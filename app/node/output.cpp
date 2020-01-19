@@ -23,43 +23,35 @@
 #include "common/xmlreadloop.h"
 #include "node/node.h"
 
-NodeOutput::NodeOutput(const QString &id) :
-    NodeParam(id)
-{
+NodeOutput::NodeOutput(const QString& id) : NodeParam(id) {}
+
+NodeParam::Type NodeOutput::type() { return kOutput; }
+
+QString NodeOutput::name() {
+  if (name_.isEmpty()) {
+    return tr("Output");
+  }
+
+  return NodeParam::name();
 }
 
-NodeParam::Type NodeOutput::type()
-{
-    return kOutput;
-}
+void NodeOutput::Load(QXmlStreamReader* reader, QHash<quintptr, NodeOutput*>& param_ptrs, QList<SerializedConnection>&,
+                      QList<FootageConnection>&) {
+  XMLAttributeLoop(reader, attr) {
+    if (attr.name() == "ptr") {
+      quintptr saved_ptr = attr.value().toULongLong();
 
-QString NodeOutput::name()
-{
-    if (name_.isEmpty()) {
-        return tr("Output");
+      param_ptrs.insert(saved_ptr, this);
     }
-
-    return NodeParam::name();
+  }
 }
 
-void NodeOutput::Load(QXmlStreamReader* reader, QHash<quintptr, NodeOutput*>& param_ptrs, QList<SerializedConnection>&, QList<FootageConnection>&)
-{
-    XMLAttributeLoop(reader, attr) {
-        if (attr.name() == "ptr") {
-            quintptr saved_ptr = attr.value().toULongLong();
+void NodeOutput::Save(QXmlStreamWriter* writer) const {
+  writer->writeStartElement("output");
 
-            param_ptrs.insert(saved_ptr, this);
-        }
-    }
-}
+  writer->writeAttribute("id", id());
 
-void NodeOutput::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement("output");
+  writer->writeAttribute("ptr", QString::number(reinterpret_cast<quintptr>(this)));
 
-    writer->writeAttribute("id", id());
-
-    writer->writeAttribute("ptr", QString::number(reinterpret_cast<quintptr>(this)));
-
-    writer->writeEndElement(); // output
+  writer->writeEndElement();  // output
 }
