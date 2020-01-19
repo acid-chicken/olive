@@ -33,7 +33,7 @@ InstallDir "$PROGRAMFILES32\${APP_NAME}"
 !insertmacro MUI_LANGUAGE "English"
 
 Section "Olive (required)"
-	
+
 	SectionIn RO
 
 	SetOutPath $INSTDIR
@@ -72,7 +72,7 @@ Section "uninstall"
 
 	Delete "$DESKTOP\${APP_NAME}.lnk"
 	rmdir /r "$SMPROGRAMS\${APP_NAME}"
-	
+
 	DeleteRegKey HKCR ".ove"
 	DeleteRegKey HKCR "OliveEditor.OVEFile"
 	DeleteRegKey HKCR "OliveEditor.OVEFile\DefaultIcon" ""
