@@ -1,20 +1,20 @@
 version: "{build}"
 branches:
   only:
-  - master
+    - master
 image: Visual Studio 2017
 environment:
   TRAVIS_REPO_SLUG: olive-editor/olive
 install:
-- cd C:\Tools\vcpkg
-- git pull
-- .\bootstrap-vcpkg.bat
-- cd %APPVEYOR_BUILD_FOLDER%
+  - cd C:\Tools\vcpkg
+  - git pull
+  - .\bootstrap-vcpkg.bat
+  - cd %APPVEYOR_BUILD_FOLDER%
 build_script:
-- cmd: appveyor-build.bat
+  - cmd: appveyor-build.bat
 artifacts:
-- path: Olive*.zip
-  name: Olive Portable
-- path: Olive*.exe
-  name: Olive Installer
+  - path: Olive*.zip
+    name: Olive Portable
+  - path: Olive*.exe
+    name: Olive Installer
 cache: c:\tools\vcpkg\installed\
