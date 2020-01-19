@@ -6,7 +6,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     cmake .
 
     # Make
-    make -j$(sysctl -n hw.ncpu)
+    make -j"$(sysctl -n hw.ncpu)"
 
     # Handle compile failure
     if [ "$?" != "0" ]
@@ -16,17 +16,17 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 
     BUNDLE_PATH=$(find . -name "Olive.app")
 
-    echo Found app at: $BUNDLE_PATH
+    echo Found app at: "$BUNDLE_PATH"
 
     # Move Qt deps into bundle
-    macdeployqt $BUNDLE_PATH
+    macdeployqt "$BUNDLE_PATH"
 
     # Fix other deps that macdeployqt missed
     wget -c -nv https://github.com/arl/macdeployqtfix/raw/master/macdeployqtfix.py
-    python2 macdeployqtfix.py $BUNDLE_PATH/Contents/MacOS/Olive /usr/local/Cellar/qt5/5.*/
+    python2 macdeployqtfix.py "$BUNDLE_PATH"/Contents/MacOS/Olive /usr/local/Cellar/qt5/5.*/
 
     # Distribute in zip
-    zip -r Olive-$(git rev-parse --short HEAD)-macOS.zip $BUNDLE_PATH
+    zip -r Olive-"$(git rev-parse --short HEAD)"-macOS.zip "$BUNDLE_PATH"
 
 elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
@@ -34,7 +34,7 @@ elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     cmake . -DQt5LinguistTools_DIR=/usr/lib/x86_64-linux-gnu/cmake/Qt5LinguistTools
 
     # Make
-    make -j$(nproc)
+    make -j"$(nproc)"
 
     # Handle compile failure
     if [ "$?" != "0" ]
@@ -43,7 +43,7 @@ elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     fi
 
     # Use `make install` on `appdir` to place files in the correct place
-    make DESTDIR=appdir -j$(nproc) install
+    make DESTDIR=appdir -j"$(nproc)" install
 
     # Download linuxdeployqt
     wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
@@ -52,7 +52,7 @@ elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
     
     # linuxdeployqt uses this for naming the file
-    export VERSION=$(git rev-parse --short HEAD)
+    export VERSION="$(git rev-parse --short HEAD)"
 
     # Use linuxdeployqt to set up dependencies
     ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/local/share/applications/*.desktop -extra-plugins=imageformats/libqsvg.so -appimage
