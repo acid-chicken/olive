@@ -22,112 +22,84 @@
 
 const NodeKeyframe::Type NodeKeyframe::kDefaultType = kLinear;
 
-NodeKeyframe::NodeKeyframe(const rational &time, const QVariant &value, const NodeKeyframe::Type &type, const int &track) :
-    time_(time),
-    value_(value),
-    type_(type),
-    bezier_control_in_(QPointF(-1.0, 0.0)),
-    bezier_control_out_(QPointF(1.0, 0.0)),
-    track_(track)
-{
+NodeKeyframe::NodeKeyframe(const rational &time, const QVariant &value, const NodeKeyframe::Type &type,
+                           const int &track)
+    : time_(time),
+      value_(value),
+      type_(type),
+      bezier_control_in_(QPointF(-1.0, 0.0)),
+      bezier_control_out_(QPointF(1.0, 0.0)),
+      track_(track) {}
+
+NodeKeyframePtr NodeKeyframe::Create(const rational &time, const QVariant &value, const NodeKeyframe::Type &type,
+                                     const int &track) {
+  return std::make_shared<NodeKeyframe>(time, value, type, track);
 }
 
-NodeKeyframePtr NodeKeyframe::Create(const rational &time, const QVariant &value, const NodeKeyframe::Type &type, const int& track)
-{
-    return std::make_shared<NodeKeyframe>(time, value, type, track);
+NodeKeyframePtr NodeKeyframe::copy() const {
+  NodeKeyframePtr copy = std::make_shared<NodeKeyframe>(time_, value_, type_, track_);
+  copy->bezier_control_in_ = bezier_control_in_;
+  copy->bezier_control_out_ = bezier_control_out_;
+  return copy;
 }
 
-NodeKeyframePtr NodeKeyframe::copy() const
-{
-    NodeKeyframePtr copy = std::make_shared<NodeKeyframe>(time_, value_, type_, track_);
-    copy->bezier_control_in_ = bezier_control_in_;
-    copy->bezier_control_out_ = bezier_control_out_;
-    return copy;
+const rational &NodeKeyframe::time() const { return time_; }
+
+void NodeKeyframe::set_time(const rational &time) {
+  time_ = time;
+  emit TimeChanged(time_);
 }
 
-const rational &NodeKeyframe::time() const
-{
-    return time_;
+const QVariant &NodeKeyframe::value() const { return value_; }
+
+void NodeKeyframe::set_value(const QVariant &value) {
+  value_ = value;
+  emit ValueChanged(value_);
 }
 
-void NodeKeyframe::set_time(const rational &time)
-{
-    time_ = time;
-    emit TimeChanged(time_);
+const NodeKeyframe::Type &NodeKeyframe::type() const { return type_; }
+
+void NodeKeyframe::set_type(const NodeKeyframe::Type &type) {
+  type_ = type;
+  emit TypeChanged(type_);
 }
 
-const QVariant &NodeKeyframe::value() const
-{
-    return value_;
+const QPointF &NodeKeyframe::bezier_control_in() const { return bezier_control_in_; }
+
+void NodeKeyframe::set_bezier_control_in(const QPointF &control) {
+  bezier_control_in_ = control;
+  emit BezierControlInChanged(bezier_control_in_);
 }
 
-void NodeKeyframe::set_value(const QVariant &value)
-{
-    value_ = value;
-    emit ValueChanged(value_);
+const QPointF &NodeKeyframe::bezier_control_out() const { return bezier_control_out_; }
+
+void NodeKeyframe::set_bezier_control_out(const QPointF &control) {
+  bezier_control_out_ = control;
+  emit BezierControlOutChanged(bezier_control_out_);
 }
 
-const NodeKeyframe::Type &NodeKeyframe::type() const
-{
-    return type_;
+const QPointF &NodeKeyframe::bezier_control(NodeKeyframe::BezierType type) const {
+  if (type == kInHandle) {
+    return bezier_control_in();
+  } else {
+    return bezier_control_out();
+  }
 }
 
-void NodeKeyframe::set_type(const NodeKeyframe::Type &type)
-{
-    type_ = type;
-    emit TypeChanged(type_);
+void NodeKeyframe::set_bezier_control(NodeKeyframe::BezierType type, const QPointF &control) {
+  if (type == kInHandle) {
+    set_bezier_control_in(control);
+  } else {
+    set_bezier_control_out(control);
+  }
 }
 
-const QPointF &NodeKeyframe::bezier_control_in() const
-{
-    return bezier_control_in_;
-}
+const int &NodeKeyframe::track() const { return track_; }
 
-void NodeKeyframe::set_bezier_control_in(const QPointF &control)
-{
-    bezier_control_in_ = control;
-    emit BezierControlInChanged(bezier_control_in_);
-}
-
-const QPointF &NodeKeyframe::bezier_control_out() const
-{
-    return bezier_control_out_;
-}
-
-void NodeKeyframe::set_bezier_control_out(const QPointF &control)
-{
-    bezier_control_out_ = control;
-    emit BezierControlOutChanged(bezier_control_out_);
-}
-
-const QPointF &NodeKeyframe::bezier_control(NodeKeyframe::BezierType type) const
-{
-    if (type == kInHandle) {
-        return bezier_control_in();
-    } else {
-        return bezier_control_out();
-    }
-}
-
-void NodeKeyframe::set_bezier_control(NodeKeyframe::BezierType type, const QPointF &control)
-{
-    if (type == kInHandle) {
-        set_bezier_control_in(control);
-    } else {
-        set_bezier_control_out(control);
-    }
-}
-
-const int &NodeKeyframe::track() const
-{
-    return track_;
-}
-
-NodeKeyframe::BezierType NodeKeyframe::get_opposing_bezier_type(NodeKeyframe::BezierType type)
-{
-    if (type == kInHandle) {
-        return kOutHandle;
-    } else {
-        return kInHandle;
-    }
+NodeKeyframe::BezierType NodeKeyframe::get_opposing_bezier_type(NodeKeyframe::BezierType type) {
+  if (type == kInHandle) {
+    return kOutHandle;
+  } else {
+    return kInHandle;
+  }
 }
