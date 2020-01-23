@@ -27,78 +27,76 @@
 #include "pixelformat.h"
 #include "render/rendermodes.h"
 
-class PixelService : public QObject
-{
-    Q_OBJECT
-public:
-    static void CreateInstance();
-    static void DestroyInstance();
-    static PixelService* instance();
+class PixelService : public QObject {
+  Q_OBJECT
+ public:
+  static void CreateInstance();
+  static void DestroyInstance();
+  static PixelService* instance();
 
-    /**
-     * @brief Returns the configured pixel format for a given mode
-     */
-    PixelFormat::Format GetConfiguredFormatForMode(RenderMode::Mode mode);
-    void SetConfiguredFormatForMode(RenderMode::Mode mode, PixelFormat::Format format);
+  /**
+   * @brief Returns the configured pixel format for a given mode
+   */
+  PixelFormat::Format GetConfiguredFormatForMode(RenderMode::Mode mode);
+  void SetConfiguredFormatForMode(RenderMode::Mode mode, PixelFormat::Format format);
 
-    /**
-     * @brief Return a PixelFormatInfo containing information for a certain format
-     *
-     * \see PixelFormatInfo
-     */
-    static PixelFormat::Info GetPixelFormatInfo(const PixelFormat::Format& format);
+  /**
+   * @brief Return a PixelFormatInfo containing information for a certain format
+   *
+   * \see PixelFormatInfo
+   */
+  static PixelFormat::Info GetPixelFormatInfo(const PixelFormat::Format& format);
 
-    /**
-     * @brief Returns the minimum buffer size (in bytes) necessary for a given format, width, and height.
-     *
-     * @param format
-     *
-     * The format of the data the buffer should contain. Must be a member of the olive::PixelFormat enum.
-     *
-     * @param width
-     *
-     * The width (in pixels) of the buffer.
-     *
-     * @param height
-     *
-     * The height (in pixels) of the buffer.
-     */
-    static int GetBufferSize(const PixelFormat::Format &format, const int& width, const int& height);
+  /**
+   * @brief Returns the minimum buffer size (in bytes) necessary for a given format, width, and height.
+   *
+   * @param format
+   *
+   * The format of the data the buffer should contain. Must be a member of the olive::PixelFormat enum.
+   *
+   * @param width
+   *
+   * The width (in pixels) of the buffer.
+   *
+   * @param height
+   *
+   * The height (in pixels) of the buffer.
+   */
+  static int GetBufferSize(const PixelFormat::Format& format, const int& width, const int& height);
 
-    /**
-     * @brief Returns the number of bytes per pixel for a certain format
-     *
-     * Different formats use different sizes of data for pixels. Use this function to determine how many bytes a pixel
-     * requires for a certain format. The number of bytes will always be a multiple of 4 since all formats use RGBA and
-     * are at least 1 bpc.
-     */
-    static int BytesPerPixel(const PixelFormat::Format &format);
+  /**
+   * @brief Returns the number of bytes per pixel for a certain format
+   *
+   * Different formats use different sizes of data for pixels. Use this function to determine how many bytes a pixel
+   * requires for a certain format. The number of bytes will always be a multiple of 4 since all formats use RGBA and
+   * are at least 1 bpc.
+   */
+  static int BytesPerPixel(const PixelFormat::Format& format);
 
-    /**
-     * @brief Returns the number of bytes per channel for a certain format
-     */
-    static int BytesPerChannel(const PixelFormat::Format& format);
+  /**
+   * @brief Returns the number of bytes per channel for a certain format
+   */
+  static int BytesPerChannel(const PixelFormat::Format& format);
 
-    /**
-     * @brief Convert a frame to a pixel format
-     *
-     * If the frame's pixel format == the destination format, this just returns `frame`.
-     */
-    static FramePtr ConvertPixelFormat(FramePtr frame, const PixelFormat::Format &dest_format);
+  /**
+   * @brief Convert a frame to a pixel format
+   *
+   * If the frame's pixel format == the destination format, this just returns `frame`.
+   */
+  static FramePtr ConvertPixelFormat(FramePtr frame, const PixelFormat::Format& dest_format);
 
-    /**
-     * @brief Convert an RGB image to an RGBA image
-     */
-    static void ConvertRGBtoRGBA(FramePtr frame);
+  /**
+   * @brief Convert an RGB image to an RGBA image
+   */
+  static void ConvertRGBtoRGBA(FramePtr frame);
 
-signals:
-    void FormatChanged();
+ signals:
+  void FormatChanged();
 
-private:
-    PixelService() = default;
+ private:
+  PixelService() = default;
 
-    static PixelService* instance_;
-
+  static PixelService* instance_;
 };
 
-#endif // PIXELSERVICE_H
+#endif  // PIXELSERVICE_H

@@ -3,33 +3,31 @@
 
 #include "dialog/loadsave/loadsave.h"
 
-class RenderCancelDialog : public LoadSaveDialog
-{
-    Q_OBJECT
-public:
-    RenderCancelDialog(QWidget* parent = nullptr);
+class RenderCancelDialog : public LoadSaveDialog {
+  Q_OBJECT
+ public:
+  RenderCancelDialog(QWidget* parent = nullptr);
 
-    void RunIfWorkersAreBusy();
+  void RunIfWorkersAreBusy();
 
-    void SetWorkerCount(int count);
+  void SetWorkerCount(int count);
 
-    void WorkerStarted();
+  void WorkerStarted();
 
-public slots:
-    void WorkerDone();
+ public slots:
+  void WorkerDone();
 
-protected:
-    virtual void showEvent(QShowEvent* event) override;
+ protected:
+  virtual void showEvent(QShowEvent* event) override;
 
-private:
-    void UpdateProgress();
+ private:
+  void UpdateProgress();
 
-    int busy_workers_;
+  int busy_workers_;
 
-    int total_workers_;
+  int total_workers_;
 
-    int waiting_workers_;
-
+  int waiting_workers_;
 };
 
-#endif // RENDERCANCELDIALOG_H
+#endif  // RENDERCANCELDIALOG_H
