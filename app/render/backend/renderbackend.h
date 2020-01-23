@@ -12,138 +12,138 @@
 
 class RenderBackend : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  RenderBackend(QObject* parent = nullptr);
+    RenderBackend(QObject* parent = nullptr);
 
-  bool Init();
+    bool Init();
 
-  void Close();
+    void Close();
 
-  const QString& GetError() const;
+    const QString& GetError() const;
 
-  void SetViewerNode(ViewerOutput* viewer_node);
+    void SetViewerNode(ViewerOutput* viewer_node);
 
-  bool IsInitiated();
+    bool IsInitiated();
 
-  ViewerOutput* viewer_node() const;
+    ViewerOutput* viewer_node() const;
 
-  void CancelQueue();
+    void CancelQueue();
 
 public slots:
-  void InvalidateCache(const rational &start_range, const rational &end_range);
+    void InvalidateCache(const rational &start_range, const rational &end_range);
 
-  bool Compile();
+    bool Compile();
 
-  void Decompile();
+    void Decompile();
 
 signals:
-  void QueueComplete();
+    void QueueComplete();
 
 protected:
-  void RegenerateCacheID();
+    void RegenerateCacheID();
 
-  virtual bool InitInternal() = 0;
+    virtual bool InitInternal() = 0;
 
-  virtual void CloseInternal() = 0;
+    virtual void CloseInternal() = 0;
 
-  virtual bool CompileInternal() = 0;
+    virtual bool CompileInternal() = 0;
 
-  virtual void DecompileInternal() = 0;
+    virtual void DecompileInternal() = 0;
 
-  virtual bool CanRender();
+    virtual bool CanRender();
 
-  virtual TimeRange PopNextFrameFromQueue();
+    virtual TimeRange PopNextFrameFromQueue();
 
-  rational GetSequenceLength();
+    rational GetSequenceLength();
 
-  const QVector<QThread*>& threads();
+    const QVector<QThread*>& threads();
 
-  /**
-   * @brief Internal function for generating the cache ID
-   */
-  virtual bool GenerateCacheIDInternal(QCryptographicHash& hash) = 0;
+    /**
+     * @brief Internal function for generating the cache ID
+     */
+    virtual bool GenerateCacheIDInternal(QCryptographicHash& hash) = 0;
 
-  virtual void InvalidateCacheInternal(const rational &start_range, const rational &end_range);
+    virtual void InvalidateCacheInternal(const rational &start_range, const rational &end_range);
 
-  virtual void CacheIDChangedEvent(const QString& id);
+    virtual void CacheIDChangedEvent(const QString& id);
 
-  void SetError(const QString& error);
+    void SetError(const QString& error);
 
-  virtual void ConnectViewer(ViewerOutput* node);
-  virtual void DisconnectViewer(ViewerOutput* node);
+    virtual void ConnectViewer(ViewerOutput* node);
+    virtual void DisconnectViewer(ViewerOutput* node);
 
-  /**
-   * @brief Function called when there are frames in the queue to cache
-   *
-   * This function is NOT thread-safe and should only be called in the main thread.
-   */
-  void CacheNext();
+    /**
+     * @brief Function called when there are frames in the queue to cache
+     *
+     * This function is NOT thread-safe and should only be called in the main thread.
+     */
+    void CacheNext();
 
-  void InitWorkers();
+    void InitWorkers();
 
-  virtual NodeInput* GetDependentInput() = 0;
+    virtual NodeInput* GetDependentInput() = 0;
 
-  virtual void ConnectWorkerToThis(RenderWorker* worker) = 0;
+    virtual void ConnectWorkerToThis(RenderWorker* worker) = 0;
 
-  bool ViewerIsConnected() const;
+    bool ViewerIsConnected() const;
 
-  const QString& cache_id() const;
+    const QString& cache_id() const;
 
-  void QueueValueUpdate();
+    void QueueValueUpdate();
 
-  bool AllProcessorsAreAvailable() const;
-  bool WorkerIsBusy(RenderWorker* worker) const;
-  void SetWorkerBusyState(RenderWorker* worker, bool busy);
+    bool AllProcessorsAreAvailable() const;
+    bool WorkerIsBusy(RenderWorker* worker) const;
+    void SetWorkerBusyState(RenderWorker* worker, bool busy);
 
-  TimeRangeList cache_queue_;
+    TimeRangeList cache_queue_;
 
-  QVector<RenderWorker*> processors_;
+    QVector<RenderWorker*> processors_;
 
-  bool compiled_;
+    bool compiled_;
 
-  QHash<TimeRange, qint64> render_job_info_;
+    QHash<TimeRange, qint64> render_job_info_;
 
 protected slots:
-  void QueueRecompile();
+    void QueueRecompile();
 
 private:
-  /**
-   * @brief Internal list of RenderProcessThreads
-   */
-  QVector<QThread*> threads_;
+    /**
+     * @brief Internal list of RenderProcessThreads
+     */
+    QVector<QThread*> threads_;
 
-  /**
-   * @brief Internal variable that contains whether the Renderer has started or not
-   */
-  bool started_;
+    /**
+     * @brief Internal variable that contains whether the Renderer has started or not
+     */
+    bool started_;
 
-  /**
-   * @brief Internal reference to attached viewer node
-   */
-  ViewerOutput* viewer_node_;
+    /**
+     * @brief Internal reference to attached viewer node
+     */
+    ViewerOutput* viewer_node_;
 
-  /**
-   * @brief Internal reference to the copied viewer node we made in the compilation process
-   */
-  ViewerOutput* copied_viewer_node_;
+    /**
+     * @brief Internal reference to the copied viewer node we made in the compilation process
+     */
+    ViewerOutput* copied_viewer_node_;
 
-  /**
-   * @brief Error string that can be set in SetError() to handle failures
-   */
-  QString error_;
+    /**
+     * @brief Error string that can be set in SetError() to handle failures
+     */
+    QString error_;
 
-  QString cache_id_;
+    QString cache_id_;
 
-  QList<Node*> source_node_list_;
-  NodeGraph copied_graph_;
+    QList<Node*> source_node_list_;
+    NodeGraph copied_graph_;
 
-  bool recompile_queued_;
-  bool input_update_queued_;
+    bool recompile_queued_;
+    bool input_update_queued_;
 
-  QVector<bool> processor_busy_state_;
+    QVector<bool> processor_busy_state_;
 
-  RenderCancelDialog* cancel_dialog_;
+    RenderCancelDialog* cancel_dialog_;
 
 };
 

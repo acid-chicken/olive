@@ -59,610 +59,610 @@
 Core Core::instance_;
 
 Core::Core() :
-  main_window_(nullptr),
-  tool_(Tool::kPointer),
-  snapping_(true),
-  queue_autorecovery_(false)
+    main_window_(nullptr),
+    tool_(Tool::kPointer),
+    snapping_(true),
+    queue_autorecovery_(false)
 {
 }
 
 Core *Core::instance()
 {
-  return &instance_;
+    return &instance_;
 }
 
 void Core::Start()
 {
-  //
-  // Parse command line arguments
-  //
+    //
+    // Parse command line arguments
+    //
 
-  QCoreApplication* app = QCoreApplication::instance();
+    QCoreApplication* app = QCoreApplication::instance();
 
-  QCommandLineParser parser;
-  parser.addHelpOption();
-  parser.addVersionOption();
+    QCommandLineParser parser;
+    parser.addHelpOption();
+    parser.addVersionOption();
 
-  // Project from command line option
-  // FIXME: What's the correct way to make a visually "optional" positional argument, or is manually adding square
-  // brackets like this correct?
-  parser.addPositionalArgument("[project]", tr("Project to open on startup"));
+    // Project from command line option
+    // FIXME: What's the correct way to make a visually "optional" positional argument, or is manually adding square
+    // brackets like this correct?
+    parser.addPositionalArgument("[project]", tr("Project to open on startup"));
 
-  // Create fullscreen option
-  QCommandLineOption fullscreen_option({"f", "fullscreen"}, tr("Start in full screen mode"));
-  parser.addOption(fullscreen_option);
+    // Create fullscreen option
+    QCommandLineOption fullscreen_option({"f", "fullscreen"}, tr("Start in full screen mode"));
+    parser.addOption(fullscreen_option);
 
-  // Parse options
-  parser.process(*app);
+    // Parse options
+    parser.process(*app);
 
-  QStringList args = parser.positionalArguments();
+    QStringList args = parser.positionalArguments();
 
-  // Detect project to load on startup
-  if (!args.isEmpty()) {
-    startup_project_ = args.first();
-  }
+    // Detect project to load on startup
+    if (!args.isEmpty()) {
+        startup_project_ = args.first();
+    }
 
-  // Declare custom types for Qt signal/slot syste
-  DeclareTypesForQt();
+    // Declare custom types for Qt signal/slot syste
+    DeclareTypesForQt();
 
-  // Set up node factory/library
-  NodeFactory::Initialize();
+    // Set up node factory/library
+    NodeFactory::Initialize();
 
-  // Load application config
-  Config::Load();
+    // Load application config
+    Config::Load();
 
 
-  //
-  // Start GUI (FIXME CLI mode)
-  //
+    //
+    // Start GUI (FIXME CLI mode)
+    //
 
-  StartGUI(parser.isSet(fullscreen_option));
+    StartGUI(parser.isSet(fullscreen_option));
 
-  // Load startup project
-  if (startup_project_.isEmpty()) {
-    // If no load project is set, create a new one on open
-    AddOpenProject(std::make_shared<Project>());
-  } else {
+    // Load startup project
+    if (startup_project_.isEmpty()) {
+        // If no load project is set, create a new one on open
+        AddOpenProject(std::make_shared<Project>());
+    } else {
 
-  }
+    }
 }
 
 void Core::Stop()
 {
-  // Save Config
-  //Config::Save();
+    // Save Config
+    //Config::Save();
 
-  MenuShared::DestroyInstance();
+    MenuShared::DestroyInstance();
 
-  TaskManager::DestroyInstance();
+    TaskManager::DestroyInstance();
 
-  PanelManager::DestroyInstance();
+    PanelManager::DestroyInstance();
 
-  AudioManager::DestroyInstance();
+    AudioManager::DestroyInstance();
 
-  DiskManager::DestroyInstance();
+    DiskManager::DestroyInstance();
 
-  PixelService::DestroyInstance();
+    PixelService::DestroyInstance();
 
-  NodeFactory::Destroy();
+    NodeFactory::Destroy();
 
-  delete main_window_;
+    delete main_window_;
 }
 
 MainWindow *Core::main_window()
 {
-  return main_window_;
+    return main_window_;
 }
 
 UndoStack *Core::undo_stack()
 {
-  return &undo_stack_;
+    return &undo_stack_;
 }
 
 void Core::ImportFiles(const QStringList &urls, ProjectViewModel* model, Folder* parent)
 {
-  if (urls.isEmpty()) {
-    QMessageBox::critical(main_window_, tr("Import error"), tr("Nothing to import"));
-    return;
-  }
+    if (urls.isEmpty()) {
+        QMessageBox::critical(main_window_, tr("Import error"), tr("Nothing to import"));
+        return;
+    }
 
-  ProjectImportManager* pim = new ProjectImportManager(model, parent, urls);
+    ProjectImportManager* pim = new ProjectImportManager(model, parent, urls);
 
-  if (!pim->GetFileCount()) {
-    // No files to import
-    delete pim;
-    return;
-  }
+    if (!pim->GetFileCount()) {
+        // No files to import
+        delete pim;
+        return;
+    }
 
-  connect(pim, &ProjectImportManager::ImportComplete, this, &Core::ImportTaskComplete, Qt::BlockingQueuedConnection);
+    connect(pim, &ProjectImportManager::ImportComplete, this, &Core::ImportTaskComplete, Qt::BlockingQueuedConnection);
 
-  InitiateOpenSaveProcess(pim, tr("Importing %1 files").arg(pim->GetFileCount()), tr("Importing..."));
+    InitiateOpenSaveProcess(pim, tr("Importing %1 files").arg(pim->GetFileCount()), tr("Importing..."));
 }
 
 const Tool::Item &Core::tool()
 {
-  return tool_;
+    return tool_;
 }
 
 const bool &Core::snapping()
 {
-  return snapping_;
+    return snapping_;
 }
 
 void Core::SetTool(const Tool::Item &tool)
 {
-  tool_ = tool;
+    tool_ = tool;
 
-  emit ToolChanged(tool_);
+    emit ToolChanged(tool_);
 }
 
 void Core::SetSnapping(const bool &b)
 {
-  snapping_ = b;
+    snapping_ = b;
 
-  emit SnappingChanged(snapping_);
+    emit SnappingChanged(snapping_);
 }
 
 void Core::DialogAboutShow()
 {
-  AboutDialog a(main_window_);
-  a.exec();
+    AboutDialog a(main_window_);
+    a.exec();
 }
 
 void Core::DialogImportShow()
 {
-  // Open dialog for user to select files
-  QStringList files = QFileDialog::getOpenFileNames(main_window_,
-                                                    tr("Import footage..."));
+    // Open dialog for user to select files
+    QStringList files = QFileDialog::getOpenFileNames(main_window_,
+                        tr("Import footage..."));
 
-  // Check if the user actually selected files to import
-  if (!files.isEmpty()) {
+    // Check if the user actually selected files to import
+    if (!files.isEmpty()) {
 
+        // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
+        ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
+        Project* active_project;
+
+        if (active_project_panel == nullptr // Check that we found a Project panel
+                || (active_project = active_project_panel->project()) == nullptr) { // and that we could find an active Project
+            QMessageBox::critical(main_window_, tr("Failed to import footage"), tr("Failed to find active Project panel"));
+            return;
+        }
+
+        // Get the selected folder in this panel
+        Folder* folder = active_project_panel->GetSelectedFolder();
+
+        ImportFiles(files, active_project_panel->model(), folder);
+    }
+}
+
+void Core::DialogPreferencesShow()
+{
+    PreferencesDialog pd(main_window_, main_window_->menuBar());
+    pd.exec();
+}
+
+void Core::DialogProjectPropertiesShow()
+{
+    ProjectPropertiesDialog ppd(main_window_);
+    ppd.exec();
+}
+
+void Core::DialogExportShow()
+{
+    ViewerPanel* latest_viewer = PanelManager::instance()->MostRecentlyFocused<ViewerPanel>();
+
+    if (latest_viewer && latest_viewer->GetConnectedViewer()) {
+        if (latest_viewer->GetConnectedViewer()->Length() == 0) {
+            QMessageBox::critical(main_window_,
+                                  tr("Error"),
+                                  tr("This Sequence is empty. There is nothing to export."),
+                                  QMessageBox::Ok);
+        } else {
+            ExportDialog ed(latest_viewer->GetConnectedViewer(), main_window_);
+            ed.exec();
+        }
+    }
+}
+
+void Core::CreateNewFolder()
+{
     // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
     ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
     Project* active_project;
 
     if (active_project_panel == nullptr // Check that we found a Project panel
-        || (active_project = active_project_panel->project()) == nullptr) { // and that we could find an active Project
-      QMessageBox::critical(main_window_, tr("Failed to import footage"), tr("Failed to find active Project panel"));
-      return;
+            || (active_project = active_project_panel->project()) == nullptr) { // and that we could find an active Project
+        QMessageBox::critical(main_window_, tr("Failed to create new folder"), tr("Failed to find active Project panel"));
+        return;
     }
 
     // Get the selected folder in this panel
     Folder* folder = active_project_panel->GetSelectedFolder();
 
-    ImportFiles(files, active_project_panel->model(), folder);
-  }
-}
+    // Create new folder
+    ItemPtr new_folder = std::make_shared<Folder>();
 
-void Core::DialogPreferencesShow()
-{
-  PreferencesDialog pd(main_window_, main_window_->menuBar());
-  pd.exec();
-}
+    // Set a default name
+    new_folder->set_name(tr("New Folder"));
 
-void Core::DialogProjectPropertiesShow()
-{
-  ProjectPropertiesDialog ppd(main_window_);
-  ppd.exec();
-}
+    // Create an undoable command
+    ProjectViewModel::AddItemCommand* aic = new ProjectViewModel::AddItemCommand(active_project_panel->model(),
+            folder,
+            new_folder);
 
-void Core::DialogExportShow()
-{
-  ViewerPanel* latest_viewer = PanelManager::instance()->MostRecentlyFocused<ViewerPanel>();
+    Core::instance()->undo_stack()->push(aic);
 
-  if (latest_viewer && latest_viewer->GetConnectedViewer()) {
-    if (latest_viewer->GetConnectedViewer()->Length() == 0) {
-      QMessageBox::critical(main_window_,
-                            tr("Error"),
-                            tr("This Sequence is empty. There is nothing to export."),
-                            QMessageBox::Ok);
-    } else {
-      ExportDialog ed(latest_viewer->GetConnectedViewer(), main_window_);
-      ed.exec();
-    }
-  }
-}
-
-void Core::CreateNewFolder()
-{
-  // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
-  ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
-  Project* active_project;
-
-  if (active_project_panel == nullptr // Check that we found a Project panel
-      || (active_project = active_project_panel->project()) == nullptr) { // and that we could find an active Project
-    QMessageBox::critical(main_window_, tr("Failed to create new folder"), tr("Failed to find active Project panel"));
-    return;
-  }
-
-  // Get the selected folder in this panel
-  Folder* folder = active_project_panel->GetSelectedFolder();
-
-  // Create new folder
-  ItemPtr new_folder = std::make_shared<Folder>();
-
-  // Set a default name
-  new_folder->set_name(tr("New Folder"));
-
-  // Create an undoable command
-  ProjectViewModel::AddItemCommand* aic = new ProjectViewModel::AddItemCommand(active_project_panel->model(),
-                                                                               folder,
-                                                                               new_folder);
-
-  Core::instance()->undo_stack()->push(aic);
-
-  // Trigger an automatic rename so users can enter the folder name
-  active_project_panel->Edit(new_folder.get());
+    // Trigger an automatic rename so users can enter the folder name
+    active_project_panel->Edit(new_folder.get());
 }
 
 void Core::CreateNewSequence()
 {
-  // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
-  ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
-  Project* active_project;
+    // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
+    ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
+    Project* active_project;
 
-  if (active_project_panel == nullptr // Check that we found a Project panel
-      || (active_project = active_project_panel->project()) == nullptr) { // and that we could find an active Project
-    QMessageBox::critical(main_window_, tr("Failed to create new sequence"), tr("Failed to find active Project panel"));
-    return;
-  }
+    if (active_project_panel == nullptr // Check that we found a Project panel
+            || (active_project = active_project_panel->project()) == nullptr) { // and that we could find an active Project
+        QMessageBox::critical(main_window_, tr("Failed to create new sequence"), tr("Failed to find active Project panel"));
+        return;
+    }
 
-  // Get the selected folder in this panel
-  Folder* folder = active_project_panel->GetSelectedFolder();
+    // Get the selected folder in this panel
+    Folder* folder = active_project_panel->GetSelectedFolder();
 
-  // Create new sequence
-  SequencePtr new_sequence = std::make_shared<Sequence>();
+    // Create new sequence
+    SequencePtr new_sequence = std::make_shared<Sequence>();
 
-  // Set all defaults for the sequence
-  new_sequence->set_default_parameters();
+    // Set all defaults for the sequence
+    new_sequence->set_default_parameters();
 
-  // Get default name for this sequence (in the format "Sequence N", the first that doesn't exist)
-  int sequence_number = 1;
-  QString sequence_name;
-  do {
-    sequence_name = tr("Sequence %1").arg(sequence_number);
-    sequence_number++;
-  } while (active_project->root()->ChildExistsWithName(sequence_name));
-  new_sequence->set_name(sequence_name);
+    // Get default name for this sequence (in the format "Sequence N", the first that doesn't exist)
+    int sequence_number = 1;
+    QString sequence_name;
+    do {
+        sequence_name = tr("Sequence %1").arg(sequence_number);
+        sequence_number++;
+    } while (active_project->root()->ChildExistsWithName(sequence_name));
+    new_sequence->set_name(sequence_name);
 
-  SequenceDialog sd(new_sequence.get(), SequenceDialog::kNew, main_window_);
+    SequenceDialog sd(new_sequence.get(), SequenceDialog::kNew, main_window_);
 
-  // Make sure SequenceDialog doesn't make an undo command for editing the sequence, since we make an undo command for
-  // adding it later on
-  sd.SetUndoable(false);
+    // Make sure SequenceDialog doesn't make an undo command for editing the sequence, since we make an undo command for
+    // adding it later on
+    sd.SetUndoable(false);
 
-  if (sd.exec() == QDialog::Accepted) {
-    // Create an undoable command
-    ProjectViewModel::AddItemCommand* aic = new ProjectViewModel::AddItemCommand(active_project_panel->model(),
-                                                                                 folder,
-                                                                                 new_sequence);
+    if (sd.exec() == QDialog::Accepted) {
+        // Create an undoable command
+        ProjectViewModel::AddItemCommand* aic = new ProjectViewModel::AddItemCommand(active_project_panel->model(),
+                folder,
+                new_sequence);
 
-    new_sequence->add_default_nodes();
+        new_sequence->add_default_nodes();
 
-    Core::instance()->undo_stack()->push(aic);
+        Core::instance()->undo_stack()->push(aic);
 
-    Sequence::Open(new_sequence.get());
-  }
+        Sequence::Open(new_sequence.get());
+    }
 }
 
 void Core::AddOpenProject(ProjectPtr p)
 {
-  open_projects_.append(p);
+    open_projects_.append(p);
 
-  emit ProjectOpened(p.get());
+    emit ProjectOpened(p.get());
 }
 
 void Core::ImportTaskComplete(QUndoCommand *command)
 {
-  undo_stack_.pushIfHasChildren(command);
+    undo_stack_.pushIfHasChildren(command);
 }
 
 void Core::DeclareTypesForQt()
 {
-  qRegisterMetaType<NodeDependency>();
-  qRegisterMetaType<rational>();
-  qRegisterMetaType<OpenGLTexturePtr>();
-  qRegisterMetaType<OpenGLTextureCache::ReferencePtr>();
-  qRegisterMetaType<NodeValueTable>();
-  qRegisterMetaType<FramePtr>();
-  qRegisterMetaType<AudioRenderingParams>();
-  qRegisterMetaType<NodeKeyframe::Type>();
+    qRegisterMetaType<NodeDependency>();
+    qRegisterMetaType<rational>();
+    qRegisterMetaType<OpenGLTexturePtr>();
+    qRegisterMetaType<OpenGLTextureCache::ReferencePtr>();
+    qRegisterMetaType<NodeValueTable>();
+    qRegisterMetaType<FramePtr>();
+    qRegisterMetaType<AudioRenderingParams>();
+    qRegisterMetaType<NodeKeyframe::Type>();
 }
 
 void Core::StartGUI(bool full_screen)
 {
-  // Set UI style
-  qApp->setStyle(QStyleFactory::create("Fusion"));
-  StyleManager::SetStyle(StyleManager::DefaultStyle());
+    // Set UI style
+    qApp->setStyle(QStyleFactory::create("Fusion"));
+    StyleManager::SetStyle(StyleManager::DefaultStyle());
 
-  // Set up shared menus
-  MenuShared::CreateInstance();
+    // Set up shared menus
+    MenuShared::CreateInstance();
 
-  // Since we're starting GUI mode, create a PanelFocusManager (auto-deletes with QObject)
-  PanelManager::CreateInstance();
+    // Since we're starting GUI mode, create a PanelFocusManager (auto-deletes with QObject)
+    PanelManager::CreateInstance();
 
-  // Initialize audio service
-  AudioManager::CreateInstance();
+    // Initialize audio service
+    AudioManager::CreateInstance();
 
-  // Initialize disk service
-  DiskManager::CreateInstance();
+    // Initialize disk service
+    DiskManager::CreateInstance();
 
-  // Initialize task manager
-  TaskManager::CreateInstance();
+    // Initialize task manager
+    TaskManager::CreateInstance();
 
-  // Initialize pixel service
-  PixelService::CreateInstance();
+    // Initialize pixel service
+    PixelService::CreateInstance();
 
-  // Connect the PanelFocusManager to the application's focus change signal
-  connect(qApp,
-          &QApplication::focusChanged,
-          PanelManager::instance(),
-          &PanelManager::FocusChanged);
+    // Connect the PanelFocusManager to the application's focus change signal
+    connect(qApp,
+            &QApplication::focusChanged,
+            PanelManager::instance(),
+            &PanelManager::FocusChanged);
 
-  // Create main window and open it
-  main_window_ = new MainWindow();
-  if (full_screen) {
-    main_window_->showFullScreen();
-  } else {
-    main_window_->showMaximized();
-  }
+    // Create main window and open it
+    main_window_ = new MainWindow();
+    if (full_screen) {
+        main_window_->showFullScreen();
+    } else {
+        main_window_->showMaximized();
+    }
 
-  // When a new project is opened, update the mainwindow
-  connect(this, &Core::ProjectOpened, main_window_, &MainWindow::ProjectOpen);
+    // When a new project is opened, update the mainwindow
+    connect(this, &Core::ProjectOpened, main_window_, &MainWindow::ProjectOpen);
 
-  // Start autorecovery timer using the config value as its interval
-  SetAutorecoveryInterval(Config::Current()["AutorecoveryInterval"].toInt());
-  autorecovery_timer_.start();
+    // Start autorecovery timer using the config value as its interval
+    SetAutorecoveryInterval(Config::Current()["AutorecoveryInterval"].toInt());
+    autorecovery_timer_.start();
 }
 
 void Core::SaveProjectInternal(Project *project)
 {
-  // Create save manager
-  ProjectSaveManager* psm = new ProjectSaveManager(project);
+    // Create save manager
+    ProjectSaveManager* psm = new ProjectSaveManager(project);
 
-  InitiateOpenSaveProcess(psm, tr("Saving '%1'").arg(project->filename()), tr("Save Project"));
+    InitiateOpenSaveProcess(psm, tr("Saving '%1'").arg(project->filename()), tr("Save Project"));
 }
 
 void Core::SaveAutorecovery()
 {
-  if (queue_autorecovery_) {
-    // FIXME: Save autorecovery of projects open
+    if (queue_autorecovery_) {
+        // FIXME: Save autorecovery of projects open
 
-    queue_autorecovery_ = false;
-  }
+        queue_autorecovery_ = false;
+    }
 }
 
 Project *Core::GetActiveProject()
 {
-  // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
-  ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
+    // Locate the most recently focused Project panel (assume that's the panel the user wants to import into)
+    ProjectPanel* active_project_panel = PanelManager::instance()->MostRecentlyFocused<ProjectPanel>();
 
-  // If we couldn't find one, return nullptr
-  if (active_project_panel == nullptr) {
-    return nullptr;
-  }
+    // If we couldn't find one, return nullptr
+    if (active_project_panel == nullptr) {
+        return nullptr;
+    }
 
-  // Otherwise, return the project panel's project (which may be nullptr but in most cases shouldn't be)
-  return active_project_panel->project();
+    // Otherwise, return the project panel's project (which may be nullptr but in most cases shouldn't be)
+    return active_project_panel->project();
 }
 
 void Core::SetProjectModified()
 {
-  main_window()->setWindowModified(true);
-  queue_autorecovery_ = true;
+    main_window()->setWindowModified(true);
+    queue_autorecovery_ = true;
 }
 
 void Core::SetAutorecoveryInterval(int minutes)
 {
-  // Convert minutes to milliseconds
-  autorecovery_timer_.setInterval(minutes * 60000);
+    // Convert minutes to milliseconds
+    autorecovery_timer_.setInterval(minutes * 60000);
 }
 
 void Core::SaveActiveProject()
 {
-  Project* active_project = GetActiveProject();
+    Project* active_project = GetActiveProject();
 
-  if (!active_project) {
-    return;
-  }
+    if (!active_project) {
+        return;
+    }
 
-  if (active_project->filename().isEmpty()) {
-    SaveActiveProjectAs();
-  } else {
-    SaveProjectInternal(active_project);
-  }
+    if (active_project->filename().isEmpty()) {
+        SaveActiveProjectAs();
+    } else {
+        SaveProjectInternal(active_project);
+    }
 }
 
 void Core::SaveActiveProjectAs()
 {
-  Project* active_project = GetActiveProject();
+    Project* active_project = GetActiveProject();
 
-  if (!active_project) {
-    return;
-  }
+    if (!active_project) {
+        return;
+    }
 
-  QString fn = QFileDialog::getSaveFileName(main_window_,
-                                            tr("Save Project As"),
-                                            QString(),
-                                            GetProjectFilter());
+    QString fn = QFileDialog::getSaveFileName(main_window_,
+                 tr("Save Project As"),
+                 QString(),
+                 GetProjectFilter());
 
-  if (!fn.isEmpty()) {
-    active_project->set_filename(fn);
+    if (!fn.isEmpty()) {
+        active_project->set_filename(fn);
 
-    SaveProjectInternal(active_project);
-  }
+        SaveProjectInternal(active_project);
+    }
 }
 
 QList<rational> Core::SupportedFrameRates()
 {
-  QList<rational> frame_rates;
+    QList<rational> frame_rates;
 
-  frame_rates.append(rational(10, 1));            // 10 FPS
-  frame_rates.append(rational(15, 1));            // 15 FPS
-  frame_rates.append(rational(24000, 1001));      // 23.976 FPS
-  frame_rates.append(rational(24, 1));            // 24 FPS
-  frame_rates.append(rational(25, 1));            // 25 FPS
-  frame_rates.append(rational(30000, 1001));      // 29.97 FPS
-  frame_rates.append(rational(30, 1));            // 30 FPS
-  frame_rates.append(rational(48000, 1001));      // 47.952 FPS
-  frame_rates.append(rational(48, 1));            // 48 FPS
-  frame_rates.append(rational(50, 1));            // 50 FPS
-  frame_rates.append(rational(60000, 1001));      // 59.94 FPS
-  frame_rates.append(rational(60, 1));            // 60 FPS
+    frame_rates.append(rational(10, 1));            // 10 FPS
+    frame_rates.append(rational(15, 1));            // 15 FPS
+    frame_rates.append(rational(24000, 1001));      // 23.976 FPS
+    frame_rates.append(rational(24, 1));            // 24 FPS
+    frame_rates.append(rational(25, 1));            // 25 FPS
+    frame_rates.append(rational(30000, 1001));      // 29.97 FPS
+    frame_rates.append(rational(30, 1));            // 30 FPS
+    frame_rates.append(rational(48000, 1001));      // 47.952 FPS
+    frame_rates.append(rational(48, 1));            // 48 FPS
+    frame_rates.append(rational(50, 1));            // 50 FPS
+    frame_rates.append(rational(60000, 1001));      // 59.94 FPS
+    frame_rates.append(rational(60, 1));            // 60 FPS
 
-  return frame_rates;
+    return frame_rates;
 }
 
 QList<int> Core::SupportedSampleRates()
 {
-  QList<int> sample_rates;
+    QList<int> sample_rates;
 
-  sample_rates.append(8000);         // 8000 Hz
-  sample_rates.append(11025);        // 11025 Hz
-  sample_rates.append(16000);        // 16000 Hz
-  sample_rates.append(22050);        // 22050 Hz
-  sample_rates.append(24000);        // 24000 Hz
-  sample_rates.append(32000);        // 32000 Hz
-  sample_rates.append(44100);        // 44100 Hz
-  sample_rates.append(48000);        // 48000 Hz
-  sample_rates.append(88200);        // 88200 Hz
-  sample_rates.append(96000);        // 96000 Hz
+    sample_rates.append(8000);         // 8000 Hz
+    sample_rates.append(11025);        // 11025 Hz
+    sample_rates.append(16000);        // 16000 Hz
+    sample_rates.append(22050);        // 22050 Hz
+    sample_rates.append(24000);        // 24000 Hz
+    sample_rates.append(32000);        // 32000 Hz
+    sample_rates.append(44100);        // 44100 Hz
+    sample_rates.append(48000);        // 48000 Hz
+    sample_rates.append(88200);        // 88200 Hz
+    sample_rates.append(96000);        // 96000 Hz
 
-  return sample_rates;
+    return sample_rates;
 }
 
 QList<uint64_t> Core::SupportedChannelLayouts()
 {
-  QList<uint64_t> channel_layouts;
+    QList<uint64_t> channel_layouts;
 
-  channel_layouts.append(AV_CH_LAYOUT_MONO);
-  channel_layouts.append(AV_CH_LAYOUT_STEREO);
-  channel_layouts.append(AV_CH_LAYOUT_5POINT1);
-  channel_layouts.append(AV_CH_LAYOUT_7POINT1);
+    channel_layouts.append(AV_CH_LAYOUT_MONO);
+    channel_layouts.append(AV_CH_LAYOUT_STEREO);
+    channel_layouts.append(AV_CH_LAYOUT_5POINT1);
+    channel_layouts.append(AV_CH_LAYOUT_7POINT1);
 
-  return channel_layouts;
+    return channel_layouts;
 }
 
 QString Core::FrameRateToString(const rational &frame_rate)
 {
-  return tr("%1 FPS").arg(frame_rate.toDouble());
+    return tr("%1 FPS").arg(frame_rate.toDouble());
 }
 
 QString Core::SampleRateToString(const int &sample_rate)
 {
-  return tr("%1 Hz").arg(sample_rate);
+    return tr("%1 Hz").arg(sample_rate);
 }
 
 QString Core::ChannelLayoutToString(const uint64_t &layout)
 {
-  switch (layout) {
-  case AV_CH_LAYOUT_MONO:
-    return tr("Mono");
-  case AV_CH_LAYOUT_STEREO:
-    return tr("Stereo");
-  case AV_CH_LAYOUT_5POINT1:
-    return tr("5.1");
-  case AV_CH_LAYOUT_7POINT1:
-    return tr("7.1");
-  default:
-    return tr("Unknown (0x%1)").arg(layout, 1, 16);
-  }
+    switch (layout) {
+    case AV_CH_LAYOUT_MONO:
+        return tr("Mono");
+    case AV_CH_LAYOUT_STEREO:
+        return tr("Stereo");
+    case AV_CH_LAYOUT_5POINT1:
+        return tr("5.1");
+    case AV_CH_LAYOUT_7POINT1:
+        return tr("7.1");
+    default:
+        return tr("Unknown (0x%1)").arg(layout, 1, 16);
+    }
 }
 
 QString Core::GetProjectFilter() const
 {
-  return QStringLiteral("%1 (*.ove)").arg("Olive Project");
+    return QStringLiteral("%1 (*.ove)").arg("Olive Project");
 }
 
 void Core::OpenProjectInternal(const QString &filename)
 {
-  ProjectLoadManager* plm = new ProjectLoadManager(filename);
+    ProjectLoadManager* plm = new ProjectLoadManager(filename);
 
-  // We use a blocking queued connection here because we want to ensure we have this project instance before the
-  // ProjectLoadManager is destroyed
-  connect(plm, &ProjectLoadManager::ProjectLoaded, this, &Core::AddOpenProject, Qt::BlockingQueuedConnection);
+    // We use a blocking queued connection here because we want to ensure we have this project instance before the
+    // ProjectLoadManager is destroyed
+    connect(plm, &ProjectLoadManager::ProjectLoaded, this, &Core::AddOpenProject, Qt::BlockingQueuedConnection);
 
-  InitiateOpenSaveProcess(plm, tr("Loading '%1'").arg(filename), tr("Load Project"));
+    InitiateOpenSaveProcess(plm, tr("Loading '%1'").arg(filename), tr("Load Project"));
 }
 
 int Core::CountFilesInFileList(const QFileInfoList &filenames)
 {
-  int file_count = 0;
+    int file_count = 0;
 
-  foreach (const QFileInfo& f, filenames) {
-    // For some reason QDir::NoDotAndDotDot	doesn't work with entryInfoList, so we have to check manually
-    if (f.fileName() == "." || f.fileName() == "..") {
-      continue;
-    } else if (f.isDir()) {
-      QFileInfoList info_list = QDir(f.absoluteFilePath()).entryInfoList();
+    foreach (const QFileInfo& f, filenames) {
+        // For some reason QDir::NoDotAndDotDot	doesn't work with entryInfoList, so we have to check manually
+        if (f.fileName() == "." || f.fileName() == "..") {
+            continue;
+        } else if (f.isDir()) {
+            QFileInfoList info_list = QDir(f.absoluteFilePath()).entryInfoList();
 
-      file_count += CountFilesInFileList(info_list);
-    } else {
-      file_count++;
+            file_count += CountFilesInFileList(info_list);
+        } else {
+            file_count++;
+        }
     }
-  }
 
-  return file_count;
+    return file_count;
 }
 
 QString GetRenderModePreferencePrefix(RenderMode::Mode mode, const QString &preference) {
-  QString key;
+    QString key;
 
-  key.append((mode == RenderMode::kOffline) ? QStringLiteral("Offline") : QStringLiteral("Online"));
-  key.append(preference);
+    key.append((mode == RenderMode::kOffline) ? QStringLiteral("Offline") : QStringLiteral("Online"));
+    key.append(preference);
 
-  return key;
+    return key;
 }
 
 QVariant Core::GetPreferenceForRenderMode(RenderMode::Mode mode, const QString &preference)
 {
-  return Config::Current()[GetRenderModePreferencePrefix(mode, preference)];
+    return Config::Current()[GetRenderModePreferencePrefix(mode, preference)];
 }
 
 void Core::SetPreferenceForRenderMode(RenderMode::Mode mode, const QString &preference, const QVariant &value)
 {
-  Config::Current()[GetRenderModePreferencePrefix(mode, preference)] = value;
+    Config::Current()[GetRenderModePreferencePrefix(mode, preference)] = value;
 }
 
 void Core::InitiateOpenSaveProcess(Task *manager, const QString& dialog_text, const QString& dialog_title)
 {
-  // Create save dialog
-  LoadSaveDialog* lsd = new LoadSaveDialog(dialog_text, dialog_title, main_window_);
-  lsd->open();
+    // Create save dialog
+    LoadSaveDialog* lsd = new LoadSaveDialog(dialog_text, dialog_title, main_window_);
+    lsd->open();
 
-  // Create a separate thread to save in
-  QThread* save_thread = new QThread();
-  save_thread->start();
+    // Create a separate thread to save in
+    QThread* save_thread = new QThread();
+    save_thread->start();
 
-  // Move the save manager to this thread
-  manager->moveToThread(save_thread);
+    // Move the save manager to this thread
+    manager->moveToThread(save_thread);
 
-  // Connect the save manager progress signal to the progress bar update on the dialog
-  connect(manager, &Task::ProgressChanged, lsd, &LoadSaveDialog::SetProgress, Qt::QueuedConnection);
+    // Connect the save manager progress signal to the progress bar update on the dialog
+    connect(manager, &Task::ProgressChanged, lsd, &LoadSaveDialog::SetProgress, Qt::QueuedConnection);
 
-  // Connect cancel signal (must be a direct connection or it'll be queued after the save is already finished)
-  connect(lsd, &LoadSaveDialog::Cancelled, manager, &Task::Cancel, Qt::DirectConnection);
+    // Connect cancel signal (must be a direct connection or it'll be queued after the save is already finished)
+    connect(lsd, &LoadSaveDialog::Cancelled, manager, &Task::Cancel, Qt::DirectConnection);
 
-  // Connect cleanup functions (ensure everything new'd in this function is deleteLater'd)
-  connect(manager, &Task::Finished, lsd, &LoadSaveDialog::accept, Qt::QueuedConnection);
-  connect(manager, &Task::Finished, lsd, &LoadSaveDialog::deleteLater, Qt::QueuedConnection);
-  connect(manager, &Task::Finished, manager, &Task::deleteLater, Qt::QueuedConnection);
-  connect(manager, &Task::Finished, save_thread, &QThread::quit, Qt::QueuedConnection);
-  connect(manager, &Task::Finished, save_thread, &QThread::deleteLater, Qt::QueuedConnection);
+    // Connect cleanup functions (ensure everything new'd in this function is deleteLater'd)
+    connect(manager, &Task::Finished, lsd, &LoadSaveDialog::accept, Qt::QueuedConnection);
+    connect(manager, &Task::Finished, lsd, &LoadSaveDialog::deleteLater, Qt::QueuedConnection);
+    connect(manager, &Task::Finished, manager, &Task::deleteLater, Qt::QueuedConnection);
+    connect(manager, &Task::Finished, save_thread, &QThread::quit, Qt::QueuedConnection);
+    connect(manager, &Task::Finished, save_thread, &QThread::deleteLater, Qt::QueuedConnection);
 
-  // Start the save process
-  QMetaObject::invokeMethod(manager, "Start", Qt::QueuedConnection);
+    // Start the save process
+    QMetaObject::invokeMethod(manager, "Start", Qt::QueuedConnection);
 }
 
 void Core::OpenProject()
 {
-  QString file = QFileDialog::getOpenFileName(main_window_,
-                                              tr("Open Project"),
-                                              QString(),
-                                              GetProjectFilter());
+    QString file = QFileDialog::getOpenFileName(main_window_,
+                   tr("Open Project"),
+                   QString(),
+                   GetProjectFilter());
 
-  if (!file.isEmpty()) {
-    OpenProjectInternal(file);
-  }
+    if (!file.isEmpty()) {
+        OpenProjectInternal(file);
+    }
 }
