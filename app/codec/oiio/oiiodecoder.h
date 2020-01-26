@@ -26,46 +26,44 @@
 #include "codec/decoder.h"
 #include "render/pixelservice.h"
 
-class OIIODecoder : public Decoder
-{
-public:
-    OIIODecoder();
+class OIIODecoder : public Decoder {
+ public:
+  OIIODecoder();
 
-    virtual QString id() override;
+  virtual QString id() override;
 
-    virtual bool Probe(Footage *f) override;
+  virtual bool Probe(Footage *f) override;
 
-    virtual bool Open() override;
+  virtual bool Open() override;
 
-    virtual FramePtr RetrieveVideo(const rational &timecode) override;
+  virtual FramePtr RetrieveVideo(const rational &timecode) override;
 
-    virtual void Close() override;
+  virtual void Close() override;
 
-    virtual int64_t GetTimestampFromTime(const rational &time) override;
+  virtual int64_t GetTimestampFromTime(const rational &time) override;
 
-    virtual bool SupportsVideo() override;
+  virtual bool SupportsVideo() override;
 
-private:
+ private:
 #if OIIO_VERSION < 10903
-    OIIO::ImageInput* image_;
+  OIIO::ImageInput *image_;
 #else
-    std::unique_ptr<OIIO::ImageInput> image_;
+  std::unique_ptr<OIIO::ImageInput> image_;
 #endif
 
-    int width_;
+  int width_;
 
-    int height_;
+  int height_;
 
-    PixelFormat::Format pix_fmt_;
+  PixelFormat::Format pix_fmt_;
 
-    PixelFormat::Info pix_fmt_info_;
+  PixelFormat::Info pix_fmt_info_;
 
-    bool is_rgba_;
+  bool is_rgba_;
 
-    FramePtr frame_;
+  FramePtr frame_;
 
-    static QStringList supported_formats_;
-
+  static QStringList supported_formats_;
 };
 
-#endif // OIIODECODER_H
+#endif  // OIIODECODER_H
