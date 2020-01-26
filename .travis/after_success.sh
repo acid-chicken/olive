@@ -9,14 +9,14 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 fi
 
 # Get current repo commit from GitHub (problems arose from trying to pipe cURL directly into grep, so we buffer it through a file)
-REMOTE=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/olive-editor/olive/commits/master | $GREP_PATH -Po '(?<=: \")(([a-z0-9])\w+)(?=\")' -m 1 --)
+REMOTE=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/olive-editor/olive/commits/master | "$GREP_PATH" -Po '(?<=: \")(([a-z0-9])\w+)(?=\")' -m 1 --)
 LOCAL=$(git rev-parse HEAD)
 
 if [ "$TRAVIS_TAG" != "" ] || [ "$REMOTE" == "$LOCAL" ]
 then
     echo "[INFO] Still current. Uploading..."
 
-    export UPLOADTOOL_BODY=$(cat release.txt)
+    export UPLOADTOOL_BODY="$(cat release.txt)"
 
     # Retrieve upload tool
     wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
