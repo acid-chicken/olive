@@ -43,178 +43,178 @@
  */
 class ViewerWidget : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ViewerWidget(QWidget* parent = nullptr);
+    ViewerWidget(QWidget* parent = nullptr);
 
-  void SetPlaybackControlsEnabled(bool enabled);
+    void SetPlaybackControlsEnabled(bool enabled);
 
-  void SetTimeRulerEnabled(bool enabled);
+    void SetTimeRulerEnabled(bool enabled);
 
-  const double& scale() const;
+    const double& scale() const;
 
-  rational GetTime() const;
+    rational GetTime() const;
 
-  void SetScale(const double& scale_);
+    void SetScale(const double& scale_);
 
-  void SetTime(const int64_t& time);
+    void SetTime(const int64_t& time);
 
-  void TogglePlayPause();
+    void TogglePlayPause();
 
-  bool IsPlaying() const;
+    bool IsPlaying() const;
 
-  void ConnectViewerNode(ViewerOutput* node, ColorManager *color_manager = nullptr);
+    void ConnectViewerNode(ViewerOutput* node, ColorManager *color_manager = nullptr);
 
-  ViewerOutput* GetConnectedViewer() const;
+    ViewerOutput* GetConnectedViewer() const;
 
-  /**
-   * @brief Enable or disable the color management menu
-   *
-   * While the Viewer is _always_ color managed, In some contexts, the color management may be controlled from an
-   * external UI making the menu unnecessary.
-   */
-  void SetColorMenuEnabled(bool enabled);
+    /**
+     * @brief Enable or disable the color management menu
+     *
+     * While the Viewer is _always_ color managed, In some contexts, the color management may be controlled from an
+     * external UI making the menu unnecessary.
+     */
+    void SetColorMenuEnabled(bool enabled);
 
-  void SetOverrideSize(int width, int height);
+    void SetOverrideSize(int width, int height);
 
-  void SetMatrix(const QMatrix4x4& mat);
+    void SetMatrix(const QMatrix4x4& mat);
 
-  VideoRenderBackend* video_renderer() const;
+    VideoRenderBackend* video_renderer() const;
 
 public slots:
-  /**
-   * @brief Set the texture to draw and draw it
-   *
-   * Wrapper function for ViewerGLWidget::SetTexture().
-   *
-   * @param tex
-   */
-  void SetTexture(OpenGLTexturePtr tex);
+    /**
+     * @brief Set the texture to draw and draw it
+     *
+     * Wrapper function for ViewerGLWidget::SetTexture().
+     *
+     * @param tex
+     */
+    void SetTexture(OpenGLTexturePtr tex);
 
-  void SetTimebase(const rational& r);
+    void SetTimebase(const rational& r);
 
-  void GoToStart();
+    void GoToStart();
 
-  void PrevFrame();
+    void PrevFrame();
 
-  void Play();
+    void Play();
 
-  void Pause();
+    void Pause();
 
-  void NextFrame();
+    void NextFrame();
 
-  void GoToEnd();
+    void GoToEnd();
 
-  void ShuttleLeft();
+    void ShuttleLeft();
 
-  void ShuttleStop();
+    void ShuttleStop();
 
-  void ShuttleRight();
+    void ShuttleRight();
 
-  void SetOCIOParameters(const QString& display, const QString& view, const QString& look);
+    void SetOCIOParameters(const QString& display, const QString& view, const QString& look);
 
-  /**
-   * @brief Externally set the OCIO display to use
-   *
-   * This value must be a valid display in the current OCIO configuration.
-   */
-  void SetOCIODisplay(const QString& display);
+    /**
+     * @brief Externally set the OCIO display to use
+     *
+     * This value must be a valid display in the current OCIO configuration.
+     */
+    void SetOCIODisplay(const QString& display);
 
-  /**
-   * @brief Externally set the OCIO view to use
-   *
-   * This value must be a valid display in the current OCIO configuration.
-   */
-  void SetOCIOView(const QString& view);
+    /**
+     * @brief Externally set the OCIO view to use
+     *
+     * This value must be a valid display in the current OCIO configuration.
+     */
+    void SetOCIOView(const QString& view);
 
-  /**
-   * @brief Externally set the OCIO look to use (use empty string if none)
-   *
-   * This value must be a valid display in the current OCIO configuration.
-   */
-  void SetOCIOLook(const QString& look);
+    /**
+     * @brief Externally set the OCIO look to use (use empty string if none)
+     *
+     * This value must be a valid display in the current OCIO configuration.
+     */
+    void SetOCIOLook(const QString& look);
 
 signals:
-  void TimeChanged(const int64_t&);
+    void TimeChanged(const int64_t&);
 
 protected:
-  virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
 
-  OpenGLBackend* video_renderer_;
-  AudioBackend* audio_renderer_;
+    OpenGLBackend* video_renderer_;
+    AudioBackend* audio_renderer_;
 
 private:
-  void UpdateTimeInternal(int64_t i);
+    void UpdateTimeInternal(int64_t i);
 
-  void UpdateTextureFromNode(const rational &time);
+    void UpdateTextureFromNode(const rational &time);
 
-  void PlayInternal(int speed);
+    void PlayInternal(int speed);
 
-  void PushScrubbedAudio();
+    void PushScrubbedAudio();
 
-  ViewerSizer* sizer_;
+    ViewerSizer* sizer_;
 
-  ViewerGLWidget* gl_widget_;
+    ViewerGLWidget* gl_widget_;
 
-  PlaybackControls* controls_;
+    PlaybackControls* controls_;
 
-  TimeRuler* ruler_;
+    TimeRuler* ruler_;
 
-  QScrollBar* scrollbar_;
+    QScrollBar* scrollbar_;
 
-  rational time_base_;
+    rational time_base_;
 
-  double time_base_dbl_;
+    double time_base_dbl_;
 
-  QTimer playback_timer_;
+    QTimer playback_timer_;
 
-  qint64 start_msec_;
-  int64_t start_timestamp_;
+    qint64 start_msec_;
+    int64_t start_timestamp_;
 
-  ViewerOutput* viewer_node_;
+    ViewerOutput* viewer_node_;
 
-  int playback_speed_;
+    int playback_speed_;
 
-  qint64 frame_cache_job_time_;
+    qint64 frame_cache_job_time_;
 
-  int64_t last_time_;
+    int64_t last_time_;
 
-  bool color_menu_enabled_;
+    bool color_menu_enabled_;
 
-  int divider_;
+    int divider_;
 
 private slots:
-  void RulerTimeChange(int64_t);
+    void RulerTimeChange(int64_t);
 
-  void PlaybackTimerUpdate();
+    void PlaybackTimerUpdate();
 
-  void RendererCachedFrame(const rational& time, QVariant value, qint64 job_time);
-  void RendererCachedTime(const rational& time, qint64 job_time);
+    void RendererCachedFrame(const rational& time, QVariant value, qint64 job_time);
+    void RendererCachedTime(const rational& time, qint64 job_time);
 
-  void SizeChangedSlot(int width, int height);
+    void SizeChangedSlot(int width, int height);
 
-  void LengthChangedSlot(const rational& length);
+    void LengthChangedSlot(const rational& length);
 
-  void UpdateRendererParameters();
+    void UpdateRendererParameters();
 
-  void ShowContextMenu(const QPoint& pos);
+    void ShowContextMenu(const QPoint& pos);
 
-  /**
-   * @brief Slot called whenever this viewer's OCIO display setting has changed
-   */
-  void ColorDisplayChanged(QAction* action);
+    /**
+     * @brief Slot called whenever this viewer's OCIO display setting has changed
+     */
+    void ColorDisplayChanged(QAction* action);
 
-  /**
-   * @brief Slot called whenever this viewer's OCIO view setting has changed
-   */
-  void ColorViewChanged(QAction* action);
+    /**
+     * @brief Slot called whenever this viewer's OCIO view setting has changed
+     */
+    void ColorViewChanged(QAction* action);
 
-  /**
-   * @brief Slot called whenever this viewer's OCIO look setting has changed
-   */
-  void ColorLookChanged(QAction* action);
+    /**
+     * @brief Slot called whenever this viewer's OCIO look setting has changed
+     */
+    void ColorLookChanged(QAction* action);
 
-  void SetDividerFromMenu(QAction* action);
+    void SetDividerFromMenu(QAction* action);
 
 };
 
