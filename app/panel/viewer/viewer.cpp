@@ -20,22 +20,19 @@
 
 #include "viewer.h"
 
-ViewerPanel::ViewerPanel(QWidget *parent) :
-    ViewerPanelBase(parent)
-{
-    // FIXME: This won't work if there's ever more than one of this panel
-    setObjectName("ViewerPanel");
+ViewerPanel::ViewerPanel(QWidget *parent) : ViewerPanelBase(parent) {
+  // FIXME: This won't work if there's ever more than one of this panel
+  setObjectName("ViewerPanel");
 
-    // Set ViewerWidget as the central widget
-    SetTimeBasedWidget(new ViewerWidget());
+  // Set ViewerWidget as the central widget
+  SetTimeBasedWidget(new ViewerWidget());
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-void ViewerPanel::Retranslate()
-{
-    ViewerPanelBase::Retranslate();
+void ViewerPanel::Retranslate() {
+  ViewerPanelBase::Retranslate();
 
-    SetTitle(tr("Viewer"));
+  SetTitle(tr("Viewer"));
 }

@@ -23,28 +23,27 @@
 
 #include "sliderbase.h"
 
-class IntegerSlider : public SliderBase
-{
-    Q_OBJECT
-public:
-    IntegerSlider(QWidget* parent = nullptr);
+class IntegerSlider : public SliderBase {
+  Q_OBJECT
+ public:
+  IntegerSlider(QWidget* parent = nullptr);
 
-    int64_t GetValue();
+  int64_t GetValue();
 
-    void SetValue(const int64_t& v);
+  void SetValue(const int64_t& v);
 
-    void SetMinimum(const int64_t& d);
+  void SetMinimum(const int64_t& d);
 
-    void SetMaximum(const int64_t& d);
+  void SetMaximum(const int64_t& d);
 
-protected:
-    virtual QVariant StringToValue(const QString& s, bool* ok) override;
+ protected:
+  virtual QVariant StringToValue(const QString& s, bool* ok) override;
 
-signals:
-    void ValueChanged(int64_t);
+ signals:
+  void ValueChanged(int64_t);
 
-private slots:
-    void ConvertValue(QVariant v);
+ private slots:
+  void ConvertValue(QVariant v);
 };
 
-#endif // INTEGERSLIDER_H
+#endif  // INTEGERSLIDER_H

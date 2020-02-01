@@ -24,21 +24,19 @@
 #include "panel/timebased/timebased.h"
 #include "widget/nodeparamview/nodeparamview.h"
 
-class ParamPanel : public TimeBasedPanel
-{
-    Q_OBJECT
-public:
-    ParamPanel(QWidget* parent);
+class ParamPanel : public TimeBasedPanel {
+  Q_OBJECT
+ public:
+  ParamPanel(QWidget* parent);
 
-public slots:
-    void SetNodes(QList<Node*> nodes);
+ public slots:
+  void SetNodes(QList<Node*> nodes);
 
-signals:
-    void SelectedInputChanged(NodeInput* input);
+ signals:
+  void SelectedInputChanged(NodeInput* input);
 
-protected:
-    virtual void Retranslate() override;
-
+ protected:
+  virtual void Retranslate() override;
 };
 
-#endif // PARAM_H
+#endif  // PARAM_H

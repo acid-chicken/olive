@@ -23,332 +23,291 @@
 #include <QDebug>
 #include <QMimeData>
 #include <QMouseEvent>
+#include <QPen>
 #include <QScrollBar>
 #include <QtMath>
-#include <QPen>
 
-#include "config/config.h"
 #include "common/flipmodifiers.h"
 #include "common/timecodefunctions.h"
+#include "config/config.h"
 #include "node/input/media/media.h"
 #include "project/item/footage/footage.h"
 
-TimelineView::TimelineView(Qt::Alignment vertical_alignment, QWidget *parent) :
-    TimelineViewBase(parent),
-    connected_track_list_(nullptr)
-{
-    Q_ASSERT(vertical_alignment == Qt::AlignTop || vertical_alignment == Qt::AlignBottom);
-    setAlignment(Qt::AlignLeft | vertical_alignment);
+TimelineView::TimelineView(Qt::Alignment vertical_alignment, QWidget *parent)
+    : TimelineViewBase(parent), connected_track_list_(nullptr) {
+  Q_ASSERT(vertical_alignment == Qt::AlignTop || vertical_alignment == Qt::AlignBottom);
+  setAlignment(Qt::AlignLeft | vertical_alignment);
 
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    setBackgroundRole(QPalette::Window);
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    SetLimitYAxis(true);
-    viewport()->setMouseTracking(true);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  setBackgroundRole(QPalette::Window);
+  setContextMenuPolicy(Qt::CustomContextMenu);
+  SetLimitYAxis(true);
+  viewport()->setMouseTracking(true);
 }
 
-void TimelineView::SelectAll()
-{
-    QList<QGraphicsItem*> all_items = items();
+void TimelineView::SelectAll() {
+  QList<QGraphicsItem *> all_items = items();
 
-    foreach (QGraphicsItem* i, all_items) {
-        i->setSelected(true);
-    }
+  foreach (QGraphicsItem *i, all_items) { i->setSelected(true); }
 }
 
-void TimelineView::DeselectAll()
-{
-    QList<QGraphicsItem*> all_items = items();
+void TimelineView::DeselectAll() {
+  QList<QGraphicsItem *> all_items = items();
 
-    foreach (QGraphicsItem* i, all_items) {
-        i->setSelected(false);
-    }
+  foreach (QGraphicsItem *i, all_items) { i->setSelected(false); }
 }
 
-void TimelineView::mousePressEvent(QMouseEvent *event)
-{
-    if (HandPress(event) || PlayheadPress(event)) {
-        // Let the parent handle this
-        return;
-    }
+void TimelineView::mousePressEvent(QMouseEvent *event) {
+  if (HandPress(event) || PlayheadPress(event)) {
+    // Let the parent handle this
+    return;
+  }
 
-    if (dragMode() != GetDefaultDragMode()) {
-        TimelineViewBase::mousePressEvent(event);
-        return;
-    }
+  if (dragMode() != GetDefaultDragMode()) {
+    TimelineViewBase::mousePressEvent(event);
+    return;
+  }
 
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
 
-    emit MousePressed(&timeline_event);
+  emit MousePressed(&timeline_event);
 }
 
-void TimelineView::mouseMoveEvent(QMouseEvent *event)
-{
-    if (HandMove(event) || PlayheadMove(event)) {
-        // Let the parent handle this
-        return;
-    }
+void TimelineView::mouseMoveEvent(QMouseEvent *event) {
+  if (HandMove(event) || PlayheadMove(event)) {
+    // Let the parent handle this
+    return;
+  }
 
-    if (dragMode() != GetDefaultDragMode()) {
-        TimelineViewBase::mouseMoveEvent(event);
-        return;
-    }
+  if (dragMode() != GetDefaultDragMode()) {
+    TimelineViewBase::mouseMoveEvent(event);
+    return;
+  }
 
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
 
-    emit MouseMoved(&timeline_event);
+  emit MouseMoved(&timeline_event);
 }
 
-void TimelineView::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (HandRelease(event) || PlayheadRelease(event)) {
-        // Let the parent handle this
-        return;
-    }
+void TimelineView::mouseReleaseEvent(QMouseEvent *event) {
+  if (HandRelease(event) || PlayheadRelease(event)) {
+    // Let the parent handle this
+    return;
+  }
 
-    if (dragMode() != GetDefaultDragMode()) {
-        TimelineViewBase::mouseReleaseEvent(event);
-        return;
-    }
+  if (dragMode() != GetDefaultDragMode()) {
+    TimelineViewBase::mouseReleaseEvent(event);
+    return;
+  }
 
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
 
-    emit MouseReleased(&timeline_event);
+  emit MouseReleased(&timeline_event);
 }
 
-void TimelineView::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
+void TimelineView::mouseDoubleClickEvent(QMouseEvent *event) {
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->modifiers());
 
-    emit MouseDoubleClicked(&timeline_event);
+  emit MouseDoubleClicked(&timeline_event);
 }
 
-void TimelineView::wheelEvent(QWheelEvent *event)
-{
-    if (HandleZoomFromScroll(event)) {
-        return;
-    } else if (Config::Current()["InvertTimelineScrollAxes"].toBool()) {
-        QWheelEvent e(event->pos(),
-                      event->delta(),
-                      event->buttons(),
-                      event->modifiers(),
-                      event->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
+void TimelineView::wheelEvent(QWheelEvent *event) {
+  if (HandleZoomFromScroll(event)) {
+    return;
+  } else if (Config::Current()["InvertTimelineScrollAxes"].toBool()) {
+    QWheelEvent e(event->pos(), event->delta(), event->buttons(), event->modifiers(),
+                  event->orientation() == Qt::Horizontal ? Qt::Vertical : Qt::Horizontal);
 
-        QGraphicsView::wheelEvent(&e);
+    QGraphicsView::wheelEvent(&e);
+  } else {
+    QGraphicsView::wheelEvent(event);
+  }
+}
+
+void TimelineView::dragEnterEvent(QDragEnterEvent *event) {
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->keyboardModifiers());
+
+  timeline_event.SetMimeData(event->mimeData());
+  timeline_event.SetEvent(event);
+
+  emit DragEntered(&timeline_event);
+}
+
+void TimelineView::dragMoveEvent(QDragMoveEvent *event) {
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->keyboardModifiers());
+
+  timeline_event.SetMimeData(event->mimeData());
+  timeline_event.SetEvent(event);
+
+  emit DragMoved(&timeline_event);
+}
+
+void TimelineView::dragLeaveEvent(QDragLeaveEvent *event) { emit DragLeft(event); }
+
+void TimelineView::dropEvent(QDropEvent *event) {
+  TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->keyboardModifiers());
+
+  timeline_event.SetMimeData(event->mimeData());
+  timeline_event.SetEvent(event);
+
+  emit DragDropped(&timeline_event);
+}
+
+void TimelineView::drawBackground(QPainter *painter, const QRectF &rect) {
+  if (!connected_track_list_) {
+    return;
+  }
+
+  painter->setPen(palette().base().color());
+
+  int line_y = 0;
+
+  foreach (TrackOutput *track, connected_track_list_->Tracks()) {
+    if (!track) {
+      continue;
+    }
+
+    line_y += track->GetTrackHeight();
+
+    // One px gap between tracks
+    line_y++;
+
+    int this_line_y;
+
+    if (alignment() & Qt::AlignTop) {
+      this_line_y = line_y;
     } else {
-        QGraphicsView::wheelEvent(event);
-    }
-}
-
-void TimelineView::dragEnterEvent(QDragEnterEvent *event)
-{
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->keyboardModifiers());
-
-    timeline_event.SetMimeData(event->mimeData());
-    timeline_event.SetEvent(event);
-
-    emit DragEntered(&timeline_event);
-}
-
-void TimelineView::dragMoveEvent(QDragMoveEvent *event)
-{
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->keyboardModifiers());
-
-    timeline_event.SetMimeData(event->mimeData());
-    timeline_event.SetEvent(event);
-
-    emit DragMoved(&timeline_event);
-}
-
-void TimelineView::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    emit DragLeft(event);
-}
-
-void TimelineView::dropEvent(QDropEvent *event)
-{
-    TimelineViewMouseEvent timeline_event = CreateMouseEvent(event->pos(), event->keyboardModifiers());
-
-    timeline_event.SetMimeData(event->mimeData());
-    timeline_event.SetEvent(event);
-
-    emit DragDropped(&timeline_event);
-}
-
-void TimelineView::drawBackground(QPainter *painter, const QRectF &rect)
-{
-    if (!connected_track_list_) {
-        return;
+      this_line_y = -line_y;
     }
 
-    painter->setPen(palette().base().color());
-
-    int line_y = 0;
-
-    foreach (TrackOutput* track, connected_track_list_->Tracks()) {
-        if (!track) {
-            continue;
-        }
-
-        line_y += track->GetTrackHeight();
-
-        // One px gap between tracks
-        line_y++;
-
-        int this_line_y;
-
-        if (alignment() & Qt::AlignTop) {
-            this_line_y = line_y;
-        } else {
-            this_line_y = -line_y;
-        }
-
-        painter->drawLine(qRound(rect.left()), this_line_y, qRound(rect.right()), this_line_y);
-    }
+    painter->drawLine(qRound(rect.left()), this_line_y, qRound(rect.right()), this_line_y);
+  }
 }
 
-void TimelineView::ToolChangedEvent(Tool::Item tool)
-{
-    switch (tool) {
+void TimelineView::ToolChangedEvent(Tool::Item tool) {
+  switch (tool) {
     case Tool::kRazor:
-        setCursor(Qt::SplitHCursor);
-        break;
+      setCursor(Qt::SplitHCursor);
+      break;
     case Tool::kEdit:
-        setCursor(Qt::IBeamCursor);
-        break;
+      setCursor(Qt::IBeamCursor);
+      break;
     case Tool::kAdd:
     case Tool::kTransition:
     case Tool::kZoom:
-        setCursor(Qt::CrossCursor);
-        break;
+      setCursor(Qt::CrossCursor);
+      break;
     default:
-        unsetCursor();
-    }
+      unsetCursor();
+  }
 }
 
-Timeline::TrackType TimelineView::ConnectedTrackType()
-{
-    if (connected_track_list_) {
-        return connected_track_list_->type();
-    }
+Timeline::TrackType TimelineView::ConnectedTrackType() {
+  if (connected_track_list_) {
+    return connected_track_list_->type();
+  }
 
-    return Timeline::kTrackTypeNone;
+  return Timeline::kTrackTypeNone;
 }
 
-Stream::Type TimelineView::TrackTypeToStreamType(Timeline::TrackType track_type)
-{
-    switch (track_type) {
+Stream::Type TimelineView::TrackTypeToStreamType(Timeline::TrackType track_type) {
+  switch (track_type) {
     case Timeline::kTrackTypeNone:
     case Timeline::kTrackTypeCount:
-        break;
+      break;
     case Timeline::kTrackTypeVideo:
-        return Stream::kVideo;
+      return Stream::kVideo;
     case Timeline::kTrackTypeAudio:
-        return Stream::kAudio;
+      return Stream::kAudio;
     case Timeline::kTrackTypeSubtitle:
-        return Stream::kSubtitle;
-    }
+      return Stream::kSubtitle;
+  }
 
-    return Stream::kUnknown;
+  return Stream::kUnknown;
 }
 
-TimelineCoordinate TimelineView::ScreenToCoordinate(const QPoint& pt)
-{
-    return SceneToCoordinate(mapToScene(pt));
+TimelineCoordinate TimelineView::ScreenToCoordinate(const QPoint &pt) { return SceneToCoordinate(mapToScene(pt)); }
+
+TimelineCoordinate TimelineView::SceneToCoordinate(const QPointF &pt) {
+  return TimelineCoordinate(SceneToTime(pt.x()), TrackReference(ConnectedTrackType(), SceneToTrack(pt.y())));
 }
 
-TimelineCoordinate TimelineView::SceneToCoordinate(const QPointF& pt)
-{
-    return TimelineCoordinate(SceneToTime(pt.x()), TrackReference(ConnectedTrackType(), SceneToTrack(pt.y())));
+TimelineViewMouseEvent TimelineView::CreateMouseEvent(const QPoint &pos, Qt::KeyboardModifiers modifiers) {
+  QPointF scene_pt = mapToScene(pos);
+
+  TimelineViewMouseEvent timeline_event(scene_pt.x(), GetScale(), timebase(),
+                                        TrackReference(ConnectedTrackType(), SceneToTrack(scene_pt.y())), modifiers);
+
+  return timeline_event;
 }
 
-TimelineViewMouseEvent TimelineView::CreateMouseEvent(const QPoint& pos, Qt::KeyboardModifiers modifiers)
-{
-    QPointF scene_pt = mapToScene(pos);
+int TimelineView::GetTrackY(int track_index) {
+  int y = 0;
 
-    TimelineViewMouseEvent timeline_event(scene_pt.x(),
-                                          GetScale(),
-                                          timebase(),
-                                          TrackReference(ConnectedTrackType(), SceneToTrack(scene_pt.y())),
-                                          modifiers);
+  if (alignment() & Qt::AlignBottom) {
+    track_index++;
+  }
 
-    return timeline_event;
+  for (int i = 0; i < track_index; i++) {
+    y += GetTrackHeight(i);
+
+    // One px line between each track
+    y++;
+  }
+
+  if (alignment() & Qt::AlignBottom) {
+    y = -y + 1;
+  }
+
+  return y;
 }
 
-int TimelineView::GetTrackY(int track_index)
-{
-    int y = 0;
+int TimelineView::GetTrackHeight(int track_index) {
+  if (!connected_track_list_ || track_index >= connected_track_list_->TrackCount()) {
+    return TrackOutput::GetDefaultTrackHeight();
+  }
 
-    if (alignment() & Qt::AlignBottom) {
-        track_index++;
-    }
-
-    for (int i=0; i<track_index; i++) {
-        y += GetTrackHeight(i);
-
-        // One px line between each track
-        y++;
-    }
-
-    if (alignment() & Qt::AlignBottom) {
-        y = -y + 1;
-    }
-
-    return y;
+  return connected_track_list_->TrackAt(track_index)->GetTrackHeight();
 }
 
-int TimelineView::GetTrackHeight(int track_index)
-{
-    if (!connected_track_list_ || track_index >= connected_track_list_->TrackCount()) {
-        return TrackOutput::GetDefaultTrackHeight();
-    }
-
-    return connected_track_list_->TrackAt(track_index)->GetTrackHeight();
+QPoint TimelineView::GetScrollCoordinates() {
+  return QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
 }
 
-QPoint TimelineView::GetScrollCoordinates()
-{
-    return QPoint(horizontalScrollBar()->value(), verticalScrollBar()->value());
+void TimelineView::SetScrollCoordinates(const QPoint &pt) {
+  horizontalScrollBar()->setValue(pt.x());
+  verticalScrollBar()->setValue(pt.y());
 }
 
-void TimelineView::SetScrollCoordinates(const QPoint &pt)
-{
-    horizontalScrollBar()->setValue(pt.x());
-    verticalScrollBar()->setValue(pt.y());
+void TimelineView::ConnectTrackList(TrackList *list) {
+  if (connected_track_list_) {
+    disconnect(connected_track_list_, SIGNAL(TrackHeightChanged(int, int)), viewport(), SLOT(update()));
+  }
+
+  connected_track_list_ = list;
+
+  if (connected_track_list_) {
+    connect(connected_track_list_, SIGNAL(TrackHeightChanged(int, int)), viewport(), SLOT(update()));
+  }
 }
 
-void TimelineView::ConnectTrackList(TrackList *list)
-{
-    if (connected_track_list_) {
-        disconnect(connected_track_list_, SIGNAL(TrackHeightChanged(int, int)), viewport(), SLOT(update()));
-    }
+int TimelineView::SceneToTrack(double y) {
+  int track = -1;
+  int heights = 0;
 
-    connected_track_list_ = list;
+  if (alignment() & Qt::AlignBottom) {
+    y = -y;
+  }
 
-    if (connected_track_list_) {
-        connect(connected_track_list_, SIGNAL(TrackHeightChanged(int, int)), viewport(), SLOT(update()));
-    }
+  do {
+    track++;
+    heights += GetTrackHeight(track);
+  } while (y > heights);
+
+  return track;
 }
 
-int TimelineView::SceneToTrack(double y)
-{
-    int track = -1;
-    int heights = 0;
-
-    if (alignment() & Qt::AlignBottom) {
-        y = -y;
-    }
-
-    do {
-        track++;
-        heights += GetTrackHeight(track);
-    } while (y > heights);
-
-    return track;
-}
-
-void TimelineView::UserSetTime(const int64_t &time)
-{
-    SetTime(time);
-    emit TimeChanged(time);
+void TimelineView::UserSetTime(const int64_t &time) {
+  SetTime(time);
+  emit TimeChanged(time);
 }

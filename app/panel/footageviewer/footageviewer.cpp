@@ -22,33 +22,29 @@
 
 #include "widget/viewer/footageviewer.h"
 
-FootageViewerPanel::FootageViewerPanel(QWidget *parent) :
-    ViewerPanelBase(parent)
-{
-    // FIXME: This won't work if there's ever more than one of this panel
-    setObjectName("FootageViewerPanel");
+FootageViewerPanel::FootageViewerPanel(QWidget *parent) : ViewerPanelBase(parent) {
+  // FIXME: This won't work if there's ever more than one of this panel
+  setObjectName("FootageViewerPanel");
 
-    // Set ViewerWidget as the central widget
-    SetTimeBasedWidget(new FootageViewerWidget());
+  // Set ViewerWidget as the central widget
+  SetTimeBasedWidget(new FootageViewerWidget());
 
-    // Set strings
+  // Set strings
+  Retranslate();
+}
+
+void FootageViewerPanel::SetFootage(Footage *f) {
+  static_cast<FootageViewerWidget *>(GetTimeBasedWidget())->SetFootage(f);
+
+  if (f) {
+    SetSubtitle(f->name());
+  } else {
     Retranslate();
+  }
 }
 
-void FootageViewerPanel::SetFootage(Footage *f)
-{
-    static_cast<FootageViewerWidget*>(GetTimeBasedWidget())->SetFootage(f);
+void FootageViewerPanel::Retranslate() {
+  ViewerPanelBase::Retranslate();
 
-    if (f) {
-        SetSubtitle(f->name());
-    } else {
-        Retranslate();
-    }
-}
-
-void FootageViewerPanel::Retranslate()
-{
-    ViewerPanelBase::Retranslate();
-
-    SetTitle(tr("Footage Viewer"));
+  SetTitle(tr("Footage Viewer"));
 }

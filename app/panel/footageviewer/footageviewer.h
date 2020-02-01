@@ -29,15 +29,14 @@
  * @brief Dockable wrapper around a ViewerWidget
  */
 class FootageViewerPanel : public ViewerPanelBase {
-    Q_OBJECT
-public:
-    FootageViewerPanel(QWidget* parent);
+  Q_OBJECT
+ public:
+  FootageViewerPanel(QWidget* parent);
 
-    void SetFootage(Footage* f);
+  void SetFootage(Footage* f);
 
-protected:
-    virtual void Retranslate() override;
-
+ protected:
+  virtual void Retranslate() override;
 };
 
-#endif // FOOTAGE_VIEWER_PANEL_H
+#endif  // FOOTAGE_VIEWER_PANEL_H

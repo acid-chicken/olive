@@ -20,35 +20,21 @@
 
 #include "timelineviewrect.h"
 
-TimelineViewRect::TimelineViewRect(QGraphicsItem* parent) :
-    QGraphicsRectItem(parent),
-    y_(0),
-    height_(0)
-{
+TimelineViewRect::TimelineViewRect(QGraphicsItem *parent) : QGraphicsRectItem(parent), y_(0), height_(0) {}
 
+void TimelineViewRect::SetYCoords(int y, int height) {
+  y_ = y;
+  height_ = height;
+
+  UpdateRect();
 }
 
-void TimelineViewRect::SetYCoords(int y, int height)
-{
-    y_ = y;
-    height_ = height;
+const TrackReference &TimelineViewRect::Track() { return track_; }
 
-    UpdateRect();
-}
+void TimelineViewRect::SetTrack(const TrackReference &track) { track_ = track; }
 
-const TrackReference &TimelineViewRect::Track()
-{
-    return track_;
-}
+void TimelineViewRect::ScaleChangedEvent(const double &scale) {
+  TimelineScaledObject::ScaleChangedEvent(scale);
 
-void TimelineViewRect::SetTrack(const TrackReference &track)
-{
-    track_ = track;
-}
-
-void TimelineViewRect::ScaleChangedEvent(const double &scale)
-{
-    TimelineScaledObject::ScaleChangedEvent(scale);
-
-    UpdateRect();
+  UpdateRect();
 }

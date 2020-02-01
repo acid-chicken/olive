@@ -21,10 +21,10 @@
 #ifndef PLAYBACKCONTROLS_H
 #define PLAYBACKCONTROLS_H
 
-#include <QWidget>
 #include <QLabel>
 #include <QPushButton>
 #include <QStackedWidget>
+#include <QWidget>
 
 #include "common/rational.h"
 #include "widget/slider/timeslider.h"
@@ -34,87 +34,84 @@
  *
  * This widget optionally features timecode displays for the current timecode and end timecode.
  */
-class PlaybackControls : public QWidget
-{
-    Q_OBJECT
-public:
-    PlaybackControls(QWidget* parent = nullptr);
+class PlaybackControls : public QWidget {
+  Q_OBJECT
+ public:
+  PlaybackControls(QWidget* parent = nullptr);
 
-    /**
-     * @brief Set whether the timecodes should be shown or not
-     */
-    void SetTimecodeEnabled(bool enabled);
+  /**
+   * @brief Set whether the timecodes should be shown or not
+   */
+  void SetTimecodeEnabled(bool enabled);
 
-    void SetTimebase(const rational& r);
+  void SetTimebase(const rational& r);
 
-public slots:
-    void SetTime(const int64_t &r);
+ public slots:
+  void SetTime(const int64_t& r);
 
-    void SetEndTime(const int64_t &r);
+  void SetEndTime(const int64_t& r);
 
-    void ShowPauseButton();
+  void ShowPauseButton();
 
-    void ShowPlayButton();
+  void ShowPlayButton();
 
-signals:
-    /**
-     * @brief Signal emitted when "Go to Start" is clicked
-     */
-    void BeginClicked();
+ signals:
+  /**
+   * @brief Signal emitted when "Go to Start" is clicked
+   */
+  void BeginClicked();
 
-    /**
-     * @brief Signal emitted when "Previous Frame" is clicked
-     */
-    void PrevFrameClicked();
+  /**
+   * @brief Signal emitted when "Previous Frame" is clicked
+   */
+  void PrevFrameClicked();
 
-    /**
-     * @brief Signal emitted when "Play" is clicked
-     */
-    void PlayClicked();
+  /**
+   * @brief Signal emitted when "Play" is clicked
+   */
+  void PlayClicked();
 
-    /**
-     * @brief Signal emitted when "Pause" is clicked
-     */
-    void PauseClicked();
+  /**
+   * @brief Signal emitted when "Pause" is clicked
+   */
+  void PauseClicked();
 
-    /**
-     * @brief Signal emitted when "Next Frame" is clicked
-     */
-    void NextFrameClicked();
+  /**
+   * @brief Signal emitted when "Next Frame" is clicked
+   */
+  void NextFrameClicked();
 
-    /**
-     * @brief Signal emitted when "Go to End" is clicked
-     */
-    void EndClicked();
+  /**
+   * @brief Signal emitted when "Go to End" is clicked
+   */
+  void EndClicked();
 
-    void TimeChanged(const int64_t& t);
+  void TimeChanged(const int64_t& t);
 
-protected:
-    virtual void changeEvent(QEvent *) override;
+ protected:
+  virtual void changeEvent(QEvent*) override;
 
-private:
-    void UpdateIcons();
+ private:
+  void UpdateIcons();
 
-    QWidget* lower_left_container_;
-    QWidget* lower_right_container_;
+  QWidget* lower_left_container_;
+  QWidget* lower_right_container_;
 
-    TimeSlider* cur_tc_lbl_;
-    QLabel* end_tc_lbl_;
+  TimeSlider* cur_tc_lbl_;
+  QLabel* end_tc_lbl_;
 
-    rational time_base_;
+  rational time_base_;
 
-    QPushButton* go_to_start_btn_;
-    QPushButton* prev_frame_btn_;
-    QPushButton* play_btn_;
-    QPushButton* pause_btn_;
-    QPushButton* next_frame_btn_;
-    QPushButton* go_to_end_btn_;
+  QPushButton* go_to_start_btn_;
+  QPushButton* prev_frame_btn_;
+  QPushButton* play_btn_;
+  QPushButton* pause_btn_;
+  QPushButton* next_frame_btn_;
+  QPushButton* go_to_end_btn_;
 
-    QStackedWidget* playpause_stack_;
+  QStackedWidget* playpause_stack_;
 
-private slots:
-
-
+ private slots:
 };
 
-#endif // PLAYBACKCONTROLS_H
+#endif  // PLAYBACKCONTROLS_H

@@ -29,13 +29,12 @@
  * @brief Dockable wrapper around a ViewerWidget
  */
 class ViewerPanel : public ViewerPanelBase {
-    Q_OBJECT
-public:
-    ViewerPanel(QWidget* parent);
+  Q_OBJECT
+ public:
+  ViewerPanel(QWidget* parent);
 
-protected:
-    virtual void Retranslate() override;
-
+ protected:
+  virtual void Retranslate() override;
 };
 
-#endif // VIEWER_PANEL_H
+#endif  // VIEWER_PANEL_H

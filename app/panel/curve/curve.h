@@ -4,22 +4,20 @@
 #include "panel/timebased/timebased.h"
 #include "widget/curvewidget/curvewidget.h"
 
-class CurvePanel : public TimeBasedPanel
-{
-    Q_OBJECT
-public:
-    CurvePanel(QWidget* parent);
+class CurvePanel : public TimeBasedPanel {
+  Q_OBJECT
+ public:
+  CurvePanel(QWidget* parent);
 
-public slots:
-    void SetInput(NodeInput* input);
+ public slots:
+  void SetInput(NodeInput* input);
 
-    virtual void IncreaseTrackHeight() override;
+  virtual void IncreaseTrackHeight() override;
 
-    virtual void DecreaseTrackHeight() override;
+  virtual void DecreaseTrackHeight() override;
 
-protected:
-    virtual void Retranslate() override;
-
+ protected:
+  virtual void Retranslate() override;
 };
 
-#endif // CURVEPANEL_H
+#endif  // CURVEPANEL_H
