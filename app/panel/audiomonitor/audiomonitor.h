@@ -10,12 +10,12 @@
 class AudioMonitorPanel : public PanelWidget
 {
 public:
-  AudioMonitorPanel(QWidget* parent = nullptr);
+    AudioMonitorPanel(QWidget* parent = nullptr);
 
 private:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  AudioMonitor* audio_monitor_;
+    AudioMonitor* audio_monitor_;
 
 };
 

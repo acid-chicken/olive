@@ -23,25 +23,25 @@
 #include "task/taskmanager.h"
 
 TaskManagerPanel::TaskManagerPanel(QWidget* parent) :
-  PanelWidget(parent)
+    PanelWidget(parent)
 {
-  // FIXME: This won't work if there's ever more than one of this panel
-  setObjectName("TaskManagerPanel");
+    // FIXME: This won't work if there's ever more than one of this panel
+    setObjectName("TaskManagerPanel");
 
-  // Create task view
-  view_ = new TaskView(this);
+    // Create task view
+    view_ = new TaskView(this);
 
-  // Set it as the main widget
-  setWidget(view_);
+    // Set it as the main widget
+    setWidget(view_);
 
-  // Connect task view to the task manager
-  connect(TaskManager::instance(), &TaskManager::TaskAdded, view_, &TaskView::AddTask);
+    // Connect task view to the task manager
+    connect(TaskManager::instance(), &TaskManager::TaskAdded, view_, &TaskView::AddTask);
 
-  // Set strings
-  Retranslate();
+    // Set strings
+    Retranslate();
 }
 
 void TaskManagerPanel::Retranslate()
 {
-  SetTitle(tr("Task Manager"));
+    SetTitle(tr("Task Manager"));
 }

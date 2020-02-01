@@ -21,35 +21,35 @@
 #include "node.h"
 
 NodePanel::NodePanel(QWidget *parent) :
-  PanelWidget(parent)
+    PanelWidget(parent)
 {
-  // FIXME: This won't work if there's ever more than one of this panel
-  setObjectName("NodePanel");
+    // FIXME: This won't work if there's ever more than one of this panel
+    setObjectName("NodePanel");
 
-  // Create NodeView widget
-  node_view_ = new NodeView(this);
+    // Create NodeView widget
+    node_view_ = new NodeView(this);
 
-  // Connect node view signals to this panel
-  connect(node_view_, SIGNAL(SelectionChanged(QList<Node*>)), this, SIGNAL(SelectionChanged(QList<Node*>)));
+    // Connect node view signals to this panel
+    connect(node_view_, SIGNAL(SelectionChanged(QList<Node*>)), this, SIGNAL(SelectionChanged(QList<Node*>)));
 
-  // Set it as the main widget of this panel
-  setWidget(node_view_);
+    // Set it as the main widget of this panel
+    setWidget(node_view_);
 
-  // Set strings
-  Retranslate();
+    // Set strings
+    Retranslate();
 }
 
 void NodePanel::SetGraph(NodeGraph *graph)
 {
-  node_view_->SetGraph(graph);
+    node_view_->SetGraph(graph);
 }
 
 void NodePanel::DeleteSelected()
 {
-  node_view_->DeleteSelected();
+    node_view_->DeleteSelected();
 }
 
 void NodePanel::Retranslate()
 {
-  SetTitle(tr("Node Editor"));
+    SetTitle(tr("Node Editor"));
 }

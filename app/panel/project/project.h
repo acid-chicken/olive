@@ -30,33 +30,33 @@
  */
 class ProjectPanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectPanel(QWidget* parent);
+    ProjectPanel(QWidget* parent);
 
-  Project* project();
-  void set_project(Project* p);
+    Project* project();
+    void set_project(Project* p);
 
-  QList<Item*> SelectedItems();
+    QList<Item*> SelectedItems();
 
-  Folder* GetSelectedFolder();
+    Folder* GetSelectedFolder();
 
-  ProjectViewModel* model();
+    ProjectViewModel* model();
 
 public slots:
-  void Edit(Item *item);
+    void Edit(Item *item);
 
 private:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  ProjectExplorer* explorer_;
+    ProjectExplorer* explorer_;
 
 private slots:
-  void ItemDoubleClickSlot(Item* item);
+    void ItemDoubleClickSlot(Item* item);
 
-  void ShowNewMenu();
+    void ShowNewMenu();
 
-  void ProjectNameChanged();
+    void ProjectNameChanged();
 };
 
 #endif // PROJECT_PANEL_H
