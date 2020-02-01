@@ -30,119 +30,94 @@
 #include "widget/menu/menushared.h"
 #include "widget/projecttoolbar/projecttoolbar.h"
 
-ProjectPanel::ProjectPanel(QWidget *parent) :
-    PanelWidget(parent)
-{
-    // FIXME: This won't work if there's ever more than one of this panel
-    setObjectName("ProjectPanel");
+ProjectPanel::ProjectPanel(QWidget *parent) : PanelWidget(parent) {
+  // FIXME: This won't work if there's ever more than one of this panel
+  setObjectName("ProjectPanel");
 
-    // Create main widget and its layout
-    QWidget* central_widget = new QWidget(this);
-    QVBoxLayout* layout = new QVBoxLayout(central_widget);
-    layout->setMargin(0);
-    //layout->setSpacing(0);
-    setWidget(central_widget);
+  // Create main widget and its layout
+  QWidget *central_widget = new QWidget(this);
+  QVBoxLayout *layout = new QVBoxLayout(central_widget);
+  layout->setMargin(0);
+  // layout->setSpacing(0);
+  setWidget(central_widget);
 
-    // Set up project toolbar
-    ProjectToolbar* toolbar = new ProjectToolbar(this);
-    layout->addWidget(toolbar);
+  // Set up project toolbar
+  ProjectToolbar *toolbar = new ProjectToolbar(this);
+  layout->addWidget(toolbar);
 
-    // Make toolbar connections
-    connect(toolbar, SIGNAL(NewClicked()), this, SLOT(ShowNewMenu()));
+  // Make toolbar connections
+  connect(toolbar, SIGNAL(NewClicked()), this, SLOT(ShowNewMenu()));
 
-    // Set up main explorer object
-    explorer_ = new ProjectExplorer(this);
-    layout->addWidget(explorer_);
-    connect(explorer_, SIGNAL(DoubleClickedItem(Item*)), this, SLOT(ItemDoubleClickSlot(Item*)));
+  // Set up main explorer object
+  explorer_ = new ProjectExplorer(this);
+  layout->addWidget(explorer_);
+  connect(explorer_, SIGNAL(DoubleClickedItem(Item *)), this, SLOT(ItemDoubleClickSlot(Item *)));
 
-    // Set toolbar's view to the explorer's view
-    toolbar->SetView(explorer_->view_type());
+  // Set toolbar's view to the explorer's view
+  toolbar->SetView(explorer_->view_type());
 
-    // Connect toolbar's view change signal to the explorer's view change slot
-    connect(toolbar,
-            &ProjectToolbar::ViewChanged,
-            explorer_,
-            &ProjectExplorer::set_view_type);
+  // Connect toolbar's view change signal to the explorer's view change slot
+  connect(toolbar, &ProjectToolbar::ViewChanged, explorer_, &ProjectExplorer::set_view_type);
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-Project *ProjectPanel::project()
-{
-    return explorer_->project();
+Project *ProjectPanel::project() { return explorer_->project(); }
+
+void ProjectPanel::set_project(Project *p) {
+  if (project()) {
+    disconnect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
+  }
+
+  explorer_->set_project(p);
+
+  if (project()) {
+    connect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
+  }
+
+  ProjectNameChanged();
 }
 
-void ProjectPanel::set_project(Project *p)
-{
-    if (project()) {
-        disconnect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
-    }
+QList<Item *> ProjectPanel::SelectedItems() { return explorer_->SelectedItems(); }
 
-    explorer_->set_project(p);
+Folder *ProjectPanel::GetSelectedFolder() { return explorer_->GetSelectedFolder(); }
 
-    if (project()) {
-        connect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
-    }
+ProjectViewModel *ProjectPanel::model() { return explorer_->model(); }
 
-    ProjectNameChanged();
+void ProjectPanel::Edit(Item *item) { explorer_->Edit(item); }
+
+void ProjectPanel::Retranslate() {
+  SetTitle(tr("Project"));
+
+  ProjectNameChanged();
 }
 
-QList<Item *> ProjectPanel::SelectedItems()
-{
-    return explorer_->SelectedItems();
+void ProjectPanel::ItemDoubleClickSlot(Item *item) {
+  if (item == nullptr) {
+    // If the user double clicks on empty space, show the import dialog
+    Core::instance()->DialogImportShow();
+  } else if (item->type() == Item::kFootage) {
+    // Open this footage in a FootageViewer
+    PanelManager::instance()->MostRecentlyFocused<FootageViewerPanel>()->SetFootage(static_cast<Footage *>(item));
+  } else if (item->type() == Item::kSequence) {
+    // Open this sequence in the Timeline
+    Sequence::Open(static_cast<Sequence *>(item));
+  }
 }
 
-Folder *ProjectPanel::GetSelectedFolder()
-{
-    return explorer_->GetSelectedFolder();
+void ProjectPanel::ShowNewMenu() {
+  Menu new_menu(this);
+
+  MenuShared::instance()->AddItemsForNewMenu(&new_menu);
+
+  new_menu.exec(QCursor::pos());
 }
 
-ProjectViewModel *ProjectPanel::model()
-{
-    return explorer_->model();
-}
-
-void ProjectPanel::Edit(Item* item)
-{
-    explorer_->Edit(item);
-}
-
-void ProjectPanel::Retranslate()
-{
-    SetTitle(tr("Project"));
-
-    ProjectNameChanged();
-}
-
-void ProjectPanel::ItemDoubleClickSlot(Item *item)
-{
-    if (item == nullptr) {
-        // If the user double clicks on empty space, show the import dialog
-        Core::instance()->DialogImportShow();
-    } else if (item->type() == Item::kFootage) {
-        // Open this footage in a FootageViewer
-        PanelManager::instance()->MostRecentlyFocused<FootageViewerPanel>()->SetFootage(static_cast<Footage*>(item));
-    } else if (item->type() == Item::kSequence) {
-        // Open this sequence in the Timeline
-        Sequence::Open(static_cast<Sequence*>(item));
-    }
-}
-
-void ProjectPanel::ShowNewMenu()
-{
-    Menu new_menu(this);
-
-    MenuShared::instance()->AddItemsForNewMenu(&new_menu);
-
-    new_menu.exec(QCursor::pos());
-}
-
-void ProjectPanel::ProjectNameChanged()
-{
-    if (project() == nullptr) {
-        SetSubtitle(tr("(none)"));
-    } else {
-        SetSubtitle(project()->name());
-    }
+void ProjectPanel::ProjectNameChanged() {
+  if (project() == nullptr) {
+    SetSubtitle(tr("(none)"));
+  } else {
+    SetSubtitle(project()->name());
+  }
 }

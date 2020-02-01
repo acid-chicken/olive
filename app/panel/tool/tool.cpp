@@ -23,29 +23,24 @@
 #include "core.h"
 #include "widget/toolbar/toolbar.h"
 
-ToolPanel::ToolPanel(QWidget *parent) :
-    PanelWidget(parent)
-{
-    // FIXME: This won't work if there's ever more than one of this panel
-    setObjectName("ToolPanel");
+ToolPanel::ToolPanel(QWidget* parent) : PanelWidget(parent) {
+  // FIXME: This won't work if there's ever more than one of this panel
+  setObjectName("ToolPanel");
 
-    Toolbar* t = new Toolbar(this);
+  Toolbar* t = new Toolbar(this);
 
-    t->SetTool(Core::instance()->tool());
-    t->SetSnapping(Core::instance()->snapping());
+  t->SetTool(Core::instance()->tool());
+  t->SetSnapping(Core::instance()->snapping());
 
-    setWidget(t);
+  setWidget(t);
 
-    connect(t, SIGNAL(ToolChanged(const Tool::Item&)), Core::instance(), SLOT(SetTool(const Tool::Item&)));
-    connect(Core::instance(), SIGNAL(ToolChanged(const Tool::Item&)), t, SLOT(SetTool(const Tool::Item&)));
+  connect(t, SIGNAL(ToolChanged(const Tool::Item&)), Core::instance(), SLOT(SetTool(const Tool::Item&)));
+  connect(Core::instance(), SIGNAL(ToolChanged(const Tool::Item&)), t, SLOT(SetTool(const Tool::Item&)));
 
-    connect(t, SIGNAL(SnappingChanged(const bool&)), Core::instance(), SLOT(SetSnapping(const bool&)));
-    connect(Core::instance(), SIGNAL(SnappingChanged(const bool&)), t, SLOT(SetSnapping(const bool&)));
+  connect(t, SIGNAL(SnappingChanged(const bool&)), Core::instance(), SLOT(SetSnapping(const bool&)));
+  connect(Core::instance(), SIGNAL(SnappingChanged(const bool&)), t, SLOT(SetSnapping(const bool&)));
 
-    Retranslate();
+  Retranslate();
 }
 
-void ToolPanel::Retranslate()
-{
-    SetTitle(tr("Tools"));
-}
+void ToolPanel::Retranslate() { SetTitle(tr("Tools")); }

@@ -28,35 +28,34 @@
 /**
  * @brief A PanelWidget wrapper around a ProjectExplorer and a ProjectToolbar
  */
-class ProjectPanel : public PanelWidget
-{
-    Q_OBJECT
-public:
-    ProjectPanel(QWidget* parent);
+class ProjectPanel : public PanelWidget {
+  Q_OBJECT
+ public:
+  ProjectPanel(QWidget* parent);
 
-    Project* project();
-    void set_project(Project* p);
+  Project* project();
+  void set_project(Project* p);
 
-    QList<Item*> SelectedItems();
+  QList<Item*> SelectedItems();
 
-    Folder* GetSelectedFolder();
+  Folder* GetSelectedFolder();
 
-    ProjectViewModel* model();
+  ProjectViewModel* model();
 
-public slots:
-    void Edit(Item *item);
+ public slots:
+  void Edit(Item* item);
 
-private:
-    virtual void Retranslate() override;
+ private:
+  virtual void Retranslate() override;
 
-    ProjectExplorer* explorer_;
+  ProjectExplorer* explorer_;
 
-private slots:
-    void ItemDoubleClickSlot(Item* item);
+ private slots:
+  void ItemDoubleClickSlot(Item* item);
 
-    void ShowNewMenu();
+  void ShowNewMenu();
 
-    void ProjectNameChanged();
+  void ProjectNameChanged();
 };
 
-#endif // PROJECT_PANEL_H
+#endif  // PROJECT_PANEL_H

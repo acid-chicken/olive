@@ -26,15 +26,13 @@
 /**
  * @brief A PanelWidget wrapper around a Toolbar
  */
-class ToolPanel : public PanelWidget
-{
-    Q_OBJECT
-public:
-    ToolPanel(QWidget* parent);
+class ToolPanel : public PanelWidget {
+  Q_OBJECT
+ public:
+  ToolPanel(QWidget* parent);
 
-private:
-    virtual void Retranslate() override;
-
+ private:
+  virtual void Retranslate() override;
 };
 
-#endif // TOOL_PANEL_H
+#endif  // TOOL_PANEL_H
