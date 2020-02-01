@@ -10,97 +10,97 @@
 
 class TimelineViewBase : public QGraphicsView, public TimelineScaledObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimelineViewBase(QWidget* parent = nullptr);
+    TimelineViewBase(QWidget* parent = nullptr);
 
-  void SetEndTime(const rational& length);
+    void SetEndTime(const rational& length);
 
-  void SetScaleAndCenterOnPlayhead(const double& scale);
+    void SetScaleAndCenterOnPlayhead(const double& scale);
 
-  static const double kMaximumScale;
+    static const double kMaximumScale;
 
 public slots:
-  void SetTime(const int64_t time);
+    void SetTime(const int64_t time);
 
 signals:
-  void TimeChanged(const int64_t& time);
+    void TimeChanged(const int64_t& time);
 
-  void ScaleChanged(double scale);
+    void ScaleChanged(double scale);
 
 protected:
-  virtual void drawForeground(QPainter *painter, const QRectF &rect) override;
+    virtual void drawForeground(QPainter *painter, const QRectF &rect) override;
 
-  virtual void resizeEvent(QResizeEvent *event) override;
+    virtual void resizeEvent(QResizeEvent *event) override;
 
-  virtual void ScaleChangedEvent(const double& scale) override;
+    virtual void ScaleChangedEvent(const double& scale) override;
 
-  bool HandleZoomFromScroll(QWheelEvent* event);
+    bool HandleZoomFromScroll(QWheelEvent* event);
 
-  bool WheelEventIsAZoomEvent(QWheelEvent* event);
+    bool WheelEventIsAZoomEvent(QWheelEvent* event);
 
-  void SetLimitYAxis(bool e);
+    void SetLimitYAxis(bool e);
 
-  rational GetPlayheadTime() const;
+    rational GetPlayheadTime() const;
 
-  void SetDefaultDragMode(DragMode mode);
-  const DragMode& GetDefaultDragMode() const;
+    void SetDefaultDragMode(DragMode mode);
+    const DragMode& GetDefaultDragMode() const;
 
-  bool PlayheadPress(QMouseEvent* event);
-  bool PlayheadMove(QMouseEvent* event);
-  bool PlayheadRelease(QMouseEvent* event);
+    bool PlayheadPress(QMouseEvent* event);
+    bool PlayheadMove(QMouseEvent* event);
+    bool PlayheadRelease(QMouseEvent* event);
 
-  bool HandPress(QMouseEvent* event);
-  bool HandMove(QMouseEvent* event);
-  bool HandRelease(QMouseEvent* event);
+    bool HandPress(QMouseEvent* event);
+    bool HandMove(QMouseEvent* event);
+    bool HandRelease(QMouseEvent* event);
 
-  virtual void ToolChangedEvent(Tool::Item tool);
+    virtual void ToolChangedEvent(Tool::Item tool);
 
-  virtual void TimebaseChangedEvent(const rational &) override;
+    virtual void TimebaseChangedEvent(const rational &) override;
 
 private:
-  qreal GetPlayheadX();
+    qreal GetPlayheadX();
 
-  int64_t playhead_;
+    int64_t playhead_;
 
-  TimelinePlayhead playhead_style_;
+    TimelinePlayhead playhead_style_;
 
-  double playhead_scene_left_;
-  double playhead_scene_right_;
+    double playhead_scene_left_;
+    double playhead_scene_right_;
 
-  bool dragging_playhead_;
+    bool dragging_playhead_;
 
-  bool dragging_hand_;
-  DragMode pre_hand_drag_mode_;
+    bool dragging_hand_;
+    DragMode pre_hand_drag_mode_;
 
-  TimelineViewEndItem* end_item_;
+    TimelineViewEndItem* end_item_;
 
-  QGraphicsScene scene_;
+    QGraphicsScene scene_;
 
-  bool limit_y_axis_;
+    bool limit_y_axis_;
 
-  DragMode default_drag_mode_;
+    DragMode default_drag_mode_;
 
 private slots:
-  /**
-   * @brief Slot called whenever the view resizes or the scene contents change to enforce minimum scene sizes
-   */
-  void UpdateSceneRect();
+    /**
+     * @brief Slot called whenever the view resizes or the scene contents change to enforce minimum scene sizes
+     */
+    void UpdateSceneRect();
 
-  /**
-   * @brief Slot to center the horizontal scroll bar on the playhead's current position
-   */
-  void CenterScrollOnPlayhead();
+    /**
+     * @brief Slot to center the horizontal scroll bar on the playhead's current position
+     */
+    void CenterScrollOnPlayhead();
 
-  /**
-   * @brief Slot to handle page scrolling of the playhead
-   *
-   * If the playhead is outside the current scroll bounds, this function will scroll to where it is. Otherwise it will
-   * do nothing.
-   */
-  void PageScrollToPlayhead();
+    /**
+     * @brief Slot to handle page scrolling of the playhead
+     *
+     * If the playhead is outside the current scroll bounds, this function will scroll to where it is. Otherwise it will
+     * do nothing.
+     */
+    void PageScrollToPlayhead();
 
-  void ApplicationToolChanged(Tool::Item tool);
+    void ApplicationToolChanged(Tool::Item tool);
 
 };
 

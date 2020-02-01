@@ -9,55 +9,55 @@
 class CurveView : public KeyframeViewBase
 {
 public:
-  CurveView(QWidget* parent = nullptr);
+    CurveView(QWidget* parent = nullptr);
 
-  virtual ~CurveView() override;
+    virtual ~CurveView() override;
 
-  virtual void Clear() override;
+    virtual void Clear() override;
 
 public slots:
-  void AddKeyframe(NodeKeyframePtr key);
+    void AddKeyframe(NodeKeyframePtr key);
 
 protected:
-  virtual void drawBackground(QPainter* painter, const QRectF& rect) override;
+    virtual void drawBackground(QPainter* painter, const QRectF& rect) override;
 
-  virtual void KeyframeAboutToBeRemoved(NodeKeyframe *key) override;
+    virtual void KeyframeAboutToBeRemoved(NodeKeyframe *key) override;
 
-  virtual void ScaleChangedEvent(const double &scale) override;
+    virtual void ScaleChangedEvent(const double &scale) override;
 
-  virtual void VerticalScaleChangedEvent(double scale) override;
+    virtual void VerticalScaleChangedEvent(double scale) override;
 
-  virtual void wheelEvent(QWheelEvent* event) override;
+    virtual void wheelEvent(QWheelEvent* event) override;
 
 private:
-  QList<NodeKeyframe*> GetKeyframesSortedByTime();
+    QList<NodeKeyframe*> GetKeyframesSortedByTime();
 
-  qreal GetItemYFromKeyframeValue(NodeKeyframe* key);
+    qreal GetItemYFromKeyframeValue(NodeKeyframe* key);
 
-  void SetItemYFromKeyframeValue(NodeKeyframe* key, KeyframeViewItem* item);
+    void SetItemYFromKeyframeValue(NodeKeyframe* key, KeyframeViewItem* item);
 
-  QPointF ScalePoint(const QPointF& point);
+    QPointF ScalePoint(const QPointF& point);
 
-  void AdjustLines();
+    void AdjustLines();
 
-  void CreateBezierControlPoints(KeyframeViewItem *item);
+    void CreateBezierControlPoints(KeyframeViewItem *item);
 
-  int text_padding_;
+    int text_padding_;
 
-  int minimum_grid_space_;
+    int minimum_grid_space_;
 
-  QList<QGraphicsLineItem*> lines_;
+    QList<QGraphicsLineItem*> lines_;
 
-  QList<BezierControlPointItem*> bezier_control_points_;
+    QList<BezierControlPointItem*> bezier_control_points_;
 
 private slots:
-  void KeyframeValueChanged();
+    void KeyframeValueChanged();
 
-  void KeyframeTypeChanged();
+    void KeyframeTypeChanged();
 
-  void SelectionChanged();
+    void SelectionChanged();
 
-  void BezierControlPointDestroyed();
+    void BezierControlPointDestroyed();
 
 };
 

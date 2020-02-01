@@ -6,38 +6,38 @@
 class TimelineScaledObject
 {
 public:
-  TimelineScaledObject();
-  virtual ~TimelineScaledObject() = default;
+    TimelineScaledObject();
+    virtual ~TimelineScaledObject() = default;
 
-  void SetTimebase(const rational &timebase);
+    void SetTimebase(const rational &timebase);
 
-  const rational& timebase() const;
-  const double& timebase_dbl() const;
+    const rational& timebase() const;
+    const double& timebase_dbl() const;
 
-  static rational SceneToTime(const double &x, const double& x_scale, const rational& timebase, bool round = false);
+    static rational SceneToTime(const double &x, const double& x_scale, const rational& timebase, bool round = false);
 
-  const double& GetScale() const;
+    const double& GetScale() const;
 
-  void SetScale(const double& scale);
+    void SetScale(const double& scale);
 
 protected:
-  double TimeToScene(const rational& time);
-  rational SceneToTime(const double &x, bool round = false);
+    double TimeToScene(const rational& time);
+    rational SceneToTime(const double &x, bool round = false);
 
-  virtual void TimebaseChangedEvent(const rational&){}
+    virtual void TimebaseChangedEvent(const rational&) {}
 
-  virtual void ScaleChangedEvent(const double&){}
+    virtual void ScaleChangedEvent(const double&) {}
 
-  void SetMaximumScale(const double& max);
+    void SetMaximumScale(const double& max);
 
 private:
-  rational timebase_;
+    rational timebase_;
 
-  double timebase_dbl_;
+    double timebase_dbl_;
 
-  double scale_;
+    double scale_;
 
-  double max_scale_;
+    double max_scale_;
 
 };
 

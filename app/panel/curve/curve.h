@@ -6,19 +6,19 @@
 
 class CurvePanel : public TimeBasedPanel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  CurvePanel(QWidget* parent);
+    CurvePanel(QWidget* parent);
 
 public slots:
-  void SetInput(NodeInput* input);
+    void SetInput(NodeInput* input);
 
-  virtual void IncreaseTrackHeight() override;
+    virtual void IncreaseTrackHeight() override;
 
-  virtual void DecreaseTrackHeight() override;
+    virtual void DecreaseTrackHeight() override;
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

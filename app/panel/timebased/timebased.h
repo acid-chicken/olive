@@ -6,69 +6,69 @@
 
 class TimeBasedPanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimeBasedPanel(QWidget *parent = nullptr);
+    TimeBasedPanel(QWidget *parent = nullptr);
 
-  void ConnectViewerNode(ViewerOutput* node);
+    void ConnectViewerNode(ViewerOutput* node);
 
-  void DisconnectViewerNode();
+    void DisconnectViewerNode();
 
-  rational GetTime();
+    rational GetTime();
 
-  ViewerOutput* GetConnectedViewer() const;
+    ViewerOutput* GetConnectedViewer() const;
 
-  virtual void ZoomIn() override;
+    virtual void ZoomIn() override;
 
-  virtual void ZoomOut() override;
+    virtual void ZoomOut() override;
 
-  virtual void GoToStart() override;
+    virtual void GoToStart() override;
 
-  virtual void PrevFrame() override;
+    virtual void PrevFrame() override;
 
-  virtual void NextFrame() override;
+    virtual void NextFrame() override;
 
-  virtual void GoToEnd() override;
+    virtual void GoToEnd() override;
 
-  virtual void GoToPrevCut() override;
+    virtual void GoToPrevCut() override;
 
-  virtual void GoToNextCut() override;
+    virtual void GoToNextCut() override;
 
-  virtual void PlayPause() override;
+    virtual void PlayPause() override;
 
-  virtual void ShuttleLeft() override;
+    virtual void ShuttleLeft() override;
 
-  virtual void ShuttleStop() override;
+    virtual void ShuttleStop() override;
 
-  virtual void ShuttleRight() override;
+    virtual void ShuttleRight() override;
 
 public slots:
-  void SetTimebase(const rational& timebase);
+    void SetTimebase(const rational& timebase);
 
-  void SetTime(const int64_t& timestamp);
+    void SetTime(const int64_t& timestamp);
 
 signals:
-  void TimeChanged(const int64_t& time);
+    void TimeChanged(const int64_t& time);
 
-  void TimebaseChanged(const rational& timebase);
+    void TimebaseChanged(const rational& timebase);
 
-  void PlayPauseRequested();
+    void PlayPauseRequested();
 
-  void ShuttleLeftRequested();
+    void ShuttleLeftRequested();
 
-  void ShuttleStopRequested();
+    void ShuttleStopRequested();
 
-  void ShuttleRightRequested();
+    void ShuttleRightRequested();
 
 protected:
-  TimeBasedWidget* GetTimeBasedWidget() const;
+    TimeBasedWidget* GetTimeBasedWidget() const;
 
-  void SetTimeBasedWidget(TimeBasedWidget* widget);
+    void SetTimeBasedWidget(TimeBasedWidget* widget);
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 private:
-  TimeBasedWidget* widget_;
+    TimeBasedWidget* widget_;
 
 };
 

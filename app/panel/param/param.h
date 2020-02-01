@@ -26,18 +26,18 @@
 
 class ParamPanel : public TimeBasedPanel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ParamPanel(QWidget* parent);
+    ParamPanel(QWidget* parent);
 
 public slots:
-  void SetNodes(QList<Node*> nodes);
+    void SetNodes(QList<Node*> nodes);
 
 signals:
-  void SelectedInputChanged(NodeInput* input);
+    void SelectedInputChanged(NodeInput* input);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

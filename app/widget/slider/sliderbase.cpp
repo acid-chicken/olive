@@ -25,293 +25,293 @@
 #include <QMessageBox>
 
 SliderBase::SliderBase(Mode mode, QWidget *parent) :
-  QStackedWidget(parent),
-  decimal_places_(1),
-  drag_multiplier_(1.0),
-  has_min_(false),
-  has_max_(false),
-  mode_(mode),
-  dragged_(false),
-  require_valid_input_(true),
-  tristate_(false)
+    QStackedWidget(parent),
+    decimal_places_(1),
+    drag_multiplier_(1.0),
+    has_min_(false),
+    has_max_(false),
+    mode_(mode),
+    dragged_(false),
+    require_valid_input_(true),
+    tristate_(false)
 {
-  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
-  label_ = new SliderLabel(this);
+    label_ = new SliderLabel(this);
 
-  addWidget(label_);
+    addWidget(label_);
 
-  editor_ = new FocusableLineEdit(this);
-  addWidget(editor_);
+    editor_ = new FocusableLineEdit(this);
+    addWidget(editor_);
 
-  connect(label_, SIGNAL(drag_start()), this, SLOT(LabelPressed()));
-  connect(label_, SIGNAL(dragged(int)), this, SLOT(LabelDragged(int)));
-  connect(label_, SIGNAL(drag_stop()), this, SLOT(LabelClicked()));
-  connect(label_, SIGNAL(focused()), this, SLOT(LabelClicked()));
-  connect(editor_, SIGNAL(Confirmed()), this, SLOT(LineEditConfirmed()));
-  connect(editor_, SIGNAL(Cancelled()), this, SLOT(LineEditCancelled()));
+    connect(label_, SIGNAL(drag_start()), this, SLOT(LabelPressed()));
+    connect(label_, SIGNAL(dragged(int)), this, SLOT(LabelDragged(int)));
+    connect(label_, SIGNAL(drag_stop()), this, SLOT(LabelClicked()));
+    connect(label_, SIGNAL(focused()), this, SLOT(LabelClicked()));
+    connect(editor_, SIGNAL(Confirmed()), this, SLOT(LineEditConfirmed()));
+    connect(editor_, SIGNAL(Cancelled()), this, SLOT(LineEditCancelled()));
 
-  // Set valid cursor based on mode
-  switch (mode_) {
-  case kString:
-    setCursor(Qt::PointingHandCursor);
-    SetValue("");
-    break;
-  case kInteger:
-  case kFloat:
-    setCursor(Qt::SizeHorCursor);
-    SetValue(0);
-    break;
-  }
+    // Set valid cursor based on mode
+    switch (mode_) {
+    case kString:
+        setCursor(Qt::PointingHandCursor);
+        SetValue("");
+        break;
+    case kInteger:
+    case kFloat:
+        setCursor(Qt::SizeHorCursor);
+        SetValue(0);
+        break;
+    }
 }
 
 void SliderBase::SetDragMultiplier(const double &d)
 {
-  drag_multiplier_ = d;
+    drag_multiplier_ = d;
 }
 
 void SliderBase::SetRequireValidInput(bool e)
 {
-  require_valid_input_ = e;
+    require_valid_input_ = e;
 }
 
 void SliderBase::SetAlignment(Qt::Alignment alignment)
 {
-  label_->setAlignment(alignment);
+    label_->setAlignment(alignment);
 }
 
 bool SliderBase::IsTristate() const
 {
-  return tristate_;
+    return tristate_;
 }
 
 void SliderBase::SetTristate()
 {
-  tristate_ = true;
-  UpdateLabel(0);
+    tristate_ = true;
+    UpdateLabel(0);
 }
 
 bool SliderBase::IsDragging() const
 {
-  return dragged_;
+    return dragged_;
 }
 
 void SliderBase::SetPrefix(const QString &s)
 {
-  prefix_ = s;
-  UpdateLabel(value_);
+    prefix_ = s;
+    UpdateLabel(value_);
 }
 
 void SliderBase::SetSuffix(const QString &s)
 {
-  suffix_ = s;
-  UpdateLabel(value_);
+    suffix_ = s;
+    UpdateLabel(value_);
 }
 
 const QVariant &SliderBase::Value()
 {
-  if (dragged_) {
-    return temp_dragged_value_;
-  }
+    if (dragged_) {
+        return temp_dragged_value_;
+    }
 
-  return value_;
+    return value_;
 }
 
 void SliderBase::SetValue(const QVariant &v)
 {
-  if (IsDragging()) {
-    return;
-  }
+    if (IsDragging()) {
+        return;
+    }
 
-  value_ = ClampValue(v);
+    value_ = ClampValue(v);
 
-  // Disable tristate
-  tristate_ = false;
+    // Disable tristate
+    tristate_ = false;
 
-  UpdateLabel(value_);
+    UpdateLabel(value_);
 }
 
 void SliderBase::SetMinimumInternal(const QVariant &v)
 {
-  min_value_ = v;
-  has_min_ = true;
+    min_value_ = v;
+    has_min_ = true;
 
-  // Limit value by this new minimum value
-  if (value_ < min_value_) {
-    SetValue(min_value_);
-  }
+    // Limit value by this new minimum value
+    if (value_ < min_value_) {
+        SetValue(min_value_);
+    }
 }
 
 void SliderBase::SetMaximumInternal(const QVariant &v)
 {
-  max_value_ = v;
-  has_max_ = true;
+    max_value_ = v;
+    has_max_ = true;
 
-  // Limit value by this new maximum value
-  if (value_ > max_value_) {
-    SetValue(max_value_);
-  }
+    // Limit value by this new maximum value
+    if (value_ > max_value_) {
+        SetValue(max_value_);
+    }
 }
 
 void SliderBase::changeEvent(QEvent *e)
 {
-  if (e->type() == QEvent::LanguageChange) {
-    UpdateLabel(value_);
-  }
-  QStackedWidget::changeEvent(e);
+    if (e->type() == QEvent::LanguageChange) {
+        UpdateLabel(value_);
+    }
+    QStackedWidget::changeEvent(e);
 }
 
 const QVariant &SliderBase::ClampValue(const QVariant &v)
 {
-  if (has_min_ && v < min_value_) {
-    return min_value_;
-  }
+    if (has_min_ && v < min_value_) {
+        return min_value_;
+    }
 
-  if (has_max_ && v > max_value_) {
-    return max_value_;
-  }
+    if (has_max_ && v > max_value_) {
+        return max_value_;
+    }
 
-  return v;
+    return v;
 }
 
 void SliderBase::UpdateLabel(const QVariant &v)
 {
-  if (tristate_) {
-    label_->setText("---");
-  } else {
-    QString comp = prefix_;
-    comp.append(ValueToString(v));
-    comp.append(suffix_);
+    if (tristate_) {
+        label_->setText("---");
+    } else {
+        QString comp = prefix_;
+        comp.append(ValueToString(v));
+        comp.append(suffix_);
 
-    label_->setText(comp);
-  }
+        label_->setText(comp);
+    }
 }
 
 double SliderBase::AdjustDragDistanceInternal(const double &start, const double &drag)
 {
-  return start + drag;
+    return start + drag;
 }
 
 QString SliderBase::ValueToString(const QVariant &v)
 {
-  return v.toString();
+    return v.toString();
 }
 
 QVariant SliderBase::StringToValue(const QString &s, bool *ok)
 {
-  *ok = true;
-  return s;
+    *ok = true;
+    return s;
 }
 
 void SliderBase::LabelPressed()
 {
-  dragged_ = false;
-  dragged_diff_ = 0;
+    dragged_ = false;
+    dragged_diff_ = 0;
 }
 
 void SliderBase::LabelClicked()
 {
-  if (dragged_) {
-    dragged_ = false;
+    if (dragged_) {
+        dragged_ = false;
 
-    // This was a drag
-    switch (mode_) {
-    case kString:
-      // No-op
-      break;
-    case kInteger:
-      SetValue(temp_dragged_value_.toInt());
-      break;
-    case kFloat:
-      SetValue(temp_dragged_value_.toDouble());
-      break;
+        // This was a drag
+        switch (mode_) {
+        case kString:
+            // No-op
+            break;
+        case kInteger:
+            SetValue(temp_dragged_value_.toInt());
+            break;
+        case kFloat:
+            SetValue(temp_dragged_value_.toDouble());
+            break;
+        }
+
+        emit ValueChanged(value_);
+    } else {
+        // This was a simple click
+
+        // Load label's text into editor
+        editor_->setText(label_->text());
+
+        // Show editor
+        setCurrentWidget(editor_);
+
+        // Select all text in the editor
+        editor_->setFocus();
+        editor_->selectAll();
     }
-
-    emit ValueChanged(value_);
-  } else {
-    // This was a simple click
-
-    // Load label's text into editor
-    editor_->setText(label_->text());
-
-    // Show editor
-    setCurrentWidget(editor_);
-
-    // Select all text in the editor
-    editor_->setFocus();
-    editor_->selectAll();
-  }
 }
 
 void SliderBase::LabelDragged(int i)
 {
-  dragged_ = true;
+    dragged_ = true;
 
-  switch (mode_) {
-  case kString:
-    // No dragging supported for strings
-    break;
-  case kInteger:
-  case kFloat:
-  {
-    dragged_diff_ += static_cast<double>(i) * drag_multiplier_;
+    switch (mode_) {
+    case kString:
+        // No dragging supported for strings
+        break;
+    case kInteger:
+    case kFloat:
+    {
+        dragged_diff_ += static_cast<double>(i) * drag_multiplier_;
 
-    double drag_val = AdjustDragDistanceInternal(value_.toDouble(), dragged_diff_);
+        double drag_val = AdjustDragDistanceInternal(value_.toDouble(), dragged_diff_);
 
-    // Update temporary value
-    if (mode_ == kInteger) {
-      temp_dragged_value_ = qRound(drag_val);
-    } else {
-      temp_dragged_value_ = drag_val;
+        // Update temporary value
+        if (mode_ == kInteger) {
+            temp_dragged_value_ = qRound(drag_val);
+        } else {
+            temp_dragged_value_ = drag_val;
+        }
+
+        temp_dragged_value_ = ClampValue(temp_dragged_value_);
+
+        UpdateLabel(temp_dragged_value_);
+        emit ValueChanged(temp_dragged_value_);
+        break;
     }
-
-    temp_dragged_value_ = ClampValue(temp_dragged_value_);
-
-    UpdateLabel(temp_dragged_value_);
-    emit ValueChanged(temp_dragged_value_);
-    break;
-  }
-  }
+    }
 }
 
 void SliderBase::LineEditConfirmed()
 {
-  bool is_valid = true;
-  QVariant test_val = StringToValue(editor_->text(), &is_valid);
+    bool is_valid = true;
+    QVariant test_val = StringToValue(editor_->text(), &is_valid);
 
-  // Ensure editor doesn't signal that the focus is lost
-  editor_->blockSignals(true);
-  label_->blockSignals(true);
+    // Ensure editor doesn't signal that the focus is lost
+    editor_->blockSignals(true);
+    label_->blockSignals(true);
 
-  if (is_valid) {
-    SetValue(test_val);
+    if (is_valid) {
+        SetValue(test_val);
 
-    setCurrentWidget(label_);
+        setCurrentWidget(label_);
 
-    emit ValueChanged(value_);
-  } else if (require_valid_input_ && !IsTristate()) {
-    QMessageBox::critical(this,
-                          tr("Invalid Value"),
-                          tr("The entered value is not valid for this field."),
-                          QMessageBox::Ok);
+        emit ValueChanged(value_);
+    } else if (require_valid_input_ && !IsTristate()) {
+        QMessageBox::critical(this,
+                              tr("Invalid Value"),
+                              tr("The entered value is not valid for this field."),
+                              QMessageBox::Ok);
 
-    // Refocus editor
-    editor_->setFocus();
-  }
+        // Refocus editor
+        editor_->setFocus();
+    }
 
-  editor_->blockSignals(false);
-  label_->blockSignals(false);
+    editor_->blockSignals(false);
+    label_->blockSignals(false);
 }
 
 void SliderBase::LineEditCancelled()
 {
-  // Ensure editor doesn't signal that the focus is lost
-  editor_->blockSignals(true);
-  label_->blockSignals(true);
+    // Ensure editor doesn't signal that the focus is lost
+    editor_->blockSignals(true);
+    label_->blockSignals(true);
 
-  // Set widget back to label
-  setCurrentWidget(label_);
+    // Set widget back to label
+    setCurrentWidget(label_);
 
-  editor_->blockSignals(false);
-  label_->blockSignals(false);
+    editor_->blockSignals(false);
+    label_->blockSignals(false);
 }

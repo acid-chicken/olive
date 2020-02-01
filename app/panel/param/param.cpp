@@ -21,36 +21,36 @@
 #include "param.h"
 
 ParamPanel::ParamPanel(QWidget* parent) :
-  TimeBasedPanel(parent)
+    TimeBasedPanel(parent)
 {
-  // FIXME: This won't work if there's ever more than one of this panel
-  setObjectName("ParamPanel");
+    // FIXME: This won't work if there's ever more than one of this panel
+    setObjectName("ParamPanel");
 
-  NodeParamView* view = new NodeParamView();
-  connect(view, &NodeParamView::SelectedInputChanged, this, &ParamPanel::SelectedInputChanged);
-  SetTimeBasedWidget(view);
+    NodeParamView* view = new NodeParamView();
+    connect(view, &NodeParamView::SelectedInputChanged, this, &ParamPanel::SelectedInputChanged);
+    SetTimeBasedWidget(view);
 
-  Retranslate();
+    Retranslate();
 }
 
 void ParamPanel::SetNodes(QList<Node *> nodes)
 {
-  static_cast<NodeParamView*>(GetTimeBasedWidget())->SetNodes(nodes);
+    static_cast<NodeParamView*>(GetTimeBasedWidget())->SetNodes(nodes);
 
-  Retranslate();
+    Retranslate();
 }
 
 void ParamPanel::Retranslate()
 {
-  SetTitle(tr("Parameter Editor"));
+    SetTitle(tr("Parameter Editor"));
 
-  NodeParamView* view = static_cast<NodeParamView*>(GetTimeBasedWidget());
+    NodeParamView* view = static_cast<NodeParamView*>(GetTimeBasedWidget());
 
-  if (view->nodes().isEmpty()) {
-    SetSubtitle(tr("(none)"));
-  } else if (view->nodes().size() == 1) {
-    SetSubtitle(view->nodes().first()->Name());
-  } else {
-    SetSubtitle(tr("(multiple)"));
-  }
+    if (view->nodes().isEmpty()) {
+        SetSubtitle(tr("(none)"));
+    } else if (view->nodes().size() == 1) {
+        SetSubtitle(view->nodes().first()->Name());
+    } else {
+        SetSubtitle(tr("(multiple)"));
+    }
 }

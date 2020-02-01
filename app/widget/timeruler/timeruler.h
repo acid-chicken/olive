@@ -30,90 +30,90 @@
 
 class TimeRuler : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimeRuler(bool text_visible = true, bool cache_status_visible = false, QWidget* parent = nullptr);
+    TimeRuler(bool text_visible = true, bool cache_status_visible = false, QWidget* parent = nullptr);
 
-  const double& GetScale();
-  void SetScale(const double& d);
+    const double& GetScale();
+    void SetScale(const double& d);
 
-  void SetTimebase(const rational& r);
+    void SetTimebase(const rational& r);
 
-  void SetCenteredText(bool c);
+    void SetCenteredText(bool c);
 
-  const int64_t& GetTime();
+    const int64_t& GetTime();
 
 public slots:
-  void SetTime(const int64_t &r);
+    void SetTime(const int64_t &r);
 
-  void SetScroll(int s);
+    void SetScroll(int s);
 
-  void CacheInvalidatedRange(const TimeRange &range);
+    void CacheInvalidatedRange(const TimeRange &range);
 
-  void CacheTimeReady(const rational& time);
+    void CacheTimeReady(const rational& time);
 
-  void SetCacheStatusLength(const rational& length);
+    void SetCacheStatusLength(const rational& length);
 
 protected:
-  virtual void paintEvent(QPaintEvent* e) override;
+    virtual void paintEvent(QPaintEvent* e) override;
 
-  virtual void mousePressEvent(QMouseEvent *event) override;
-  virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
 
 signals:
-  /**
-   * @brief Signal emitted whenever the time changes on this ruler, either by user or programatically
-   */
-  void TimeChanged(int64_t);
+    /**
+     * @brief Signal emitted whenever the time changes on this ruler, either by user or programatically
+     */
+    void TimeChanged(int64_t);
 
 private:
-  void UpdateHeight();
+    void UpdateHeight();
 
-  void DrawPlayhead(QPainter* p, int x, int y);
+    void DrawPlayhead(QPainter* p, int x, int y);
 
-  int CacheStatusHeight() const;
+    int CacheStatusHeight() const;
 
-  double ScreenToUnitFloat(int screen);
+    double ScreenToUnitFloat(int screen);
 
-  int64_t ScreenToUnit(int screen);
+    int64_t ScreenToUnit(int screen);
 
-  int UnitToScreen(int64_t unit);
+    int UnitToScreen(int64_t unit);
 
-  int TimeToScreen(const rational& time);
+    int TimeToScreen(const rational& time);
 
-  void SeekToScreenPoint(int screen);
+    void SeekToScreenPoint(int screen);
 
-  int text_height_;
+    int text_height_;
 
-  int cache_status_height_;
+    int cache_status_height_;
 
-  int minimum_gap_between_lines_;
+    int minimum_gap_between_lines_;
 
-  int playhead_width_;
+    int playhead_width_;
 
-  int scroll_;
+    int scroll_;
 
-  bool text_visible_;
+    bool text_visible_;
 
-  bool centered_text_;
+    bool centered_text_;
 
-  double scale_;
+    double scale_;
 
-  rational timebase_;
+    rational timebase_;
 
-  double timebase_dbl_;
+    double timebase_dbl_;
 
-  double timebase_flipped_dbl_;
+    double timebase_flipped_dbl_;
 
-  int64_t time_;
+    int64_t time_;
 
-  TimelinePlayhead style_;
+    TimelinePlayhead style_;
 
-  bool show_cache_status_;
+    bool show_cache_status_;
 
-  rational cache_length_;
+    rational cache_length_;
 
-  TimeRangeList dirty_cache_ranges_;
+    TimeRangeList dirty_cache_ranges_;
 
 };
 

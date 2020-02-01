@@ -28,15 +28,15 @@
  */
 class ToolPanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ToolPanel(QWidget* parent);
+    ToolPanel(QWidget* parent);
 
 protected:
-  virtual void changeEvent(QEvent* e) override;
+    virtual void changeEvent(QEvent* e) override;
 
 private:
-  void Retranslate();
+    void Retranslate();
 
 };
 
