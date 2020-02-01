@@ -8,85 +8,83 @@
 #include "widget/timelinewidget/timelinescaledobject.h"
 #include "widget/timeruler/timeruler.h"
 
-class TimeBasedWidget : public QWidget, public TimelineScaledObject
-{
-    Q_OBJECT
-public:
-    TimeBasedWidget(bool ruler_text_visible = true, bool ruler_cache_status_visible = false, QWidget* parent = nullptr);
+class TimeBasedWidget : public QWidget, public TimelineScaledObject {
+  Q_OBJECT
+ public:
+  TimeBasedWidget(bool ruler_text_visible = true, bool ruler_cache_status_visible = false, QWidget* parent = nullptr);
 
-    rational GetTime() const;
+  rational GetTime() const;
 
-    const int64_t& GetTimestamp() const;
+  const int64_t& GetTimestamp() const;
 
-    void ZoomIn();
+  void ZoomIn();
 
-    void ZoomOut();
+  void ZoomOut();
 
-    ViewerOutput* GetConnectedNode() const;
+  ViewerOutput* GetConnectedNode() const;
 
-    void ConnectViewerNode(ViewerOutput *node);
+  void ConnectViewerNode(ViewerOutput* node);
 
-public slots:
-    // FIXME: Rename this to SetTimestamp to reduce confusion
-    void SetTime(int64_t timestamp);
+ public slots:
+  // FIXME: Rename this to SetTimestamp to reduce confusion
+  void SetTime(int64_t timestamp);
 
-    void SetTimebase(const rational& timebase);
+  void SetTimebase(const rational& timebase);
 
-    void SetScale(const double& scale);
+  void SetScale(const double& scale);
 
-    void GoToStart();
+  void GoToStart();
 
-    void PrevFrame();
+  void PrevFrame();
 
-    void NextFrame();
+  void NextFrame();
 
-    void GoToEnd();
+  void GoToEnd();
 
-    void GoToPrevCut();
+  void GoToPrevCut();
 
-    void GoToNextCut();
+  void GoToNextCut();
 
-protected slots:
-    void SetTimeAndSignal(const int64_t& t);
+ protected slots:
+  void SetTimeAndSignal(const int64_t& t);
 
-protected:
-    TimeRuler* ruler() const;
+ protected:
+  TimeRuler* ruler() const;
 
-    QScrollBar* scrollbar() const;
+  QScrollBar* scrollbar() const;
 
-    virtual void TimebaseChangedEvent(const rational&) override;
+  virtual void TimebaseChangedEvent(const rational&) override;
 
-    virtual void TimeChangedEvent(const int64_t&) {}
+  virtual void TimeChangedEvent(const int64_t&) {}
 
-    virtual void ScaleChangedEvent(const double &) override;
+  virtual void ScaleChangedEvent(const double&) override;
 
-    virtual void ConnectedNodeChanged(ViewerOutput*) {}
+  virtual void ConnectedNodeChanged(ViewerOutput*) {}
 
-    virtual void ConnectNodeInternal(ViewerOutput*) {}
+  virtual void ConnectNodeInternal(ViewerOutput*) {}
 
-    virtual void DisconnectNodeInternal(ViewerOutput*) {}
+  virtual void DisconnectNodeInternal(ViewerOutput*) {}
 
-    void SetAutoMaxScrollBar(bool e);
+  void SetAutoMaxScrollBar(bool e);
 
-    virtual void resizeEvent(QResizeEvent *event) override;
+  virtual void resizeEvent(QResizeEvent* event) override;
 
-signals:
-    void TimeChanged(const int64_t&);
+ signals:
+  void TimeChanged(const int64_t&);
 
-    void TimebaseChanged(const rational&);
+  void TimebaseChanged(const rational&);
 
-private:
-    ViewerOutput* viewer_node_;
+ private:
+  ViewerOutput* viewer_node_;
 
-    TimeRuler* ruler_;
+  TimeRuler* ruler_;
 
-    QScrollBar* scrollbar_;
+  QScrollBar* scrollbar_;
 
-    bool auto_max_scrollbar_;
+  bool auto_max_scrollbar_;
 
-private slots:
-    void UpdateMaximumScroll();
-
+ private slots:
+  void UpdateMaximumScroll();
 };
 
-#endif // TIMEBASEDWIDGET_H
+#endif  // TIMEBASEDWIDGET_H
