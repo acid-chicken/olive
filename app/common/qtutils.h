@@ -37,4 +37,4 @@
  */
 int QFontMetricsWidth(QFontMetrics fm, const QString& s);
 
-#endif // QTVERSIONABSTRACTION_H
+#endif  // QTVERSIONABSTRACTION_H

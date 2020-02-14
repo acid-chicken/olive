@@ -39,382 +39,378 @@ class Node;
  *
  * This is an abstract base class. In most cases you'll want NodeInput or NodeOutput.
  */
-class NodeParam : public QObject
-{
-    Q_OBJECT
-public:
+class NodeParam : public QObject {
+  Q_OBJECT
+ public:
+  /**
+   * @brief The type of parameter this is
+   */
+  enum Type { kInput, kOutput };
+
+  /**
+   * @brief The types of data that can be passed between Nodes
+   */
+  enum DataType {
+    kNone = 0x0,
+
     /**
-     * @brief The type of parameter this is
+     ****************************** SPECIFIC IDENTIFIERS ******************************
      */
-    enum Type {
-        kInput,
-        kOutput
-    };
 
     /**
-     * @brief The types of data that can be passed between Nodes
-     */
-    enum DataType {
-        kNone = 0x0,
-
-        /**
-         ****************************** SPECIFIC IDENTIFIERS ******************************
-         */
-
-        /**
-         * Integer type
-         *
-         * Resolves to `int` (may resolve to `long` in the future).
-         */
-        kInt = 0x1,
-
-        /**
-         * Decimal (floating-point) type
-         *
-         * Resolves to `double`.
-         */
-        kFloat = 0x2,
-
-        /**
-         * Decimal (rational) type
-         *
-         * Resolves to `double`.
-         */
-        kRational = 0x4,
-
-        /**
-         * Boolean type
-         *
-         * Resolves to `bool`.
-         */
-        kBoolean = 0x8,
-
-        /**
-         * Floating-point type
-         *
-         * Resolves to `QRgba64`.
-         *
-         * Colors passed around the nodes should always be in reference space and preferably use
-         */
-        kColor = 0x10,
-
-        /**
-         * Matrix type
-         *
-         * Resolves to `QMatrix4x4`.
-         */
-        kMatrix = 0x20,
-
-        /**
-         * Text type
-         *
-         * Resolves to `QString`.
-         */
-        kText = 0x40,
-
-        /**
-         * Font type
-         *
-         * Resolves to `QFont`.
-         */
-        kFont = 0x80,
-
-        /**
-         * File type
-         *
-         * Resolves to a `QString` containing an absolute file path.
-         */
-        kFile = 0x100,
-
-        /**
-         * Image buffer type
-         *
-         * True value type depends on the render engine used.
-         */
-        kTexture = 0x200,
-
-        /**
-         * Audio samples type
-         *
-         * Resolves to `QVector4D`.
-         */
-        kSamples = 0x400,
-
-        /**
-         * Footage stream identifier type
-         *
-         * Resolves to `StreamPtr`.
-         */
-        kFootage = 0x800,
-
-        /**
-         * Two-dimensional vector (XY) type
-         *
-         * Resolves to `QVector2D`.
-         */
-        kVec2 = 0x1000,
-
-        /**
-         * Three-dimensional vector (XYZ) type
-         *
-         * Resolves to `QVector3D`.
-         */
-        kVec3 = 0x2000,
-
-        /**
-         * Four-dimensional vector (XYZW) type
-         *
-         * Resolves to `QVector4D`.
-         */
-        kVec4 = 0x4000,
-
-        /**
-         ****************************** BROAD IDENTIFIERS ******************************
-         */
-
-        /**
-         * Identifier for type that contains a decimal number
-         *
-         * Includes kFloat and kRational.
-         */
-        kDecimal = 0x6,
-
-        /**
-         * Identifier for type that contains a whole number
-         *
-         * Includes kInt and kBoolean.
-         */
-        kWholeNumber = 0x9,
-
-        /**
-         * Identifier for type that contains a number of any kind (whole or decimal)
-         *
-         * Includes kInt, kFloat, kRational, and kBoolean.
-         */
-        kNumber = 0xF,
-
-        /**
-         * Identifier for type that contains a text string of any kind.
-         *
-         * Includes kText and kFile.
-         */
-        kString = 0x140,
-
-        /**
-         * Identifier for type that contains a either an image or audio buffer
-         *
-         * Includes kTexture and kSamples.
-         */
-        kBuffer = 0x600,
-
-        /**
-         * Identifier for type that contains a vector (two- to four-dimensional)
-         *
-         * Includes kVec2, kVec3, kVec4, and kColor.
-         */
-        kVector = 0x7010,
-
-        /**
-         * Identifier for any type
-         *
-         * Matches with all types except for kNone
-         */
-        kAny = 0xFFFFFFFF
-    };
-
-    /**
-     * @brief NodeParam Constructor
-     */
-    NodeParam(const QString& id);
-
-    virtual ~NodeParam() override;
-
-    struct SerializedConnection {
-        NodeInput* input;
-        quintptr output;
-    };
-
-    struct FootageConnection {
-        NodeInput* input;
-        quintptr footage;
-    };
-
-    /**
-     * @brief Load function
-     */
-    virtual void Load(QXmlStreamReader* reader, QHash<quintptr, NodeOutput*>& param_ptrs, QList<SerializedConnection> &input_connections, QList<FootageConnection>& footage_connections) = 0;
-
-    /**
-     * @brief Save function
-     */
-    virtual void Save(QXmlStreamWriter* writer) const = 0;
-
-    /**
-     * @brief Return ID of this parameter
-     */
-    const QString id() const;
-
-    /**
-     * @brief The type of node paramter this is
+     * Integer type
      *
-     * This must be set in subclasses, but most of the time you should probably subclass from NodeInput and NodeOutput
-     * anyway.
+     * Resolves to `int` (may resolve to `long` in the future).
      */
-    virtual Type type() = 0;
+    kInt = 0x1,
 
     /**
-     * @brief Name of this parameter to be shown to the user
-     */
-    virtual QString name();
-    void set_name(const QString& name);
-
-    /**
-     * @brief Node parent object
+     * Decimal (floating-point) type
      *
-     * Nodes and NodeParams use the QObject parent-child system. This function is a convenience function for
-     * static_cast<Node*>(QObject::parent())
+     * Resolves to `double`.
      */
-    Node* parentNode() const;
+    kFloat = 0x2,
 
     /**
-     * @brief Return the row index of this parameter in the parent node (primarily used for UI drawing functions)
-     */
-    int index();
-
-    /**
-     * @brief Returns whether anything is connected to this parameter or not
-     */
-    bool IsConnected() const;
-
-    bool IsConnectable() const;
-    void SetConnectable(bool connectable);
-
-    /**
-     * @brief Return a list of edges (aka connections to other nodes)
+     * Decimal (rational) type
      *
-     * This list can't be modified directly. Use ConnectEdge() and DisconnectEdge() instead for that.
+     * Resolves to `double`.
      */
-    const QVector<NodeEdgePtr>& edges();
+    kRational = 0x4,
 
     /**
-     * @brief Disconnect any edges connecting this parameter to other parameters
+     * Boolean type
+     *
+     * Resolves to `bool`.
      */
-    void DisconnectAll();
+    kBoolean = 0x8,
 
     /**
-     * @brief Connect an output parameter to an input parameter
+     * Floating-point type
      *
-     * This function makes no attempt to check whether the two NodeParams have compatible data types. This should be done
-     * beforehand or behavior is undefined.
+     * Resolves to `QRgba64`.
      *
-     * If the input already has an edge connected and can't accept multiple edges, that edge is disconnected before an
-     * attempt at a new connection is made. This function returns the new NodeEdge created by this connection.
-     *
-     * If the input *can* accept multiple edges but is already connected to this output, no new connection is made (since
-     * the connection already exists). In this situation, nullptr is returned.
-     *
-     * This function emits EdgeAdded().
+     * Colors passed around the nodes should always be in reference space and preferably use
      */
-    static NodeEdgePtr ConnectEdge(NodeOutput *output, NodeInput *input);
+    kColor = 0x10,
 
     /**
-     * @brief Disconnect an edge
+     * Matrix type
      *
-     * This function emits EdgeRemoved(NodeEdgePtr edge).
+     * Resolves to `QMatrix4x4`.
+     */
+    kMatrix = 0x20,
+
+    /**
+     * Text type
      *
-     * @param edge
+     * Resolves to `QString`.
+     */
+    kText = 0x40,
+
+    /**
+     * Font type
      *
-     * Edge to disconnect.
+     * Resolves to `QFont`.
      */
-    static void DisconnectEdge(NodeEdgePtr edge);
+    kFont = 0x80,
 
     /**
-     * @brief Disconnect an edge
+     * File type
      *
-     * Sometimes this function is preferable if you don't know what the edge object is (or with undo commands where the
-     * edge object may change despite the connection being between the same parameters).
+     * Resolves to a `QString` containing an absolute file path.
+     */
+    kFile = 0x100,
+
+    /**
+     * Image buffer type
      *
-     * This function emits EdgeRemoved(NodeEdgePtr edge).
+     * True value type depends on the render engine used.
+     */
+    kTexture = 0x200,
+
+    /**
+     * Audio samples type
      *
-     * @param edge
+     * Resolves to `QVector4D`.
+     */
+    kSamples = 0x400,
+
+    /**
+     * Footage stream identifier type
      *
-     * Edge to disconnect.
+     * Resolves to `StreamPtr`.
      */
-    static void DisconnectEdge(NodeOutput* output, NodeInput* input);
+    kFootage = 0x800,
 
     /**
-     * @brief If an input has an edge and can't take multiple, this function disconnects them and returns the edge object
+     * Two-dimensional vector (XY) type
      *
-     * This is used just before a connection is about to be made. If an input is already connected to an output, but
-     * can't take multiple inputs, that connection will need to be removed before the new connection can be made.
-     * This function check if it's necessary to remove the edge from an input before connecting a new edge, and removes
-     * and returns it if so.
+     * Resolves to `QVector2D`.
+     */
+    kVec2 = 0x1000,
+
+    /**
+     * Three-dimensional vector (XYZ) type
      *
-     * If the input does NOT have anything connected, or it does but the input CAN accept multiple connections, nothing
-     * is disconnected and nullptr is returned.
+     * Resolves to `QVector3D`.
      */
-    static NodeEdgePtr DisconnectForNewOutput(NodeInput* input);
+    kVec3 = 0x2000,
 
     /**
-     * @brief Get a human-readable translated name for a certain data type
-     */
-    static QString GetDefaultDataTypeName(const DataType &type);
-
-    /**
-     * @brief Convert a value from a NodeParam into bytes
-     */
-    static QByteArray ValueToBytes(const DataType &type, const QVariant& value);
-
-    /**
-     * @brief Convert a string to a data type
-     */
-    static DataType StringToDataType(const QString& s);
-
-signals:
-    /**
-     * @brief Signal emitted when an edge is added to this parameter
+     * Four-dimensional vector (XYZW) type
      *
-     * See ConnectEdge() for usage. Only one of the two parameters needs to emit this signal when a connection is made,
-     * because otherwise two of exactly the same signal will be emitted.
+     * Resolves to `QVector4D`.
      */
-    void EdgeAdded(NodeEdgePtr edge);
+    kVec4 = 0x4000,
 
     /**
-     * @brief Signal emitted when an edge is removed from this parameter
+     ****************************** BROAD IDENTIFIERS ******************************
+     */
+
+    /**
+     * Identifier for type that contains a decimal number
      *
-     * See DisconnectEdge() for usage. Only one of the two parameters needs to emit this signal when a connection is
-     * removed, because otherwise two of exactly the same signal will be emitted.
+     * Includes kFloat and kRational.
      */
-    void EdgeRemoved(NodeEdgePtr edge);
-
-protected:
-    /**
-     * @brief Internal list of edges
-     */
-    QVector<NodeEdgePtr> edges_;
+    kDecimal = 0x6,
 
     /**
-     * @brief Internal name string
+     * Identifier for type that contains a whole number
+     *
+     * Includes kInt and kBoolean.
      */
-    QString name_;
-
-private:
-    /**
-     * @brief Internal function for returning a value in the form of bytes
-     */
-    template<typename T>
-    static QByteArray ValueToBytesInternal(const QVariant& v);
+    kWholeNumber = 0x9,
 
     /**
-     * @brief Internal ID string
+     * Identifier for type that contains a number of any kind (whole or decimal)
+     *
+     * Includes kInt, kFloat, kRational, and kBoolean.
      */
-    QString id_;
+    kNumber = 0xF,
 
     /**
-     * @brief Internal connectable value
+     * Identifier for type that contains a text string of any kind.
+     *
+     * Includes kText and kFile.
      */
-    bool connectable_;
+    kString = 0x140,
 
+    /**
+     * Identifier for type that contains a either an image or audio buffer
+     *
+     * Includes kTexture and kSamples.
+     */
+    kBuffer = 0x600,
+
+    /**
+     * Identifier for type that contains a vector (two- to four-dimensional)
+     *
+     * Includes kVec2, kVec3, kVec4, and kColor.
+     */
+    kVector = 0x7010,
+
+    /**
+     * Identifier for any type
+     *
+     * Matches with all types except for kNone
+     */
+    kAny = 0xFFFFFFFF
+  };
+
+  /**
+   * @brief NodeParam Constructor
+   */
+  NodeParam(const QString& id);
+
+  virtual ~NodeParam() override;
+
+  struct SerializedConnection {
+    NodeInput* input;
+    quintptr output;
+  };
+
+  struct FootageConnection {
+    NodeInput* input;
+    quintptr footage;
+  };
+
+  /**
+   * @brief Load function
+   */
+  virtual void Load(QXmlStreamReader* reader, QHash<quintptr, NodeOutput*>& param_ptrs,
+                    QList<SerializedConnection>& input_connections, QList<FootageConnection>& footage_connections) = 0;
+
+  /**
+   * @brief Save function
+   */
+  virtual void Save(QXmlStreamWriter* writer) const = 0;
+
+  /**
+   * @brief Return ID of this parameter
+   */
+  const QString id() const;
+
+  /**
+   * @brief The type of node paramter this is
+   *
+   * This must be set in subclasses, but most of the time you should probably subclass from NodeInput and NodeOutput
+   * anyway.
+   */
+  virtual Type type() = 0;
+
+  /**
+   * @brief Name of this parameter to be shown to the user
+   */
+  virtual QString name();
+  void set_name(const QString& name);
+
+  /**
+   * @brief Node parent object
+   *
+   * Nodes and NodeParams use the QObject parent-child system. This function is a convenience function for
+   * static_cast<Node*>(QObject::parent())
+   */
+  Node* parentNode() const;
+
+  /**
+   * @brief Return the row index of this parameter in the parent node (primarily used for UI drawing functions)
+   */
+  int index();
+
+  /**
+   * @brief Returns whether anything is connected to this parameter or not
+   */
+  bool IsConnected() const;
+
+  bool IsConnectable() const;
+  void SetConnectable(bool connectable);
+
+  /**
+   * @brief Return a list of edges (aka connections to other nodes)
+   *
+   * This list can't be modified directly. Use ConnectEdge() and DisconnectEdge() instead for that.
+   */
+  const QVector<NodeEdgePtr>& edges();
+
+  /**
+   * @brief Disconnect any edges connecting this parameter to other parameters
+   */
+  void DisconnectAll();
+
+  /**
+   * @brief Connect an output parameter to an input parameter
+   *
+   * This function makes no attempt to check whether the two NodeParams have compatible data types. This should be done
+   * beforehand or behavior is undefined.
+   *
+   * If the input already has an edge connected and can't accept multiple edges, that edge is disconnected before an
+   * attempt at a new connection is made. This function returns the new NodeEdge created by this connection.
+   *
+   * If the input *can* accept multiple edges but is already connected to this output, no new connection is made (since
+   * the connection already exists). In this situation, nullptr is returned.
+   *
+   * This function emits EdgeAdded().
+   */
+  static NodeEdgePtr ConnectEdge(NodeOutput* output, NodeInput* input);
+
+  /**
+   * @brief Disconnect an edge
+   *
+   * This function emits EdgeRemoved(NodeEdgePtr edge).
+   *
+   * @param edge
+   *
+   * Edge to disconnect.
+   */
+  static void DisconnectEdge(NodeEdgePtr edge);
+
+  /**
+   * @brief Disconnect an edge
+   *
+   * Sometimes this function is preferable if you don't know what the edge object is (or with undo commands where the
+   * edge object may change despite the connection being between the same parameters).
+   *
+   * This function emits EdgeRemoved(NodeEdgePtr edge).
+   *
+   * @param edge
+   *
+   * Edge to disconnect.
+   */
+  static void DisconnectEdge(NodeOutput* output, NodeInput* input);
+
+  /**
+   * @brief If an input has an edge and can't take multiple, this function disconnects them and returns the edge object
+   *
+   * This is used just before a connection is about to be made. If an input is already connected to an output, but
+   * can't take multiple inputs, that connection will need to be removed before the new connection can be made.
+   * This function check if it's necessary to remove the edge from an input before connecting a new edge, and removes
+   * and returns it if so.
+   *
+   * If the input does NOT have anything connected, or it does but the input CAN accept multiple connections, nothing
+   * is disconnected and nullptr is returned.
+   */
+  static NodeEdgePtr DisconnectForNewOutput(NodeInput* input);
+
+  /**
+   * @brief Get a human-readable translated name for a certain data type
+   */
+  static QString GetDefaultDataTypeName(const DataType& type);
+
+  /**
+   * @brief Convert a value from a NodeParam into bytes
+   */
+  static QByteArray ValueToBytes(const DataType& type, const QVariant& value);
+
+  /**
+   * @brief Convert a string to a data type
+   */
+  static DataType StringToDataType(const QString& s);
+
+ signals:
+  /**
+   * @brief Signal emitted when an edge is added to this parameter
+   *
+   * See ConnectEdge() for usage. Only one of the two parameters needs to emit this signal when a connection is made,
+   * because otherwise two of exactly the same signal will be emitted.
+   */
+  void EdgeAdded(NodeEdgePtr edge);
+
+  /**
+   * @brief Signal emitted when an edge is removed from this parameter
+   *
+   * See DisconnectEdge() for usage. Only one of the two parameters needs to emit this signal when a connection is
+   * removed, because otherwise two of exactly the same signal will be emitted.
+   */
+  void EdgeRemoved(NodeEdgePtr edge);
+
+ protected:
+  /**
+   * @brief Internal list of edges
+   */
+  QVector<NodeEdgePtr> edges_;
+
+  /**
+   * @brief Internal name string
+   */
+  QString name_;
+
+ private:
+  /**
+   * @brief Internal function for returning a value in the form of bytes
+   */
+  template <typename T>
+  static QByteArray ValueToBytesInternal(const QVariant& v);
+
+  /**
+   * @brief Internal ID string
+   */
+  QString id_;
+
+  /**
+   * @brief Internal connectable value
+   */
+  bool connectable_;
 };
 
-#endif // NODEPARAM_H
+#endif  // NODEPARAM_H

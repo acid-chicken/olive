@@ -28,28 +28,27 @@
 #include "openglshader.h"
 
 class OpenGLRenderFunctions {
-public:
-    /**
-     * @brief Draw texture on screen
-     *
-     * @param pipeline
-     *
-     * Shader to use for the texture drawing
-     *
-     * @param flipped
-     *
-     * Draw the texture vertically flipped (defaults to FALSE)
-     *
-     * @param matrix
-     *
-     * Transformation matrix to use when drawing (defaults to no transform)
-     */
-    static void Blit(OpenGLShaderPtr pipeline, bool flipped = false, QMatrix4x4 matrix = QMatrix4x4());
+ public:
+  /**
+   * @brief Draw texture on screen
+   *
+   * @param pipeline
+   *
+   * Shader to use for the texture drawing
+   *
+   * @param flipped
+   *
+   * Draw the texture vertically flipped (defaults to FALSE)
+   *
+   * @param matrix
+   *
+   * Transformation matrix to use when drawing (defaults to no transform)
+   */
+  static void Blit(OpenGLShaderPtr pipeline, bool flipped = false, QMatrix4x4 matrix = QMatrix4x4());
 
-    static void OCIOBlit(OpenGLShaderPtr pipeline, GLuint lut, bool flipped = false, QMatrix4x4 matrix = QMatrix4x4());
+  static void OCIOBlit(OpenGLShaderPtr pipeline, GLuint lut, bool flipped = false, QMatrix4x4 matrix = QMatrix4x4());
 
-    static void PrepareToDraw(QOpenGLFunctions* f);
-
+  static void PrepareToDraw(QOpenGLFunctions* f);
 };
 
-#endif // OPENGLFUNCTIONS_H
+#endif  // OPENGLFUNCTIONS_H

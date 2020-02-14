@@ -27,190 +27,155 @@
 #include <QVector3D>
 #include <QVector4D>
 
-#include "node/node.h"
 #include "node/input.h"
+#include "node/node.h"
 #include "node/output.h"
 
-NodeParam::NodeParam(const QString &id) :
-    id_(id),
-    connectable_(true)
-{
-    Q_ASSERT(!id_.isEmpty());
+NodeParam::NodeParam(const QString &id) : id_(id), connectable_(true) { Q_ASSERT(!id_.isEmpty()); }
+
+NodeParam::~NodeParam() {
+  // Clear all connected edges
+  while (!edges_.isEmpty()) {
+    DisconnectEdge(edges_.last());
+  }
 }
 
-NodeParam::~NodeParam()
-{
-    // Clear all connected edges
-    while (!edges_.isEmpty()) {
-        DisconnectEdge(edges_.last());
-    }
+const QString NodeParam::id() const { return id_; }
+
+QString NodeParam::name() {
+  if (name_.isEmpty()) {
+    return tr("Value");
+  }
+
+  return name_;
 }
 
-const QString NodeParam::id() const
-{
-    return id_;
-}
+void NodeParam::set_name(const QString &name) { name_ = name; }
 
-QString NodeParam::name()
-{
-    if (name_.isEmpty()) {
-        return tr("Value");
-    }
+Node *NodeParam::parentNode() const {
+  QObject *p = parent();
 
-    return name_;
-}
-
-void NodeParam::set_name(const QString &name)
-{
-    name_ = name;
-}
-
-Node *NodeParam::parentNode() const
-{
-    QObject* p = parent();
-
-    while (p != nullptr) {
-        // Determine if this object is a Node or not
-        Node* cast_test = dynamic_cast<Node*>(p);
-        if (cast_test != nullptr) {
-            return cast_test;
-        }
-
-        p = p->parent();
+  while (p != nullptr) {
+    // Determine if this object is a Node or not
+    Node *cast_test = dynamic_cast<Node *>(p);
+    if (cast_test != nullptr) {
+      return cast_test;
     }
 
+    p = p->parent();
+  }
+
+  return nullptr;
+}
+
+int NodeParam::index() { return parentNode()->IndexOfParameter(this); }
+
+bool NodeParam::IsConnected() const { return !edges_.isEmpty(); }
+
+bool NodeParam::IsConnectable() const { return connectable_; }
+
+void NodeParam::SetConnectable(bool connectable) { connectable_ = connectable; }
+
+const QVector<NodeEdgePtr> &NodeParam::edges() { return edges_; }
+
+void NodeParam::DisconnectAll() {
+  while (!edges_.isEmpty()) {
+    DisconnectEdge(edges_.first());
+  }
+}
+
+NodeEdgePtr NodeParam::ConnectEdge(NodeOutput *output, NodeInput *input) {
+  if (!input->IsConnectable()) {
     return nullptr;
-}
+  }
 
-int NodeParam::index()
-{
-    return parentNode()->IndexOfParameter(this);
-}
+  // If the input can only accept one input (the default) and has one already, disconnect it
+  DisconnectForNewOutput(input);
 
-bool NodeParam::IsConnected() const
-{
-    return !edges_.isEmpty();
-}
-
-bool NodeParam::IsConnectable() const
-{
-    return connectable_;
-}
-
-void NodeParam::SetConnectable(bool connectable)
-{
-    connectable_ = connectable;
-}
-
-const QVector<NodeEdgePtr> &NodeParam::edges()
-{
-    return edges_;
-}
-
-void NodeParam::DisconnectAll()
-{
-    while (!edges_.isEmpty()) {
-        DisconnectEdge(edges_.first());
+  // Make sure it's not a duplicate of an edge that already exists
+  foreach (NodeEdgePtr existing, input->edges()) {
+    if (existing->output() == output) {
+      return nullptr;
     }
+  }
+
+  // Ensure both nodes are in the same graph
+  Q_ASSERT(output->parentNode()->parent() == input->parentNode()->parent());
+
+  NodeEdgePtr edge = std::make_shared<NodeEdge>(output, input);
+
+  // The nodes should never be the same, and since we lock both nodes here, this can lead to a entire program freeze
+  // that's difficult to diagnose. This makes that issue very clear.
+  Q_ASSERT(output->parentNode() != input->parentNode());
+
+  output->edges_.append(edge);
+  input->edges_.append(edge);
+
+  // Emit a signal than an edge was added (only one signal needs emitting)
+  emit input->EdgeAdded(edge);
+
+  return edge;
 }
 
-NodeEdgePtr NodeParam::ConnectEdge(NodeOutput *output, NodeInput *input)
-{
-    if (!input->IsConnectable()) {
-        return nullptr;
+void NodeParam::DisconnectEdge(NodeEdgePtr edge) {
+  NodeOutput *output = edge->output();
+  NodeInput *input = edge->input();
+
+  output->edges_.removeOne(edge);
+  input->edges_.removeOne(edge);
+
+  emit input->EdgeRemoved(edge);
+}
+
+void NodeParam::DisconnectEdge(NodeOutput *output, NodeInput *input) {
+  for (int i = 0; i < output->edges_.size(); i++) {
+    NodeEdgePtr edge = output->edges_.at(i);
+    if (edge->input() == input) {
+      DisconnectEdge(edge);
+      break;
     }
+  }
+}
 
-    // If the input can only accept one input (the default) and has one already, disconnect it
-    DisconnectForNewOutput(input);
+NodeEdgePtr NodeParam::DisconnectForNewOutput(NodeInput *input) {
+  // If the input can only accept one input (the default) and has one already, disconnect it
+  if (!input->edges_.isEmpty()) {
+    NodeEdgePtr edge = input->edges_.first();
 
-    // Make sure it's not a duplicate of an edge that already exists
-    foreach (NodeEdgePtr existing, input->edges()) {
-        if (existing->output() == output) {
-            return nullptr;
-        }
-    }
-
-    // Ensure both nodes are in the same graph
-    Q_ASSERT(output->parentNode()->parent() == input->parentNode()->parent());
-
-    NodeEdgePtr edge = std::make_shared<NodeEdge>(output, input);
-
-    // The nodes should never be the same, and since we lock both nodes here, this can lead to a entire program freeze
-    // that's difficult to diagnose. This makes that issue very clear.
-    Q_ASSERT(output->parentNode() != input->parentNode());
-
-    output->edges_.append(edge);
-    input->edges_.append(edge);
-
-    // Emit a signal than an edge was added (only one signal needs emitting)
-    emit input->EdgeAdded(edge);
+    DisconnectEdge(edge);
 
     return edge;
+  }
+
+  return nullptr;
 }
 
-void NodeParam::DisconnectEdge(NodeEdgePtr edge)
-{
-    NodeOutput* output = edge->output();
-    NodeInput* input = edge->input();
-
-    output->edges_.removeOne(edge);
-    input->edges_.removeOne(edge);
-
-    emit input->EdgeRemoved(edge);
-}
-
-void NodeParam::DisconnectEdge(NodeOutput *output, NodeInput *input)
-{
-    for (int i=0; i<output->edges_.size(); i++) {
-        NodeEdgePtr edge = output->edges_.at(i);
-        if (edge->input() == input) {
-            DisconnectEdge(edge);
-            break;
-        }
-    }
-}
-
-NodeEdgePtr NodeParam::DisconnectForNewOutput(NodeInput *input)
-{
-    // If the input can only accept one input (the default) and has one already, disconnect it
-    if (!input->edges_.isEmpty()) {
-        NodeEdgePtr edge = input->edges_.first();
-
-        DisconnectEdge(edge);
-
-        return edge;
-    }
-
-    return nullptr;
-}
-
-QByteArray NodeParam::ValueToBytes(const NodeParam::DataType &type, const QVariant &value)
-{
-    switch (type) {
+QByteArray NodeParam::ValueToBytes(const NodeParam::DataType &type, const QVariant &value) {
+  switch (type) {
     case kInt:
-        return ValueToBytesInternal<int>(value);
+      return ValueToBytesInternal<int>(value);
     case kFloat:
-        return ValueToBytesInternal<float>(value);
+      return ValueToBytesInternal<float>(value);
     case kColor:
-        return ValueToBytesInternal<QColor>(value);
+      return ValueToBytesInternal<QColor>(value);
     case kText:
-        return ValueToBytesInternal<QString>(value);
+      return ValueToBytesInternal<QString>(value);
     case kBoolean:
-        return ValueToBytesInternal<bool>(value);
+      return ValueToBytesInternal<bool>(value);
     case kFont:
-        return ValueToBytesInternal<QString>(value); // FIXME: This should probably be a QFont?
+      return ValueToBytesInternal<QString>(value);  // FIXME: This should probably be a QFont?
     case kFile:
-        return ValueToBytesInternal<QString>(value);
+      return ValueToBytesInternal<QString>(value);
     case kMatrix:
-        return ValueToBytesInternal<QMatrix4x4>(value);
+      return ValueToBytesInternal<QMatrix4x4>(value);
     case kRational:
-        return ValueToBytesInternal<rational>(value);
+      return ValueToBytesInternal<rational>(value);
     case kVec2:
-        return ValueToBytesInternal<QVector2D>(value);
+      return ValueToBytesInternal<QVector2D>(value);
     case kVec3:
-        return ValueToBytesInternal<QVector3D>(value);
+      return ValueToBytesInternal<QVector3D>(value);
     case kVec4:
-        return ValueToBytesInternal<QVector4D>(value);
+      return ValueToBytesInternal<QVector4D>(value);
 
     // These types have no persistent input
     case kNone:
@@ -224,53 +189,51 @@ QByteArray NodeParam::ValueToBytes(const NodeParam::DataType &type, const QVaria
     case kBuffer:
     case kVector:
     case kAny:
-        break;
-    }
+      break;
+  }
 
-    return QByteArray();
+  return QByteArray();
 }
 
-NodeParam::DataType NodeParam::StringToDataType(const QString &s)
-{
-    QString type_id = s.toLower();
+NodeParam::DataType NodeParam::StringToDataType(const QString &s) {
+  QString type_id = s.toLower();
 
-    if (type_id == "float") {
-        return kFloat;
-    } else if (type_id == "int") {
-        return kInt;
-    } else if (type_id == "rational") {
-        return kRational;
-    } else if (type_id == "bool") {
-        return kBoolean;
-    } else if (type_id == "color") {
-        return kColor;
-    } else if (type_id == "matrix") {
-        return kMatrix;
-    } else if (type_id == "text") {
-        return kText;
-    } else if (type_id == "texture") {
-        return kTexture;
-    } else if (type_id == "vec2") {
-        return kVec2;
-    } else if (type_id == "vec3") {
-        return kVec3;
-    } else if (type_id == "vec4") {
-        return kVec4;
-    }
+  if (type_id == "float") {
+    return kFloat;
+  } else if (type_id == "int") {
+    return kInt;
+  } else if (type_id == "rational") {
+    return kRational;
+  } else if (type_id == "bool") {
+    return kBoolean;
+  } else if (type_id == "color") {
+    return kColor;
+  } else if (type_id == "matrix") {
+    return kMatrix;
+  } else if (type_id == "text") {
+    return kText;
+  } else if (type_id == "texture") {
+    return kTexture;
+  } else if (type_id == "vec2") {
+    return kVec2;
+  } else if (type_id == "vec3") {
+    return kVec3;
+  } else if (type_id == "vec4") {
+    return kVec4;
+  }
 
-    return kAny;
+  return kAny;
 }
 
-template<typename T>
-QByteArray NodeParam::ValueToBytesInternal(const QVariant &v)
-{
-    QByteArray bytes;
+template <typename T>
+QByteArray NodeParam::ValueToBytesInternal(const QVariant &v) {
+  QByteArray bytes;
 
-    int size_of_type = sizeof(T);
+  int size_of_type = sizeof(T);
 
-    bytes.resize(size_of_type);
-    T raw_val = v.value<T>();
-    memcpy(bytes.data(), &raw_val, static_cast<size_t>(size_of_type));
+  bytes.resize(size_of_type);
+  T raw_val = v.value<T>();
+  memcpy(bytes.data(), &raw_val, static_cast<size_t>(size_of_type));
 
-    return bytes;
+  return bytes;
 }

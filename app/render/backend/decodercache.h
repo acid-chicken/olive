@@ -7,4 +7,4 @@
 
 using DecoderCache = RenderCache<Stream*, DecoderPtr>;
 
-#endif // DECODERCACHE_H
+#endif  // DECODERCACHE_H
