@@ -32,7 +32,7 @@ set(OLIVE_SOURCES
   render/backend/audiorenderbackend.cpp
   render/backend/audiorenderworker.h
   render/backend/audiorenderworker.cpp
-  
+
   render/backend/videorenderbackend.h
   render/backend/videorenderbackend.cpp
   render/backend/videorenderframecache.h
@@ -43,6 +43,6 @@ set(OLIVE_SOURCES
   render/backend/rendercache.h
   render/backend/colorprocessorcache.h
   render/backend/decodercache.h
-  
+
   PARENT_SCOPE
 )
