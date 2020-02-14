@@ -15,22 +15,22 @@ using OpenGLShaderPtr = std::shared_ptr<OpenGLShader>;
  */
 class OpenGLShader : public QOpenGLShaderProgram {
 public:
-  OpenGLShader();
+    OpenGLShader();
 
-  static OpenGLShaderPtr CreateDefault(const QString &function_name = QString(),
+    static OpenGLShaderPtr CreateDefault(const QString &function_name = QString(),
+                                         const QString &shader_code = QString());
+
+    static OpenGLShaderPtr CreateOCIO(QOpenGLContext* ctx,
+                                      GLuint& lut_texture,
+                                      OCIO::ConstProcessorRcPtr processor,
+                                      bool alpha_is_associated);
+
+    static QString CodeDefaultFragment(const QString &function_name = QString(),
                                        const QString &shader_code = QString());
-
-  static OpenGLShaderPtr CreateOCIO(QOpenGLContext* ctx,
-                                    GLuint& lut_texture,
-                                    OCIO::ConstProcessorRcPtr processor,
-                                    bool alpha_is_associated);
-
-  static QString CodeDefaultFragment(const QString &function_name = QString(),
-                                     const QString &shader_code = QString());
-  static QString CodeDefaultVertex();
-  static QString CodeAlphaDisassociate(const QString& function_name);
-  static QString CodeAlphaReassociate(const QString& function_name);
-  static QString CodeAlphaAssociate(const QString& function_name);
+    static QString CodeDefaultVertex();
+    static QString CodeAlphaDisassociate(const QString& function_name);
+    static QString CodeAlphaReassociate(const QString& function_name);
+    static QString CodeAlphaAssociate(const QString& function_name);
 
 };
 

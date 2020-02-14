@@ -40,36 +40,36 @@
  * @brief Olive's main window responsible for docking widgets and the main menu bar.
  */
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
 
 public slots:
-  void ProjectOpen(Project *p);
-  void SetFullscreen(bool fullscreen);
-  void ToggleMaximizedPanel();
+    void ProjectOpen(Project *p);
+    void SetFullscreen(bool fullscreen);
+    void ToggleMaximizedPanel();
 
-  void SetDefaultLayout();
+    void SetDefaultLayout();
 
 protected:
-  virtual void closeEvent(QCloseEvent* e) override;
+    virtual void closeEvent(QCloseEvent* e) override;
 
 private:
-  void UpdateTitle();
+    void UpdateTitle();
 
-  QByteArray premaximized_state_;
+    QByteArray premaximized_state_;
 
-  // Standard panels
-  NodePanel* node_panel_;
-  ParamPanel* param_panel_;
-  ViewerPanel* viewer_panel_;
-  FootageViewerPanel* footage_viewer_panel_;
-  ProjectPanel* project_panel_;
-  ToolPanel* tool_panel_;
-  TimelinePanel* timeline_panel_;
-  AudioMonitorPanel* audio_monitor_panel_;
-  TaskManagerPanel* task_man_panel_;
-  CurvePanel* curve_panel_;
+    // Standard panels
+    NodePanel* node_panel_;
+    ParamPanel* param_panel_;
+    ViewerPanel* viewer_panel_;
+    FootageViewerPanel* footage_viewer_panel_;
+    ProjectPanel* project_panel_;
+    ToolPanel* tool_panel_;
+    TimelinePanel* timeline_panel_;
+    AudioMonitorPanel* audio_monitor_panel_;
+    TaskManagerPanel* task_man_panel_;
+    CurvePanel* curve_panel_;
 
 };
 
