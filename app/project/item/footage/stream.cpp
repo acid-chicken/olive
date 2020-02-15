@@ -23,142 +23,77 @@
 #include "footage.h"
 #include "ui/icons/icons.h"
 
-Stream::Stream() :
-    footage_(nullptr),
-    type_(kUnknown),
-    enabled_(true)
-{
+Stream::Stream() : footage_(nullptr), type_(kUnknown), enabled_(true) {}
 
+Stream::~Stream() {}
+
+void Stream::Load(QXmlStreamReader *reader) { LoadCustomParameters(reader); }
+
+void Stream::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement("stream");
+
+  writer->writeAttribute("ptr", QString::number(reinterpret_cast<quintptr>(this)));
+
+  writer->writeAttribute("index", QString::number(index_));
+
+  SaveCustomParameters(writer);
+
+  writer->writeEndElement();  // stream
 }
 
-Stream::~Stream()
-{
+QString Stream::description() const { return QCoreApplication::translate("Stream", "%1: Unknown").arg(index()); }
+
+const Stream::Type &Stream::type() const { return type_; }
+
+void Stream::set_type(const Stream::Type &type) { type_ = type; }
+
+Footage *Stream::footage() const { return footage_; }
+
+void Stream::set_footage(Footage *f) {
+  footage_ = f;
+  FootageSetEvent(footage_);
 }
 
-void Stream::Load(QXmlStreamReader *reader)
-{
-    LoadCustomParameters(reader);
-}
+const rational &Stream::timebase() const { return timebase_; }
 
-void Stream::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement("stream");
+void Stream::set_timebase(const rational &timebase) { timebase_ = timebase; }
 
-    writer->writeAttribute("ptr", QString::number(reinterpret_cast<quintptr>(this)));
+const int &Stream::index() const { return index_; }
 
-    writer->writeAttribute("index", QString::number(index_));
+void Stream::set_index(const int &index) { index_ = index; }
 
-    SaveCustomParameters(writer);
+const int64_t &Stream::duration() const { return duration_; }
 
-    writer->writeEndElement(); // stream
-}
+void Stream::set_duration(const int64_t &duration) { duration_ = duration; }
 
-QString Stream::description() const
-{
-    return QCoreApplication::translate("Stream", "%1: Unknown").arg(index());
-}
+bool Stream::enabled() const { return enabled_; }
 
-const Stream::Type &Stream::type() const
-{
-    return type_;
-}
+void Stream::set_enabled(bool e) { enabled_ = e; }
 
-void Stream::set_type(const Stream::Type &type)
-{
-    type_ = type;
-}
-
-Footage *Stream::footage() const
-{
-    return footage_;
-}
-
-void Stream::set_footage(Footage *f)
-{
-    footage_ = f;
-    FootageSetEvent(footage_);
-}
-
-const rational &Stream::timebase() const
-{
-    return timebase_;
-}
-
-void Stream::set_timebase(const rational &timebase)
-{
-    timebase_ = timebase;
-}
-
-const int &Stream::index() const
-{
-    return index_;
-}
-
-void Stream::set_index(const int &index)
-{
-    index_ = index;
-}
-
-const int64_t &Stream::duration() const
-{
-    return duration_;
-}
-
-void Stream::set_duration(const int64_t &duration)
-{
-    duration_ = duration;
-}
-
-bool Stream::enabled() const
-{
-    return enabled_;
-}
-
-void Stream::set_enabled(bool e)
-{
-    enabled_ = e;
-}
-
-QIcon Stream::IconFromType(const Stream::Type &type)
-{
-    switch (type) {
+QIcon Stream::IconFromType(const Stream::Type &type) {
+  switch (type) {
     case Stream::kVideo:
-        return icon::Video;
+      return icon::Video;
     case Stream::kImage:
-        return icon::Image;
+      return icon::Image;
     case Stream::kAudio:
-        return icon::Audio;
+      return icon::Audio;
     default:
-        break;
-    }
+      break;
+  }
 
-    return QIcon();
+  return QIcon();
 }
 
-StreamID Stream::ToID() const
-{
-    return StreamID(footage_->filename(), index_);
-}
+StreamID Stream::ToID() const { return StreamID(footage_->filename(), index_); }
 
-QMutex* Stream::index_process_lock()
-{
-    return &index_process_lock_;
-}
+QMutex *Stream::index_process_lock() { return &index_process_lock_; }
 
-void Stream::FootageSetEvent(Footage*)
-{
-}
+void Stream::FootageSetEvent(Footage *) {}
 
-void Stream::LoadCustomParameters(QXmlStreamReader*)
-{
-}
+void Stream::LoadCustomParameters(QXmlStreamReader *) {}
 
-void Stream::SaveCustomParameters(QXmlStreamWriter*) const
-{
-}
+void Stream::SaveCustomParameters(QXmlStreamWriter *) const {}
 
-StreamID::StreamID(const QString &filename, const int &stream_index) :
-    filename_(filename),
-    stream_index_(stream_index)
-{
-}
+StreamID::StreamID(const QString &filename, const int &stream_index)
+    : filename_(filename), stream_index_(stream_index) {}
