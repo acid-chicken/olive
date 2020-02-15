@@ -2,7 +2,7 @@
 <effect id="org.olivevideoeditor.Olive.gaussianblur">
     <!-- Effect Name -->
     <name lang="en_US">Stroke</name>
-    
+
     <!-- Effect Category -->
     <category lang="en_US">Stylize</category>
     <category lang="en_GB">Stylise</category>

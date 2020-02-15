@@ -17,12 +17,12 @@ void main(void) {
         gl_FragColor = texture2D(tex_in, ove_texcoord);
         return;
     }
-    
+
     // We only sample on hard pixels, so we don't accept decimal radii
     float real_radius = ceil(radius_in);
 
     // Calculate the weight of each pixel based on the radius
-    float divider = 1.0 / real_radius;      
+    float divider = 1.0 / real_radius;
 
     vec4 composite = vec4(0.0);
     for (float i=-real_radius+0.5;i<=real_radius;i+=2.0) {

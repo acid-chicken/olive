@@ -2,7 +2,7 @@
 <effect id="org.olivevideoeditor.Olive.gaussianblur">
     <!-- Effect Name -->
     <name lang="en_US">Gaussian Blur</name>
-    
+
     <!-- Effect Category -->
     <category lang="en_US">Blur</category>
 
@@ -22,7 +22,7 @@
         <min>0</min>
         <default>5.5</default>
     </param>
-    
+
     <!-- Parameter: Horizontal Enable -->
     <param id="horiz_in" type="bool">
         <name lang="en_US">Horizontal</name>
