@@ -26,169 +26,169 @@
 #include "render/pixelservice.h"
 
 OpenGLTexture::OpenGLTexture() :
-  created_ctx_(nullptr),
-  texture_(0),
-  width_(0),
-  height_(0),
-  format_(PixelFormat::PIX_FMT_INVALID)
+    created_ctx_(nullptr),
+    texture_(0),
+    width_(0),
+    height_(0),
+    format_(PixelFormat::PIX_FMT_INVALID)
 {
 }
 
 OpenGLTexture::~OpenGLTexture()
 {
-  Destroy();
+    Destroy();
 }
 
 bool OpenGLTexture::IsCreated() const
 {
-  return (texture_);
+    return (texture_);
 }
 
 void OpenGLTexture::Create(QOpenGLContext *ctx, int width, int height, const PixelFormat::Format &format, const void* data)
 {
-  if (!ctx) {
-    qWarning() << "OpenGLTexture::Create was passed an invalid context";
-    return;
-  }
+    if (!ctx) {
+        qWarning() << "OpenGLTexture::Create was passed an invalid context";
+        return;
+    }
 
-  Destroy();
+    Destroy();
 
-  created_ctx_ = ctx;
-  width_ = width;
-  height_ = height;
-  format_ = format;
+    created_ctx_ = ctx;
+    width_ = width;
+    height_ = height;
+    format_ = format;
 
-  connect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
+    connect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
 
-  // Create main texture
-  CreateInternal(created_ctx_, &texture_, data);
+    // Create main texture
+    CreateInternal(created_ctx_, &texture_, data);
 }
 
 void OpenGLTexture::Create(QOpenGLContext *ctx, FramePtr frame)
 {
-  Create(ctx, frame->width(), frame->height(), frame->format(), frame->data());
+    Create(ctx, frame->width(), frame->height(), frame->format(), frame->data());
 }
 
 void OpenGLTexture::Destroy()
 {
-  if (created_ctx_) {
-    disconnect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
+    if (created_ctx_) {
+        disconnect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
 
-    created_ctx_->functions()->glDeleteTextures(1, &texture_);
-    texture_ = 0;
+        created_ctx_->functions()->glDeleteTextures(1, &texture_);
+        texture_ = 0;
 
-    created_ctx_ = nullptr;
-  }
+        created_ctx_ = nullptr;
+    }
 }
 
 void OpenGLTexture::Bind()
 {
-  QOpenGLContext* context = QOpenGLContext::currentContext();
+    QOpenGLContext* context = QOpenGLContext::currentContext();
 
-  if (!context) {
-    qWarning() << "OpenGLTexture::Bind() called with an invalid context";
-    return;
-  }
+    if (!context) {
+        qWarning() << "OpenGLTexture::Bind() called with an invalid context";
+        return;
+    }
 
-  context->functions()->glBindTexture(GL_TEXTURE_2D, texture_);
+    context->functions()->glBindTexture(GL_TEXTURE_2D, texture_);
 }
 
 void OpenGLTexture::Release()
 {
-  QOpenGLContext* context = QOpenGLContext::currentContext();
+    QOpenGLContext* context = QOpenGLContext::currentContext();
 
-  if (!context) {
-    qWarning() << "OpenGLTexture::Release() called with an invalid context";
-    return;
-  }
+    if (!context) {
+        qWarning() << "OpenGLTexture::Release() called with an invalid context";
+        return;
+    }
 
-  context->functions()->glBindTexture(GL_TEXTURE_2D, 0);
+    context->functions()->glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 const int &OpenGLTexture::width() const
 {
-  return width_;
+    return width_;
 }
 
 const int &OpenGLTexture::height() const
 {
-  return height_;
+    return height_;
 }
 
 const PixelFormat::Format &OpenGLTexture::format() const
 {
-  return format_;
+    return format_;
 }
 
 const GLuint &OpenGLTexture::texture() const
 {
-  return texture_;
+    return texture_;
 }
 
 void OpenGLTexture::Upload(const void *data)
 {
-  if (!IsCreated()) {
-    qWarning() << "OpenGLTexture::Upload() called while it wasn't created";
-    return;
-  }
+    if (!IsCreated()) {
+        qWarning() << "OpenGLTexture::Upload() called while it wasn't created";
+        return;
+    }
 
-  QOpenGLContext* context = QOpenGLContext::currentContext();
+    QOpenGLContext* context = QOpenGLContext::currentContext();
 
-  if (!context) {
-    qWarning() << "OpenGLTexture::Release() called with an invalid context";
-    return;
-  }
+    if (!context) {
+        qWarning() << "OpenGLTexture::Release() called with an invalid context";
+        return;
+    }
 
-  Bind();
+    Bind();
 
-  PixelFormat::Info info = PixelService::GetPixelFormatInfo(format_);
+    PixelFormat::Info info = PixelService::GetPixelFormatInfo(format_);
 
-  context->functions()->glTexSubImage2D(GL_TEXTURE_2D,
-                                        0,
-                                        0,
-                                        0,
-                                        width_,
-                                        height_,
-                                        info.pixel_format,
-                                        info.gl_pixel_type,
-                                        data);
+    context->functions()->glTexSubImage2D(GL_TEXTURE_2D,
+                                          0,
+                                          0,
+                                          0,
+                                          width_,
+                                          height_,
+                                          info.pixel_format,
+                                          info.gl_pixel_type,
+                                          data);
 
-  Release();
+    Release();
 }
 
 void OpenGLTexture::CreateInternal(QOpenGLContext* create_ctx, GLuint* tex, const void *data)
 {
-  QOpenGLFunctions* f = create_ctx->functions();
+    QOpenGLFunctions* f = create_ctx->functions();
 
-  // Create texture
-  f->glGenTextures(1, tex);
+    // Create texture
+    f->glGenTextures(1, tex);
 
-  // Verify texture
-  if (texture_ == 0) {
-    qWarning() << "OpenGL texture creation failed";
-    return;
-  }
+    // Verify texture
+    if (texture_ == 0) {
+        qWarning() << "OpenGL texture creation failed";
+        return;
+    }
 
-  // Bind texture
-  f->glBindTexture(GL_TEXTURE_2D, *tex);
+    // Bind texture
+    f->glBindTexture(GL_TEXTURE_2D, *tex);
 
-  // Allocate storage for texture
-  const PixelFormat::Info& bit_depth = PixelService::GetPixelFormatInfo(format_);
+    // Allocate storage for texture
+    const PixelFormat::Info& bit_depth = PixelService::GetPixelFormatInfo(format_);
 
-  f->glTexImage2D(GL_TEXTURE_2D,
-                  0,
-                  bit_depth.internal_format,
-                  width_,
-                  height_,
-                  0,
-                  bit_depth.pixel_format,
-                  bit_depth.gl_pixel_type,
-                  data);
+    f->glTexImage2D(GL_TEXTURE_2D,
+                    0,
+                    bit_depth.internal_format,
+                    width_,
+                    height_,
+                    0,
+                    bit_depth.pixel_format,
+                    bit_depth.gl_pixel_type,
+                    data);
 
-  // Set texture filtering to bilinear
-  f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Set texture filtering to bilinear
+    f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  // Release texture
-  f->glBindTexture(GL_TEXTURE_2D, 0);
+    // Release texture
+    f->glBindTexture(GL_TEXTURE_2D, 0);
 }
