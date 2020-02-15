@@ -41,121 +41,121 @@
 class NodeViewItem : public QGraphicsRectItem
 {
 public:
-  NodeViewItem(QGraphicsItem* parent = nullptr);
+    NodeViewItem(QGraphicsItem* parent = nullptr);
 
-  /**
-   * @brief Set the Node to correspond to this widget
-   */
-  void SetNode(Node* n);
+    /**
+     * @brief Set the Node to correspond to this widget
+     */
+    void SetNode(Node* n);
 
-  /**
-   * @brief Get currently attached noe
-   */
-  Node* node();
+    /**
+     * @brief Get currently attached noe
+     */
+    Node* node();
 
-  /**
-   * @brief Get expanded state
-   */
-  bool IsExpanded();
+    /**
+     * @brief Get expanded state
+     */
+    bool IsExpanded();
 
-  /**
-   * @brief Set expanded state
-   */
-  void SetExpanded(bool e);
-  void ToggleExpanded();
+    /**
+     * @brief Set expanded state
+     */
+    void SetExpanded(bool e);
+    void ToggleExpanded();
 
-  /**
-   * @brief Get the rectangle of a specific parameter connector
-   *
-   * Useful for drawing parameter connectors (white squares where the Node edges attach) or determining whether a click
-   * or drag occurred within one.
-   *
-   * @param index
-   *
-   * Index of the parameter of this node (see NodeParam::index()).
-   */
-  QRectF GetParameterConnectorRect(int index);
+    /**
+     * @brief Get the rectangle of a specific parameter connector
+     *
+     * Useful for drawing parameter connectors (white squares where the Node edges attach) or determining whether a click
+     * or drag occurred within one.
+     *
+     * @param index
+     *
+     * Index of the parameter of this node (see NodeParam::index()).
+     */
+    QRectF GetParameterConnectorRect(int index);
 
 protected:
-  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
-  virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-  virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-  virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-  virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
-  virtual QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
+    virtual QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value) override;
 
 private:
-  /**
-   * @brief Get the relative position to draw text for a parameter at a certain index
-   */
-  QPointF GetParameterTextPoint(int index);
+    /**
+     * @brief Get the relative position to draw text for a parameter at a certain index
+     */
+    QPointF GetParameterTextPoint(int index);
 
-  /**
-   * @brief Variable for the expand/collapse button rect (stored for clicking)
-   */
-  QRectF expand_hitbox_;
+    /**
+     * @brief Variable for the expand/collapse button rect (stored for clicking)
+     */
+    QRectF expand_hitbox_;
 
-  /**
-   * @brief Reference to attached Node
-   */
-  Node* node_;
+    /**
+     * @brief Reference to attached Node
+     */
+    Node* node_;
 
-  /**
-   * @brief A QWidget that can receive CSS properties that NodeViewItem can use
-   *
-   * \see NodeViewItemWidget
-   */
-  NodeViewItemWidget css_proxy_;
+    /**
+     * @brief A QWidget that can receive CSS properties that NodeViewItem can use
+     *
+     * \see NodeViewItemWidget
+     */
+    NodeViewItemWidget css_proxy_;
 
-  /**
-   * @brief Rectangle of the Node's title bar (equal to rect() when collapsed)
-   */
-  QRectF title_bar_rect_;
+    /**
+     * @brief Rectangle of the Node's title bar (equal to rect() when collapsed)
+     */
+    QRectF title_bar_rect_;
 
-  /**
-   * @brief Rectangle of the Node's content (zero-size when collapsed, (rect() - title_bar_rect_) when expanded)
-   */
-  QRectF content_rect_;
+    /**
+     * @brief Rectangle of the Node's content (zero-size when collapsed, (rect() - title_bar_rect_) when expanded)
+     */
+    QRectF content_rect_;
 
-  /// Used to determine certain padding/margin variables for high DPI support
-  QFont font;
-  QFontMetrics font_metrics;
+    /// Used to determine certain padding/margin variables for high DPI support
+    QFont font;
+    QFontMetrics font_metrics;
 
-  /// Edge dragging variables
-  NodeViewEdge* dragging_edge_;
-  QPointF dragging_edge_start_;
-  NodeParam* drag_src_param_;
-  NodeParam* drag_dest_param_;
-  NodeViewItem* drag_source_;
-  NodeViewItem* drag_expanded_item_;
+    /// Edge dragging variables
+    NodeViewEdge* dragging_edge_;
+    QPointF dragging_edge_start_;
+    NodeParam* drag_src_param_;
+    NodeParam* drag_dest_param_;
+    NodeViewItem* drag_source_;
+    NodeViewItem* drag_expanded_item_;
 
-  /// Sizing variables to use when drawing
-  int node_connector_size_;
-  int node_text_padding_;
-  int node_icon_padding_;
-  int node_border_width_;
+    /// Sizing variables to use when drawing
+    int node_connector_size_;
+    int node_text_padding_;
+    int node_icon_padding_;
+    int node_border_width_;
 
-  /**
-   * @brief Expanded state
-   */
-  bool expanded_;
+    /**
+     * @brief Expanded state
+     */
+    bool expanded_;
 
-  /**
-   * @brief Current click mode
-   *
-   * \see mousePressEvent()
-   */
-  bool standard_click_;
+    /**
+     * @brief Current click mode
+     *
+     * \see mousePressEvent()
+     */
+    bool standard_click_;
 
-  /**
-   * @brief QUndoCommand for creating and deleting edges by dragging
-   *
-   * \see mousePressEvent()
-   * \see mouseReleaseEvent()
-   */
-  QUndoCommand* node_edge_change_command_;
+    /**
+     * @brief QUndoCommand for creating and deleting edges by dragging
+     *
+     * \see mousePressEvent()
+     * \see mouseReleaseEvent()
+     */
+    QUndoCommand* node_edge_change_command_;
 
 };
 
