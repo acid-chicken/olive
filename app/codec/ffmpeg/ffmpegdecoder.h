@@ -41,102 +41,102 @@ extern "C" {
  */
 class FFmpegDecoder : public Decoder
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  // Constructor
-  FFmpegDecoder();
+    // Constructor
+    FFmpegDecoder();
 
-  // Destructor
-  virtual ~FFmpegDecoder() override;
+    // Destructor
+    virtual ~FFmpegDecoder() override;
 
-  virtual bool Probe(Footage *f, const QAtomicInt *cancelled) override;
+    virtual bool Probe(Footage *f, const QAtomicInt *cancelled) override;
 
-  virtual bool Open() override;
-  virtual RetrieveState GetRetrieveState(const rational &time) override;
-  virtual FramePtr RetrieveVideo(const rational &timecode) override;
-  virtual FramePtr RetrieveAudio(const rational &timecode, const rational &length, const AudioRenderingParams& params) override;
-  virtual void Close() override;
+    virtual bool Open() override;
+    virtual RetrieveState GetRetrieveState(const rational &time) override;
+    virtual FramePtr RetrieveVideo(const rational &timecode) override;
+    virtual FramePtr RetrieveAudio(const rational &timecode, const rational &length, const AudioRenderingParams& params) override;
+    virtual void Close() override;
 
-  virtual QString id() override;
+    virtual QString id() override;
 
-  virtual bool SupportsVideo() override;
-  virtual bool SupportsAudio() override;
+    virtual bool SupportsVideo() override;
+    virtual bool SupportsAudio() override;
 
-  virtual void Index(const QAtomicInt *cancelled) override;
+    virtual void Index(const QAtomicInt *cancelled) override;
 
 signals:
-  void ConsumedMemory();
+    void ConsumedMemory();
 
 private:
-  /**
-   * @brief Handle an error
-   *
-   * Immediately closes the Decoder (freeing memory resources) and sends the string provided to the warning stream.
-   * As this function closes the Decoder, no further Decoder functions should be performed after this is called
-   * (unless the Decoder is opened again first).
-   */
-  void Error(const QString& s);
+    /**
+     * @brief Handle an error
+     *
+     * Immediately closes the Decoder (freeing memory resources) and sends the string provided to the warning stream.
+     * As this function closes the Decoder, no further Decoder functions should be performed after this is called
+     * (unless the Decoder is opened again first).
+     */
+    void Error(const QString& s);
 
-  /**
-   * @brief Handle an FFmpeg error code
-   *
-   * Uses the FFmpeg API to retrieve a descriptive string for this error code and sends it to Error(). As such, this
-   * function also automatically closes the Decoder.
-   *
-   * @param error_code
-   */
-  void FFmpegError(int error_code);
+    /**
+     * @brief Handle an FFmpeg error code
+     *
+     * Uses the FFmpeg API to retrieve a descriptive string for this error code and sends it to Error(). As such, this
+     * function also automatically closes the Decoder.
+     *
+     * @param error_code
+     */
+    void FFmpegError(int error_code);
 
-  /**
-   * @brief Uses the FFmpeg API to retrieve a packet (stored in pkt_) and decode it (stored in frame_)
-   *
-   * @return
-   *
-   * An FFmpeg error code, or >= 0 on success
-   */
-  int GetFrame(AVPacket* pkt, AVFrame* frame);
+    /**
+     * @brief Uses the FFmpeg API to retrieve a packet (stored in pkt_) and decode it (stored in frame_)
+     *
+     * @return
+     *
+     * An FFmpeg error code, or >= 0 on success
+     */
+    int GetFrame(AVPacket* pkt, AVFrame* frame);
 
-  virtual QString GetIndexFilename() override;
+    virtual QString GetIndexFilename() override;
 
-  void UnconditionalAudioIndex(const QAtomicInt* cancelled);
+    void UnconditionalAudioIndex(const QAtomicInt* cancelled);
 
-  void Seek(int64_t timestamp);
+    void Seek(int64_t timestamp);
 
-  void CacheFrameToDisk(AVFrame* f);
+    void CacheFrameToDisk(AVFrame* f);
 
-  void RemoveFirstFromFrameCache();
-  void RemoveLastFromFrameCache();
-  void ClearFrameCache();
+    void RemoveFirstFromFrameCache();
+    void RemoveLastFromFrameCache();
+    void ClearFrameCache();
 
-  void ClearResources();
+    void ClearResources();
 
-  AVFormatContext* fmt_ctx_;
-  AVCodecContext* codec_ctx_;
-  AVStream* avstream_;
+    AVFormatContext* fmt_ctx_;
+    AVCodecContext* codec_ctx_;
+    AVStream* avstream_;
 
-  AVPixelFormat ideal_pix_fmt_;
-  PixelFormat::Format native_pix_fmt_;
+    AVPixelFormat ideal_pix_fmt_;
+    PixelFormat::Format native_pix_fmt_;
 
-  SwsContext* scale_ctx_;
+    SwsContext* scale_ctx_;
 
-  QList<AVFrame*> cached_frames_;
-  bool cache_at_zero_;
-  bool cache_at_eof_;
+    QList<AVFrame*> cached_frames_;
+    bool cache_at_zero_;
+    bool cache_at_eof_;
 
-  int64_t second_ts_;
+    int64_t second_ts_;
 
-  AVDictionary* opts_;
+    AVDictionary* opts_;
 
-  QTimer clear_timer_;
+    QTimer clear_timer_;
 
-  QAtomicInt allow_clear_event_;
+    QAtomicInt allow_clear_event_;
 
 private slots:
-  void FreeMemory();
+    void FreeMemory();
 
-  void ClearTimerEvent();
+    void ClearTimerEvent();
 
-  void RestartClearTimer();
+    void RestartClearTimer();
 
 };
 
