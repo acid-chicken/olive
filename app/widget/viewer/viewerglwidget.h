@@ -45,168 +45,168 @@
  */
 class ViewerGLWidget : public QOpenGLWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /**
-   * @brief ViewerGLWidget Constructor
-   *
-   * @param parent
-   *
-   * QWidget parent.
-   */
-  ViewerGLWidget(QWidget* parent = nullptr);
+    /**
+     * @brief ViewerGLWidget Constructor
+     *
+     * @param parent
+     *
+     * QWidget parent.
+     */
+    ViewerGLWidget(QWidget* parent = nullptr);
 
-  virtual ~ViewerGLWidget() override;
+    virtual ~ViewerGLWidget() override;
 
-  /**
-   * @brief Connect a ColorManager (ColorManagers usually belong to the Project)
-   */
-  void ConnectColorManager(ColorManager* color_manager);
+    /**
+     * @brief Connect a ColorManager (ColorManagers usually belong to the Project)
+     */
+    void ConnectColorManager(ColorManager* color_manager);
 
-  /**
-   * @brief Disconnect a ColorManager (equivalent to ConnectColorManager(nullptr))
-   */
-  void DisconnectColorManager();
+    /**
+     * @brief Disconnect a ColorManager (equivalent to ConnectColorManager(nullptr))
+     */
+    void DisconnectColorManager();
 
-  /**
-   * @brief Set the transformation matrix to draw with
-   *
-   * Set this if you want the drawing to pass through some sort of transform (most of the time you won't want this).
-   */
-  void SetMatrix(const QMatrix4x4& mat);
+    /**
+     * @brief Set the transformation matrix to draw with
+     *
+     * Set this if you want the drawing to pass through some sort of transform (most of the time you won't want this).
+     */
+    void SetMatrix(const QMatrix4x4& mat);
 
-  /**
-   * @brief Set an image to load and display on screen
-   */
-  void SetImage(const QString& fn);
+    /**
+     * @brief Set an image to load and display on screen
+     */
+    void SetImage(const QString& fn);
 
 public slots:
-  /**
-   * @brief Set the texture to draw and draw it
-   *
-   * Use this function to update the viewer.
-   *
-   * @param tex
-   */
-  //void SetTexture(OpenGLTexturePtr tex);
+    /**
+     * @brief Set the texture to draw and draw it
+     *
+     * Use this function to update the viewer.
+     *
+     * @param tex
+     */
+    //void SetTexture(OpenGLTexturePtr tex);
 
-  void SetOCIOParameters(const QString& display, const QString& view, const QString& look);
+    void SetOCIOParameters(const QString& display, const QString& view, const QString& look);
 
-  /**
-   * @brief Externally set the OCIO display to use
-   *
-   * This value must be a valid display in the current OCIO configuration.
-   */
-  void SetOCIODisplay(const QString& display);
+    /**
+     * @brief Externally set the OCIO display to use
+     *
+     * This value must be a valid display in the current OCIO configuration.
+     */
+    void SetOCIODisplay(const QString& display);
 
-  /**
-   * @brief Externally set the OCIO view to use
-   *
-   * This value must be a valid display in the current OCIO configuration.
-   */
-  void SetOCIOView(const QString& view);
+    /**
+     * @brief Externally set the OCIO view to use
+     *
+     * This value must be a valid display in the current OCIO configuration.
+     */
+    void SetOCIOView(const QString& view);
 
-  /**
-   * @brief Externally set the OCIO look to use (use empty string if none)
-   *
-   * This value must be a valid display in the current OCIO configuration.
-   */
-  void SetOCIOLook(const QString& look);
+    /**
+     * @brief Externally set the OCIO look to use (use empty string if none)
+     *
+     * This value must be a valid display in the current OCIO configuration.
+     */
+    void SetOCIOLook(const QString& look);
 
-  ColorManager* color_manager() const;
+    ColorManager* color_manager() const;
 
-  const QString& ocio_display() const;
-  const QString& ocio_view() const;
-  const QString& ocio_look() const;
+    const QString& ocio_display() const;
+    const QString& ocio_view() const;
+    const QString& ocio_look() const;
 
 protected:
-  /**
-   * @brief Initialize function to set up the OpenGL context upon its construction
-   *
-   * Currently primarily used to regenerate the pipeline shader used for drawing.
-   */
-  virtual void initializeGL() override;
+    /**
+     * @brief Initialize function to set up the OpenGL context upon its construction
+     *
+     * Currently primarily used to regenerate the pipeline shader used for drawing.
+     */
+    virtual void initializeGL() override;
 
-  /**
-   * @brief Paint function to display the texture (received in SetTexture()) on screen.
-   *
-   * Simple OpenGL drawing function for painting the texture on screen. Standardized around OpenGL ES 3.2 Core.
-   */
-  virtual void paintGL() override;
+    /**
+     * @brief Paint function to display the texture (received in SetTexture()) on screen.
+     *
+     * Simple OpenGL drawing function for painting the texture on screen. Standardized around OpenGL ES 3.2 Core.
+     */
+    virtual void paintGL() override;
 
 private:
-  /**
-   * @brief Call this if this user has selected a different display/view/look to recreate the processor
-   */
-  void SetupColorProcessor();
+    /**
+     * @brief Call this if this user has selected a different display/view/look to recreate the processor
+     */
+    void SetupColorProcessor();
 
-  /**
-   * @brief Cleanup function
-   */
-  void ClearOCIOLutTexture();
+    /**
+     * @brief Cleanup function
+     */
+    void ClearOCIOLutTexture();
 
-  /**
-   * @brief Internal variable to set color space to
-   */
-  QString ocio_display_;
+    /**
+     * @brief Internal variable to set color space to
+     */
+    QString ocio_display_;
 
-  /**
-   * @brief Internal variable to set color space to
-   */
-  QString ocio_view_;
+    /**
+     * @brief Internal variable to set color space to
+     */
+    QString ocio_view_;
 
-  /**
-   * @brief Internal variable to set color space to
-   */
-  QString ocio_look_;
+    /**
+     * @brief Internal variable to set color space to
+     */
+    QString ocio_look_;
 
-  /**
-   * @brief Internal reference to the OpenGL texture to draw. Set in SetTexture() and used in paintGL().
-   */
-  OpenGLTexture texture_;
+    /**
+     * @brief Internal reference to the OpenGL texture to draw. Set in SetTexture() and used in paintGL().
+     */
+    OpenGLTexture texture_;
 
-  /**
-   * @brief Connected color manager
-   */
-  ColorManager* color_manager_;
+    /**
+     * @brief Connected color manager
+     */
+    ColorManager* color_manager_;
 
-  /**
-   * @brief Color management service
-   */
-  OpenGLColorProcessorPtr color_service_;
+    /**
+     * @brief Color management service
+     */
+    OpenGLColorProcessorPtr color_service_;
 
-  /**
-   * @brief Drawing matrix (defaults to identity)
-   */
-  QMatrix4x4 matrix_;
+    /**
+     * @brief Drawing matrix (defaults to identity)
+     */
+    QMatrix4x4 matrix_;
 
-  /**
-   * @brief Buffer to load images into RAM before sending them to the display
-   */
-  Frame load_buffer_;
+    /**
+     * @brief Buffer to load images into RAM before sending them to the display
+     */
+    Frame load_buffer_;
 
 #ifdef Q_OS_LINUX
-  static bool nouveau_check_done_;
+    static bool nouveau_check_done_;
 #endif
 
-  bool has_image_;
+    bool has_image_;
 
 private slots:
-  /**
-   * @brief Slot to connect just before the OpenGL context is destroyed to clean up resources
-   */
-  void ContextCleanup();
+    /**
+     * @brief Slot to connect just before the OpenGL context is destroyed to clean up resources
+     */
+    void ContextCleanup();
 
-  /**
-   * @brief Sets all color settings to the defaults pertaining to this configuration
-   */
-  void RefreshColorPipeline();
+    /**
+     * @brief Sets all color settings to the defaults pertaining to this configuration
+     */
+    void RefreshColorPipeline();
 
 #ifdef Q_OS_LINUX
-  /**
-   * @brief Shows warning messagebox if Nouveau is detected
-   */
-  void ShowNouveauWarning();
+    /**
+     * @brief Shows warning messagebox if Nouveau is detected
+     */
+    void ShowNouveauWarning();
 #endif
 
 };
