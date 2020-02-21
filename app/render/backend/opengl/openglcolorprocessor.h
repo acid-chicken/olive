@@ -7,45 +7,38 @@
 class OpenGLColorProcessor;
 using OpenGLColorProcessorPtr = std::shared_ptr<OpenGLColorProcessor>;
 
-class OpenGLColorProcessor : public QObject, public ColorProcessor
-{
-    Q_OBJECT
-public:
-    OpenGLColorProcessor(OCIO::ConstConfigRcPtr config, const QString &source_space, const QString &dest_space);
+class OpenGLColorProcessor : public QObject, public ColorProcessor {
+  Q_OBJECT
+ public:
+  OpenGLColorProcessor(OCIO::ConstConfigRcPtr config, const QString& source_space, const QString& dest_space);
 
-    OpenGLColorProcessor(OCIO::ConstConfigRcPtr config,
-                         const QString& source_space,
-                         QString display,
-                         QString view,
-                         const QString& look);
+  OpenGLColorProcessor(OCIO::ConstConfigRcPtr config, const QString& source_space, QString display, QString view,
+                       const QString& look);
 
-    ~OpenGLColorProcessor();
+  ~OpenGLColorProcessor();
 
-    static OpenGLColorProcessorPtr Create(OCIO::ConstConfigRcPtr config, const QString& source_space, const QString& dest_space);
+  static OpenGLColorProcessorPtr Create(OCIO::ConstConfigRcPtr config, const QString& source_space,
+                                        const QString& dest_space);
 
-    static OpenGLColorProcessorPtr Create(OCIO::ConstConfigRcPtr config,
-                                          const QString& source_space,
-                                          const QString& display,
-                                          const QString& view,
-                                          const QString& look);
+  static OpenGLColorProcessorPtr Create(OCIO::ConstConfigRcPtr config, const QString& source_space,
+                                        const QString& display, const QString& view, const QString& look);
 
-    void Enable(QOpenGLContext* context, bool alpha_is_associated);
-    bool IsEnabled() const;
+  void Enable(QOpenGLContext* context, bool alpha_is_associated);
+  bool IsEnabled() const;
 
-    OpenGLShaderPtr pipeline() const;
+  OpenGLShaderPtr pipeline() const;
 
-    void ProcessOpenGL(bool flipped = false, const QMatrix4x4& matrix = QMatrix4x4());
+  void ProcessOpenGL(bool flipped = false, const QMatrix4x4& matrix = QMatrix4x4());
 
-private:
-    QOpenGLContext* context_;
+ private:
+  QOpenGLContext* context_;
 
-    GLuint ocio_lut_;
+  GLuint ocio_lut_;
 
-    OpenGLShaderPtr pipeline_;
+  OpenGLShaderPtr pipeline_;
 
-private slots:
-    void ClearTexture();
-
+ private slots:
+  void ClearTexture();
 };
 
-#endif // OPENGLCOLORPROCESSOR_H
+#endif  // OPENGLCOLORPROCESSOR_H
