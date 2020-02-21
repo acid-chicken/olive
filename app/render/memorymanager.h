@@ -3,31 +3,29 @@
 
 #include <QObject>
 
-class MemoryManager : public QObject
-{
-    Q_OBJECT
-public:
-    MemoryManager(QObject* parent = nullptr);
+class MemoryManager : public QObject {
+  Q_OBJECT
+ public:
+  MemoryManager(QObject* parent = nullptr);
 
-    static void CreateInstance();
-    static MemoryManager* instance();
-    static void DestroyInstance();
+  static void CreateInstance();
+  static MemoryManager* instance();
+  static void DestroyInstance();
 
-    static bool ShouldFreeMemory();
+  static bool ShouldFreeMemory();
 
-public slots:
-    void ConsumedMemory();
+ public slots:
+  void ConsumedMemory();
 
-signals:
-    void FreeMemory();
+ signals:
+  void FreeMemory();
 
-private:
-    static uint64_t GetAvailableMemory();
+ private:
+  static uint64_t GetAvailableMemory();
 
-    static MemoryManager* instance_;
+  static MemoryManager* instance_;
 
-    static const uint64_t minimum_available_memory_;
-
+  static const uint64_t minimum_available_memory_;
 };
 
-#endif // MEMORYMANAGER_H
+#endif  // MEMORYMANAGER_H
