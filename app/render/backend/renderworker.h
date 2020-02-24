@@ -5,65 +5,65 @@
 
 #include "common/cancelableobject.h"
 #include "common/constructors.h"
-#include "node/output/track/track.h"
-#include "node/node.h"
 #include "decodercache.h"
+#include "node/node.h"
+#include "node/output/track/track.h"
 
-class RenderWorker : public QObject, public CancelableObject
-{
-    Q_OBJECT
-public:
-    RenderWorker(DecoderCache* decoder_cache, QObject* parent = nullptr);
+class RenderWorker : public QObject, public CancelableObject {
+  Q_OBJECT
+ public:
+  RenderWorker(DecoderCache* decoder_cache, QObject* parent = nullptr);
 
-    bool Init();
+  bool Init();
 
-    bool IsStarted();
+  bool IsStarted();
 
-public slots:
-    void Close();
+ public slots:
+  void Close();
 
-    void Render(NodeDependency CurrentPath, qint64 job_time);
+  void Render(NodeDependency CurrentPath, qint64 job_time);
 
-signals:
-    void CompletedCache(NodeDependency dep, NodeValueTable data, qint64 job_time);
+ signals:
+  void CompletedCache(NodeDependency dep, NodeValueTable data, qint64 job_time);
 
-    void FootageUnavailable(StreamPtr stream, Decoder::RetrieveState state, const TimeRange& range, const rational& stream_time);
+  void FootageUnavailable(StreamPtr stream, Decoder::RetrieveState state, const TimeRange& range,
+                          const rational& stream_time);
 
-protected:
-    virtual bool InitInternal() = 0;
+ protected:
+  virtual bool InitInternal() = 0;
 
-    virtual void CloseInternal() = 0;
+  virtual void CloseInternal() = 0;
 
-    virtual NodeValueTable RenderInternal(const NodeDependency& CurrentPath, const qint64& job_time);
+  virtual NodeValueTable RenderInternal(const NodeDependency& CurrentPath, const qint64& job_time);
 
-    virtual void RunNodeAccelerated(const Node *node, const TimeRange& range, const NodeValueDatabase &input_params, NodeValueTable* output_params);
+  virtual void RunNodeAccelerated(const Node* node, const TimeRange& range, const NodeValueDatabase& input_params,
+                                  NodeValueTable* output_params);
 
-    StreamPtr ResolveStreamFromInput(NodeInput* input);
-    DecoderPtr ResolveDecoderFromInput(StreamPtr stream);
+  StreamPtr ResolveStreamFromInput(NodeInput* input);
+  DecoderPtr ResolveDecoderFromInput(StreamPtr stream);
 
-    virtual FramePtr RetrieveFromDecoder(DecoderPtr decoder, const TimeRange& range) = 0;
+  virtual FramePtr RetrieveFromDecoder(DecoderPtr decoder, const TimeRange& range) = 0;
 
-    virtual void FrameToValue(StreamPtr stream, FramePtr frame, NodeValueTable* table) = 0;
+  virtual void FrameToValue(StreamPtr stream, FramePtr frame, NodeValueTable* table) = 0;
 
-    NodeValueTable ProcessNode(const NodeDependency &dep);
+  NodeValueTable ProcessNode(const NodeDependency& dep);
 
-    virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange& range) = 0;
+  virtual NodeValueTable RenderBlock(const TrackOutput* track, const TimeRange& range) = 0;
 
-    NodeValueTable ProcessInput(const NodeInput* input, const TimeRange &range);
+  NodeValueTable ProcessInput(const NodeInput* input, const TimeRange& range);
 
-    virtual void ReportUnavailableFootage(StreamPtr stream, Decoder::RetrieveState state, const rational& stream_time);
+  virtual void ReportUnavailableFootage(StreamPtr stream, Decoder::RetrieveState state, const rational& stream_time);
 
-    const NodeDependency& CurrentPath() const;
+  const NodeDependency& CurrentPath() const;
 
-private:
-    NodeValueDatabase GenerateDatabase(const Node *node, const TimeRange &range);
+ private:
+  NodeValueDatabase GenerateDatabase(const Node* node, const TimeRange& range);
 
-    bool started_;
+  bool started_;
 
-    DecoderCache* decoder_cache_;
+  DecoderCache* decoder_cache_;
 
-    NodeDependency path_;
-
+  NodeDependency path_;
 };
 
-#endif // RENDERWORKER_H
+#endif  // RENDERWORKER_H
