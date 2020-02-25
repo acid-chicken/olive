@@ -20,78 +20,42 @@
 
 #include "timeline.h"
 
-TimelinePanel::TimelinePanel(QWidget *parent) :
-    TimeBasedPanel(parent)
-{
-    // FIXME: This won't work if there's ever more than one of this panel
-    setObjectName("TimelinePanel");
+TimelinePanel::TimelinePanel(QWidget* parent) : TimeBasedPanel(parent) {
+  // FIXME: This won't work if there's ever more than one of this panel
+  setObjectName("TimelinePanel");
 
-    TimelineWidget* tw = new TimelineWidget();
-    SetTimeBasedWidget(tw);
+  TimelineWidget* tw = new TimelineWidget();
+  SetTimeBasedWidget(tw);
 
-    Retranslate();
+  Retranslate();
 
-    connect(tw, &TimelineWidget::SelectionChanged, this, &TimelinePanel::SelectionChanged);
+  connect(tw, &TimelineWidget::SelectionChanged, this, &TimelinePanel::SelectionChanged);
 }
 
-void TimelinePanel::Clear()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->Clear();
-}
+void TimelinePanel::Clear() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->Clear(); }
 
-void TimelinePanel::SplitAtPlayhead()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->SplitAtPlayhead();
-}
+void TimelinePanel::SplitAtPlayhead() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->SplitAtPlayhead(); }
 
-void TimelinePanel::SelectAll()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->SelectAll();
-}
+void TimelinePanel::SelectAll() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->SelectAll(); }
 
-void TimelinePanel::DeselectAll()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeselectAll();
-}
+void TimelinePanel::DeselectAll() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeselectAll(); }
 
-void TimelinePanel::RippleToIn()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToIn();
-}
+void TimelinePanel::RippleToIn() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToIn(); }
 
-void TimelinePanel::RippleToOut()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToOut();
-}
+void TimelinePanel::RippleToOut() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToOut(); }
 
-void TimelinePanel::EditToIn()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToIn();
-}
+void TimelinePanel::EditToIn() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToIn(); }
 
-void TimelinePanel::EditToOut()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToOut();
-}
+void TimelinePanel::EditToOut() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToOut(); }
 
-void TimelinePanel::DeleteSelected()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeleteSelected();
-}
+void TimelinePanel::DeleteSelected() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeleteSelected(); }
 
-void TimelinePanel::IncreaseTrackHeight()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->IncreaseTrackHeight();
-}
+void TimelinePanel::IncreaseTrackHeight() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->IncreaseTrackHeight(); }
 
-void TimelinePanel::DecreaseTrackHeight()
-{
-    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DecreaseTrackHeight();
-}
+void TimelinePanel::DecreaseTrackHeight() { static_cast<TimelineWidget*>(GetTimeBasedWidget())->DecreaseTrackHeight(); }
 
-void TimelinePanel::Retranslate()
-{
-    TimeBasedPanel::Retranslate();
+void TimelinePanel::Retranslate() {
+  TimeBasedPanel::Retranslate();
 
-    SetTitle(tr("Timeline"));
+  SetTitle(tr("Timeline"));
 }

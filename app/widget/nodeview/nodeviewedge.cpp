@@ -28,110 +28,98 @@
 #include "common/lerp.h"
 #include "nodeview.h"
 
-NodeViewEdge::NodeViewEdge(QGraphicsItem *parent) :
-    QGraphicsPathItem(parent),
-    edge_(nullptr),
-    color_group_(QPalette::Active),
-    color_role_(QPalette::Text)
-{
-    // Ensures this UI object is drawn behind other objects
-    setZValue(-1);
+NodeViewEdge::NodeViewEdge(QGraphicsItem *parent)
+    : QGraphicsPathItem(parent), edge_(nullptr), color_group_(QPalette::Active), color_role_(QPalette::Text) {
+  // Ensures this UI object is drawn behind other objects
+  setZValue(-1);
 
-    // Use font metrics to set edge width for basic high DPI support
-    edge_width_ = QFontMetrics(QFont()).height() / 12;
+  // Use font metrics to set edge width for basic high DPI support
+  edge_width_ = QFontMetrics(QFont()).height() / 12;
 }
 
-void NodeViewEdge::SetEdge(NodeEdgePtr edge)
-{
-    SetConnected(true);
+void NodeViewEdge::SetEdge(NodeEdgePtr edge) {
+  SetConnected(true);
 
-    // Set the new edge pointer
-    edge_ = edge;
+  // Set the new edge pointer
+  edge_ = edge;
 
-    // Re-adjust the line positioning for this new edge
-    Adjust();
+  // Re-adjust the line positioning for this new edge
+  Adjust();
 }
 
-NodeEdgePtr NodeViewEdge::edge()
-{
-    return edge_;
+NodeEdgePtr NodeViewEdge::edge() { return edge_; }
+
+qreal CalculateEdgeYPoint(NodeViewItem *item, NodeParam *param, NodeViewItem *opposing) {
+  if (item->IsExpanded()) {
+    return item->pos().y() + item->GetParameterConnectorRect(param).center().y();
+  } else {
+    qreal max_height = qMax(opposing->rect().height(), item->rect().height());
+
+    // Calculate the Y distance between the two nodes and create a 0.0-1.0 range for lerping
+    qreal input_value =
+        clamp(0.5 + ((opposing->pos().y() + opposing->rect().top()) - (item->pos().y() + item->rect().top())) /
+                        max_height / 4,
+              0.0, 1.0);
+
+    // Use a lerp function to draw the line between the two corners
+    qreal input_y = item->pos().y() + item->rect().top() + lerp(0.0, item->rect().height(), input_value);
+
+    // Set Y values according to calculations
+    return input_y;
+  }
 }
 
-qreal CalculateEdgeYPoint(NodeViewItem *item, NodeParam* param, NodeViewItem *opposing)
-{
-    if (item->IsExpanded()) {
-        return item->pos().y() + item->GetParameterConnectorRect(param).center().y();
-    } else {
-        qreal max_height = qMax(opposing->rect().height(), item->rect().height());
+void NodeViewEdge::Adjust() {
+  if (edge_ == nullptr || scene() == nullptr) {
+    return;
+  }
 
-        // Calculate the Y distance between the two nodes and create a 0.0-1.0 range for lerping
-        qreal input_value = clamp(0.5 + ((opposing->pos().y() + opposing->rect().top()) - (item->pos().y() + item->rect().top())) / max_height / 4, 0.0, 1.0);
+  // Get the UI objects of both nodes that this edge connects
+  NodeViewItem *output = NodeView::NodeToUIObject(scene(), edge_->output()->parentNode());
+  NodeViewItem *input = NodeView::NodeToUIObject(scene(), edge_->input()->parentNode());
 
-        // Use a lerp function to draw the line between the two corners
-        qreal input_y = item->pos().y() + item->rect().top() + lerp(0.0, item->rect().height(), input_value);
+  // Create initial values
+  QPointF output_point = QPointF(output->pos().x() + output->rect().left() + output->rect().width(), 0);
+  QPointF input_point = QPointF(input->pos().x() + output->rect().left(), 0);
 
-        // Set Y values according to calculations
-        return input_y;
-    }
+  // Calculate output/input points
+  output_point.setY(CalculateEdgeYPoint(output, edge_->output(), input));
+  input_point.setY(CalculateEdgeYPoint(input, edge_->input(), output));
+
+  // Draw a line between the two
+  SetPoints(output_point, input_point);
 }
 
-void NodeViewEdge::Adjust()
-{
-    if (edge_ == nullptr || scene() == nullptr) {
-        return;
-    }
+void NodeViewEdge::SetConnected(bool c) {
+  if (c) {
+    color_group_ = QPalette::Active;
+  } else {
+    color_group_ = QPalette::Disabled;
+  }
 
-    // Get the UI objects of both nodes that this edge connects
-    NodeViewItem* output = NodeView::NodeToUIObject(scene(), edge_->output()->parentNode());
-    NodeViewItem* input = NodeView::NodeToUIObject(scene(), edge_->input()->parentNode());
-
-    // Create initial values
-    QPointF output_point = QPointF(output->pos().x() + output->rect().left() + output->rect().width(), 0);
-    QPointF input_point = QPointF(input->pos().x() + output->rect().left(), 0);
-
-    // Calculate output/input points
-    output_point.setY(CalculateEdgeYPoint(output, edge_->output(), input));
-    input_point.setY(CalculateEdgeYPoint(input, edge_->input(), output));
-
-    // Draw a line between the two
-    SetPoints(output_point, input_point);
+  UpdatePen();
 }
 
-void NodeViewEdge::SetConnected(bool c)
-{
-    if (c) {
-        color_group_ = QPalette::Active;
-    } else {
-        color_group_ = QPalette::Disabled;
-    }
+void NodeViewEdge::SetHighlighted(bool e) {
+  if (e) {
+    color_role_ = QPalette::Highlight;
+  } else {
+    color_role_ = QPalette::Text;
+  }
 
-    UpdatePen();
+  UpdatePen();
 }
 
-void NodeViewEdge::SetHighlighted(bool e)
-{
-    if (e) {
-        color_role_ = QPalette::Highlight;
-    } else {
-        color_role_ = QPalette::Text;
-    }
-
-    UpdatePen();
+void NodeViewEdge::SetPoints(const QPointF &start, const QPointF &end) {
+  QPainterPath path;
+  double half_x = lerp(start.x(), end.x(), 0.5);
+  path.moveTo(start);
+  path.cubicTo(QPointF(half_x, start.y()), QPointF(half_x, end.y()), end);
+  setPath(path);
 }
 
-void NodeViewEdge::SetPoints(const QPointF &start, const QPointF &end)
-{
-    QPainterPath path;
-    double half_x = lerp(start.x(), end.x(), 0.5);
-    path.moveTo(start);
-    path.cubicTo(QPointF(half_x, start.y()), QPointF(half_x, end.y()), end);
-    setPath(path);
+void NodeViewEdge::UpdatePen() {
+  setPen(QPen(qApp->palette().color(color_group_, color_role_), edge_width_));
+
+  // update();
 }
-
-void NodeViewEdge::UpdatePen()
-{
-    setPen(QPen(qApp->palette().color(color_group_, color_role_), edge_width_));
-
-    //update();
-}
-
