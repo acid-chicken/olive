@@ -42,69 +42,69 @@
  */
 class TimelineView : public TimelineViewBase
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimelineView(Qt::Alignment vertical_alignment = Qt::AlignTop,
-               QWidget* parent = nullptr);
+    TimelineView(Qt::Alignment vertical_alignment = Qt::AlignTop,
+                 QWidget* parent = nullptr);
 
-  void SelectAll();
+    void SelectAll();
 
-  void DeselectAll();
+    void DeselectAll();
 
-  int GetTrackY(int track_index);
-  int GetTrackHeight(int track_index);
+    int GetTrackY(int track_index);
+    int GetTrackHeight(int track_index);
 
-  QPoint GetScrollCoordinates();
-  void SetScrollCoordinates(const QPoint& pt);
+    QPoint GetScrollCoordinates();
+    void SetScrollCoordinates(const QPoint& pt);
 
-  void ConnectTrackList(TrackList* list);
+    void ConnectTrackList(TrackList* list);
 
 signals:
-  void MousePressed(TimelineViewMouseEvent* event);
-  void MouseMoved(TimelineViewMouseEvent* event);
-  void MouseReleased(TimelineViewMouseEvent* event);
-  void MouseDoubleClicked(TimelineViewMouseEvent* event);
+    void MousePressed(TimelineViewMouseEvent* event);
+    void MouseMoved(TimelineViewMouseEvent* event);
+    void MouseReleased(TimelineViewMouseEvent* event);
+    void MouseDoubleClicked(TimelineViewMouseEvent* event);
 
-  void DragEntered(TimelineViewMouseEvent* event);
-  void DragMoved(TimelineViewMouseEvent* event);
-  void DragLeft(QDragLeaveEvent* event);
-  void DragDropped(TimelineViewMouseEvent* event);
+    void DragEntered(TimelineViewMouseEvent* event);
+    void DragMoved(TimelineViewMouseEvent* event);
+    void DragLeft(QDragLeaveEvent* event);
+    void DragDropped(TimelineViewMouseEvent* event);
 
-  void SelectionChanged();
+    void SelectionChanged();
 
 protected:
-  virtual void mousePressEvent(QMouseEvent *event) override;
-  virtual void mouseMoveEvent(QMouseEvent *event) override;
-  virtual void mouseReleaseEvent(QMouseEvent *event) override;
-  virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+    virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 
-  virtual void wheelEvent(QWheelEvent* event) override;
+    virtual void wheelEvent(QWheelEvent* event) override;
 
-  virtual void dragEnterEvent(QDragEnterEvent *event) override;
-  virtual void dragMoveEvent(QDragMoveEvent *event) override;
-  virtual void dragLeaveEvent(QDragLeaveEvent *event) override;
-  virtual void dropEvent(QDropEvent *event) override;
+    virtual void dragEnterEvent(QDragEnterEvent *event) override;
+    virtual void dragMoveEvent(QDragMoveEvent *event) override;
+    virtual void dragLeaveEvent(QDragLeaveEvent *event) override;
+    virtual void dropEvent(QDropEvent *event) override;
 
-  virtual void drawBackground(QPainter *painter, const QRectF &rect) override;
+    virtual void drawBackground(QPainter *painter, const QRectF &rect) override;
 
-  virtual void ToolChangedEvent(Tool::Item tool) override;
+    virtual void ToolChangedEvent(Tool::Item tool) override;
 
 private:
-  Timeline::TrackType ConnectedTrackType();
-  Stream::Type TrackTypeToStreamType(Timeline::TrackType track_type);
+    Timeline::TrackType ConnectedTrackType();
+    Stream::Type TrackTypeToStreamType(Timeline::TrackType track_type);
 
-  TimelineCoordinate ScreenToCoordinate(const QPoint& pt);
-  TimelineCoordinate SceneToCoordinate(const QPointF& pt);
+    TimelineCoordinate ScreenToCoordinate(const QPoint& pt);
+    TimelineCoordinate SceneToCoordinate(const QPointF& pt);
 
-  TimelineViewMouseEvent CreateMouseEvent(const QPoint &pos, Qt::KeyboardModifiers modifiers);
+    TimelineViewMouseEvent CreateMouseEvent(const QPoint &pos, Qt::KeyboardModifiers modifiers);
 
-  int SceneToTrack(double y);
+    int SceneToTrack(double y);
 
-  void UserSetTime(const int64_t& time);
+    void UserSetTime(const int64_t& time);
 
-  void UpdatePlayheadRect();
+    void UpdatePlayheadRect();
 
-  TrackList* connected_track_list_;
+    TrackList* connected_track_list_;
 
 };
 

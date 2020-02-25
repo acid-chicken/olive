@@ -29,31 +29,31 @@
  */
 class NodePanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  NodePanel(QWidget* parent);
+    NodePanel(QWidget* parent);
 
-  void SetGraph(NodeGraph* graph);
+    void SetGraph(NodeGraph* graph);
 
-  virtual void SelectAll() override;
-  virtual void DeselectAll() override;
+    virtual void SelectAll() override;
+    virtual void DeselectAll() override;
 
-  virtual void DeleteSelected() override;
+    virtual void DeleteSelected() override;
 
 public slots:
-  void Select(const QList<Node*>& nodes);
-  void SelectWithDependencies(const QList<Node*>& nodes);
+    void Select(const QList<Node*>& nodes);
+    void SelectWithDependencies(const QList<Node*>& nodes);
 
 signals:
-  /**
-   * @brief Wrapper for NodeView::SelectionChanged()
-   */
-  void SelectionChanged(QList<Node*> selected_nodes);
+    /**
+     * @brief Wrapper for NodeView::SelectionChanged()
+     */
+    void SelectionChanged(QList<Node*> selected_nodes);
 
 private:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  NodeView* node_view_;
+    NodeView* node_view_;
 
 };
 
