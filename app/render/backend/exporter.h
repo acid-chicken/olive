@@ -13,80 +13,80 @@
 
 class Exporter : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  Exporter(ViewerOutput* viewer,
-           Encoder* encoder,
-           QObject* parent = nullptr);
+    Exporter(ViewerOutput* viewer,
+             Encoder* encoder,
+             QObject* parent = nullptr);
 
-  void EnableVideo(const VideoRenderingParams& video_params, const QMatrix4x4& transform, ColorProcessorPtr color_processor);
-  void EnableAudio(const AudioRenderingParams& audio_params);
+    void EnableVideo(const VideoRenderingParams& video_params, const QMatrix4x4& transform, ColorProcessorPtr color_processor);
+    void EnableAudio(const AudioRenderingParams& audio_params);
 
-  bool GetExportStatus() const;
-  const QString& GetExportError() const;
+    bool GetExportStatus() const;
+    const QString& GetExportError() const;
 
 public slots:
-  void StartExporting();
+    void StartExporting();
 
 signals:
-  void ProgressChanged(int);
+    void ProgressChanged(int);
 
-  void ExportEnded();
+    void ExportEnded();
 
 protected:
-  void SetExportMessage(const QString& s);
+    void SetExportMessage(const QString& s);
 
-  // Renderers
-  VideoRenderBackend* video_backend_;
-  AudioRenderBackend* audio_backend_;
+    // Renderers
+    VideoRenderBackend* video_backend_;
+    AudioRenderBackend* audio_backend_;
 
-  // Viewer node
-  ViewerOutput* viewer_node_;
+    // Viewer node
+    ViewerOutput* viewer_node_;
 
-  // Export parameters
-  VideoRenderingParams video_params_;
-  AudioRenderingParams audio_params_;
+    // Export parameters
+    VideoRenderingParams video_params_;
+    AudioRenderingParams audio_params_;
 
-  // Export transform
-  QMatrix4x4 transform_;
+    // Export transform
+    QMatrix4x4 transform_;
 
-  bool video_done_;
+    bool video_done_;
 
-  bool audio_done_;
+    bool audio_done_;
 
 private:
-  void ExportSucceeded();
+    void ExportSucceeded();
 
-  void ExportFailed();
+    void ExportFailed();
 
-  void EncodeFrame();
+    void EncodeFrame();
 
-  ColorProcessorPtr color_processor_;
+    ColorProcessorPtr color_processor_;
 
-  Encoder* encoder_;
+    Encoder* encoder_;
 
-  bool export_status_;
+    bool export_status_;
 
-  QString export_msg_;
+    QString export_msg_;
 
-  rational waiting_for_frame_;
+    rational waiting_for_frame_;
 
-  QHash<rational, FramePtr> cached_frames_;
+    QHash<rational, FramePtr> cached_frames_;
 
 private slots:
-  void FrameRendered(const rational &time, FramePtr value);
+    void FrameRendered(const rational &time, FramePtr value);
 
-  void AudioRendered();
+    void AudioRendered();
 
-  void AudioEncodeComplete();
+    void AudioEncodeComplete();
 
-  void EncoderOpenedSuccessfully();
+    void EncoderOpenedSuccessfully();
 
-  void EncoderOpenFailed();
+    void EncoderOpenFailed();
 
-  void EncoderClosed();
+    void EncoderClosed();
 
-  void VideoHashesComplete();
+    void VideoHashesComplete();
 
 };
 
