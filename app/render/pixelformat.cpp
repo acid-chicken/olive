@@ -27,116 +27,102 @@
 #include "common/define.h"
 #include "core.h"
 
-bool PixelFormat::FormatHasAlphaChannel(const PixelFormat::Format &format)
-{
-    switch (format) {
+bool PixelFormat::FormatHasAlphaChannel(const PixelFormat::Format &format) {
+  switch (format) {
     case PixelFormat::PIX_FMT_RGBA8:
     case PixelFormat::PIX_FMT_RGBA16U:
     case PixelFormat::PIX_FMT_RGBA16F:
     case PixelFormat::PIX_FMT_RGBA32F:
-        return true;
+      return true;
     case PixelFormat::PIX_FMT_RGB8:
     case PixelFormat::PIX_FMT_RGB16U:
     case PixelFormat::PIX_FMT_RGB16F:
     case PixelFormat::PIX_FMT_RGB32F:
     case PixelFormat::PIX_FMT_INVALID:
     case PixelFormat::PIX_FMT_COUNT:
-        break;
-    }
+      break;
+  }
 
-    return false;
+  return false;
 }
 
-OIIO::TypeDesc PixelFormat::GetOIIOTypeDesc(const PixelFormat::Format &format)
-{
-    switch (format) {
+OIIO::TypeDesc PixelFormat::GetOIIOTypeDesc(const PixelFormat::Format &format) {
+  switch (format) {
     case PixelFormat::PIX_FMT_RGB8:
     case PixelFormat::PIX_FMT_RGBA8:
-        return OIIO::TypeDesc::UINT8;
+      return OIIO::TypeDesc::UINT8;
     case PixelFormat::PIX_FMT_RGB16U:
     case PixelFormat::PIX_FMT_RGBA16U:
-        return OIIO::TypeDesc::UINT16;
+      return OIIO::TypeDesc::UINT16;
     case PixelFormat::PIX_FMT_RGB16F:
     case PixelFormat::PIX_FMT_RGBA16F:
-        return OIIO::TypeDesc::HALF;
+      return OIIO::TypeDesc::HALF;
     case PixelFormat::PIX_FMT_RGB32F:
     case PixelFormat::PIX_FMT_RGBA32F:
-        return OIIO::TypeDesc::FLOAT;
+      return OIIO::TypeDesc::FLOAT;
     case PixelFormat::PIX_FMT_INVALID:
     case PixelFormat::PIX_FMT_COUNT:
-        break;
-    }
+      break;
+  }
 
-    return OIIO::TypeDesc::UNKNOWN;
+  return OIIO::TypeDesc::UNKNOWN;
 }
 
-QString PixelFormat::GetName(const PixelFormat::Format &format)
-{
-    switch (format) {
+QString PixelFormat::GetName(const PixelFormat::Format &format) {
+  switch (format) {
     case PixelFormat::PIX_FMT_RGB8:
     case PixelFormat::PIX_FMT_RGBA8:
-        return tr("8-bit");
+      return tr("8-bit");
     case PixelFormat::PIX_FMT_RGB16U:
     case PixelFormat::PIX_FMT_RGBA16U:
-        return tr("16-bit Integer");
+      return tr("16-bit Integer");
     case PixelFormat::PIX_FMT_RGB16F:
     case PixelFormat::PIX_FMT_RGBA16F:
-        return tr("Half-Float (16-bit)");
+      return tr("Half-Float (16-bit)");
     case PixelFormat::PIX_FMT_RGB32F:
     case PixelFormat::PIX_FMT_RGBA32F:
-        return tr("Full-Float (32-bit)");
+      return tr("Full-Float (32-bit)");
     case PixelFormat::PIX_FMT_INVALID:
     case PixelFormat::PIX_FMT_COUNT:
-        break;
-    }
+      break;
+  }
 
-    return tr("Unknown (%1)").arg(format);
+  return tr("Unknown (%1)").arg(format);
 }
 
-PixelFormat* PixelFormat::instance_ = nullptr;
+PixelFormat *PixelFormat::instance_ = nullptr;
 
-void PixelFormat::CreateInstance()
-{
-    instance_ = new PixelFormat();
+void PixelFormat::CreateInstance() { instance_ = new PixelFormat(); }
+
+void PixelFormat::DestroyInstance() { delete instance_; }
+
+PixelFormat *PixelFormat::instance() { return instance_; }
+
+PixelFormat::Format PixelFormat::GetConfiguredFormatForMode(RenderMode::Mode mode) {
+  return static_cast<PixelFormat::Format>(
+      Core::GetPreferenceForRenderMode(mode, QStringLiteral("PixelFormat")).toInt());
 }
 
-void PixelFormat::DestroyInstance()
-{
-    delete instance_;
+void PixelFormat::SetConfiguredFormatForMode(RenderMode::Mode mode, PixelFormat::Format format) {
+  if (format != GetConfiguredFormatForMode(mode)) {
+    Core::SetPreferenceForRenderMode(mode, QStringLiteral("PixelFormat"), format);
+
+    emit FormatChanged();
+  }
 }
 
-PixelFormat *PixelFormat::instance()
-{
-    return instance_;
-}
+PixelFormat::Format PixelFormat::OIIOFormatToOliveFormat(OIIO::TypeDesc desc, bool has_alpha) {
+  if (desc == OIIO::TypeDesc::UINT8) {
+    return has_alpha ? PixelFormat::PIX_FMT_RGBA8 : PixelFormat::PIX_FMT_RGB8;
+  } else if (desc == OIIO::TypeDesc::UINT16) {
+    return has_alpha ? PixelFormat::PIX_FMT_RGBA16U : PixelFormat::PIX_FMT_RGB16U;
+  } else if (desc == OIIO::TypeDesc::HALF) {
+    return has_alpha ? PixelFormat::PIX_FMT_RGBA16F : PixelFormat::PIX_FMT_RGB16F;
+  } else if (desc == OIIO::TypeDesc::FLOAT) {
+    return has_alpha ? PixelFormat::PIX_FMT_RGBA32F : PixelFormat::PIX_FMT_RGB32F;
+  }
 
-PixelFormat::Format PixelFormat::GetConfiguredFormatForMode(RenderMode::Mode mode)
-{
-    return static_cast<PixelFormat::Format>(Core::GetPreferenceForRenderMode(mode, QStringLiteral("PixelFormat")).toInt());
-}
-
-void PixelFormat::SetConfiguredFormatForMode(RenderMode::Mode mode, PixelFormat::Format format)
-{
-    if (format != GetConfiguredFormatForMode(mode)) {
-        Core::SetPreferenceForRenderMode(mode, QStringLiteral("PixelFormat"), format);
-
-        emit FormatChanged();
-    }
-}
-
-PixelFormat::Format PixelFormat::OIIOFormatToOliveFormat(OIIO::TypeDesc desc, bool has_alpha)
-{
-    if (desc == OIIO::TypeDesc::UINT8) {
-        return has_alpha ? PixelFormat::PIX_FMT_RGBA8 : PixelFormat::PIX_FMT_RGB8;
-    } else if (desc == OIIO::TypeDesc::UINT16) {
-        return has_alpha ? PixelFormat::PIX_FMT_RGBA16U : PixelFormat::PIX_FMT_RGB16U;
-    } else if (desc == OIIO::TypeDesc::HALF) {
-        return has_alpha ? PixelFormat::PIX_FMT_RGBA16F : PixelFormat::PIX_FMT_RGB16F;
-    } else if (desc == OIIO::TypeDesc::FLOAT) {
-        return has_alpha ? PixelFormat::PIX_FMT_RGBA32F : PixelFormat::PIX_FMT_RGB32F;
-    }
-
-    return PixelFormat::PIX_FMT_INVALID;
+  return PixelFormat::PIX_FMT_INVALID;
 }
 
 /*PixelFormat::Info PixelFormat::GetPixelFormatInfo(const PixelFormat::Format &format)
@@ -183,73 +169,67 @@ PixelFormat::Format PixelFormat::OIIOFormatToOliveFormat(OIIO::TypeDesc desc, bo
   return info;
 }*/
 
-int PixelFormat::GetBufferSize(const PixelFormat::Format &format, const int &width, const int &height)
-{
-    return BytesPerPixel(format) * width * height;
+int PixelFormat::GetBufferSize(const PixelFormat::Format &format, const int &width, const int &height) {
+  return BytesPerPixel(format) * width * height;
 }
 
-int PixelFormat::BytesPerPixel(const PixelFormat::Format &format)
-{
-    return BytesPerChannel(format) * ChannelCount(format);
+int PixelFormat::BytesPerPixel(const PixelFormat::Format &format) {
+  return BytesPerChannel(format) * ChannelCount(format);
 }
 
-int PixelFormat::BytesPerChannel(const PixelFormat::Format &format)
-{
-    switch (format) {
+int PixelFormat::BytesPerChannel(const PixelFormat::Format &format) {
+  switch (format) {
     case PixelFormat::PIX_FMT_RGB8:
     case PixelFormat::PIX_FMT_RGBA8:
-        return 1;
+      return 1;
     case PixelFormat::PIX_FMT_RGB16U:
     case PixelFormat::PIX_FMT_RGB16F:
     case PixelFormat::PIX_FMT_RGBA16U:
     case PixelFormat::PIX_FMT_RGBA16F:
-        return 2;
+      return 2;
     case PixelFormat::PIX_FMT_RGB32F:
     case PixelFormat::PIX_FMT_RGBA32F:
-        return 4;
+      return 4;
     case PixelFormat::PIX_FMT_INVALID:
     case PixelFormat::PIX_FMT_COUNT:
-        break;
-    }
+      break;
+  }
 
-    qFatal("Invalid pixel format requested");
+  qFatal("Invalid pixel format requested");
 
-    // qFatal will abort so we won't get here, but this suppresses compiler warnings
-    return 0;
+  // qFatal will abort so we won't get here, but this suppresses compiler warnings
+  return 0;
 }
 
-int PixelFormat::ChannelCount(const PixelFormat::Format &format)
-{
-    if (PixelFormat::FormatHasAlphaChannel(format)) {
-        return kRGBAChannels;
-    } else {
-        return kRGBChannels;
-    }
+int PixelFormat::ChannelCount(const PixelFormat::Format &format) {
+  if (PixelFormat::FormatHasAlphaChannel(format)) {
+    return kRGBAChannels;
+  } else {
+    return kRGBChannels;
+  }
 }
 
-FramePtr PixelFormat::ConvertPixelFormat(FramePtr frame, const PixelFormat::Format &dest_format)
-{
-    if (frame->format() == dest_format) {
-        return frame;
-    }
+FramePtr PixelFormat::ConvertPixelFormat(FramePtr frame, const PixelFormat::Format &dest_format) {
+  if (frame->format() == dest_format) {
+    return frame;
+  }
 
-    FramePtr converted = Frame::Create();
+  FramePtr converted = Frame::Create();
 
-    // Copy parameters
-    converted->set_width(frame->width());
-    converted->set_height(frame->height());
-    converted->set_timestamp(frame->timestamp());
-    converted->set_format(dest_format);
-    converted->allocate();
+  // Copy parameters
+  converted->set_width(frame->width());
+  converted->set_height(frame->height());
+  converted->set_timestamp(frame->timestamp());
+  converted->set_format(dest_format);
+  converted->allocate();
 
-    OIIO::TypeDesc src_type = GetOIIOTypeDesc(frame->format());
-    OIIO::TypeDesc dst_type = GetOIIOTypeDesc(dest_format);
+  OIIO::TypeDesc src_type = GetOIIOTypeDesc(frame->format());
+  OIIO::TypeDesc dst_type = GetOIIOTypeDesc(dest_format);
 
-    if (OIIO::convert_type(src_type, frame->data(), dst_type, converted->data())) {
-        return converted;
-    } else {
-        qDebug() << "Failed to convert type:" << OIIO::geterror().c_str();
-        return nullptr;
-    }
+  if (OIIO::convert_type(src_type, frame->data(), dst_type, converted->data())) {
+    return converted;
+  } else {
+    qDebug() << "Failed to convert type:" << OIIO::geterror().c_str();
+    return nullptr;
+  }
 }
-

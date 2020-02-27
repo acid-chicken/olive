@@ -26,145 +26,98 @@
 #include "openglrenderfunctions.h"
 #include "render/pixelformat.h"
 
-OpenGLTexture::OpenGLTexture() :
-    created_ctx_(nullptr),
-    texture_(0),
-    width_(0),
-    height_(0),
-    format_(PixelFormat::PIX_FMT_INVALID)
-{
+OpenGLTexture::OpenGLTexture()
+    : created_ctx_(nullptr), texture_(0), width_(0), height_(0), format_(PixelFormat::PIX_FMT_INVALID) {}
+
+OpenGLTexture::~OpenGLTexture() { Destroy(); }
+
+bool OpenGLTexture::IsCreated() const { return (texture_); }
+
+void OpenGLTexture::Create(QOpenGLContext *ctx, int width, int height, const PixelFormat::Format &format,
+                           const void *data) {
+  if (!ctx) {
+    qWarning() << "OpenGLTexture::Create was passed an invalid context";
+    return;
+  }
+
+  Destroy();
+
+  created_ctx_ = ctx;
+  width_ = width;
+  height_ = height;
+  format_ = format;
+
+  connect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()), Qt::DirectConnection);
+
+  // Create main texture
+  CreateInternal(created_ctx_, &texture_, data);
 }
 
-OpenGLTexture::~OpenGLTexture()
-{
-    Destroy();
+void OpenGLTexture::Create(QOpenGLContext *ctx, FramePtr frame) {
+  Create(ctx, frame->width(), frame->height(), frame->format(), frame->data());
 }
 
-bool OpenGLTexture::IsCreated() const
-{
-    return (texture_);
+void OpenGLTexture::Destroy() {
+  if (created_ctx_) {
+    disconnect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
+
+    created_ctx_->functions()->glDeleteTextures(1, &texture_);
+    texture_ = 0;
+
+    created_ctx_ = nullptr;
+  }
 }
 
-void OpenGLTexture::Create(QOpenGLContext *ctx, int width, int height, const PixelFormat::Format &format, const void* data)
-{
-    if (!ctx) {
-        qWarning() << "OpenGLTexture::Create was passed an invalid context";
-        return;
-    }
+void OpenGLTexture::Bind() { created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, texture_); }
 
-    Destroy();
+void OpenGLTexture::Release() { created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, 0); }
 
-    created_ctx_ = ctx;
-    width_ = width;
-    height_ = height;
-    format_ = format;
+const int &OpenGLTexture::width() const { return width_; }
 
-    connect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()), Qt::DirectConnection);
+const int &OpenGLTexture::height() const { return height_; }
 
-    // Create main texture
-    CreateInternal(created_ctx_, &texture_, data);
+const PixelFormat::Format &OpenGLTexture::format() const { return format_; }
+
+const GLuint &OpenGLTexture::texture() const { return texture_; }
+
+void OpenGLTexture::Upload(const void *data) {
+  if (!IsCreated()) {
+    qWarning() << "OpenGLTexture::Upload() called while it wasn't created";
+    return;
+  }
+
+  Bind();
+
+  created_ctx_->functions()->glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width_, height_,
+                                             OpenGLRenderFunctions::GetPixelFormat(format_),
+                                             OpenGLRenderFunctions::GetPixelType(format_), data);
+
+  Release();
 }
 
-void OpenGLTexture::Create(QOpenGLContext *ctx, FramePtr frame)
-{
-    Create(ctx, frame->width(), frame->height(), frame->format(), frame->data());
-}
+void OpenGLTexture::CreateInternal(QOpenGLContext *create_ctx, GLuint *tex, const void *data) {
+  QOpenGLFunctions *f = create_ctx->functions();
 
-void OpenGLTexture::Destroy()
-{
-    if (created_ctx_) {
-        disconnect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
+  // Create texture
+  f->glGenTextures(1, tex);
 
-        created_ctx_->functions()->glDeleteTextures(1, &texture_);
-        texture_ = 0;
+  // Verify texture
+  if (texture_ == 0) {
+    qWarning() << "OpenGL texture creation failed";
+    return;
+  }
 
-        created_ctx_ = nullptr;
-    }
-}
+  // Bind texture
+  f->glBindTexture(GL_TEXTURE_2D, *tex);
 
-void OpenGLTexture::Bind()
-{
-    created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, texture_);
-}
+  // Allocate storage for texture
+  f->glTexImage2D(GL_TEXTURE_2D, 0, OpenGLRenderFunctions::GetInternalFormat(format_), width_, height_, 0,
+                  OpenGLRenderFunctions::GetPixelFormat(format_), OpenGLRenderFunctions::GetPixelType(format_), data);
 
-void OpenGLTexture::Release()
-{
-    created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, 0);
-}
+  // Set texture filtering to bilinear
+  f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-const int &OpenGLTexture::width() const
-{
-    return width_;
-}
-
-const int &OpenGLTexture::height() const
-{
-    return height_;
-}
-
-const PixelFormat::Format &OpenGLTexture::format() const
-{
-    return format_;
-}
-
-const GLuint &OpenGLTexture::texture() const
-{
-    return texture_;
-}
-
-void OpenGLTexture::Upload(const void *data)
-{
-    if (!IsCreated()) {
-        qWarning() << "OpenGLTexture::Upload() called while it wasn't created";
-        return;
-    }
-
-    Bind();
-
-    created_ctx_->functions()->glTexSubImage2D(GL_TEXTURE_2D,
-            0,
-            0,
-            0,
-            width_,
-            height_,
-            OpenGLRenderFunctions::GetPixelFormat(format_),
-            OpenGLRenderFunctions::GetPixelType(format_),
-            data);
-
-    Release();
-}
-
-void OpenGLTexture::CreateInternal(QOpenGLContext* create_ctx, GLuint* tex, const void *data)
-{
-    QOpenGLFunctions* f = create_ctx->functions();
-
-    // Create texture
-    f->glGenTextures(1, tex);
-
-    // Verify texture
-    if (texture_ == 0) {
-        qWarning() << "OpenGL texture creation failed";
-        return;
-    }
-
-    // Bind texture
-    f->glBindTexture(GL_TEXTURE_2D, *tex);
-
-    // Allocate storage for texture
-    f->glTexImage2D(GL_TEXTURE_2D,
-                    0,
-                    OpenGLRenderFunctions::GetInternalFormat(format_),
-                    width_,
-                    height_,
-                    0,
-                    OpenGLRenderFunctions::GetPixelFormat(format_),
-                    OpenGLRenderFunctions::GetPixelType(format_),
-                    data);
-
-    // Set texture filtering to bilinear
-    f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    // Release texture
-    f->glBindTexture(GL_TEXTURE_2D, 0);
+  // Release texture
+  f->glBindTexture(GL_TEXTURE_2D, 0);
 }

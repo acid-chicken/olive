@@ -27,175 +27,157 @@
 
 QStringList OIIODecoder::supported_formats_;
 
-OIIODecoder::OIIODecoder() :
-    image_(nullptr),
-    frame_(nullptr)
-{
+OIIODecoder::OIIODecoder() : image_(nullptr), frame_(nullptr) {}
+
+QString OIIODecoder::id() { return QStringLiteral("oiio"); }
+
+bool OIIODecoder::Probe(Footage *f, const QAtomicInt *cancelled) {
+  // We prioritize OIIO over FFmpeg to pick up still images more effectively, but some OIIO decoders (notably OpenJPEG)
+  // will segfault entirely if given unexpected data (an MPEG-4 for instance). To workaround this issue, we use OIIO's
+  // "extension_list" attribute and match it with the extension of the file.
+
+  // Check if we've created the supported formats list, create it if not
+  if (supported_formats_.isEmpty()) {
+    QStringList extension_list = QString::fromStdString(OIIO::get_string_attribute("extension_list")).split(';');
+
+    // The format of "extension_list" is "format:ext", we want to separate it into a simple list of extensions
+    foreach (const QString &ext, extension_list) {
+      QStringList format_and_ext = ext.split(':');
+
+      supported_formats_.append(format_and_ext.at(1).split(','));
+    }
+  }
+
+  //
+  QFileInfo file_info(f->filename());
+
+  if (!supported_formats_.contains(file_info.completeSuffix(), Qt::CaseInsensitive)) {
+    return false;
+  }
+
+  std::string std_filename = f->filename().toStdString();
+
+  auto in = OIIO::ImageInput::open(std_filename);
+
+  if (!in) {
+    return false;
+  }
+
+  if (!strcmp(in->format_name(), "FFmpeg movie")) {
+    // If this is FFmpeg via OIIO, fall-through to our native FFmpeg decoder
+    return false;
+  }
+
+  // Get stats for this image and dump them into the Footage file
+  const OIIO::ImageSpec &spec = in->spec();
+
+  ImageStreamPtr image_stream = std::make_shared<ImageStream>();
+  image_stream->set_width(spec.width);
+  image_stream->set_height(spec.height);
+
+  // Images will always have just one stream
+  image_stream->set_index(0);
+
+  // OIIO automatically premultiplies alpha
+  // FIXME: We usually disassociate the alpha for the color management later, for 8-bit images this likely reduces the
+  //        fidelity?
+  image_stream->set_premultiplied_alpha(true);
+
+  f->add_stream(image_stream);
+
+  // If we're here, we have a successful image open
+  in->close();
+
+  return true;
 }
 
-QString OIIODecoder::id()
-{
-    return QStringLiteral("oiio");
+bool OIIODecoder::Open() {
+  QMutexLocker locker(&mutex_);
+
+  image_ = OIIO::ImageInput::open(stream()->footage()->filename().toStdString());
+
+  if (!image_) {
+    return false;
+  }
+
+  // Check if we can work with this pixel format
+  const OIIO::ImageSpec &spec = image_->spec();
+
+  width_ = spec.width;
+  height_ = spec.height;
+
+  is_rgba_ = (spec.nchannels == kRGBAChannels);
+
+  // Weirdly, switch statement doesn't work correctly here
+  if (spec.format == OIIO::TypeDesc::UINT8) {
+    pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA8 : PixelFormat::PIX_FMT_RGB8;
+  } else if (spec.format == OIIO::TypeDesc::UINT16) {
+    pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA16U : PixelFormat::PIX_FMT_RGB16U;
+  } else if (spec.format == OIIO::TypeDesc::HALF) {
+    pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA16F : PixelFormat::PIX_FMT_RGB16F;
+  } else if (spec.format == OIIO::TypeDesc::FLOAT) {
+    pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA32F : PixelFormat::PIX_FMT_RGB32F;
+  } else {
+    qWarning() << "Failed to convert OIIO::ImageDesc to native pixel format";
+    return false;
+  }
+
+  // FIXME: Many OIIO pixel formats are not handled here
+  type_ = PixelFormat::GetOIIOTypeDesc(pix_fmt_);
+
+  open_ = true;
+
+  return true;
 }
 
-bool OIIODecoder::Probe(Footage *f, const QAtomicInt *cancelled)
-{
-    // We prioritize OIIO over FFmpeg to pick up still images more effectively, but some OIIO decoders (notably OpenJPEG)
-    // will segfault entirely if given unexpected data (an MPEG-4 for instance). To workaround this issue, we use OIIO's
-    // "extension_list" attribute and match it with the extension of the file.
+Decoder::RetrieveState OIIODecoder::GetRetrieveState(const rational &time) {
+  QMutexLocker locker(&mutex_);
 
-    // Check if we've created the supported formats list, create it if not
-    if (supported_formats_.isEmpty()) {
-        QStringList extension_list = QString::fromStdString(OIIO::get_string_attribute("extension_list")).split(';');
+  if (!open_) {
+    return kFailedToOpen;
+  }
 
-        // The format of "extension_list" is "format:ext", we want to separate it into a simple list of extensions
-        foreach (const QString& ext, extension_list) {
-            QStringList format_and_ext = ext.split(':');
-
-            supported_formats_.append(format_and_ext.at(1).split(','));
-        }
-    }
-
-    //
-    QFileInfo file_info(f->filename());
-
-    if (!supported_formats_.contains(file_info.completeSuffix(), Qt::CaseInsensitive)) {
-        return false;
-    }
-
-    std::string std_filename = f->filename().toStdString();
-
-    auto in = OIIO::ImageInput::open(std_filename);
-
-    if (!in) {
-        return false;
-    }
-
-    if (!strcmp(in->format_name(), "FFmpeg movie")) {
-        // If this is FFmpeg via OIIO, fall-through to our native FFmpeg decoder
-        return false;
-    }
-
-    // Get stats for this image and dump them into the Footage file
-    const OIIO::ImageSpec& spec = in->spec();
-
-    ImageStreamPtr image_stream = std::make_shared<ImageStream>();
-    image_stream->set_width(spec.width);
-    image_stream->set_height(spec.height);
-
-    // Images will always have just one stream
-    image_stream->set_index(0);
-
-    // OIIO automatically premultiplies alpha
-    // FIXME: We usually disassociate the alpha for the color management later, for 8-bit images this likely reduces the
-    //        fidelity?
-    image_stream->set_premultiplied_alpha(true);
-
-    f->add_stream(image_stream);
-
-    // If we're here, we have a successful image open
-    in->close();
-
-    return true;
+  return kReady;
 }
 
-bool OIIODecoder::Open()
-{
-    QMutexLocker locker(&mutex_);
+FramePtr OIIODecoder::RetrieveVideo(const rational &timecode) {
+  QMutexLocker locker(&mutex_);
 
-    image_ = OIIO::ImageInput::open(stream()->footage()->filename().toStdString());
+  if (!open_) {
+    return nullptr;
+  }
 
-    if (!image_) {
-        return false;
-    }
+  Q_UNUSED(timecode)
 
-    // Check if we can work with this pixel format
-    const OIIO::ImageSpec& spec = image_->spec();
+  if (!frame_) {
+    frame_ = Frame::Create();
 
-    width_ = spec.width;
-    height_ = spec.height;
+    frame_->set_width(width_);
+    frame_->set_height(height_);
+    frame_->set_format(pix_fmt_);
+    frame_->allocate();
 
-    is_rgba_ = (spec.nchannels == kRGBAChannels);
+    // Use the native format to determine what format OIIO should return
+    image_->read_image(type_, frame_->data());
+  }
 
-    // Weirdly, switch statement doesn't work correctly here
-    if (spec.format == OIIO::TypeDesc::UINT8) {
-        pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA8 : PixelFormat::PIX_FMT_RGB8;
-    } else if (spec.format == OIIO::TypeDesc::UINT16) {
-        pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA16U : PixelFormat::PIX_FMT_RGB16U;
-    } else if (spec.format == OIIO::TypeDesc::HALF) {
-        pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA16F : PixelFormat::PIX_FMT_RGB16F;
-    } else if (spec.format == OIIO::TypeDesc::FLOAT) {
-        pix_fmt_ = is_rgba_ ? PixelFormat::PIX_FMT_RGBA32F : PixelFormat::PIX_FMT_RGB32F;
-    } else {
-        qWarning() << "Failed to convert OIIO::ImageDesc to native pixel format";
-        return false;
-    }
-
-    // FIXME: Many OIIO pixel formats are not handled here
-    type_ = PixelFormat::GetOIIOTypeDesc(pix_fmt_);
-
-    open_ = true;
-
-    return true;
+  return frame_;
 }
 
-Decoder::RetrieveState OIIODecoder::GetRetrieveState(const rational &time)
-{
-    QMutexLocker locker(&mutex_);
+void OIIODecoder::Close() {
+  QMutexLocker locker(&mutex_);
 
-    if (!open_) {
-        return kFailedToOpen;
-    }
-
-    return kReady;
-}
-
-FramePtr OIIODecoder::RetrieveVideo(const rational &timecode)
-{
-    QMutexLocker locker(&mutex_);
-
-    if (!open_) {
-        return nullptr;
-    }
-
-    Q_UNUSED(timecode)
-
-    if (!frame_) {
-        frame_ = Frame::Create();
-
-        frame_->set_width(width_);
-        frame_->set_height(height_);
-        frame_->set_format(pix_fmt_);
-        frame_->allocate();
-
-        // Use the native format to determine what format OIIO should return
-        image_->read_image(type_, frame_->data());
-    }
-
-    return frame_;
-}
-
-void OIIODecoder::Close()
-{
-    QMutexLocker locker(&mutex_);
-
-    if (image_) {
-        image_->close();
+  if (image_) {
+    image_->close();
 #if OIIO_VERSION < 10903
-        OIIO::ImageInput::destroy(image_);
+    OIIO::ImageInput::destroy(image_);
 #endif
-        image_ = nullptr;
-    }
+    image_ = nullptr;
+  }
 
-    frame_ = nullptr;
+  frame_ = nullptr;
 }
 
-bool OIIODecoder::SupportsVideo()
-{
-    return true;
-}
+bool OIIODecoder::SupportsVideo() { return true; }
 
-QString OIIODecoder::GetIndexFilename()
-{
-    return QString();
-}
+QString OIIODecoder::GetIndexFilename() { return QString(); }
