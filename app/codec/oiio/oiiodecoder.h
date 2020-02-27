@@ -29,41 +29,41 @@
 class OIIODecoder : public Decoder
 {
 public:
-  OIIODecoder();
+    OIIODecoder();
 
-  virtual QString id() override;
+    virtual QString id() override;
 
-  virtual bool Probe(Footage *f, const QAtomicInt* cancelled) override;
+    virtual bool Probe(Footage *f, const QAtomicInt* cancelled) override;
 
-  virtual bool Open() override;
-  virtual RetrieveState GetRetrieveState(const rational &time) override;
-  virtual FramePtr RetrieveVideo(const rational &timecode) override;
-  virtual void Close() override;
+    virtual bool Open() override;
+    virtual RetrieveState GetRetrieveState(const rational &time) override;
+    virtual FramePtr RetrieveVideo(const rational &timecode) override;
+    virtual void Close() override;
 
-  virtual bool SupportsVideo() override;
+    virtual bool SupportsVideo() override;
 
-  virtual QString GetIndexFilename() override;
+    virtual QString GetIndexFilename() override;
 
 private:
 #if OIIO_VERSION < 10903
-  OIIO::ImageInput* image_;
+    OIIO::ImageInput* image_;
 #else
-  std::unique_ptr<OIIO::ImageInput> image_;
+    std::unique_ptr<OIIO::ImageInput> image_;
 #endif
 
-  int width_;
+    int width_;
 
-  int height_;
+    int height_;
 
-  PixelFormat::Format pix_fmt_;
+    PixelFormat::Format pix_fmt_;
 
-  OIIO::TypeDesc type_;
+    OIIO::TypeDesc type_;
 
-  bool is_rgba_;
+    bool is_rgba_;
 
-  FramePtr frame_;
+    FramePtr frame_;
 
-  static QStringList supported_formats_;
+    static QStringList supported_formats_;
 
 };
 

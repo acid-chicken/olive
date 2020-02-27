@@ -11,58 +11,58 @@
 
 VideoInput::VideoInput()
 {
-  matrix_input_ = new NodeInput("matrix_in", NodeInput::kMatrix);
-  AddInput(matrix_input_);
+    matrix_input_ = new NodeInput("matrix_in", NodeInput::kMatrix);
+    AddInput(matrix_input_);
 }
 
 Node *VideoInput::copy() const
 {
-  return new VideoInput();
+    return new VideoInput();
 }
 
 QString VideoInput::Name() const
 {
-  return tr("Video Input");
+    return tr("Video Input");
 }
 
 QString VideoInput::id() const
 {
-  return "org.olivevideoeditor.Olive.videoinput";
+    return "org.olivevideoeditor.Olive.videoinput";
 }
 
 QString VideoInput::Category() const
 {
-  return tr("Input");
+    return tr("Input");
 }
 
 QString VideoInput::Description() const
 {
-  return tr("Import a video footage stream.");
+    return tr("Import a video footage stream.");
 }
 
 NodeInput *VideoInput::matrix_input() const
 {
-  return matrix_input_;
+    return matrix_input_;
 }
 
 bool VideoInput::IsAccelerated() const
 {
-  return true;
+    return true;
 }
 
 QString VideoInput::AcceleratedCodeVertex() const
 {
-  return ReadFileAsString(":/shaders/videoinput.vert");
+    return ReadFileAsString(":/shaders/videoinput.vert");
 }
 
 QString VideoInput::AcceleratedCodeFragment() const
 {
-  return ReadFileAsString(":/shaders/videoinput.frag");
+    return ReadFileAsString(":/shaders/videoinput.frag");
 }
 
 void VideoInput::Retranslate()
 {
-  MediaInput::Retranslate();
+    MediaInput::Retranslate();
 
-  matrix_input_->set_name(tr("Transform"));
+    matrix_input_->set_name(tr("Transform"));
 }
