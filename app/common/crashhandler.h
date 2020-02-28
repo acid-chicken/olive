@@ -3,4 +3,4 @@
 
 void crash_handler(int sig);
 
-#endif // CRASHHANDLER_H
+#endif  // CRASHHANDLER_H
