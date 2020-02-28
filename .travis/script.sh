@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # linuxdeployqt uses this for naming the file
-export VERSION=$(git rev-parse --short=8 HEAD)
+export VERSION="$(git rev-parse --short=8 HEAD)"
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 
@@ -9,7 +9,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     cmake .
 
     # Make
-    make -j$(sysctl -n hw.ncpu)
+    make -j"$(sysctl -n hw.ncpu)"
 
     # Handle compile failure
     if [ "$?" != "0" ]
@@ -19,17 +19,17 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 
     BUNDLE_NAME=Olive.app
 
-    mv app/$BUNDLE_NAME .
+    mv app/"$BUNDLE_NAME" .
 
     # Move Qt deps into bundle
-    macdeployqt $BUNDLE_NAME
+    macdeployqt "$BUNDLE_NAME"
 
     # Fix other deps that macdeployqt missed
     wget -c -nv https://github.com/arl/macdeployqtfix/raw/master/macdeployqtfix.py
-    python2 macdeployqtfix.py $BUNDLE_NAME/Contents/MacOS/Olive /usr/local/Cellar/qt5/5.*/
+    python2 macdeployqtfix.py "$BUNDLE_NAME"/Contents/MacOS/Olive /usr/local/Cellar/qt5/5.*/
 
     # Distribute in zip
-    zip -r Olive-$VERSION-macOS.zip $BUNDLE_NAME
+    zip -r Olive-"$VERSION"-macOS.zip "$BUNDLE_NAME"
 
 elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
@@ -37,7 +37,7 @@ elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     cmake .
 
     # Make
-    make -j$(nproc)
+    make -j"$(nproc)"
 
     # Handle compile failure
     if [ "$?" != "0" ]
