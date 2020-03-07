@@ -30,105 +30,105 @@
 #include "undo/undocommand.h"
 
 class BlockResizeCommand : public UndoCommand {
-public:
-    BlockResizeCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
+ public:
+  BlockResizeCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    Block* block_;
-    rational old_length_;
-    rational new_length_;
+ private:
+  Block* block_;
+  rational old_length_;
+  rational new_length_;
 };
 
 class BlockResizeWithMediaInCommand : public UndoCommand {
-public:
-    BlockResizeWithMediaInCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
+ public:
+  BlockResizeWithMediaInCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    Block* block_;
-    rational old_length_;
-    rational new_length_;
+ private:
+  Block* block_;
+  rational old_length_;
+  rational new_length_;
 };
 
 class BlockSetMediaInCommand : public UndoCommand {
-public:
-    BlockSetMediaInCommand(Block* block, rational new_media_in, QUndoCommand* parent = nullptr);
+ public:
+  BlockSetMediaInCommand(Block* block, rational new_media_in, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    Block* block_;
-    rational old_media_in_;
-    rational new_media_in_;
+ private:
+  Block* block_;
+  rational old_media_in_;
+  rational new_media_in_;
 };
 
 class BlockSetSpeedCommand : public UndoCommand {
-public:
-    BlockSetSpeedCommand(Block* block, const rational& new_speed, QUndoCommand* parent = nullptr);
+ public:
+  BlockSetSpeedCommand(Block* block, const rational& new_speed, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    Block* block_;
+ private:
+  Block* block_;
 
-    rational old_speed_;
-    rational new_speed_;
+  rational old_speed_;
+  rational new_speed_;
 };
 
 class TrackRippleRemoveBlockCommand : public UndoCommand {
-public:
-    TrackRippleRemoveBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
+ public:
+  TrackRippleRemoveBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    TrackOutput* track_;
+ private:
+  TrackOutput* track_;
 
-    Block* block_;
+  Block* block_;
 
-    Block* before_;
+  Block* before_;
 };
 
 class TrackPrependBlockCommand : public UndoCommand {
-public:
-    TrackPrependBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
+ public:
+  TrackPrependBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    TrackOutput* track_;
-    Block* block_;
+ private:
+  TrackOutput* track_;
+  Block* block_;
 };
 
 class TrackInsertBlockAfterCommand : public UndoCommand {
-public:
-    TrackInsertBlockAfterCommand(TrackOutput* track, Block* block, Block* before, QUndoCommand* parent = nullptr);
+ public:
+  TrackInsertBlockAfterCommand(TrackOutput* track, Block* block, Block* before, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    TrackOutput* track_;
+ private:
+  TrackOutput* track_;
 
-    Block* block_;
+  Block* block_;
 
-    Block* before_;
+  Block* before_;
 };
 
 /**
@@ -139,35 +139,35 @@ private:
  * a block to insert at the `in` point. No checking is done to ensure `insert` is the same length as `in` to `out`.
  */
 class TrackRippleRemoveAreaCommand : public UndoCommand {
-public:
-    TrackRippleRemoveAreaCommand(TrackOutput* track, rational in, rational out, QUndoCommand* parent = nullptr);
+ public:
+  TrackRippleRemoveAreaCommand(TrackOutput* track, rational in, rational out, QUndoCommand* parent = nullptr);
 
-    void SetInsert(Block* insert);
+  void SetInsert(Block* insert);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-protected:
-    TrackOutput* track_;
-    rational in_;
-    rational out_;
+ protected:
+  TrackOutput* track_;
+  rational in_;
+  rational out_;
 
-    bool splice_;
+  bool splice_;
 
-    Block* trim_out_;
-    Block* trim_in_;
-    QVector<Block*> removed_blocks_;
+  Block* trim_out_;
+  Block* trim_in_;
+  QVector<Block*> removed_blocks_;
 
-    rational trim_in_old_length_;
-    rational trim_out_old_length_;
+  rational trim_in_old_length_;
+  rational trim_out_old_length_;
 
-    rational trim_in_new_length_;
-    rational trim_out_new_length_;
+  rational trim_in_new_length_;
+  rational trim_out_new_length_;
 
-    Block* insert_;
+  Block* insert_;
 
-    QObject memory_manager_;
+  QObject memory_manager_;
 };
 
 /**
@@ -178,60 +178,60 @@ protected:
  * the Sequence, a GapBlock is inserted to compensate.
  */
 class TrackPlaceBlockCommand : public TrackRippleRemoveAreaCommand {
-public:
-    TrackPlaceBlockCommand(TrackList *timeline, int track, Block* block, rational in, QUndoCommand* parent = nullptr);
+ public:
+  TrackPlaceBlockCommand(TrackList* timeline, int track, Block* block, rational in, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    TrackList* timeline_;
-    int track_index_;
-    bool append_;
-    GapBlock* gap_;
-    int added_track_count_;
+ private:
+  TrackList* timeline_;
+  int track_index_;
+  bool append_;
+  GapBlock* gap_;
+  int added_track_count_;
 };
 
 class BlockSplitCommand : public UndoCommand {
-public:
-    BlockSplitCommand(TrackOutput* track, Block* block, rational point, QUndoCommand* parent = nullptr);
+ public:
+  BlockSplitCommand(TrackOutput* track, Block* block, rational point, QUndoCommand* parent = nullptr);
 
-    Block* new_block();
+  Block* new_block();
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    TrackOutput* track_;
-    Block* block_;
+ private:
+  TrackOutput* track_;
+  Block* block_;
 
-    rational new_length_;
-    rational old_length_;
-    rational point_;
+  rational new_length_;
+  rational old_length_;
+  rational point_;
 
-    Block* new_block_;
+  Block* new_block_;
 
-    QList<NodeInput*> transitions_to_move_;
+  QList<NodeInput*> transitions_to_move_;
 
-    QObject memory_manager_;
-
+  QObject memory_manager_;
 };
 
 class TrackSplitAtTimeCommand : public UndoCommand {
-public:
-    TrackSplitAtTimeCommand(TrackOutput* track, rational point, QUndoCommand* parent = nullptr);
+ public:
+  TrackSplitAtTimeCommand(TrackOutput* track, rational point, QUndoCommand* parent = nullptr);
 };
 
 class BlockSplitPreservingLinksCommand : public UndoCommand {
-public:
-    BlockSplitPreservingLinksCommand(const QVector<Block *> &blocks, const QList<rational>& times, QUndoCommand* parent = nullptr);
+ public:
+  BlockSplitPreservingLinksCommand(const QVector<Block*>& blocks, const QList<rational>& times,
+                                   QUndoCommand* parent = nullptr);
 
-private:
-    QVector<Block *> blocks_;
+ private:
+  QVector<Block*> blocks_;
 
-    QList<rational> times_;
+  QList<rational> times_;
 };
 
 /**
@@ -240,60 +240,58 @@ private:
  * Both blocks must have equal lengths.
  */
 class TrackReplaceBlockCommand : public UndoCommand {
-public:
-    TrackReplaceBlockCommand(TrackOutput* track, Block* old, Block* replace, QUndoCommand* parent = nullptr);
+ public:
+  TrackReplaceBlockCommand(TrackOutput* track, Block* old, Block* replace, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    TrackOutput* track_;
-    Block* old_;
-    Block* replace_;
+ private:
+  TrackOutput* track_;
+  Block* old_;
+  Block* replace_;
 };
 
 class TrackCleanGapsCommand : public UndoCommand {
-public:
-    TrackCleanGapsCommand(TrackList* track_list, int index, QUndoCommand* parent = nullptr);
+ public:
+  TrackCleanGapsCommand(TrackList* track_list, int index, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    struct MergedGap {
-        GapBlock* merged;
-        rational original_length;
-        QList<GapBlock*> removed;
-    };
+ private:
+  struct MergedGap {
+    GapBlock* merged;
+    rational original_length;
+    QList<GapBlock*> removed;
+  };
 
-    TrackList* track_list_;
+  TrackList* track_list_;
 
-    int track_index_;
+  int track_index_;
 
-    QObject memory_manager_;
+  QObject memory_manager_;
 
-    QList<MergedGap> merged_gaps_;
+  QList<MergedGap> merged_gaps_;
 
-    QList<GapBlock*> removed_end_gaps_;
-
+  QList<GapBlock*> removed_end_gaps_;
 };
 
 class TimelineRippleDeleteGapsAtRegions : public UndoCommand {
-public:
-    TimelineRippleDeleteGapsAtRegions(ViewerOutput* vo, const TimeRangeList& regions, QUndoCommand* parent = nullptr);
+ public:
+  TimelineRippleDeleteGapsAtRegions(ViewerOutput* vo, const TimeRangeList& regions, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    ViewerOutput* timeline_;
-    TimeRangeList regions_;
+ private:
+  ViewerOutput* timeline_;
+  TimeRangeList regions_;
 
-    QList<UndoCommand*> commands_;
-
+  QList<UndoCommand*> commands_;
 };
 
-#endif // TIMELINEUNDOABLE_H
+#endif  // TIMELINEUNDOABLE_H
