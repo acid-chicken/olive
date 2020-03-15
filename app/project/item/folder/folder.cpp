@@ -25,70 +25,56 @@
 #include "project/item/sequence/sequence.h"
 #include "ui/icons/icons.h"
 
-Folder::Folder()
-{
-}
+Folder::Folder() {}
 
-Item::Type Folder::type() const
-{
-    return kFolder;
-}
+Item::Type Folder::type() const { return kFolder; }
 
-bool Folder::CanHaveChildren() const
-{
-    return true;
-}
+bool Folder::CanHaveChildren() const { return true; }
 
-QIcon Folder::icon()
-{
-    return icon::Folder;
-}
+QIcon Folder::icon() { return icon::Folder; }
 
-void Folder::Load(QXmlStreamReader *reader, QHash<quintptr, StreamPtr> &footage_ptrs, QList<NodeParam::FootageConnection>& footage_connections, const QAtomicInt *cancelled)
-{
-    XMLAttributeLoop(reader, attr) {
-        if (cancelled && *cancelled) {
-            return;
-        }
-
-        if (attr.name() == "name") {
-            set_name(attr.value().toString());
-        }
+void Folder::Load(QXmlStreamReader *reader, QHash<quintptr, StreamPtr> &footage_ptrs,
+                  QList<NodeParam::FootageConnection> &footage_connections, const QAtomicInt *cancelled) {
+  XMLAttributeLoop(reader, attr) {
+    if (cancelled && *cancelled) {
+      return;
     }
 
-    XMLReadLoop(reader, "folder") {
-        if (cancelled && *cancelled) {
-            return;
-        }
-
-        if (reader->isStartElement()) {
-            ItemPtr child;
-
-            if (reader->name() == "folder") {
-                child = std::make_shared<Folder>();
-            } else if (reader->name() == "footage") {
-                child = std::make_shared<Footage>();
-            } else if (reader->name() == "sequence") {
-                child = std::make_shared<Sequence>();
-            } else {
-                continue;
-            }
-
-            add_child(child);
-            child->Load(reader, footage_ptrs, footage_connections, cancelled);
-        }
+    if (attr.name() == "name") {
+      set_name(attr.value().toString());
     }
+  }
+
+  XMLReadLoop(reader, "folder") {
+    if (cancelled && *cancelled) {
+      return;
+    }
+
+    if (reader->isStartElement()) {
+      ItemPtr child;
+
+      if (reader->name() == "folder") {
+        child = std::make_shared<Folder>();
+      } else if (reader->name() == "footage") {
+        child = std::make_shared<Footage>();
+      } else if (reader->name() == "sequence") {
+        child = std::make_shared<Sequence>();
+      } else {
+        continue;
+      }
+
+      add_child(child);
+      child->Load(reader, footage_ptrs, footage_connections, cancelled);
+    }
+  }
 }
 
-void Folder::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement("folder");
+void Folder::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement("folder");
 
-    writer->writeAttribute("name", name());
+  writer->writeAttribute("name", name());
 
-    foreach (ItemPtr child, children()) {
-        child->Save(writer);
-    }
+  foreach (ItemPtr child, children()) { child->Save(writer); }
 
-    writer->writeEndElement(); // folder
+  writer->writeEndElement();  // folder
 }

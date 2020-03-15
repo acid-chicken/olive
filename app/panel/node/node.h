@@ -27,39 +27,37 @@
 /**
  * @brief A PanelWidget wrapper around a NodeView
  */
-class NodePanel : public PanelWidget
-{
-    Q_OBJECT
-public:
-    NodePanel(QWidget* parent);
+class NodePanel : public PanelWidget {
+  Q_OBJECT
+ public:
+  NodePanel(QWidget* parent);
 
-    void SetGraph(NodeGraph* graph);
+  void SetGraph(NodeGraph* graph);
 
-    virtual void SelectAll() override;
-    virtual void DeselectAll() override;
+  virtual void SelectAll() override;
+  virtual void DeselectAll() override;
 
-    virtual void DeleteSelected() override;
+  virtual void DeleteSelected() override;
 
-    virtual void CutSelected() override;
-    virtual void CopySelected() override;
+  virtual void CutSelected() override;
+  virtual void CopySelected() override;
 
-    virtual void Paste() override;
+  virtual void Paste() override;
 
-public slots:
-    void Select(const QList<Node*>& nodes);
-    void SelectWithDependencies(const QList<Node*>& nodes);
+ public slots:
+  void Select(const QList<Node*>& nodes);
+  void SelectWithDependencies(const QList<Node*>& nodes);
 
-signals:
-    /**
-     * @brief Wrapper for NodeView::SelectionChanged()
-     */
-    void SelectionChanged(QList<Node*> selected_nodes);
+ signals:
+  /**
+   * @brief Wrapper for NodeView::SelectionChanged()
+   */
+  void SelectionChanged(QList<Node*> selected_nodes);
 
-private:
-    virtual void Retranslate() override;
+ private:
+  virtual void Retranslate() override;
 
-    NodeView* node_view_;
-
+  NodeView* node_view_;
 };
 
-#endif // NODEPANEL_H
+#endif  // NODEPANEL_H

@@ -9,387 +9,317 @@
 #include "project/item/sequence/sequence.h"
 #include "widget/timelinewidget/undo/undo.h"
 
-TimeBasedWidget::TimeBasedWidget(bool ruler_text_visible, bool ruler_cache_status_visible, QWidget *parent) :
-    TimelineScaledWidget(parent),
-    viewer_node_(nullptr),
-    auto_max_scrollbar_(false),
-    points_(nullptr)
-{
-    ruler_ = new TimeRuler(ruler_text_visible, ruler_cache_status_visible, this);
-    connect(ruler_, &TimeRuler::TimeChanged, this, &TimeBasedWidget::SetTimeAndSignal);
+TimeBasedWidget::TimeBasedWidget(bool ruler_text_visible, bool ruler_cache_status_visible, QWidget *parent)
+    : TimelineScaledWidget(parent), viewer_node_(nullptr), auto_max_scrollbar_(false), points_(nullptr) {
+  ruler_ = new TimeRuler(ruler_text_visible, ruler_cache_status_visible, this);
+  connect(ruler_, &TimeRuler::TimeChanged, this, &TimeBasedWidget::SetTimeAndSignal);
 
-    scrollbar_ = new ResizableScrollBar(Qt::Horizontal, this);
-    connect(scrollbar_, &ResizableScrollBar::RequestScale, this, &TimeBasedWidget::ScrollBarResized);
+  scrollbar_ = new ResizableScrollBar(Qt::Horizontal, this);
+  connect(scrollbar_, &ResizableScrollBar::RequestScale, this, &TimeBasedWidget::ScrollBarResized);
 }
 
-void TimeBasedWidget::SetScaleAndCenterOnPlayhead(const double &scale)
-{
-    SetScale(scale);
+void TimeBasedWidget::SetScaleAndCenterOnPlayhead(const double &scale) {
+  SetScale(scale);
 
-    // Zoom towards the playhead
-    // (using a hacky singleShot so the scroll occurs after the scene and its scrollbars have updated)
-    QTimer::singleShot(0, this, &TimeBasedWidget::CenterScrollOnPlayhead);
+  // Zoom towards the playhead
+  // (using a hacky singleShot so the scroll occurs after the scene and its scrollbars have updated)
+  QTimer::singleShot(0, this, &TimeBasedWidget::CenterScrollOnPlayhead);
 }
 
-rational TimeBasedWidget::GetTime() const
-{
-    return Timecode::timestamp_to_time(ruler()->GetTime(), timebase());
-}
+rational TimeBasedWidget::GetTime() const { return Timecode::timestamp_to_time(ruler()->GetTime(), timebase()); }
 
-const int64_t &TimeBasedWidget::GetTimestamp() const
-{
-    return ruler_->GetTime();
-}
+const int64_t &TimeBasedWidget::GetTimestamp() const { return ruler_->GetTime(); }
 
-ViewerOutput *TimeBasedWidget::GetConnectedNode() const
-{
-    return viewer_node_;
-}
+ViewerOutput *TimeBasedWidget::GetConnectedNode() const { return viewer_node_; }
 
-void TimeBasedWidget::ConnectViewerNode(ViewerOutput *node)
-{
-    if (viewer_node_) {
-        DisconnectNodeInternal(viewer_node_);
+void TimeBasedWidget::ConnectViewerNode(ViewerOutput *node) {
+  if (viewer_node_) {
+    DisconnectNodeInternal(viewer_node_);
 
-        disconnect(viewer_node_, &ViewerOutput::LengthChanged, this, &TimeBasedWidget::UpdateMaximumScroll);
+    disconnect(viewer_node_, &ViewerOutput::LengthChanged, this, &TimeBasedWidget::UpdateMaximumScroll);
 
-        points_ = nullptr;
-        ruler()->ConnectTimelinePoints(nullptr);
+    points_ = nullptr;
+    ruler()->ConnectTimelinePoints(nullptr);
+  }
+
+  viewer_node_ = node;
+
+  ConnectedNodeChanged(viewer_node_);
+
+  if (viewer_node_) {
+    connect(viewer_node_, &ViewerOutput::LengthChanged, this, &TimeBasedWidget::UpdateMaximumScroll);
+
+    if ((points_ = ConnectTimelinePoints())) {
+      ruler()->ConnectTimelinePoints(points_);
     }
 
-    viewer_node_ = node;
-
-    ConnectedNodeChanged(viewer_node_);
-
-    if (viewer_node_) {
-        connect(viewer_node_, &ViewerOutput::LengthChanged, this, &TimeBasedWidget::UpdateMaximumScroll);
-
-        if ((points_ = ConnectTimelinePoints())) {
-            ruler()->ConnectTimelinePoints(points_);
-        }
-
-        ConnectNodeInternal(viewer_node_);
-    }
+    ConnectNodeInternal(viewer_node_);
+  }
 }
 
-void TimeBasedWidget::UpdateMaximumScroll()
-{
-    if (!viewer_node_ || !auto_max_scrollbar_) {
-        return;
-    }
+void TimeBasedWidget::UpdateMaximumScroll() {
+  if (!viewer_node_ || !auto_max_scrollbar_) {
+    return;
+  }
 
-    scrollbar_->setMaximum(qMax(0, qCeil(TimeToScene(viewer_node_->Length())) - width()));
+  scrollbar_->setMaximum(qMax(0, qCeil(TimeToScene(viewer_node_->Length())) - width()));
 }
 
-void TimeBasedWidget::ScrollBarResized(const double &multiplier)
-{
-    QScrollBar* bar = static_cast<QScrollBar*>(sender());
+void TimeBasedWidget::ScrollBarResized(const double &multiplier) {
+  QScrollBar *bar = static_cast<QScrollBar *>(sender());
 
-    // Our extension area (represented by a TimelineViewEndItem) is NOT scaled, but the ResizableScrollBar doesn't know
-    // this. Here we re-calculate the requested scale knowing that the end item is not affected by scale.
+  // Our extension area (represented by a TimelineViewEndItem) is NOT scaled, but the ResizableScrollBar doesn't know
+  // this. Here we re-calculate the requested scale knowing that the end item is not affected by scale.
 
-    int current_max = bar->maximum();
-    double proposed_max = static_cast<double>(current_max) * multiplier;
+  int current_max = bar->maximum();
+  double proposed_max = static_cast<double>(current_max) * multiplier;
 
-    proposed_max = proposed_max - (bar->width() * 0.5 / multiplier) + (bar->width() * 0.5);
+  proposed_max = proposed_max - (bar->width() * 0.5 / multiplier) + (bar->width() * 0.5);
 
-    double corrected_scale;
+  double corrected_scale;
 
-    if (current_max == 0) {
-        corrected_scale = multiplier;
-    } else {
-        corrected_scale = (proposed_max / static_cast<double>(current_max));
-    }
+  if (current_max == 0) {
+    corrected_scale = multiplier;
+  } else {
+    corrected_scale = (proposed_max / static_cast<double>(current_max));
+  }
 
-    SetScale(GetScale() * corrected_scale);
+  SetScale(GetScale() * corrected_scale);
 }
 
-TimeRuler *TimeBasedWidget::ruler() const
-{
-    return ruler_;
+TimeRuler *TimeBasedWidget::ruler() const { return ruler_; }
+
+ResizableScrollBar *TimeBasedWidget::scrollbar() const { return scrollbar_; }
+
+void TimeBasedWidget::TimebaseChangedEvent(const rational &timebase) {
+  TimelineScaledObject::TimebaseChangedEvent(timebase);
+
+  ruler_->SetTimebase(timebase);
+
+  emit TimebaseChanged(timebase);
 }
 
-ResizableScrollBar *TimeBasedWidget::scrollbar() const
-{
-    return scrollbar_;
+void TimeBasedWidget::ScaleChangedEvent(const double &scale) {
+  TimelineScaledObject::ScaleChangedEvent(scale);
+
+  ruler_->SetScale(scale);
+
+  UpdateMaximumScroll();
 }
 
-void TimeBasedWidget::TimebaseChangedEvent(const rational &timebase)
-{
-    TimelineScaledObject::TimebaseChangedEvent(timebase);
+void TimeBasedWidget::SetAutoMaxScrollBar(bool e) { auto_max_scrollbar_ = e; }
 
-    ruler_->SetTimebase(timebase);
+void TimeBasedWidget::resizeEvent(QResizeEvent *event) {
+  QWidget::resizeEvent(event);
 
-    emit TimebaseChanged(timebase);
+  // Update horizontal scrollbar's page step to the width of the panel
+  scrollbar()->setPageStep(scrollbar()->width());
+
+  UpdateMaximumScroll();
 }
 
-void TimeBasedWidget::ScaleChangedEvent(const double &scale)
-{
-    TimelineScaledObject::ScaleChangedEvent(scale);
+TimelinePoints *TimeBasedWidget::ConnectTimelinePoints() { return static_cast<Sequence *>(viewer_node_->parent()); }
 
-    ruler_->SetScale(scale);
+TimelinePoints *TimeBasedWidget::GetConnectedTimelinePoints() const { return points_; }
 
-    UpdateMaximumScroll();
+void TimeBasedWidget::SetTime(int64_t timestamp) {
+  ruler_->SetTime(timestamp);
+
+  TimeChangedEvent(timestamp);
 }
 
-void TimeBasedWidget::SetAutoMaxScrollBar(bool e)
-{
-    auto_max_scrollbar_ = e;
+void TimeBasedWidget::SetTimebase(const rational &timebase) { TimelineScaledObject::SetTimebase(timebase); }
+
+void TimeBasedWidget::SetScale(const double &scale) {
+  // Simple QObject slot wrapper around TimelineScaledObject::SetScale()
+  TimelineScaledObject::SetScale(scale);
 }
 
-void TimeBasedWidget::resizeEvent(QResizeEvent *event)
-{
-    QWidget::resizeEvent(event);
+void TimeBasedWidget::ZoomIn() { SetScaleAndCenterOnPlayhead(GetScale() * 2); }
 
-    // Update horizontal scrollbar's page step to the width of the panel
-    scrollbar()->setPageStep(scrollbar()->width());
+void TimeBasedWidget::ZoomOut() { SetScaleAndCenterOnPlayhead(GetScale() * 0.5); }
 
-    UpdateMaximumScroll();
-}
+void TimeBasedWidget::GoToPrevCut() {
+  if (!GetConnectedNode()) {
+    return;
+  }
 
-TimelinePoints *TimeBasedWidget::ConnectTimelinePoints()
-{
-    return static_cast<Sequence*>(viewer_node_->parent());
-}
+  if (GetTimestamp() == 0) {
+    return;
+  }
 
-TimelinePoints *TimeBasedWidget::GetConnectedTimelinePoints() const
-{
-    return points_;
-}
+  int64_t closest_cut = 0;
 
-void TimeBasedWidget::SetTime(int64_t timestamp)
-{
-    ruler_->SetTime(timestamp);
+  foreach (TrackOutput *track, viewer_node_->Tracks()) {
+    int64_t this_track_closest_cut = 0;
 
-    TimeChangedEvent(timestamp);
-}
+    foreach (Block *block, track->Blocks()) {
+      int64_t block_out_ts = Timecode::time_to_timestamp(block->out(), timebase());
 
-void TimeBasedWidget::SetTimebase(const rational &timebase)
-{
-    TimelineScaledObject::SetTimebase(timebase);
-}
-
-void TimeBasedWidget::SetScale(const double &scale)
-{
-    // Simple QObject slot wrapper around TimelineScaledObject::SetScale()
-    TimelineScaledObject::SetScale(scale);
-}
-
-void TimeBasedWidget::ZoomIn()
-{
-    SetScaleAndCenterOnPlayhead(GetScale() * 2);
-}
-
-void TimeBasedWidget::ZoomOut()
-{
-    SetScaleAndCenterOnPlayhead(GetScale() * 0.5);
-}
-
-void TimeBasedWidget::GoToPrevCut()
-{
-    if (!GetConnectedNode()) {
-        return;
+      if (block_out_ts < GetTimestamp()) {
+        this_track_closest_cut = block_out_ts;
+      } else {
+        break;
+      }
     }
 
-    if (GetTimestamp() == 0) {
-        return;
+    closest_cut = qMax(closest_cut, this_track_closest_cut);
+  }
+
+  SetTimeAndSignal(closest_cut);
+}
+
+void TimeBasedWidget::GoToNextCut() {
+  if (!GetConnectedNode()) {
+    return;
+  }
+
+  int64_t closest_cut = INT64_MAX;
+
+  foreach (TrackOutput *track, GetConnectedNode()->Tracks()) {
+    int64_t this_track_closest_cut = Timecode::time_to_timestamp(track->track_length(), timebase());
+
+    if (this_track_closest_cut <= GetTimestamp()) {
+      this_track_closest_cut = INT64_MAX;
     }
 
-    int64_t closest_cut = 0;
+    foreach (Block *block, track->Blocks()) {
+      int64_t block_in_ts = Timecode::time_to_timestamp(block->in(), timebase());
 
-    foreach (TrackOutput* track, viewer_node_->Tracks()) {
-        int64_t this_track_closest_cut = 0;
-
-        foreach (Block* block, track->Blocks()) {
-            int64_t block_out_ts = Timecode::time_to_timestamp(block->out(), timebase());
-
-            if (block_out_ts < GetTimestamp()) {
-                this_track_closest_cut = block_out_ts;
-            } else {
-                break;
-            }
-        }
-
-        closest_cut = qMax(closest_cut, this_track_closest_cut);
+      if (block_in_ts > GetTimestamp()) {
+        this_track_closest_cut = block_in_ts;
+        break;
+      }
     }
 
+    closest_cut = qMin(closest_cut, this_track_closest_cut);
+  }
+
+  if (closest_cut < INT64_MAX) {
     SetTimeAndSignal(closest_cut);
+  }
 }
 
-void TimeBasedWidget::GoToNextCut()
-{
-    if (!GetConnectedNode()) {
-        return;
-    }
-
-    int64_t closest_cut = INT64_MAX;
-
-    foreach (TrackOutput* track, GetConnectedNode()->Tracks()) {
-        int64_t this_track_closest_cut = Timecode::time_to_timestamp(track->track_length(), timebase());
-
-        if (this_track_closest_cut <= GetTimestamp()) {
-            this_track_closest_cut = INT64_MAX;
-        }
-
-        foreach (Block* block, track->Blocks()) {
-            int64_t block_in_ts = Timecode::time_to_timestamp(block->in(), timebase());
-
-            if (block_in_ts > GetTimestamp()) {
-                this_track_closest_cut = block_in_ts;
-                break;
-            }
-        }
-
-        closest_cut = qMin(closest_cut, this_track_closest_cut);
-    }
-
-    if (closest_cut < INT64_MAX) {
-        SetTimeAndSignal(closest_cut);
-    }
+void TimeBasedWidget::GoToStart() {
+  if (viewer_node_) {
+    SetTimeAndSignal(0);
+  }
 }
 
-void TimeBasedWidget::GoToStart()
-{
-    if (viewer_node_) {
-        SetTimeAndSignal(0);
-    }
+void TimeBasedWidget::PrevFrame() {
+  if (viewer_node_) {
+    SetTimeAndSignal(qMax(static_cast<int64_t>(0), ruler()->GetTime() - 1));
+  }
 }
 
-void TimeBasedWidget::PrevFrame()
-{
-    if (viewer_node_) {
-        SetTimeAndSignal(qMax(static_cast<int64_t>(0), ruler()->GetTime() - 1));
-    }
+void TimeBasedWidget::NextFrame() {
+  if (viewer_node_) {
+    SetTimeAndSignal(ruler()->GetTime() + 1);
+  }
 }
 
-void TimeBasedWidget::NextFrame()
-{
-    if (viewer_node_) {
-        SetTimeAndSignal(ruler()->GetTime() + 1);
-    }
+void TimeBasedWidget::GoToEnd() {
+  if (viewer_node_) {
+    SetTimeAndSignal(Timecode::time_to_timestamp(viewer_node_->Length(), timebase()));
+  }
 }
 
-void TimeBasedWidget::GoToEnd()
-{
-    if (viewer_node_) {
-        SetTimeAndSignal(Timecode::time_to_timestamp(viewer_node_->Length(), timebase()));
-    }
+void TimeBasedWidget::SetTimeAndSignal(const int64_t &t) {
+  SetTime(t);
+  emit TimeChanged(t);
 }
 
-void TimeBasedWidget::SetTimeAndSignal(const int64_t &t)
-{
-    SetTime(t);
-    emit TimeChanged(t);
+void TimeBasedWidget::CenterScrollOnPlayhead() {
+  scrollbar_->setValue(qRound(TimeToScene(Timecode::timestamp_to_time(ruler_->GetTime(), timebase()))) -
+                       scrollbar_->width() / 2);
 }
 
-void TimeBasedWidget::CenterScrollOnPlayhead()
-{
-    scrollbar_->setValue(qRound(TimeToScene(Timecode::timestamp_to_time(ruler_->GetTime(), timebase()))) - scrollbar_->width()/2);
-}
+void TimeBasedWidget::SetPoint(Timeline::MovementMode m, const rational &time) {
+  if (!points_) {
+    return;
+  }
 
-void TimeBasedWidget::SetPoint(Timeline::MovementMode m, const rational& time)
-{
-    if (!points_) {
-        return;
-    }
+  QUndoCommand *command = new QUndoCommand();
 
-    QUndoCommand* command = new QUndoCommand();
+  // Enable workarea if it isn't already enabled
+  if (!points_->workarea()->enabled()) {
+    new WorkareaSetEnabledCommand(points_, true, command);
+  }
 
-    // Enable workarea if it isn't already enabled
-    if (!points_->workarea()->enabled()) {
-        new WorkareaSetEnabledCommand(points_, true, command);
-    }
+  // Determine our new range
+  rational in_point, out_point;
 
-    // Determine our new range
-    rational in_point, out_point;
+  if (m == Timeline::kTrimIn) {
+    in_point = time;
 
-    if (m == Timeline::kTrimIn) {
-        in_point = time;
-
-        if (!points_->workarea()->enabled() || points_->workarea()->out() < in_point) {
-            out_point = TimelineWorkArea::kResetOut;
-        } else {
-            out_point = points_->workarea()->out();
-        }
+    if (!points_->workarea()->enabled() || points_->workarea()->out() < in_point) {
+      out_point = TimelineWorkArea::kResetOut;
     } else {
-        out_point = time;
-
-        if (!points_->workarea()->enabled() || points_->workarea()->in() > out_point) {
-            in_point = TimelineWorkArea::kResetIn;
-        } else {
-            in_point = points_->workarea()->in();
-        }
+      out_point = points_->workarea()->out();
     }
+  } else {
+    out_point = time;
 
-    // Set workarea
-    new WorkareaSetRangeCommand(points_, TimeRange(in_point, out_point), command);
-
-    Core::instance()->undo_stack()->push(command);
-}
-
-void TimeBasedWidget::ResetPoint(Timeline::MovementMode m)
-{
-    if (!points_ || !points_->workarea()->enabled()) {
-        return;
-    }
-
-    TimeRange r = points_->workarea()->range();
-
-    if (m == Timeline::kTrimIn) {
-        r.set_in(TimelineWorkArea::kResetIn);
+    if (!points_->workarea()->enabled() || points_->workarea()->in() > out_point) {
+      in_point = TimelineWorkArea::kResetIn;
     } else {
-        r.set_out(TimelineWorkArea::kResetOut);
+      in_point = points_->workarea()->in();
     }
+  }
 
-    Core::instance()->undo_stack()->push(new WorkareaSetRangeCommand(points_, r));
+  // Set workarea
+  new WorkareaSetRangeCommand(points_, TimeRange(in_point, out_point), command);
+
+  Core::instance()->undo_stack()->push(command);
 }
 
-void TimeBasedWidget::SetInAtPlayhead()
-{
-    SetPoint(Timeline::kTrimIn, GetTime());
+void TimeBasedWidget::ResetPoint(Timeline::MovementMode m) {
+  if (!points_ || !points_->workarea()->enabled()) {
+    return;
+  }
+
+  TimeRange r = points_->workarea()->range();
+
+  if (m == Timeline::kTrimIn) {
+    r.set_in(TimelineWorkArea::kResetIn);
+  } else {
+    r.set_out(TimelineWorkArea::kResetOut);
+  }
+
+  Core::instance()->undo_stack()->push(new WorkareaSetRangeCommand(points_, r));
 }
 
-void TimeBasedWidget::SetOutAtPlayhead()
-{
-    SetPoint(Timeline::kTrimOut, GetTime());
+void TimeBasedWidget::SetInAtPlayhead() { SetPoint(Timeline::kTrimIn, GetTime()); }
+
+void TimeBasedWidget::SetOutAtPlayhead() { SetPoint(Timeline::kTrimOut, GetTime()); }
+
+void TimeBasedWidget::ResetIn() { ResetPoint(Timeline::kTrimIn); }
+
+void TimeBasedWidget::ResetOut() { ResetPoint(Timeline::kTrimOut); }
+
+void TimeBasedWidget::ClearInOutPoints() {
+  if (!points_) {
+    return;
+  }
+
+  Core::instance()->undo_stack()->push(new WorkareaSetEnabledCommand(points_, false));
 }
 
-void TimeBasedWidget::ResetIn()
-{
-    ResetPoint(Timeline::kTrimIn);
-}
+void TimeBasedWidget::SetMarker() {
+  if (!points_) {
+    return;
+  }
 
-void TimeBasedWidget::ResetOut()
-{
-    ResetPoint(Timeline::kTrimOut);
-}
+  bool ok;
+  QString marker_name;
 
-void TimeBasedWidget::ClearInOutPoints()
-{
-    if (!points_) {
-        return;
-    }
+  if (Config::Current()["SetNameWithMarker"].toBool()) {
+    marker_name = QInputDialog::getText(this, tr("Set Marker"), tr("Marker name:"), QLineEdit::Normal, QString(), &ok);
+  } else {
+    ok = true;
+  }
 
-
-    Core::instance()->undo_stack()->push(new WorkareaSetEnabledCommand(points_, false));
-}
-
-void TimeBasedWidget::SetMarker()
-{
-    if (!points_) {
-        return;
-    }
-
-    bool ok;
-    QString marker_name;
-
-    if (Config::Current()["SetNameWithMarker"].toBool()) {
-        marker_name = QInputDialog::getText(this, tr("Set Marker"), tr("Marker name:"), QLineEdit::Normal, QString(), &ok);
-    } else {
-        ok = true;
-    }
-
-    if (ok) {
-        points_->markers()->AddMarker(TimeRange(GetTime(), GetTime()), marker_name);
-    }
+  if (ok) {
+    points_->markers()->AddMarker(TimeRange(GetTime(), GetTime()), marker_name);
+  }
 }

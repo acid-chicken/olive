@@ -28,329 +28,257 @@
 #include "config/config.h"
 #include "ui/icons/icons.h"
 
-Footage::Footage()
-{
-    Clear();
-}
+Footage::Footage() { Clear(); }
 
-Footage::~Footage()
-{
-    ClearStreams();
-}
+Footage::~Footage() { ClearStreams(); }
 
-void Footage::Load(QXmlStreamReader *reader, QHash<quintptr, StreamPtr>& footage_ptrs, QList<NodeParam::FootageConnection>&, const QAtomicInt* cancelled)
-{
-    QXmlStreamAttributes attributes = reader->attributes();
+void Footage::Load(QXmlStreamReader *reader, QHash<quintptr, StreamPtr> &footage_ptrs,
+                   QList<NodeParam::FootageConnection> &, const QAtomicInt *cancelled) {
+  QXmlStreamAttributes attributes = reader->attributes();
 
-    foreach (const QXmlStreamAttribute& attr, attributes) {
-        if (attr.name() == "name") {
-            set_name(attr.value().toString());
-        } else if (attr.name() == "filename") {
-            set_filename(attr.value().toString());
-        }
+  foreach (const QXmlStreamAttribute &attr, attributes) {
+    if (attr.name() == "name") {
+      set_name(attr.value().toString());
+    } else if (attr.name() == "filename") {
+      set_filename(attr.value().toString());
+    }
+  }
+
+  Decoder::ProbeMedia(this, cancelled);
+
+  XMLReadLoop(reader, "footage") {
+    if (cancelled && *cancelled) {
+      return;
     }
 
-    Decoder::ProbeMedia(this, cancelled);
+    if (reader->isStartElement()) {
+      if (reader->name() == "stream") {
+        int stream_index = -1;
+        quintptr stream_ptr = 0;
 
-    XMLReadLoop(reader, "footage") {
-        if (cancelled && *cancelled) {
+        XMLAttributeLoop(reader, attr) {
+          if (cancelled && *cancelled) {
             return;
+          }
+
+          if (attr.name() == "index") {
+            stream_index = attr.value().toInt();
+          } else if (attr.name() == "ptr") {
+            stream_ptr = attr.value().toULongLong();
+          }
         }
 
-        if (reader->isStartElement()) {
-            if (reader->name() == "stream") {
-                int stream_index = -1;
-                quintptr stream_ptr = 0;
+        if (stream_index > -1 && stream_ptr > 0) {
+          footage_ptrs.insert(stream_ptr, stream(stream_index));
 
-                XMLAttributeLoop(reader, attr) {
-                    if (cancelled && *cancelled) {
-                        return;
-                    }
-
-                    if (attr.name() == "index") {
-                        stream_index = attr.value().toInt();
-                    } else if (attr.name() == "ptr") {
-                        stream_ptr = attr.value().toULongLong();
-                    }
-                }
-
-                if (stream_index > -1 && stream_ptr > 0) {
-                    footage_ptrs.insert(stream_ptr, stream(stream_index));
-
-                    stream(stream_index)->Load(reader);
-                } else {
-                    qWarning() << "Invalid stream found in project file";
-                }
-            }
+          stream(stream_index)->Load(reader);
+        } else {
+          qWarning() << "Invalid stream found in project file";
         }
+      }
     }
+  }
 }
 
-void Footage::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement("footage");
+void Footage::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement("footage");
 
-    writer->writeAttribute("name", name());
-    writer->writeAttribute("filename", filename());
+  writer->writeAttribute("name", name());
+  writer->writeAttribute("filename", filename());
 
-    foreach (StreamPtr stream, streams_) {
-        stream->Save(writer);
-    }
+  foreach (StreamPtr stream, streams_) { stream->Save(writer); }
 
-    writer->writeEndElement(); // footage
+  writer->writeEndElement();  // footage
 }
 
-const Footage::Status& Footage::status() const
-{
-    return status_;
+const Footage::Status &Footage::status() const { return status_; }
+
+void Footage::set_status(const Footage::Status &status) {
+  status_ = status;
+
+  UpdateTooltip();
 }
 
-void Footage::set_status(const Footage::Status &status)
-{
-    status_ = status;
+void Footage::Clear() {
+  // Clear all streams
+  ClearStreams();
 
-    UpdateTooltip();
+  // Reset ready state
+  set_status(kUnprobed);
 }
 
-void Footage::Clear()
-{
-    // Clear all streams
-    ClearStreams();
+const QString &Footage::filename() const { return filename_; }
 
-    // Reset ready state
-    set_status(kUnprobed);
+void Footage::set_filename(const QString &s) { filename_ = s; }
+
+const QDateTime &Footage::timestamp() const { return timestamp_; }
+
+void Footage::set_timestamp(const QDateTime &t) { timestamp_ = t; }
+
+void Footage::add_stream(StreamPtr s) {
+  // Set its footage parent to this
+  s->set_footage(this);
+
+  // Add a copy of this stream to the list
+  streams_.append(s);
 }
 
-const QString &Footage::filename() const
-{
-    return filename_;
-}
+StreamPtr Footage::stream(int index) const { return streams_.at(index); }
 
-void Footage::set_filename(const QString &s)
-{
-    filename_ = s;
-}
+const QList<StreamPtr> &Footage::streams() const { return streams_; }
 
-const QDateTime &Footage::timestamp() const
-{
-    return timestamp_;
-}
+int Footage::stream_count() const { return streams_.size(); }
 
-void Footage::set_timestamp(const QDateTime &t)
-{
-    timestamp_ = t;
-}
+Item::Type Footage::type() const { return kFootage; }
 
-void Footage::add_stream(StreamPtr s)
-{
-    // Set its footage parent to this
-    s->set_footage(this);
+const QString &Footage::decoder() const { return decoder_; }
 
-    // Add a copy of this stream to the list
-    streams_.append(s);
-}
+void Footage::set_decoder(const QString &id) { decoder_ = id; }
 
-StreamPtr Footage::stream(int index) const
-{
-    return streams_.at(index);
-}
-
-const QList<StreamPtr> &Footage::streams() const
-{
-    return streams_;
-}
-
-int Footage::stream_count() const
-{
-    return streams_.size();
-}
-
-Item::Type Footage::type() const
-{
-    return kFootage;
-}
-
-const QString &Footage::decoder() const
-{
-    return decoder_;
-}
-
-void Footage::set_decoder(const QString &id)
-{
-    decoder_ = id;
-}
-
-QIcon Footage::icon()
-{
-    switch (status_) {
+QIcon Footage::icon() {
+  switch (status_) {
     case kUnprobed:
     case kUnindexed:
-        // FIXME Set a waiting icon
-        return QIcon();
+      // FIXME Set a waiting icon
+      return QIcon();
     case kReady:
-        if (HasStreamsOfType(Stream::kVideo)) {
+      if (HasStreamsOfType(Stream::kVideo)) {
+        // Prioritize the video icon
+        return icon::Video;
 
-            // Prioritize the video icon
-            return icon::Video;
+      } else if (HasStreamsOfType(Stream::kAudio)) {
+        // Otherwise assume it's audio only
+        return icon::Audio;
 
-        } else if (HasStreamsOfType(Stream::kAudio)) {
-
-            // Otherwise assume it's audio only
-            return icon::Audio;
-
-        } else if (HasStreamsOfType(Stream::kImage)) {
-
-            // Otherwise assume it's an image
-            return icon::Image;
-
-        }
+      } else if (HasStreamsOfType(Stream::kImage)) {
+        // Otherwise assume it's an image
+        return icon::Image;
+      }
     /* fall-through */
     case kInvalid:
-        return icon::Error;
-    }
+      return icon::Error;
+  }
 
-    return QIcon();
+  return QIcon();
 }
 
-QString Footage::duration()
-{
-    if (streams_.isEmpty()) {
-        return QString();
-    }
-
-    if (streams_.first()->type() == Stream::kVideo) {
-        VideoStreamPtr video_stream = std::static_pointer_cast<VideoStream>(streams_.first());
-
-        int64_t duration = video_stream->duration();
-        rational frame_rate_timebase = video_stream->frame_rate().flipped();
-
-        if (video_stream->timebase() != frame_rate_timebase) {
-            // Convert from timebase to frame rate
-            rational duration_time = Timecode::timestamp_to_time(duration, video_stream->timebase());
-            duration = Timecode::time_to_timestamp(duration_time, frame_rate_timebase);
-        }
-
-        return Timecode::timestamp_to_timecode(duration,
-                                               frame_rate_timebase,
-                                               Timecode::CurrentDisplay());
-    } else if (streams_.first()->type() == Stream::kAudio) {
-        AudioStreamPtr audio_stream = std::static_pointer_cast<AudioStream>(streams_.first());
-
-        // If we're showing in a timecode, we prefer showing audio in seconds instead
-        Timecode::Display display = Timecode::CurrentDisplay();
-        if (display == Timecode::kTimecodeDropFrame
-                || display == Timecode::kTimecodeNonDropFrame) {
-            display = Timecode::kTimecodeSeconds;
-        }
-
-        return Timecode::timestamp_to_timecode(streams_.first()->duration(),
-                                               streams_.first()->timebase(),
-                                               display);
-    }
-
+QString Footage::duration() {
+  if (streams_.isEmpty()) {
     return QString();
+  }
+
+  if (streams_.first()->type() == Stream::kVideo) {
+    VideoStreamPtr video_stream = std::static_pointer_cast<VideoStream>(streams_.first());
+
+    int64_t duration = video_stream->duration();
+    rational frame_rate_timebase = video_stream->frame_rate().flipped();
+
+    if (video_stream->timebase() != frame_rate_timebase) {
+      // Convert from timebase to frame rate
+      rational duration_time = Timecode::timestamp_to_time(duration, video_stream->timebase());
+      duration = Timecode::time_to_timestamp(duration_time, frame_rate_timebase);
+    }
+
+    return Timecode::timestamp_to_timecode(duration, frame_rate_timebase, Timecode::CurrentDisplay());
+  } else if (streams_.first()->type() == Stream::kAudio) {
+    AudioStreamPtr audio_stream = std::static_pointer_cast<AudioStream>(streams_.first());
+
+    // If we're showing in a timecode, we prefer showing audio in seconds instead
+    Timecode::Display display = Timecode::CurrentDisplay();
+    if (display == Timecode::kTimecodeDropFrame || display == Timecode::kTimecodeNonDropFrame) {
+      display = Timecode::kTimecodeSeconds;
+    }
+
+    return Timecode::timestamp_to_timecode(streams_.first()->duration(), streams_.first()->timebase(), display);
+  }
+
+  return QString();
 }
 
-QString Footage::rate()
-{
-    if (streams_.isEmpty()) {
-        return QString();
-    }
-
-    if (streams_.first()->type() == Stream::kVideo) {
-        // Return the timebase as a frame rate
-        VideoStreamPtr video_stream = std::static_pointer_cast<VideoStream>(streams_.first());
-
-        return QCoreApplication::translate("Footage", "%1 FPS").arg(video_stream->frame_rate().toDouble());
-    } else if (streams_.first()->type() == Stream::kAudio) {
-        // Return the sample rate
-        AudioStreamPtr audio_stream = std::static_pointer_cast<AudioStream>(streams_.first());
-
-        return QCoreApplication::translate("Footage", "%1 Hz").arg(audio_stream->sample_rate());
-    }
-
+QString Footage::rate() {
+  if (streams_.isEmpty()) {
     return QString();
+  }
+
+  if (streams_.first()->type() == Stream::kVideo) {
+    // Return the timebase as a frame rate
+    VideoStreamPtr video_stream = std::static_pointer_cast<VideoStream>(streams_.first());
+
+    return QCoreApplication::translate("Footage", "%1 FPS").arg(video_stream->frame_rate().toDouble());
+  } else if (streams_.first()->type() == Stream::kAudio) {
+    // Return the sample rate
+    AudioStreamPtr audio_stream = std::static_pointer_cast<AudioStream>(streams_.first());
+
+    return QCoreApplication::translate("Footage", "%1 Hz").arg(audio_stream->sample_rate());
+  }
+
+  return QString();
 }
 
-void Footage::ClearStreams()
-{
-    if (streams_.empty()) {
-        return;
+void Footage::ClearStreams() {
+  if (streams_.empty()) {
+    return;
+  }
+
+  // Delete all streams
+  streams_.clear();
+}
+
+bool Footage::HasStreamsOfType(const Stream::Type type) {
+  // Return true if any streams are video streams
+  for (int i = 0; i < streams_.size(); i++) {
+    if (streams_.at(i)->type() == type) {
+      return true;
     }
+  }
 
-    // Delete all streams
-    streams_.clear();
+  return false;
 }
 
-bool Footage::HasStreamsOfType(const Stream::Type type)
-{
-    // Return true if any streams are video streams
-    for (int i=0; i<streams_.size(); i++) {
-        if (streams_.at(i)->type() == type) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void Footage::UpdateTooltip()
-{
-    switch (status_) {
+void Footage::UpdateTooltip() {
+  switch (status_) {
     case kUnprobed:
-        set_tooltip(QCoreApplication::translate("Footage", "Waiting for probe"));
-        break;
+      set_tooltip(QCoreApplication::translate("Footage", "Waiting for probe"));
+      break;
     case kUnindexed:
-        set_tooltip(QCoreApplication::translate("Footage", "Waiting for index"));
-        break;
-    case kReady:
-    {
-        QString tip = QCoreApplication::translate("Footage", "Filename: %1").arg(filename());
+      set_tooltip(QCoreApplication::translate("Footage", "Waiting for index"));
+      break;
+    case kReady: {
+      QString tip = QCoreApplication::translate("Footage", "Filename: %1").arg(filename());
 
-        if (!streams_.isEmpty()) {
-            tip.append("\n");
+      if (!streams_.isEmpty()) {
+        tip.append("\n");
 
-            for (int i=0; i<streams_.size(); i++) {
+        for (int i = 0; i < streams_.size(); i++) {
+          StreamPtr s = streams_.at(i);
 
-                StreamPtr s = streams_.at(i);
+          switch (s->type()) {
+            case Stream::kVideo:
+            case Stream::kImage: {
+              ImageStreamPtr vs = std::static_pointer_cast<ImageStream>(s);
 
-                switch (s->type()) {
-                case Stream::kVideo:
-                case Stream::kImage:
-                {
-                    ImageStreamPtr vs = std::static_pointer_cast<ImageStream>(s);
-
-                    tip.append(
-                        QCoreApplication::translate("Footage",
-                                                    "\nVideo %1: %2x%3").arg(QString::number(i),
-                                                            QString::number(vs->width()),
-                                                            QString::number(vs->height()))
-                    );
-                    break;
-                }
-                case Stream::kAudio:
-                {
-                    AudioStreamPtr as = std::static_pointer_cast<AudioStream>(s);
-
-                    tip.append(
-                        QCoreApplication::translate("Footage",
-                                                    "\nAudio %1: %2 channels %3 Hz").arg(QString::number(i),
-                                                            QString::number(as->channels()),
-                                                            QString::number(as->sample_rate()))
-                    );
-                    break;
-                }
-                default:
-                    break;
-                }
+              tip.append(QCoreApplication::translate("Footage", "\nVideo %1: %2x%3")
+                             .arg(QString::number(i), QString::number(vs->width()), QString::number(vs->height())));
+              break;
             }
-        }
+            case Stream::kAudio: {
+              AudioStreamPtr as = std::static_pointer_cast<AudioStream>(s);
 
-        set_tooltip(tip);
-    }
-    break;
+              tip.append(
+                  QCoreApplication::translate("Footage", "\nAudio %1: %2 channels %3 Hz")
+                      .arg(QString::number(i), QString::number(as->channels()), QString::number(as->sample_rate())));
+              break;
+            }
+            default:
+              break;
+          }
+        }
+      }
+
+      set_tooltip(tip);
+    } break;
     case kInvalid:
-        set_tooltip(QCoreApplication::translate("Footage", "An error occurred probing this footage"));
-        break;
-    }
+      set_tooltip(QCoreApplication::translate("Footage", "An error occurred probing this footage"));
+      break;
+  }
 }

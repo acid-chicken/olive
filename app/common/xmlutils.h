@@ -8,12 +8,13 @@
 #define XMLReadLoop(reader, section) \
   while (!reader->atEnd() && !(reader->name() == section && reader->isEndElement()) && reader->readNext())
 
-#define XMLAttributeLoop(reader, item) \
+#define XMLAttributeLoop(reader, item)                      \
   QXmlStreamAttributes __attributes = reader->attributes(); \
-  foreach (const QXmlStreamAttribute& item, __attributes)
+  foreach (const QXmlStreamAttribute &item, __attributes)
 
-Node *XMLLoadNode(QXmlStreamReader* reader);
+Node *XMLLoadNode(QXmlStreamReader *reader);
 
-void XMLConnectNodes(const QHash<quintptr, NodeOutput *> &output_ptrs, const QList<NodeParam::SerializedConnection> &desired_connections);
+void XMLConnectNodes(const QHash<quintptr, NodeOutput *> &output_ptrs,
+                     const QList<NodeParam::SerializedConnection> &desired_connections);
 
-#endif // XMLREADLOOP_H
+#endif  // XMLREADLOOP_H

@@ -33,85 +33,83 @@
  * This widget takes a NodeGraph object and constructs a QGraphicsScene representing its data, viewing and allowing
  * the user to make modifications to it.
  */
-class NodeView : public QGraphicsView
-{
-    Q_OBJECT
-public:
-    NodeView(QWidget* parent);
+class NodeView : public QGraphicsView {
+  Q_OBJECT
+ public:
+  NodeView(QWidget* parent);
 
-    virtual ~NodeView() override;
+  virtual ~NodeView() override;
 
-    /**
-     * @brief Sets the graph to view
-     */
-    void SetGraph(NodeGraph* graph);
+  /**
+   * @brief Sets the graph to view
+   */
+  void SetGraph(NodeGraph* graph);
 
-    /**
-     * @brief Delete selected nodes from graph (user-friendly/undoable)
-     */
-    void DeleteSelected();
+  /**
+   * @brief Delete selected nodes from graph (user-friendly/undoable)
+   */
+  void DeleteSelected();
 
-    void SelectAll();
-    void DeselectAll();
+  void SelectAll();
+  void DeselectAll();
 
-    void Select(const QList<Node*>& nodes);
-    void SelectWithDependencies(QList<Node *> nodes);
+  void Select(const QList<Node*>& nodes);
+  void SelectWithDependencies(QList<Node*> nodes);
 
-    void CopySelected(bool cut);
-    void Paste();
+  void CopySelected(bool cut);
+  void Paste();
 
-signals:
-    /**
-     * @brief Signal emitted when the selected nodes have changed
-     */
-    void SelectionChanged(QList<Node*> selected_nodes);
+ signals:
+  /**
+   * @brief Signal emitted when the selected nodes have changed
+   */
+  void SelectionChanged(QList<Node*> selected_nodes);
 
-protected:
-    virtual void keyPressEvent(QKeyEvent *event) override;
+ protected:
+  virtual void keyPressEvent(QKeyEvent* event) override;
 
-    virtual void mousePressEvent(QMouseEvent *event) override;
+  virtual void mousePressEvent(QMouseEvent* event) override;
 
-    virtual void mouseMoveEvent(QMouseEvent *event) override;
+  virtual void mouseMoveEvent(QMouseEvent* event) override;
 
-private:
-    void PlaceNode(NodeViewItem* n, const QPointF& pos);
+ private:
+  void PlaceNode(NodeViewItem* n, const QPointF& pos);
 
-    void AttachItemToCursor(NodeViewItem* item);
+  void AttachItemToCursor(NodeViewItem* item);
 
-    void DetachItemFromCursor();
+  void DetachItemFromCursor();
 
-    NodeGraph* graph_;
+  NodeGraph* graph_;
 
-    NodeViewItem* attached_item_;
+  NodeViewItem* attached_item_;
 
-    NodeViewEdge* drop_edge_;
-    NodeInput* drop_compatible_input_;
+  NodeViewEdge* drop_edge_;
+  NodeInput* drop_compatible_input_;
 
-    NodeViewScene scene_;
+  NodeViewScene scene_;
 
-private slots:
-    /**
-     * @brief Internal function triggered when any change is signalled from the QGraphicsScene
-     *
-     * Current primary function is to inform all NodeViewEdges to re-adjust in case any Nodes have moved
-     */
-    void ItemsChanged();
+ private slots:
+  /**
+   * @brief Internal function triggered when any change is signalled from the QGraphicsScene
+   *
+   * Current primary function is to inform all NodeViewEdges to re-adjust in case any Nodes have moved
+   */
+  void ItemsChanged();
 
-    /**
-     * @brief Receiver for when the scene's selected items change
-     */
-    void SceneSelectionChangedSlot();
+  /**
+   * @brief Receiver for when the scene's selected items change
+   */
+  void SceneSelectionChangedSlot();
 
-    /**
-     * @brief Receiver for when the user right clicks (or otherwise requests a context menu)
-     */
-    void ShowContextMenu(const QPoint &pos);
+  /**
+   * @brief Receiver for when the user right clicks (or otherwise requests a context menu)
+   */
+  void ShowContextMenu(const QPoint& pos);
 
-    /**
-     * @brief Receiver for when the user requests a new node from the add menu
-     */
-    void CreateNodeSlot(QAction* action);
-
+  /**
+   * @brief Receiver for when the user requests a new node from the add menu
+   */
+  void CreateNodeSlot(QAction* action);
 };
 
-#endif // NODEVIEW_H
+#endif  // NODEVIEW_H

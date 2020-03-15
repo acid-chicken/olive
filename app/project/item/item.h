@@ -21,12 +21,12 @@
 #ifndef ITEM_H
 #define ITEM_H
 
-#include <memory>
 #include <QIcon>
 #include <QList>
 #include <QMutex>
 #include <QString>
 #include <QXmlStreamWriter>
+#include <memory>
 
 #include "common/constructors.h"
 #include "common/threadedobject.h"
@@ -44,81 +44,76 @@ using ItemPtr = std::shared_ptr<Item>;
  * Project objects implement a parent-child hierarchy of Items that can be used throughout the Project. The Item class
  * itself is abstract and will need to be subclassed to be used in a Project.
  */
-class Item
-{
-public:
-    enum Type {
-        kFolder,
-        kFootage,
-        kSequence
-    };
+class Item {
+ public:
+  enum Type { kFolder, kFootage, kSequence };
 
-    /**
-     * @brief Item constructor
-     */
-    Item();
+  /**
+   * @brief Item constructor
+   */
+  Item();
 
-    /**
-     * @brief Required virtual Item destructor
-     */
-    virtual ~Item();
+  /**
+   * @brief Required virtual Item destructor
+   */
+  virtual ~Item();
 
-    DISABLE_COPY_MOVE(Item)
+  DISABLE_COPY_MOVE(Item)
 
-    virtual void Load(QXmlStreamReader* reader, QHash<quintptr, StreamPtr> &footage_ptrs, QList<NodeParam::FootageConnection> &footage_connections, const QAtomicInt *cancelled) = 0;
+  virtual void Load(QXmlStreamReader* reader, QHash<quintptr, StreamPtr>& footage_ptrs,
+                    QList<NodeParam::FootageConnection>& footage_connections, const QAtomicInt* cancelled) = 0;
 
-    virtual void Save(QXmlStreamWriter* writer) const = 0;
+  virtual void Save(QXmlStreamWriter* writer) const = 0;
 
-    virtual Type type() const = 0;
+  virtual Type type() const = 0;
 
-    void add_child(ItemPtr c);
-    void remove_child(Item* c);
-    int child_count() const;
-    Item* child(int i) const;
-    const QList<ItemPtr>& children() const;
+  void add_child(ItemPtr c);
+  void remove_child(Item* c);
+  int child_count() const;
+  Item* child(int i) const;
+  const QList<ItemPtr>& children() const;
 
-    ItemPtr shared_ptr_from_raw(Item* item, bool traverse = false);
+  ItemPtr shared_ptr_from_raw(Item* item, bool traverse = false);
 
-    const QString& name() const;
-    void set_name(const QString& n);
+  const QString& name() const;
+  void set_name(const QString& n);
 
-    const QString& tooltip() const;
-    void set_tooltip(const QString& t);
+  const QString& tooltip() const;
+  void set_tooltip(const QString& t);
 
-    virtual QIcon icon() = 0;
+  virtual QIcon icon() = 0;
 
-    virtual QString duration();
+  virtual QString duration();
 
-    virtual QString rate();
+  virtual QString rate();
 
-    Item *parent() const;
-    const Item* root() const;
+  Item* parent() const;
+  const Item* root() const;
 
-    Project* project() const;
-    void set_project(Project* project);
+  Project* project() const;
+  void set_project(Project* project);
 
-    QList<ItemPtr> get_children_of_type(Type type, bool recursive) const;
+  QList<ItemPtr> get_children_of_type(Type type, bool recursive) const;
 
-    virtual bool CanHaveChildren() const;
+  virtual bool CanHaveChildren() const;
 
-    bool ChildExistsWithName(const QString& name);
+  bool ChildExistsWithName(const QString& name);
 
-protected:
-    virtual void NameChangedEvent(const QString& name);
+ protected:
+  virtual void NameChangedEvent(const QString& name);
 
-private:
-    bool ChildExistsWithNameInternal(const QString& name, Item* folder);
+ private:
+  bool ChildExistsWithNameInternal(const QString& name, Item* folder);
 
-    QList<ItemPtr> children_;
+  QList<ItemPtr> children_;
 
-    Item* parent_;
+  Item* parent_;
 
-    Project* project_;
+  Project* project_;
 
-    QString name_;
+  QString name_;
 
-    QString tooltip_;
-
+  QString tooltip_;
 };
 
-#endif // ITEM_H
+#endif  // ITEM_H
