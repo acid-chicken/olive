@@ -30,115 +30,115 @@
 
 Project::Project()
 {
-  root_.set_project(this);
+    root_.set_project(this);
 }
 
 void Project::Load(QXmlStreamReader *reader, const QAtomicInt* cancelled)
 {
-  QHash<quintptr, StreamPtr> footage_ptrs;
-  QList<NodeInput::FootageConnection> footage_connections;
+    QHash<quintptr, StreamPtr> footage_ptrs;
+    QList<NodeInput::FootageConnection> footage_connections;
 
-  XMLReadLoop(reader, "project") {
-    if (reader->isStartElement()) {
-      if (reader->name() == "folder") {
+    XMLReadLoop(reader, "project") {
+        if (reader->isStartElement()) {
+            if (reader->name() == "folder") {
 
-        // Assume this folder is our root
-        root_.Load(reader, footage_ptrs, footage_connections, cancelled);
+                // Assume this folder is our root
+                root_.Load(reader, footage_ptrs, footage_connections, cancelled);
 
-      } else if (reader->name() == "colormanagement") {
+            } else if (reader->name() == "colormanagement") {
 
-        // Read color management info
-        XMLReadLoop(reader, "colormanagement") {
-          if (reader->name() == "config") {
-            reader->readNext();
-            set_ocio_config(reader->text().toString());
-          } else if (reader->name() == "default") {
-            reader->readNext();
-            set_default_input_colorspace(reader->text().toString());
-          }
+                // Read color management info
+                XMLReadLoop(reader, "colormanagement") {
+                    if (reader->name() == "config") {
+                        reader->readNext();
+                        set_ocio_config(reader->text().toString());
+                    } else if (reader->name() == "default") {
+                        reader->readNext();
+                        set_default_input_colorspace(reader->text().toString());
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  foreach (const NodeInput::FootageConnection& con, footage_connections) {
-    if (con.footage) {
-      con.input->set_standard_value(QVariant::fromValue(footage_ptrs.value(con.footage)));
+    foreach (const NodeInput::FootageConnection& con, footage_connections) {
+        if (con.footage) {
+            con.input->set_standard_value(QVariant::fromValue(footage_ptrs.value(con.footage)));
+        }
     }
-  }
 }
 
 void Project::Save(QXmlStreamWriter *writer) const
 {
-  writer->writeStartElement("project");
+    writer->writeStartElement("project");
 
-  writer->writeTextElement("url", filename_);
+    writer->writeTextElement("url", filename_);
 
-  root_.Save(writer);
+    root_.Save(writer);
 
-  writer->writeStartElement("colormanagement");
+    writer->writeStartElement("colormanagement");
 
-  writer->writeTextElement("config", ocio_config_);
+    writer->writeTextElement("config", ocio_config_);
 
-  writer->writeTextElement("default", default_input_colorspace_);
+    writer->writeTextElement("default", default_input_colorspace_);
 
-  writer->writeEndElement(); // colormanagement
+    writer->writeEndElement(); // colormanagement
 
-  writer->writeEndElement(); // project
+    writer->writeEndElement(); // project
 }
 
 Folder *Project::root()
 {
-  return &root_;
+    return &root_;
 }
 
 QString Project::name() const
 {
-  if (filename_.isEmpty()) {
-    return tr("(untitled)");
-  } else {
-    return QFileInfo(filename_).baseName();
-  }
+    if (filename_.isEmpty()) {
+        return tr("(untitled)");
+    } else {
+        return QFileInfo(filename_).baseName();
+    }
 }
 
 const QString &Project::filename() const
 {
-  return filename_;
+    return filename_;
 }
 
 void Project::set_filename(const QString &s)
 {
-  filename_ = s;
+    filename_ = s;
 
-  emit NameChanged();
+    emit NameChanged();
 }
 
 const QString &Project::ocio_config() const
 {
-  return ocio_config_;
+    return ocio_config_;
 }
 
 void Project::set_ocio_config(const QString &ocio_config)
 {
-  ocio_config_ = ocio_config;
+    ocio_config_ = ocio_config;
 }
 
 const QString &Project::default_input_colorspace() const
 {
-  return default_input_colorspace_;
+    return default_input_colorspace_;
 }
 
 void Project::set_default_input_colorspace(const QString &colorspace)
 {
-  default_input_colorspace_ = colorspace;
+    default_input_colorspace_ = colorspace;
 }
 
 ColorManager *Project::color_manager()
 {
-  return &color_manager_;
+    return &color_manager_;
 }
 
 QList<ItemPtr> Project::get_items_of_type(Item::Type type) const
 {
-  return root_.get_children_of_type(type, true);
+    return root_.get_children_of_type(type, true);
 }

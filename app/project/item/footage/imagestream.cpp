@@ -26,112 +26,112 @@
 #include "render/colormanager.h"
 
 ImageStream::ImageStream() :
-  premultiplied_alpha_(false)
+    premultiplied_alpha_(false)
 {
-  set_type(kImage);
+    set_type(kImage);
 }
 
 void ImageStream::FootageSetEvent(Footage *f)
 {
-  // For some reason this connection fails if we don't explicitly specify DirectConnection
-  connect(f->project()->color_manager(),
-          &ColorManager::ConfigChanged,
-          this,
-          &ImageStream::ColorConfigChanged,
-          Qt::DirectConnection);
+    // For some reason this connection fails if we don't explicitly specify DirectConnection
+    connect(f->project()->color_manager(),
+            &ColorManager::ConfigChanged,
+            this,
+            &ImageStream::ColorConfigChanged,
+            Qt::DirectConnection);
 }
 
 void ImageStream::LoadCustomParameters(QXmlStreamReader *reader)
 {
-  XMLReadLoop(reader, "stream") {
-    if (reader->isStartElement() && reader->name() == "colorspace") {
-      reader->readNext();
-      set_colorspace(reader->text().toString());
+    XMLReadLoop(reader, "stream") {
+        if (reader->isStartElement() && reader->name() == "colorspace") {
+            reader->readNext();
+            set_colorspace(reader->text().toString());
+        }
     }
-  }
 }
 
 void ImageStream::SaveCustomParameters(QXmlStreamWriter *writer) const
 {
-  writer->writeTextElement("colorspace", colorspace_);
+    writer->writeTextElement("colorspace", colorspace_);
 }
 
 QString ImageStream::description() const
 {
-  return QCoreApplication::translate("Stream", "%1: Image - %2x%3").arg(QString::number(index()),
-                                                                        QString::number(width()),
-                                                                        QString::number(height()));
+    return QCoreApplication::translate("Stream", "%1: Image - %2x%3").arg(QString::number(index()),
+            QString::number(width()),
+            QString::number(height()));
 }
 
 const int &ImageStream::width() const
 {
-  return width_;
+    return width_;
 }
 
 void ImageStream::set_width(const int &width)
 {
-  width_ = width;
+    width_ = width;
 }
 
 const int &ImageStream::height() const
 {
-  return height_;
+    return height_;
 }
 
 void ImageStream::set_height(const int &height)
 {
-  height_ = height;
+    height_ = height;
 }
 
 bool ImageStream::premultiplied_alpha() const
 {
-  return premultiplied_alpha_;
+    return premultiplied_alpha_;
 }
 
 void ImageStream::set_premultiplied_alpha(bool e)
 {
-  premultiplied_alpha_ = e;
+    premultiplied_alpha_ = e;
 
-  emit ParametersChanged();
+    emit ParametersChanged();
 }
 
 const QString &ImageStream::colorspace(bool default_if_empty) const
 {
-  if (colorspace_.isEmpty() && default_if_empty) {
-    return footage()->project()->default_input_colorspace();
-  } else {
-    return colorspace_;
-  }
+    if (colorspace_.isEmpty() && default_if_empty) {
+        return footage()->project()->default_input_colorspace();
+    } else {
+        return colorspace_;
+    }
 }
 
 void ImageStream::set_colorspace(const QString &color)
 {
-  colorspace_ = color;
+    colorspace_ = color;
 
-  emit ParametersChanged();
+    emit ParametersChanged();
 }
 
 void ImageStream::ColorConfigChanged()
 {
-  ColorManager* color_manager = footage()->project()->color_manager();
+    ColorManager* color_manager = footage()->project()->color_manager();
 
-  // Check if this colorspace is in the new config
-  if (!colorspace_.isEmpty()) {
-    QStringList colorspaces = color_manager->ListAvailableInputColorspaces();
-    if (!colorspaces.contains(colorspace_)) {
-      // Set to empty if not
-      colorspace_.clear();
+    // Check if this colorspace is in the new config
+    if (!colorspace_.isEmpty()) {
+        QStringList colorspaces = color_manager->ListAvailableInputColorspaces();
+        if (!colorspaces.contains(colorspace_)) {
+            // Set to empty if not
+            colorspace_.clear();
+        }
     }
-  }
 
-  // Either way, the color calculation has likely changed so we signal here
-  emit ParametersChanged();
+    // Either way, the color calculation has likely changed so we signal here
+    emit ParametersChanged();
 }
 
 void ImageStream::DefaultColorSpaceChanged()
 {
-  // If no colorspace is set, this stream uses the default color space and it's just changed
-  if (colorspace_.isEmpty()) {
-    emit ParametersChanged();
-  }
+    // If no colorspace is set, this stream uses the default color space and it's just changed
+    if (colorspace_.isEmpty()) {
+        emit ParametersChanged();
+    }
 }
