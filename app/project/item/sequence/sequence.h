@@ -38,49 +38,49 @@ using SequencePtr = std::shared_ptr<Sequence>;
 class Sequence : public Item, public NodeGraph, public TimelinePoints
 {
 public:
-  Sequence();
+    Sequence();
 
-  /**
-   * @brief Load function
-   */
-  virtual void Load(QXmlStreamReader* reader, QHash<quintptr, StreamPtr> &footage_ptrs, QList<NodeParam::FootageConnection> &footage_connections, const QAtomicInt* cancelled) override;
+    /**
+     * @brief Load function
+     */
+    virtual void Load(QXmlStreamReader* reader, QHash<quintptr, StreamPtr> &footage_ptrs, QList<NodeParam::FootageConnection> &footage_connections, const QAtomicInt* cancelled) override;
 
-  /**
-   * @brief Save function
-   */
-  virtual void Save(QXmlStreamWriter *writer) const override;
+    /**
+     * @brief Save function
+     */
+    virtual void Save(QXmlStreamWriter *writer) const override;
 
-  static void Open(Sequence *sequence);
+    static void Open(Sequence *sequence);
 
-  void add_default_nodes();
+    void add_default_nodes();
 
-  /**
-   * @brief Item::Type() override
-   */
-  virtual Type type() const override;
+    /**
+     * @brief Item::Type() override
+     */
+    virtual Type type() const override;
 
-  virtual QIcon icon() override;
+    virtual QIcon icon() override;
 
-  virtual QString duration() override;
-  virtual QString rate() override;
+    virtual QString duration() override;
+    virtual QString rate() override;
 
-  const VideoParams& video_params() const;
-  void set_video_params(const VideoParams& vparam);
+    const VideoParams& video_params() const;
+    void set_video_params(const VideoParams& vparam);
 
-  const AudioParams& audio_params() const;
-  void set_audio_params(const AudioParams& params);
+    const AudioParams& audio_params() const;
+    void set_audio_params(const AudioParams& params);
 
-  void set_default_parameters();
+    void set_default_parameters();
 
-  void set_parameters_from_footage(const QList<Footage*> footage);
+    void set_parameters_from_footage(const QList<Footage*> footage);
 
-  ViewerOutput* viewer_output() const;
+    ViewerOutput* viewer_output() const;
 
 protected:
-  virtual void NameChangedEvent(const QString& name) override;
+    virtual void NameChangedEvent(const QString& name) override;
 
 private:
-  ViewerOutput* viewer_output_;
+    ViewerOutput* viewer_output_;
 
 };
 

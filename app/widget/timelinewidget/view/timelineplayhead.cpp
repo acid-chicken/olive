@@ -24,31 +24,31 @@
 
 const QColor &TimelinePlayhead::GetPlayheadColor() const
 {
-  return playhead_color_;
+    return playhead_color_;
 }
 
 const QColor &TimelinePlayhead::GetPlayheadHighlightColor() const
 {
-  return playhead_highlight_color_;
+    return playhead_highlight_color_;
 }
 
 void TimelinePlayhead::SetPlayheadColor(QColor c)
 {
-  playhead_color_ = c;
+    playhead_color_ = c;
 }
 
 void TimelinePlayhead::SetPlayheadHighlightColor(QColor c)
 {
-  playhead_highlight_color_ = c;
+    playhead_highlight_color_ = c;
 }
 
 void TimelinePlayhead::Draw(QPainter* painter, const QRectF& playhead_rect) const
 {
-  painter->setPen(Qt::NoPen);
-  painter->setBrush(GetPlayheadHighlightColor());
-  painter->drawRect(playhead_rect);
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(GetPlayheadHighlightColor());
+    painter->drawRect(playhead_rect);
 
-  painter->setPen(GetPlayheadColor());
-  painter->setBrush(Qt::NoBrush);
-  painter->drawLine(QLineF(playhead_rect.topLeft(), playhead_rect.bottomLeft()));
+    painter->setPen(GetPlayheadColor());
+    painter->setBrush(Qt::NoBrush);
+    painter->drawLine(QLineF(playhead_rect.topLeft(), playhead_rect.bottomLeft()));
 }

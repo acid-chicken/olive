@@ -11,20 +11,20 @@
 class NodeTraverser : public CancelableObject
 {
 public:
-  NodeTraverser();
+    NodeTraverser();
 
-  NodeValueTable ProcessNode(const NodeDependency &dep);
+    NodeValueTable ProcessNode(const NodeDependency &dep);
 
 protected:
-  NodeValueDatabase GenerateDatabase(const Node *node, const TimeRange &range);
+    NodeValueDatabase GenerateDatabase(const Node *node, const TimeRange &range);
 
-  virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange& range);
+    virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange& range);
 
-  NodeValueTable ProcessInput(const NodeInput* input, const TimeRange &range);
+    NodeValueTable ProcessInput(const NodeInput* input, const TimeRange &range);
 
-  virtual void InputProcessingEvent(NodeInput*, const TimeRange&, NodeValueTable*){}
+    virtual void InputProcessingEvent(NodeInput*, const TimeRange&, NodeValueTable*) {}
 
-  virtual void ProcessNodeEvent(const Node*, const TimeRange&, const NodeValueDatabase&, NodeValueTable*){}
+    virtual void ProcessNodeEvent(const Node*, const TimeRange&, const NodeValueDatabase&, NodeValueTable*) {}
 
 };
 

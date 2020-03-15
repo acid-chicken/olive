@@ -42,222 +42,222 @@
 class Footage : public Item, public TimelinePoints
 {
 public:
-  enum Status {
-    kUnprobed,
-    kUnindexed,
-    kReady,
-    kInvalid
-  };
+    enum Status {
+        kUnprobed,
+        kUnindexed,
+        kReady,
+        kInvalid
+    };
 
-  /**
-   * @brief Footage Constructor
-   */
-  Footage();
+    /**
+     * @brief Footage Constructor
+     */
+    Footage();
 
-  /**
-   * @brief Footage Destructor
-   *
-   * Makes sure Stream objects are cleared properly
-   */
-  virtual ~Footage() override;
+    /**
+     * @brief Footage Destructor
+     *
+     * Makes sure Stream objects are cleared properly
+     */
+    virtual ~Footage() override;
 
-  /**
-   * @brief Load function
-   */
-  virtual void Load(QXmlStreamReader* reader, QHash<quintptr, StreamPtr> &footage_ptrs, QList<NodeParam::FootageConnection> &footage_connections, const QAtomicInt *cancelled) override;
+    /**
+     * @brief Load function
+     */
+    virtual void Load(QXmlStreamReader* reader, QHash<quintptr, StreamPtr> &footage_ptrs, QList<NodeParam::FootageConnection> &footage_connections, const QAtomicInt *cancelled) override;
 
-  /**
-   * @brief Save function
-   */
-  virtual void Save(QXmlStreamWriter *writer) const override;
+    /**
+     * @brief Save function
+     */
+    virtual void Save(QXmlStreamWriter *writer) const override;
 
-  /**
-   * @brief Check the ready state of this Footage object
-   *
-   * @return
-   *
-   * If the Footage has been successfully probed, this will return TRUE.
-   */
-  const Status& status() const;
+    /**
+     * @brief Check the ready state of this Footage object
+     *
+     * @return
+     *
+     * If the Footage has been successfully probed, this will return TRUE.
+     */
+    const Status& status() const;
 
-  /**
-   * @brief Set ready state
-   *
-   * This should only be set by olive::ProbeMedia. Sets the Footage's current status to a member of enum
-   * Footage::Status.
-   *
-   * This function also runs UpdateIcon() and UpdateTooltip(). If you need to override the tooltip (e.g. for an error
-   * message), you must run set_tooltip() *after* running set_status();
-   */
-  void set_status(const Status& status);
+    /**
+     * @brief Set ready state
+     *
+     * This should only be set by olive::ProbeMedia. Sets the Footage's current status to a member of enum
+     * Footage::Status.
+     *
+     * This function also runs UpdateIcon() and UpdateTooltip(). If you need to override the tooltip (e.g. for an error
+     * message), you must run set_tooltip() *after* running set_status();
+     */
+    void set_status(const Status& status);
 
-  /**
-   * @brief Reset Footage state ready for running through Probe() again
-   *
-   * If a Footage object needs to be re-probed (e.g. source file changes or Footage is linked to a new file), its
-   * state needs to be reset so the Decoder::Probe() function can accurately mirror the source file. Clear() will
-   * reset the Footage object's state to being freshly created (keeping the filename).
-   *
-   * In most cases, you'll be using olive::ProbeMedia() for re-probing which already runs Clear(), so you won't need
-   * to worry about this.
-   */
-  void Clear();
+    /**
+     * @brief Reset Footage state ready for running through Probe() again
+     *
+     * If a Footage object needs to be re-probed (e.g. source file changes or Footage is linked to a new file), its
+     * state needs to be reset so the Decoder::Probe() function can accurately mirror the source file. Clear() will
+     * reset the Footage object's state to being freshly created (keeping the filename).
+     *
+     * In most cases, you'll be using olive::ProbeMedia() for re-probing which already runs Clear(), so you won't need
+     * to worry about this.
+     */
+    void Clear();
 
-  /**
-   * @brief Return the current filename of this Footage object
-   */
-  const QString& filename() const;
+    /**
+     * @brief Return the current filename of this Footage object
+     */
+    const QString& filename() const;
 
-  /**
-   * @brief Set the filename
-   *
-   * NOTE: This does not automtaically clear the old streams and re-probe for new ones. If the file link has been
-   * changed, this will need to be done manually.
-   *
-   * @param s
-   *
-   * New filename
-   */
-  void set_filename(const QString& s);
+    /**
+     * @brief Set the filename
+     *
+     * NOTE: This does not automtaically clear the old streams and re-probe for new ones. If the file link has been
+     * changed, this will need to be done manually.
+     *
+     * @param s
+     *
+     * New filename
+     */
+    void set_filename(const QString& s);
 
-  /**
-   * @brief Retrieve the last modified time/date
-   *
-   * The file's last modified timestamp is stored for potential organization in the ProjectExplorer. It can be
-   * retrieved here.
-   */
-  const QDateTime& timestamp() const;
+    /**
+     * @brief Retrieve the last modified time/date
+     *
+     * The file's last modified timestamp is stored for potential organization in the ProjectExplorer. It can be
+     * retrieved here.
+     */
+    const QDateTime& timestamp() const;
 
-  /**
-   * @brief Set the last modified time/date
-   *
-   * This should probably only be done on import or replace.
-   *
-   * @param t
-   *
-   * New last modified time/date
-   */
-  void set_timestamp(const QDateTime& t);
+    /**
+     * @brief Set the last modified time/date
+     *
+     * This should probably only be done on import or replace.
+     *
+     * @param t
+     *
+     * New last modified time/date
+     */
+    void set_timestamp(const QDateTime& t);
 
-  /**
-   * @brief Add a stream metadata object to this footage
-   *
-   * Usually done during a Decoder::Probe() function for retrieving metadata about the video/audio/other streams
-   * inside a container. Streams can have non-video/audio types so that they can be equivalent to the file's actual
-   * stream list, though the only streams officially supported are video and audio streams.
-   *
-   * @param s
-   *
-   * A pointer to a stream object. The Footage takes ownership of this object and will free it when it's deleted.
-   */
-  void add_stream(StreamPtr s);
+    /**
+     * @brief Add a stream metadata object to this footage
+     *
+     * Usually done during a Decoder::Probe() function for retrieving metadata about the video/audio/other streams
+     * inside a container. Streams can have non-video/audio types so that they can be equivalent to the file's actual
+     * stream list, though the only streams officially supported are video and audio streams.
+     *
+     * @param s
+     *
+     * A pointer to a stream object. The Footage takes ownership of this object and will free it when it's deleted.
+     */
+    void add_stream(StreamPtr s);
 
-  /**
-   * @brief Retrieve a stream at the given index.
-   *
-   * @param index
-   *
-   * The index will be equivalent to the stream's index in the file (or in FFmpeg
-   * terms AVStream->file_index). Must be < stream_count().
-   *
-   * @return
-   *
-   * The stream at the index provided
-   */
-  StreamPtr stream(int index) const;
+    /**
+     * @brief Retrieve a stream at the given index.
+     *
+     * @param index
+     *
+     * The index will be equivalent to the stream's index in the file (or in FFmpeg
+     * terms AVStream->file_index). Must be < stream_count().
+     *
+     * @return
+     *
+     * The stream at the index provided
+     */
+    StreamPtr stream(int index) const;
 
-  /**
-   * @brief Returns a list of the streams in this Footage
-   */
-  const QList<StreamPtr>& streams() const;
+    /**
+     * @brief Returns a list of the streams in this Footage
+     */
+    const QList<StreamPtr>& streams() const;
 
-  /**
-   * @brief Retrieve total number of streams in this Footage file
-   */
-  int stream_count() const;
+    /**
+     * @brief Retrieve total number of streams in this Footage file
+     */
+    int stream_count() const;
 
-  /**
-   * @brief Item::Type() override
-   *
-   * @return kFootage
-   */
-  virtual Type type() const override;
+    /**
+     * @brief Item::Type() override
+     *
+     * @return kFootage
+     */
+    virtual Type type() const override;
 
-  /**
-   * @brief Get the Decoder ID set when this Footage was probed
-   *
-   * @return
-   *
-   * A decoder ID
-   */
-  const QString& decoder() const;
+    /**
+     * @brief Get the Decoder ID set when this Footage was probed
+     *
+     * @return
+     *
+     * A decoder ID
+     */
+    const QString& decoder() const;
 
-  /**
-   * @brief Used by decoders when they Probe to attach itself to this Footage
-   */
-  void set_decoder(const QString& id);
+    /**
+     * @brief Used by decoders when they Probe to attach itself to this Footage
+     */
+    void set_decoder(const QString& id);
 
-  virtual QIcon icon() override;
+    virtual QIcon icon() override;
 
-  virtual QString duration() override;
+    virtual QString duration() override;
 
-  virtual QString rate() override;
+    virtual QString rate() override;
 
 private:
-  /**
-   * @brief Internal function to delete all Stream children and empty the array
-   */
-  void ClearStreams();
+    /**
+     * @brief Internal function to delete all Stream children and empty the array
+     */
+    void ClearStreams();
 
-  /**
-   * @brief Check if this footage has streams of a certain type
-   *
-   * @param type
-   *
-   * The stream type to check for
-   */
-  bool HasStreamsOfType(const Stream::Type type);
+    /**
+     * @brief Check if this footage has streams of a certain type
+     *
+     * @param type
+     *
+     * The stream type to check for
+     */
+    bool HasStreamsOfType(const Stream::Type type);
 
-  /**
-   * @brief Update the icon based on the Footage status
-   *
-   * For kUnprobed and kError an appropriate icon will be shown. For kReady, this function will determine what the
-   * dominant type of media in this Footage is (video/audio/image) and set the icon accordingly based on that.
-   */
-  void UpdateIcon();
+    /**
+     * @brief Update the icon based on the Footage status
+     *
+     * For kUnprobed and kError an appropriate icon will be shown. For kReady, this function will determine what the
+     * dominant type of media in this Footage is (video/audio/image) and set the icon accordingly based on that.
+     */
+    void UpdateIcon();
 
-  /**
-   * @brief Update the tooltip based on the Footage status
-   *
-   * For kUnprobed and kError, this sets an appropriate generic message. For kReady, this function will set
-   * basic information about the Footage in the tooltip (based on the results of a previous probe).
-   */
-  void UpdateTooltip();
+    /**
+     * @brief Update the tooltip based on the Footage status
+     *
+     * For kUnprobed and kError, this sets an appropriate generic message. For kReady, this function will set
+     * basic information about the Footage in the tooltip (based on the results of a previous probe).
+     */
+    void UpdateTooltip();
 
-  /**
-   * @brief Internal filename string
-   */
-  QString filename_;
+    /**
+     * @brief Internal filename string
+     */
+    QString filename_;
 
-  /**
-   * @brief Internal timestamp object
-   */
-  QDateTime timestamp_;
+    /**
+     * @brief Internal timestamp object
+     */
+    QDateTime timestamp_;
 
-  /**
-   * @brief Internal streams array
-   */
-  QList<StreamPtr> streams_;
+    /**
+     * @brief Internal streams array
+     */
+    QList<StreamPtr> streams_;
 
-  /**
-   * @brief Internal ready setting
-   */
-  Status status_;
+    /**
+     * @brief Internal ready setting
+     */
+    Status status_;
 
-  /**
-   * @brief Internal attached decoder ID
-   */
-  QString decoder_;
+    /**
+     * @brief Internal attached decoder ID
+     */
+    QString decoder_;
 
 };
 

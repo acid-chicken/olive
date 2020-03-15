@@ -7,18 +7,18 @@
 class TimelinePoints
 {
 public:
-  TimelinePoints() = default;
+    TimelinePoints() = default;
 
-  TimelineMarkerList* markers();
-  const TimelineMarkerList* markers() const;
+    TimelineMarkerList* markers();
+    const TimelineMarkerList* markers() const;
 
-  TimelineWorkArea* workarea();
-  const TimelineWorkArea* workarea() const;
+    TimelineWorkArea* workarea();
+    const TimelineWorkArea* workarea() const;
 
 private:
-  TimelineMarkerList markers_;
+    TimelineMarkerList markers_;
 
-  TimelineWorkArea workarea_;
+    TimelineWorkArea workarea_;
 
 };
 

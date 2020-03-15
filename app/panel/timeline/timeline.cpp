@@ -24,115 +24,115 @@
 #include "panel/project/footagemanagementpanel.h"
 
 TimelinePanel::TimelinePanel(QWidget *parent) :
-  TimeBasedPanel(parent)
+    TimeBasedPanel(parent)
 {
-  // FIXME: This won't work if there's ever more than one of this panel
-  setObjectName("TimelinePanel");
+    // FIXME: This won't work if there's ever more than one of this panel
+    setObjectName("TimelinePanel");
 
-  TimelineWidget* tw = new TimelineWidget();
-  SetTimeBasedWidget(tw);
+    TimelineWidget* tw = new TimelineWidget();
+    SetTimeBasedWidget(tw);
 
-  Retranslate();
+    Retranslate();
 
-  connect(tw, &TimelineWidget::SelectionChanged, this, &TimelinePanel::SelectionChanged);
+    connect(tw, &TimelineWidget::SelectionChanged, this, &TimelinePanel::SelectionChanged);
 }
 
 void TimelinePanel::Clear()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->Clear();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->Clear();
 }
 
 void TimelinePanel::SplitAtPlayhead()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->SplitAtPlayhead();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->SplitAtPlayhead();
 }
 
 void TimelinePanel::SelectAll()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->SelectAll();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->SelectAll();
 }
 
 void TimelinePanel::DeselectAll()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeselectAll();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeselectAll();
 }
 
 void TimelinePanel::RippleToIn()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToIn();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToIn();
 }
 
 void TimelinePanel::RippleToOut()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToOut();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->RippleToOut();
 }
 
 void TimelinePanel::EditToIn()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToIn();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToIn();
 }
 
 void TimelinePanel::EditToOut()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToOut();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->EditToOut();
 }
 
 void TimelinePanel::DeleteSelected()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeleteSelected(false);
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeleteSelected(false);
 }
 
 void TimelinePanel::RippleDelete()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeleteSelected(true);
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DeleteSelected(true);
 }
 
 void TimelinePanel::IncreaseTrackHeight()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->IncreaseTrackHeight();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->IncreaseTrackHeight();
 }
 
 void TimelinePanel::DecreaseTrackHeight()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->DecreaseTrackHeight();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->DecreaseTrackHeight();
 }
 
 void TimelinePanel::Insert()
 {
-  FootageManagementPanel* project_panel = PanelManager::instance()->MostRecentlyFocused<FootageManagementPanel>();
+    FootageManagementPanel* project_panel = PanelManager::instance()->MostRecentlyFocused<FootageManagementPanel>();
 
-  if (project_panel) {
-    InsertFootageAtPlayhead(project_panel->GetSelectedFootage());
-  }
+    if (project_panel) {
+        InsertFootageAtPlayhead(project_panel->GetSelectedFootage());
+    }
 }
 
 void TimelinePanel::Overwrite()
 {
-  FootageManagementPanel* project_panel = PanelManager::instance()->MostRecentlyFocused<FootageManagementPanel>();
+    FootageManagementPanel* project_panel = PanelManager::instance()->MostRecentlyFocused<FootageManagementPanel>();
 
-  if (project_panel) {
-    OverwriteFootageAtPlayhead(project_panel->GetSelectedFootage());
-  }
+    if (project_panel) {
+        OverwriteFootageAtPlayhead(project_panel->GetSelectedFootage());
+    }
 }
 
 void TimelinePanel::ToggleLinks()
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->ToggleLinksOnSelected();
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->ToggleLinksOnSelected();
 }
 
 void TimelinePanel::InsertFootageAtPlayhead(const QList<Footage *> &footage)
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->InsertFootageAtPlayhead(footage);
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->InsertFootageAtPlayhead(footage);
 }
 
 void TimelinePanel::OverwriteFootageAtPlayhead(const QList<Footage *> &footage)
 {
-  static_cast<TimelineWidget*>(GetTimeBasedWidget())->OverwriteFootageAtPlayhead(footage);
+    static_cast<TimelineWidget*>(GetTimeBasedWidget())->OverwriteFootageAtPlayhead(footage);
 }
 
 void TimelinePanel::Retranslate()
 {
-  TimeBasedPanel::Retranslate();
+    TimeBasedPanel::Retranslate();
 
-  SetTitle(tr("Timeline"));
+    SetTitle(tr("Timeline"));
 }

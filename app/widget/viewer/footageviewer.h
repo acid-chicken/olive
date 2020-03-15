@@ -8,27 +8,27 @@
 
 class FootageViewerWidget : public ViewerWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  FootageViewerWidget(QWidget* parent = nullptr);
+    FootageViewerWidget(QWidget* parent = nullptr);
 
-  Footage* GetFootage() const;
-  void SetFootage(Footage* footage);
+    Footage* GetFootage() const;
+    void SetFootage(Footage* footage);
 
 protected:
-  virtual TimelinePoints* ConnectTimelinePoints() override;
+    virtual TimelinePoints* ConnectTimelinePoints() override;
 
 private:
-  Footage* footage_;
+    Footage* footage_;
 
-  VideoInput* video_node_;
+    VideoInput* video_node_;
 
-  AudioInput* audio_node_;
+    AudioInput* audio_node_;
 
-  ViewerOutput* viewer_node_;
+    ViewerOutput* viewer_node_;
 
 private slots:
-  void StartFootageDrag();
+    void StartFootageDrag();
 
 };
 

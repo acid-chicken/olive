@@ -29,52 +29,52 @@
 
 class OIIODecoder : public Decoder
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  OIIODecoder();
+    OIIODecoder();
 
-  virtual QString id() override;
+    virtual QString id() override;
 
-  virtual bool Probe(Footage *f, const QAtomicInt* cancelled) override;
+    virtual bool Probe(Footage *f, const QAtomicInt* cancelled) override;
 
-  virtual bool Open() override;
-  virtual RetrieveState GetRetrieveState(const rational &time) override;
-  virtual FramePtr RetrieveVideo(const rational &timecode, const int& divider) override;
-  virtual void Close() override;
+    virtual bool Open() override;
+    virtual RetrieveState GetRetrieveState(const rational &time) override;
+    virtual FramePtr RetrieveVideo(const rational &timecode, const int& divider) override;
+    virtual void Close() override;
 
-  virtual bool SupportsVideo() override;
+    virtual bool SupportsVideo() override;
 
-  virtual QString GetIndexFilename() override;
+    virtual QString GetIndexFilename() override;
 
 private:
 #if OIIO_VERSION < 10903
-  OIIO::ImageInput* image_;
+    OIIO::ImageInput* image_;
 #else
-  std::unique_ptr<OIIO::ImageInput> image_;
+    std::unique_ptr<OIIO::ImageInput> image_;
 #endif
-  static bool FileTypeIsSupported(const QString& fn);
+    static bool FileTypeIsSupported(const QString& fn);
 
-  static int GetImageSequenceDigitCount(const QString& filename);
+    static int GetImageSequenceDigitCount(const QString& filename);
 
-  static QString TransformImageSequenceFileName(const QString& filename, const int64_t& number);
+    static QString TransformImageSequenceFileName(const QString& filename, const int64_t& number);
 
-  static int64_t GetImageSequenceIndex(const QString& filename);
+    static int64_t GetImageSequenceIndex(const QString& filename);
 
-  bool OpenImageHandler(const QString& fn);
+    bool OpenImageHandler(const QString& fn);
 
-  void CloseImageHandle();
+    void CloseImageHandle();
 
-  PixelFormat::Format pix_fmt_;
+    PixelFormat::Format pix_fmt_;
 
-  OIIO::TypeDesc type_;
+    OIIO::TypeDesc type_;
 
-  bool is_rgba_;
+    bool is_rgba_;
 
-  bool is_sequence_;
+    bool is_sequence_;
 
-  OIIO::ImageBuf* buffer_;
+    OIIO::ImageBuf* buffer_;
 
-  static QStringList supported_formats_;
+    static QStringList supported_formats_;
 
 };
 

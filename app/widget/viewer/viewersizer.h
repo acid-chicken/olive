@@ -34,68 +34,68 @@
  */
 class ViewerSizer : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ViewerSizer(QWidget* parent = nullptr);
+    ViewerSizer(QWidget* parent = nullptr);
 
-  /**
-   * @brief Set the widget to be adjusted by this widget
-   *
-   * ViewerSizer takes ownership of this widget. If a widget was previously set, it is destroyed.
-   */
-  void SetWidget(QWidget* widget);
+    /**
+     * @brief Set the widget to be adjusted by this widget
+     *
+     * ViewerSizer takes ownership of this widget. If a widget was previously set, it is destroyed.
+     */
+    void SetWidget(QWidget* widget);
 
-  /**
-   * @brief Set resolution to use
-   *
-   * This is not the actual resolution of the viewer, it's used to calculate the aspect ratio
-   */
-  void SetChildSize(int width, int height);
+    /**
+     * @brief Set resolution to use
+     *
+     * This is not the actual resolution of the viewer, it's used to calculate the aspect ratio
+     */
+    void SetChildSize(int width, int height);
 
-  /**
-   * @brief Set the zoom value of the child widget
-   *
-   * The number is an integer percentage (100 = 100%). Set to 0 to auto-fit.
-   */
-  void SetZoom(int percent);
+    /**
+     * @brief Set the zoom value of the child widget
+     *
+     * The number is an integer percentage (100 = 100%). Set to 0 to auto-fit.
+     */
+    void SetZoom(int percent);
 
 signals:
-  void RequestMatrix(const QMatrix4x4& matrix);
+    void RequestMatrix(const QMatrix4x4& matrix);
 
 protected:
-  /**
-   * @brief Listen for resize events to ensure the child widget remains correctly sized
-   */
-  virtual void resizeEvent(QResizeEvent *event) override;
+    /**
+     * @brief Listen for resize events to ensure the child widget remains correctly sized
+     */
+    virtual void resizeEvent(QResizeEvent *event) override;
 
 private:
-  /**
-   * @brief Main sizing function, resizes widget_ to fit aspect_ratio_ (or hides if aspect ratio is 0)
-   */
-  void UpdateSize();
+    /**
+     * @brief Main sizing function, resizes widget_ to fit aspect_ratio_ (or hides if aspect ratio is 0)
+     */
+    void UpdateSize();
 
-  /**
-   * @brief Reference to widget
-   *
-   * If this is nullptr, all sizing operations are no-ops
-   */
-  QWidget* widget_;
+    /**
+     * @brief Reference to widget
+     *
+     * If this is nullptr, all sizing operations are no-ops
+     */
+    QWidget* widget_;
 
-  /**
-   * @brief Internal resolution values
-   */
-  int width_;
-  int height_;
+    /**
+     * @brief Internal resolution values
+     */
+    int width_;
+    int height_;
 
-  /**
-   * @brief Aspect ratio calculated from the size provided by SetChildSize()
-   */
-  double aspect_ratio_;
+    /**
+     * @brief Aspect ratio calculated from the size provided by SetChildSize()
+     */
+    double aspect_ratio_;
 
-  /**
-   * @brief Internal zoom value
-   */
-  int zoom_;
+    /**
+     * @brief Internal zoom value
+     */
+    int zoom_;
 
 };
 

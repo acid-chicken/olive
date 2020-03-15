@@ -29,26 +29,26 @@
  */
 class MediaInput : public Node
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MediaInput();
+    MediaInput();
 
-  StreamPtr footage();
-  void SetFootage(StreamPtr f);
+    StreamPtr footage();
+    void SetFootage(StreamPtr f);
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  virtual NodeValueTable Value(const NodeValueDatabase& value) const override;
+    virtual NodeValueTable Value(const NodeValueDatabase& value) const override;
 
 protected:
-  NodeInput* footage_input_;
+    NodeInput* footage_input_;
 
-  StreamPtr connected_footage_;
+    StreamPtr connected_footage_;
 
 private slots:
-  void FootageChanged();
+    void FootageChanged();
 
-  void FootageParametersChanged();
+    void FootageParametersChanged();
 
 };
 

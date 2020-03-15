@@ -10,24 +10,24 @@
 
 class WaveformView : public SeekableWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  WaveformView(QWidget* parent = nullptr);
+    WaveformView(QWidget* parent = nullptr);
 
-  //void SetData(const QString& file, const AudioRenderingParams& params);
+    //void SetData(const QString& file, const AudioRenderingParams& params);
 
-  void SetBackend(AudioRenderBackend* backend);
+    void SetBackend(AudioRenderBackend* backend);
 
-  static void DrawWaveform(QPainter* painter, const QRect &rect, const double &scale, const SampleSummer::Sum *samples, int nb_samples, int channels);
+    static void DrawWaveform(QPainter* painter, const QRect &rect, const double &scale, const SampleSummer::Sum *samples, int nb_samples, int channels);
 
 protected:
-  virtual void paintEvent(QPaintEvent* event) override;
+    virtual void paintEvent(QPaintEvent* event) override;
 
 private:
-  AudioRenderBackend* backend_;
+    AudioRenderBackend* backend_;
 
 private slots:
-  void BackendParamsChanged();
+    void BackendParamsChanged();
 
 };
 

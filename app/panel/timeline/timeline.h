@@ -29,49 +29,49 @@
  */
 class TimelinePanel : public TimeBasedPanel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimelinePanel(QWidget* parent);
+    TimelinePanel(QWidget* parent);
 
-  void Clear();
+    void Clear();
 
-  void SplitAtPlayhead();
+    void SplitAtPlayhead();
 
-  virtual void SelectAll() override;
+    virtual void SelectAll() override;
 
-  virtual void DeselectAll() override;
+    virtual void DeselectAll() override;
 
-  virtual void RippleToIn() override;
+    virtual void RippleToIn() override;
 
-  virtual void RippleToOut() override;
+    virtual void RippleToOut() override;
 
-  virtual void EditToIn() override;
+    virtual void EditToIn() override;
 
-  virtual void EditToOut() override;
+    virtual void EditToOut() override;
 
-  virtual void DeleteSelected() override;
+    virtual void DeleteSelected() override;
 
-  virtual void RippleDelete() override;
+    virtual void RippleDelete() override;
 
-  virtual void IncreaseTrackHeight() override;
+    virtual void IncreaseTrackHeight() override;
 
-  virtual void DecreaseTrackHeight() override;
+    virtual void DecreaseTrackHeight() override;
 
-  virtual void Insert() override;
+    virtual void Insert() override;
 
-  virtual void Overwrite() override;
+    virtual void Overwrite() override;
 
-  virtual void ToggleLinks() override;
+    virtual void ToggleLinks() override;
 
-  void InsertFootageAtPlayhead(const QList<Footage *> &footage);
+    void InsertFootageAtPlayhead(const QList<Footage *> &footage);
 
-  void OverwriteFootageAtPlayhead(const QList<Footage *> &footage);
+    void OverwriteFootageAtPlayhead(const QList<Footage *> &footage);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 signals:
-  void SelectionChanged(const QList<Node*>& selected_blocks);
+    void SelectionChanged(const QList<Node*>& selected_blocks);
 
 };
 

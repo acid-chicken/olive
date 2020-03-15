@@ -2,20 +2,20 @@
 
 TimelineMarkerList *TimelinePoints::markers()
 {
-  return &markers_;
+    return &markers_;
 }
 
 const TimelineMarkerList *TimelinePoints::markers() const
 {
-  return &markers_;
+    return &markers_;
 }
 
 const TimelineWorkArea *TimelinePoints::workarea() const
 {
-  return &workarea_;
+    return &workarea_;
 }
 
 TimelineWorkArea *TimelinePoints::workarea()
 {
-  return &workarea_;
+    return &workarea_;
 }
