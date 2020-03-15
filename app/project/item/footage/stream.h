@@ -21,25 +21,24 @@
 #ifndef STREAM_H
 #define STREAM_H
 
-#include <memory>
 #include <QCoreApplication>
 #include <QMutex>
 #include <QString>
 #include <QXmlStreamWriter>
+#include <memory>
 
 #include "common/rational.h"
 
 class Footage;
 
 class StreamID {
-public:
-    StreamID(const QString& filename, const int& stream_index);
+ public:
+  StreamID(const QString& filename, const int& stream_index);
 
-private:
-    QString filename_;
+ private:
+  QString filename_;
 
-    int stream_index_;
-
+  int stream_index_;
 };
 
 /**
@@ -51,87 +50,77 @@ private:
  * The Stream class is fairly simple and is intended to be subclassed for data that pertains specifically to one
  * Stream::Type. \see VideoStream and \see AudioStream.
  */
-class Stream : public QObject
-{
-    Q_OBJECT
-public:
-    enum Type {
-        kUnknown,
-        kVideo,
-        kAudio,
-        kData,
-        kSubtitle,
-        kAttachment,
-        kImage = 100
-    };
+class Stream : public QObject {
+  Q_OBJECT
+ public:
+  enum Type { kUnknown, kVideo, kAudio, kData, kSubtitle, kAttachment, kImage = 100 };
 
-    /**
-     * @brief Stream constructor
-     */
-    Stream();
+  /**
+   * @brief Stream constructor
+   */
+  Stream();
 
-    /**
-     * @brief Required virtual destructor, serves no purpose
-     */
-    virtual ~Stream();
+  /**
+   * @brief Required virtual destructor, serves no purpose
+   */
+  virtual ~Stream();
 
-    void Load(QXmlStreamReader* reader);
+  void Load(QXmlStreamReader* reader);
 
-    void Save(QXmlStreamWriter *writer) const;
+  void Save(QXmlStreamWriter* writer) const;
 
-    virtual QString description() const;
+  virtual QString description() const;
 
-    const Type& type() const;
-    void set_type(const Type& type);
+  const Type& type() const;
+  void set_type(const Type& type);
 
-    Footage* footage() const;
-    void set_footage(Footage* f);
+  Footage* footage() const;
+  void set_footage(Footage* f);
 
-    const rational& timebase() const;
-    void set_timebase(const rational& timebase);
+  const rational& timebase() const;
+  void set_timebase(const rational& timebase);
 
-    const int& index() const;
-    void set_index(const int& index);
+  const int& index() const;
+  void set_index(const int& index);
 
-    const int64_t& duration() const;
-    void set_duration(const int64_t& duration);
+  const int64_t& duration() const;
+  void set_duration(const int64_t& duration);
 
-    bool enabled() const;
-    void set_enabled(bool e);
+  bool enabled() const;
+  void set_enabled(bool e);
 
-    static QIcon IconFromType(const Type& type);
+  static QIcon IconFromType(const Type& type);
 
-    StreamID ToID() const;
+  StreamID ToID() const;
 
-    QMutex* index_process_lock();
+  QMutex* index_process_lock();
 
-protected:
-    virtual void FootageSetEvent(Footage*);
+ protected:
+  virtual void FootageSetEvent(Footage*);
 
-    virtual void LoadCustomParameters(QXmlStreamReader *reader);
+  virtual void LoadCustomParameters(QXmlStreamReader* reader);
 
-    virtual void SaveCustomParameters(QXmlStreamWriter* writer) const;
+  virtual void SaveCustomParameters(QXmlStreamWriter* writer) const;
 
-signals:
-    void IndexChanged();
+ signals:
+  void IndexChanged();
 
-    void ParametersChanged();
+  void ParametersChanged();
 
-private:
-    Footage* footage_;
+ private:
+  Footage* footage_;
 
-    rational timebase_;
+  rational timebase_;
 
-    int64_t duration_;
+  int64_t duration_;
 
-    int index_;
+  int index_;
 
-    Type type_;
+  Type type_;
 
-    bool enabled_;
+  bool enabled_;
 
-    QMutex index_process_lock_;
-
+  QMutex index_process_lock_;
 };
 
 using StreamPtr = std::shared_ptr<Stream>;
@@ -139,4 +128,4 @@ using StreamPtr = std::shared_ptr<Stream>;
 #include <QMetaType>
 Q_DECLARE_METATYPE(StreamPtr)
 
-#endif // STREAM_H
+#endif  // STREAM_H

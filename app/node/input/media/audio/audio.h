@@ -3,19 +3,18 @@
 
 #include "../media.h"
 
-class AudioInput : public MediaInput
-{
-public:
-    AudioInput();
+class AudioInput : public MediaInput {
+ public:
+  AudioInput();
 
-    virtual Node* copy() const override;
+  virtual Node* copy() const override;
 
-    virtual QString Name() const override;
-    virtual QString id() const override;
-    virtual QString Category() const override;
-    virtual QString Description() const override;
+  virtual QString Name() const override;
+  virtual QString id() const override;
+  virtual QString Category() const override;
+  virtual QString Description() const override;
 
-private:
+ private:
 };
 
-#endif // AUDIOINPUT_H
+#endif  // AUDIOINPUT_H

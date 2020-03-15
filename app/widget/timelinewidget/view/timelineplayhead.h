@@ -28,25 +28,25 @@
  *
  * To allow Qt CSS customization (which is only available to QWidgets) to be accessed by TimeRuler
  */
-class TimelinePlayhead : public QWidget
-{
-    Q_OBJECT
-    Q_PROPERTY(QColor playheadColor READ GetPlayheadColor WRITE SetPlayheadColor DESIGNABLE true)
-    Q_PROPERTY(QColor playheadHighlightColor READ GetPlayheadHighlightColor WRITE SetPlayheadHighlightColor DESIGNABLE true)
-public:
-    TimelinePlayhead() = default;
+class TimelinePlayhead : public QWidget {
+  Q_OBJECT
+  Q_PROPERTY(QColor playheadColor READ GetPlayheadColor WRITE SetPlayheadColor DESIGNABLE true)
+  Q_PROPERTY(
+      QColor playheadHighlightColor READ GetPlayheadHighlightColor WRITE SetPlayheadHighlightColor DESIGNABLE true)
+ public:
+  TimelinePlayhead() = default;
 
-    const QColor& GetPlayheadColor() const;
-    const QColor& GetPlayheadHighlightColor() const;
+  const QColor& GetPlayheadColor() const;
+  const QColor& GetPlayheadHighlightColor() const;
 
-    void SetPlayheadColor(QColor c);
-    void SetPlayheadHighlightColor(QColor c);
+  void SetPlayheadColor(QColor c);
+  void SetPlayheadHighlightColor(QColor c);
 
-    void Draw(QPainter *painter, const QRectF &rect) const;
+  void Draw(QPainter* painter, const QRectF& rect) const;
 
-private:
-    QColor playhead_color_;
-    QColor playhead_highlight_color_;
+ private:
+  QColor playhead_color_;
+  QColor playhead_highlight_color_;
 };
 
-#endif // TIMELINEPLAYHEADSTYLE_H
+#endif  // TIMELINEPLAYHEADSTYLE_H

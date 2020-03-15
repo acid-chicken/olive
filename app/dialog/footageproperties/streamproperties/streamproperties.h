@@ -24,17 +24,13 @@
 #include <QUndoCommand>
 #include <QWidget>
 
-class StreamProperties : public QWidget
-{
-public:
-    StreamProperties(QWidget* parent = nullptr);
+class StreamProperties : public QWidget {
+ public:
+  StreamProperties(QWidget* parent = nullptr);
 
-    virtual void Accept(QUndoCommand*) {}
+  virtual void Accept(QUndoCommand*) {}
 
-    virtual bool SanityCheck() {
-        return true;
-    }
-
+  virtual bool SanityCheck() { return true; }
 };
 
-#endif // STREAMPROPERTIES_H
+#endif  // STREAMPROPERTIES_H

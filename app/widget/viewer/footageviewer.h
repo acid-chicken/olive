@@ -6,30 +6,28 @@
 #include "node/output/viewer/viewer.h"
 #include "viewer.h"
 
-class FootageViewerWidget : public ViewerWidget
-{
-    Q_OBJECT
-public:
-    FootageViewerWidget(QWidget* parent = nullptr);
+class FootageViewerWidget : public ViewerWidget {
+  Q_OBJECT
+ public:
+  FootageViewerWidget(QWidget* parent = nullptr);
 
-    Footage* GetFootage() const;
-    void SetFootage(Footage* footage);
+  Footage* GetFootage() const;
+  void SetFootage(Footage* footage);
 
-protected:
-    virtual TimelinePoints* ConnectTimelinePoints() override;
+ protected:
+  virtual TimelinePoints* ConnectTimelinePoints() override;
 
-private:
-    Footage* footage_;
+ private:
+  Footage* footage_;
 
-    VideoInput* video_node_;
+  VideoInput* video_node_;
 
-    AudioInput* audio_node_;
+  AudioInput* audio_node_;
 
-    ViewerOutput* viewer_node_;
+  ViewerOutput* viewer_node_;
 
-private slots:
-    void StartFootageDrag();
-
+ private slots:
+  void StartFootageDrag();
 };
 
-#endif // FOOTAGEVIEWERWIDGET_H
+#endif  // FOOTAGEVIEWERWIDGET_H

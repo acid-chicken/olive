@@ -5,52 +5,48 @@
 
 #include "common/timerange.h"
 
-class TimelineMarker : public QObject
-{
-    Q_OBJECT
-public:
-    TimelineMarker(const TimeRange& time = TimeRange(), const QString& name = QString(), QObject* parent = nullptr);
+class TimelineMarker : public QObject {
+  Q_OBJECT
+ public:
+  TimelineMarker(const TimeRange& time = TimeRange(), const QString& name = QString(), QObject* parent = nullptr);
 
-    const TimeRange &time() const;
-    void set_time(const TimeRange& time);
+  const TimeRange& time() const;
+  void set_time(const TimeRange& time);
 
-    const QString& name() const;
-    void set_name(const QString& name);
+  const QString& name() const;
+  void set_name(const QString& name);
 
-signals:
-    void TimeChanged(const TimeRange& time);
+ signals:
+  void TimeChanged(const TimeRange& time);
 
-    void NameChanged(const QString& name);
+  void NameChanged(const QString& name);
 
-private:
-    TimeRange time_;
+ private:
+  TimeRange time_;
 
-    QString name_;
-
+  QString name_;
 };
 
-class TimelineMarkerList : public QObject
-{
-    Q_OBJECT
-public:
-    TimelineMarkerList() = default;
+class TimelineMarkerList : public QObject {
+  Q_OBJECT
+ public:
+  TimelineMarkerList() = default;
 
-    virtual ~TimelineMarkerList() override;
+  virtual ~TimelineMarkerList() override;
 
-    void AddMarker(const TimeRange& time = TimeRange(), const QString& name = QString());
+  void AddMarker(const TimeRange& time = TimeRange(), const QString& name = QString());
 
-    void RemoveMarker(TimelineMarker* marker);
+  void RemoveMarker(TimelineMarker* marker);
 
-    const QList<TimelineMarker *> &list() const;
+  const QList<TimelineMarker*>& list() const;
 
-signals:
-    void MarkerAdded(TimelineMarker* marker);
+ signals:
+  void MarkerAdded(TimelineMarker* marker);
 
-    void MarkerRemoved(TimelineMarker* marker);
+  void MarkerRemoved(TimelineMarker* marker);
 
-private:
-    QList<TimelineMarker*> markers_;
-
+ private:
+  QList<TimelineMarker*> markers_;
 };
 
-#endif // TIMELINEMARKER_H
+#endif  // TIMELINEMARKER_H

@@ -29,86 +29,79 @@
 #include "undo/undocommand.h"
 #include "widget/slider/integerslider.h"
 
-class VideoStreamProperties : public StreamProperties
-{
-public:
-    VideoStreamProperties(ImageStreamPtr stream);
+class VideoStreamProperties : public StreamProperties {
+ public:
+  VideoStreamProperties(ImageStreamPtr stream);
 
-    virtual void Accept(QUndoCommand* parent) override;
+  virtual void Accept(QUndoCommand* parent) override;
 
-    virtual bool SanityCheck() override;
+  virtual bool SanityCheck() override;
 
-private:
-    static bool IsImageSequence(ImageStream* stream);
+ private:
+  static bool IsImageSequence(ImageStream* stream);
 
-    /**
-     * @brief Attached video stream
-     */
+  /**
+   * @brief Attached video stream
+   */
+  ImageStreamPtr stream_;
+
+  /**
+   * @brief Setting for associated/premultiplied alpha
+   */
+  QCheckBox* video_premultiply_alpha_;
+
+  /**
+   * @brief Setting for this media's color space
+   */
+  QComboBox* video_color_space_;
+
+  /**
+   * @brief Sets the start index for image sequences
+   */
+  IntegerSlider* imgseq_start_time_;
+
+  /**
+   * @brief Sets the end index for image sequences
+   */
+  IntegerSlider* imgseq_end_time_;
+
+  class VideoStreamChangeCommand : public UndoCommand {
+   public:
+    VideoStreamChangeCommand(ImageStreamPtr stream, bool premultiplied, QString colorspace,
+                             QUndoCommand* parent = nullptr);
+
+   protected:
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
+
+   private:
     ImageStreamPtr stream_;
 
-    /**
-     * @brief Setting for associated/premultiplied alpha
-     */
-    QCheckBox* video_premultiply_alpha_;
+    bool new_premultiplied_;
+    QString new_colorspace_;
 
-    /**
-     * @brief Setting for this media's color space
-     */
-    QComboBox* video_color_space_;
+    bool old_premultiplied_;
+    QString old_colorspace_;
+  };
 
-    /**
-     * @brief Sets the start index for image sequences
-     */
-    IntegerSlider* imgseq_start_time_;
+  class ImageSequenceChangeCommand : public UndoCommand {
+   public:
+    ImageSequenceChangeCommand(VideoStreamPtr video_stream, int64_t start_index, int64_t duration,
+                               QUndoCommand* parent = nullptr);
 
-    /**
-     * @brief Sets the end index for image sequences
-     */
-    IntegerSlider* imgseq_end_time_;
+   protected:
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
-    class VideoStreamChangeCommand : public UndoCommand {
-    public:
-        VideoStreamChangeCommand(ImageStreamPtr stream,
-                                 bool premultiplied,
-                                 QString colorspace,
-                                 QUndoCommand* parent = nullptr);
+   private:
+    VideoStreamPtr video_stream_;
 
-    protected:
-        virtual void redo_internal() override;
-        virtual void undo_internal() override;
+    int64_t new_start_index_;
+    int64_t old_start_index_;
 
-    private:
-        ImageStreamPtr stream_;
-
-        bool new_premultiplied_;
-        QString new_colorspace_;
-
-        bool old_premultiplied_;
-        QString old_colorspace_;
-
-    };
-
-    class ImageSequenceChangeCommand : public UndoCommand {
-    public:
-        ImageSequenceChangeCommand(VideoStreamPtr video_stream,
-                                   int64_t start_index,
-                                   int64_t duration,
-                                   QUndoCommand* parent = nullptr);
-
-    protected:
-        virtual void redo_internal() override;
-        virtual void undo_internal() override;
-
-    private:
-        VideoStreamPtr video_stream_;
-
-        int64_t new_start_index_;
-        int64_t old_start_index_;
-
-        int64_t new_duration_;
-        int64_t old_duration_;
-
-    };
+    int64_t new_duration_;
+    int64_t old_duration_;
+  };
 };
 
-#endif // VIDEOSTREAMPROPERTIES_H
+#endif  // VIDEOSTREAMPROPERTIES_H

@@ -26,259 +26,212 @@
 
 AudioManager* AudioManager::instance_ = nullptr;
 
-void AudioManager::CreateInstance()
-{
-    if (instance_ == nullptr) {
-        instance_ = new AudioManager();
-    }
+void AudioManager::CreateInstance() {
+  if (instance_ == nullptr) {
+    instance_ = new AudioManager();
+  }
 }
 
-void AudioManager::DestroyInstance()
-{
-    delete instance_;
-    instance_ = nullptr;
+void AudioManager::DestroyInstance() {
+  delete instance_;
+  instance_ = nullptr;
 }
 
-AudioManager *AudioManager::instance()
-{
-    return instance_;
+AudioManager* AudioManager::instance() { return instance_; }
+
+void AudioManager::RefreshDevices() {
+  if (refresh_thread_) {
+    return;
+  }
+
+  input_devices_.clear();
+  output_devices_.clear();
+
+  // Refreshing devices can take some time, so we do it in a separate thread
+  refresh_thread_ = new QThread(this);
+  connect(refresh_thread_, &QThread::finished, refresh_thread_, &QThread::deleteLater);
+
+  refresh_thread_->start(QThread::IdlePriority);
+
+  AudioRefreshDevicesObject* refresher = new AudioRefreshDevicesObject();
+  connect(refresher, &AudioRefreshDevicesObject::ListsReady, this, &AudioManager::RefreshThreadDone,
+          Qt::QueuedConnection);
+  refresher->moveToThread(refresh_thread_);
+
+  QMetaObject::invokeMethod(refresher, "Refresh", Qt::QueuedConnection);
 }
 
-void AudioManager::RefreshDevices()
-{
-    if (refresh_thread_) {
-        return;
-    }
+bool AudioManager::IsRefreshing() { return refresh_thread_; }
 
-    input_devices_.clear();
-    output_devices_.clear();
+void AudioManager::PushToOutput(const QByteArray& samples) { output_manager_.Push(samples); }
 
-    // Refreshing devices can take some time, so we do it in a separate thread
-    refresh_thread_ = new QThread(this);
-    connect(refresh_thread_, &QThread::finished, refresh_thread_, &QThread::deleteLater);
-
-    refresh_thread_->start(QThread::IdlePriority);
-
-    AudioRefreshDevicesObject* refresher = new AudioRefreshDevicesObject();
-    connect(refresher, &AudioRefreshDevicesObject::ListsReady, this, &AudioManager::RefreshThreadDone, Qt::QueuedConnection);
-    refresher->moveToThread(refresh_thread_);
-
-    QMetaObject::invokeMethod(refresher,
-                              "Refresh",
-                              Qt::QueuedConnection);
+void AudioManager::StartOutput(QIODevice* device, int playback_speed) {
+  output_manager_.PullFromDevice(device, playback_speed);
 }
 
-bool AudioManager::IsRefreshing()
-{
-    return refresh_thread_;
-}
+void AudioManager::StopOutput() { output_manager_.ResetToPushMode(); }
 
-void AudioManager::PushToOutput(const QByteArray &samples)
-{
-    output_manager_.Push(samples);
-}
+void AudioManager::SetOutputDevice(const QAudioDeviceInfo& info) {
+  qInfo() << "Setting output audio device to" << info.deviceName();
 
-void AudioManager::StartOutput(QIODevice *device, int playback_speed)
-{
-    output_manager_.PullFromDevice(device, playback_speed);
-}
+  StopOutput();
 
-void AudioManager::StopOutput()
-{
-    output_manager_.ResetToPushMode();
-}
+  output_device_info_ = info;
 
-void AudioManager::SetOutputDevice(const QAudioDeviceInfo &info)
-{
-    qInfo() << "Setting output audio device to" << info.deviceName();
+  if (output_params_.is_valid()) {
+    QAudioFormat format;
+    format.setSampleRate(output_params_.sample_rate());
+    format.setChannelCount(output_params_.channel_count());
+    format.setCodec("audio/pcm");
+    format.setByteOrder(QAudioFormat::LittleEndian);
 
-    StopOutput();
-
-    output_device_info_ = info;
-
-    if (output_params_.is_valid()) {
-        QAudioFormat format;
-        format.setSampleRate(output_params_.sample_rate());
-        format.setChannelCount(output_params_.channel_count());
-        format.setCodec("audio/pcm");
-        format.setByteOrder(QAudioFormat::LittleEndian);
-
-        switch (output_params_.format()) {
-        case SampleFormat::SAMPLE_FMT_U8:
-            format.setSampleSize(8);
-            format.setSampleType(QAudioFormat::UnSignedInt);
-            break;
-        case SampleFormat::SAMPLE_FMT_S16:
-            format.setSampleSize(16);
-            format.setSampleType(QAudioFormat::SignedInt);
-            break;
-        case SampleFormat::SAMPLE_FMT_S32:
-            format.setSampleSize(32);
-            format.setSampleType(QAudioFormat::SignedInt);
-            break;
-        case SampleFormat::SAMPLE_FMT_S64:
-            format.setSampleSize(64);
-            format.setSampleType(QAudioFormat::SignedInt);
-            break;
-        case SampleFormat::SAMPLE_FMT_FLT:
-            format.setSampleSize(32);
-            format.setSampleType(QAudioFormat::Float);
-            break;
-        case SampleFormat::SAMPLE_FMT_DBL:
-            format.setSampleSize(64);
-            format.setSampleType(QAudioFormat::Float);
-            break;
-        case SampleFormat::SAMPLE_FMT_COUNT:
-        case SampleFormat::SAMPLE_FMT_INVALID:
-            abort();
-        }
-
-        output_manager_.SetOutputDevice(info, format);
+    switch (output_params_.format()) {
+      case SampleFormat::SAMPLE_FMT_U8:
+        format.setSampleSize(8);
+        format.setSampleType(QAudioFormat::UnSignedInt);
+        break;
+      case SampleFormat::SAMPLE_FMT_S16:
+        format.setSampleSize(16);
+        format.setSampleType(QAudioFormat::SignedInt);
+        break;
+      case SampleFormat::SAMPLE_FMT_S32:
+        format.setSampleSize(32);
+        format.setSampleType(QAudioFormat::SignedInt);
+        break;
+      case SampleFormat::SAMPLE_FMT_S64:
+        format.setSampleSize(64);
+        format.setSampleType(QAudioFormat::SignedInt);
+        break;
+      case SampleFormat::SAMPLE_FMT_FLT:
+        format.setSampleSize(32);
+        format.setSampleType(QAudioFormat::Float);
+        break;
+      case SampleFormat::SAMPLE_FMT_DBL:
+        format.setSampleSize(64);
+        format.setSampleType(QAudioFormat::Float);
+        break;
+      case SampleFormat::SAMPLE_FMT_COUNT:
+      case SampleFormat::SAMPLE_FMT_INVALID:
+        abort();
     }
 
-    // Un-comment this to get debug information about what the audio output is doing
-    //connect(output_.get(), &QAudioOutput::stateChanged, this, &AudioManager::OutputStateChanged);
+    output_manager_.SetOutputDevice(info, format);
+  }
+
+  // Un-comment this to get debug information about what the audio output is doing
+  // connect(output_.get(), &QAudioOutput::stateChanged, this, &AudioManager::OutputStateChanged);
 }
 
-void AudioManager::SetOutputParams(const AudioRenderingParams &params)
-{
-    if (output_params_ != params) {
-        output_params_ = params;
+void AudioManager::SetOutputParams(const AudioRenderingParams& params) {
+  if (output_params_ != params) {
+    output_params_ = params;
 
-        output_manager_.SetParameters(params);
+    output_manager_.SetParameters(params);
 
-        // Refresh output device
-        SetOutputDevice(output_device_info_);
-    }
+    // Refresh output device
+    SetOutputDevice(output_device_info_);
+  }
 }
 
-void AudioManager::SetInputDevice(const QAudioDeviceInfo &info)
-{
-    input_ = std::unique_ptr<QAudioInput>(new QAudioInput(info, QAudioFormat(), this));
-    input_device_info_ = info;
+void AudioManager::SetInputDevice(const QAudioDeviceInfo& info) {
+  input_ = std::unique_ptr<QAudioInput>(new QAudioInput(info, QAudioFormat(), this));
+  input_device_info_ = info;
 }
 
-const QList<QAudioDeviceInfo> &AudioManager::ListInputDevices()
-{
-    return input_devices_;
+const QList<QAudioDeviceInfo>& AudioManager::ListInputDevices() { return input_devices_; }
+
+const QList<QAudioDeviceInfo>& AudioManager::ListOutputDevices() { return output_devices_; }
+
+void AudioManager::ReverseBuffer(char* buffer, int buffer_size, int sample_size) {
+  int half_buffer_sz = buffer_size / 2;
+  char* temp_buffer = new char[sample_size];
+
+  for (int src_index = 0; src_index < half_buffer_sz; src_index += sample_size) {
+    char* src_ptr = buffer + src_index;
+    char* dst_ptr = buffer + buffer_size - sample_size - src_index;
+
+    // Simple swap
+    memcpy(temp_buffer, src_ptr, static_cast<size_t>(sample_size));
+    memcpy(src_ptr, dst_ptr, static_cast<size_t>(sample_size));
+    memcpy(dst_ptr, temp_buffer, static_cast<size_t>(sample_size));
+  }
+
+  delete[] temp_buffer;
 }
 
-const QList<QAudioDeviceInfo> &AudioManager::ListOutputDevices()
-{
-    return output_devices_;
+AudioManager::AudioManager() : input_(nullptr), input_file_(nullptr), refresh_thread_(nullptr) {
+  RefreshDevices();
+
+  connect(&output_manager_, &AudioOutputManager::SentSamples, this, &AudioManager::SentSamples);
+  connect(&output_manager_, &AudioOutputManager::OutputNotified, this, &AudioManager::OutputNotified);
+
+  output_manager_.SetEnableSendingSamples(true);
 }
 
-void AudioManager::ReverseBuffer(char *buffer, int buffer_size, int sample_size)
-{
-    int half_buffer_sz = buffer_size / 2;
-    char* temp_buffer = new char[sample_size];
-
-    for (int src_index=0; src_index<half_buffer_sz; src_index+=sample_size) {
-        char* src_ptr = buffer + src_index;
-        char* dst_ptr = buffer + buffer_size - sample_size - src_index;
-
-        // Simple swap
-        memcpy(temp_buffer, src_ptr, static_cast<size_t>(sample_size));
-        memcpy(src_ptr, dst_ptr, static_cast<size_t>(sample_size));
-        memcpy(dst_ptr, temp_buffer, static_cast<size_t>(sample_size));
-    }
-
-    delete [] temp_buffer;
-}
-
-AudioManager::AudioManager() :
-    input_(nullptr),
-    input_file_(nullptr),
-    refresh_thread_(nullptr)
-{
-    RefreshDevices();
-
-    connect(&output_manager_, &AudioOutputManager::SentSamples, this, &AudioManager::SentSamples);
-    connect(&output_manager_, &AudioOutputManager::OutputNotified, this, &AudioManager::OutputNotified);
-
-    output_manager_.SetEnableSendingSamples(true);
-}
-
-AudioManager::~AudioManager()
-{
-    if (refresh_thread_) {
-        refresh_thread_->quit();
-        refresh_thread_->wait();
-    }
-}
-
-void AudioManager::RefreshThreadDone()
-{
-    AudioRefreshDevicesObject* refresher = static_cast<AudioRefreshDevicesObject*>(sender());
-
-    output_devices_ = refresher->output_devices();
-    input_devices_ = refresher->input_devices();
-
-
-
-    QString preferred_audio_output = Config::Current()["PreferredAudioOutput"].toString();
-
-    if (!output_manager_.OutputIsSet()
-            || (!preferred_audio_output.isEmpty() && output_device_info_.deviceName() != preferred_audio_output)) {
-        if (preferred_audio_output.isEmpty()) {
-            SetOutputDevice(QAudioDeviceInfo::defaultOutputDevice());
-        } else {
-            foreach (const QAudioDeviceInfo& info, output_devices_) {
-                if (info.deviceName() == preferred_audio_output) {
-                    SetOutputDevice(info);
-                    break;
-                }
-            }
-        }
-    }
-
-    QString preferred_audio_input = Config::Current()["PreferredAudioInput"].toString();
-
-    if (input_ == nullptr
-            || (!preferred_audio_input.isEmpty() && input_device_info_.deviceName() != preferred_audio_input)) {
-        if (preferred_audio_input.isEmpty()) {
-            SetInputDevice(QAudioDeviceInfo::defaultInputDevice());
-        } else {
-            foreach (const QAudioDeviceInfo& info, input_devices_) {
-                if (info.deviceName() == preferred_audio_input) {
-                    SetInputDevice(info);
-                    break;
-                }
-            }
-        }
-    }
-
-    // Clean up refresher object
+AudioManager::~AudioManager() {
+  if (refresh_thread_) {
     refresh_thread_->quit();
-    refresh_thread_ = nullptr;
-    refresher->deleteLater();
-
-    emit DeviceListReady();
+    refresh_thread_->wait();
+  }
 }
 
-void AudioManager::OutputStateChanged(QAudio::State state)
-{
-    qDebug() << state;
+void AudioManager::RefreshThreadDone() {
+  AudioRefreshDevicesObject* refresher = static_cast<AudioRefreshDevicesObject*>(sender());
+
+  output_devices_ = refresher->output_devices();
+  input_devices_ = refresher->input_devices();
+
+  QString preferred_audio_output = Config::Current()["PreferredAudioOutput"].toString();
+
+  if (!output_manager_.OutputIsSet() ||
+      (!preferred_audio_output.isEmpty() && output_device_info_.deviceName() != preferred_audio_output)) {
+    if (preferred_audio_output.isEmpty()) {
+      SetOutputDevice(QAudioDeviceInfo::defaultOutputDevice());
+    } else {
+      foreach (const QAudioDeviceInfo& info, output_devices_) {
+        if (info.deviceName() == preferred_audio_output) {
+          SetOutputDevice(info);
+          break;
+        }
+      }
+    }
+  }
+
+  QString preferred_audio_input = Config::Current()["PreferredAudioInput"].toString();
+
+  if (input_ == nullptr ||
+      (!preferred_audio_input.isEmpty() && input_device_info_.deviceName() != preferred_audio_input)) {
+    if (preferred_audio_input.isEmpty()) {
+      SetInputDevice(QAudioDeviceInfo::defaultInputDevice());
+    } else {
+      foreach (const QAudioDeviceInfo& info, input_devices_) {
+        if (info.deviceName() == preferred_audio_input) {
+          SetInputDevice(info);
+          break;
+        }
+      }
+    }
+  }
+
+  // Clean up refresher object
+  refresh_thread_->quit();
+  refresh_thread_ = nullptr;
+  refresher->deleteLater();
+
+  emit DeviceListReady();
 }
 
-AudioRefreshDevicesObject::AudioRefreshDevicesObject()
-{
-}
+void AudioManager::OutputStateChanged(QAudio::State state) { qDebug() << state; }
 
-const QList<QAudioDeviceInfo>& AudioRefreshDevicesObject::input_devices()
-{
-    return input_devices_;
-}
+AudioRefreshDevicesObject::AudioRefreshDevicesObject() {}
 
-const QList<QAudioDeviceInfo>& AudioRefreshDevicesObject::output_devices()
-{
-    return output_devices_;
-}
+const QList<QAudioDeviceInfo>& AudioRefreshDevicesObject::input_devices() { return input_devices_; }
 
-void AudioRefreshDevicesObject::Refresh()
-{
-    output_devices_ = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
-    input_devices_ = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+const QList<QAudioDeviceInfo>& AudioRefreshDevicesObject::output_devices() { return output_devices_; }
 
-    emit ListsReady();
+void AudioRefreshDevicesObject::Refresh() {
+  output_devices_ = QAudioDeviceInfo::availableDevices(QAudio::AudioOutput);
+  input_devices_ = QAudioDeviceInfo::availableDevices(QAudio::AudioInput);
+
+  emit ListsReady();
 }
