@@ -11,31 +11,31 @@
 
 class PreferencesGeneralTab : public PreferencesTab
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PreferencesGeneralTab();
+    PreferencesGeneralTab();
 
-  virtual void Accept() override;
+    virtual void Accept() override;
 
 private slots:
-  /**
-   * @brief Shows a NewSequenceDialog attached to default_sequence
-   */
-  void edit_default_sequence_settings();
+    /**
+     * @brief Shows a NewSequenceDialog attached to default_sequence
+     */
+    void edit_default_sequence_settings();
 
 private:
-  QComboBox* language_combobox_;
+    QComboBox* language_combobox_;
 
-  QComboBox* autoscroll_method_;
+    QComboBox* autoscroll_method_;
 
-  QCheckBox* rectified_waveforms_;
+    QCheckBox* rectified_waveforms_;
 
-  FloatSlider* default_still_length_;
+    FloatSlider* default_still_length_;
 
-  /**
-   * @brief A sequence we can feed to a SequenceDialog to change the defaults
-   */
-  Sequence default_sequence_;
+    /**
+     * @brief A sequence we can feed to a SequenceDialog to change the defaults
+     */
+    Sequence default_sequence_;
 
 };
 

@@ -6,22 +6,22 @@
 
 class TimeSlider : public IntegerSlider
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimeSlider(QWidget* parent = nullptr);
+    TimeSlider(QWidget* parent = nullptr);
 
-  void SetTimebase(const rational& timebase);
+    void SetTimebase(const rational& timebase);
 
 protected:
-  virtual QString ValueToString(const QVariant& v) override;
+    virtual QString ValueToString(const QVariant& v) override;
 
-  virtual QVariant StringToValue(const QString& s, bool* ok) override;
+    virtual QVariant StringToValue(const QString& s, bool* ok) override;
 
 private:
-  rational timebase_;
+    rational timebase_;
 
 private slots:
-  void TimecodeDisplayChanged();
+    void TimecodeDisplayChanged();
 
 };
 
