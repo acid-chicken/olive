@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # linuxdeployqt uses this for naming the file
-export VERSION=$(git rev-parse --short=8 HEAD)
+export VERSION="$(git rev-parse --short=8 HEAD)"
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 
@@ -9,7 +9,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     cmake .
 
     # Make
-    make -j$(sysctl -n hw.ncpu)
+    make -j"$(sysctl -n hw.ncpu)"
 
     # Handle compile failure
     if [ "$?" != "0" ]
@@ -20,32 +20,32 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     BUNDLE_NAME=Olive.app
 
     # Move bundle to working directory
-    mv app/$BUNDLE_NAME .
+    mv app/"$BUNDLE_NAME" .
 
     # Move Qt deps into bundle
-    macdeployqt $BUNDLE_NAME
+    macdeployqt "$BUNDLE_NAME"
 
     # Fix other deps that macdeployqt missed
     wget -c -nv https://github.com/arl/macdeployqtfix/raw/master/macdeployqtfix.py
-    python2 macdeployqtfix.py $BUNDLE_NAME/Contents/MacOS/Olive /usr/local/Cellar/qt5/5.*/
+    python2 macdeployqtfix.py "$BUNDLE_NAME"/Contents/MacOS/Olive /usr/local/Cellar/qt5/5.*/
 
     # Fix deps on crash handler
-    python2 macdeployqtfix.py $BUNDLE_NAME/Contents/MacOS/olive-crashhandler /usr/local/Cellar/qt5/5.*/
+    python2 macdeployqtfix.py "$BUNDLE_NAME"/Contents/MacOS/olive-crashhandler /usr/local/Cellar/qt5/5.*/
 
     # Fix OpenEXR libs that seem to be missed by both macdeployqt _and_ macdeployqtfix
-    cd $BUNDLE_NAME/Contents/Frameworks
+    cd "$BUNDLE_NAME"/Contents/Frameworks
     exrlib=(libImath-*.dylib libHalf-*.dylib libIexMath-*.dylib libIex-*.dylib libIlmThread-*.dylib)
 
-    for a in ${exrlib[@]}; do
-        for b in ${exrlib[@]}; do
-            install_name_tool -change @rpath/$b @executable_path/../Frameworks/$b $a
+    for a in "${exrlib[@]}"; do
+        for b in "${exrlib[@]}"; do
+            install_name_tool -change @rpath/"$b" @executable_path/../Frameworks/"$b" "$a"
         done
     done
 
     cd ../../..
 
     # Distribute in zip
-    zip -r Olive-$VERSION-macOS.zip $BUNDLE_NAME
+    zip -r Olive-"$VERSION"-macOS.zip "$BUNDLE_NAME"
 
 elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 
@@ -53,7 +53,7 @@ elif [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     cmake .
 
     # Make
-    make -j$(nproc)
+    make -j"$(nproc)"
 
     # Handle compile failure
     if [ "$?" != "0" ]
