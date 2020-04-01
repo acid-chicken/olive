@@ -14,31 +14,31 @@ using ColorProcessorPtr = std::shared_ptr<ColorProcessor>;
 class ColorProcessor
 {
 public:
-  ColorProcessor(OCIO::ConstConfigRcPtr config, const QString &source_space, const QString &dest_space);
+    ColorProcessor(OCIO::ConstConfigRcPtr config, const QString &source_space, const QString &dest_space);
 
-  ColorProcessor(OCIO::ConstConfigRcPtr config, const QString& source_space,
-                 QString display,
-                 QString view,
-                 const QString& look);
+    ColorProcessor(OCIO::ConstConfigRcPtr config, const QString& source_space,
+                   QString display,
+                   QString view,
+                   const QString& look);
 
-  DISABLE_COPY_MOVE(ColorProcessor)
+    DISABLE_COPY_MOVE(ColorProcessor)
 
-  static ColorProcessorPtr Create(OCIO::ConstConfigRcPtr config, const QString& source_space, const QString& dest_space);
+    static ColorProcessorPtr Create(OCIO::ConstConfigRcPtr config, const QString& source_space, const QString& dest_space);
 
-  static ColorProcessorPtr Create(OCIO::ConstConfigRcPtr config,
-                                  const QString& source_space,
-                                  const QString& display,
-                                  const QString& view,
-                                  const QString& look);
+    static ColorProcessorPtr Create(OCIO::ConstConfigRcPtr config,
+                                    const QString& source_space,
+                                    const QString& display,
+                                    const QString& view,
+                                    const QString& look);
 
-  OCIO::ConstProcessorRcPtr GetProcessor();
+    OCIO::ConstProcessorRcPtr GetProcessor();
 
-  void ConvertFrame(FramePtr f);
+    void ConvertFrame(FramePtr f);
 
-  Color ConvertColor(Color in);
+    Color ConvertColor(Color in);
 
 private:
-  OCIO::ConstProcessorRcPtr processor;
+    OCIO::ConstProcessorRcPtr processor;
 
 };
 

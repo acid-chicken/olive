@@ -31,46 +31,46 @@
  */
 class ProjectPanel : public PanelWidget, public FootageManagementPanel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectPanel(QWidget* parent);
+    ProjectPanel(QWidget* parent);
 
-  Project* project();
-  void set_project(Project* p);
+    Project* project();
+    void set_project(Project* p);
 
-  QList<Item*> SelectedItems();
+    QList<Item*> SelectedItems();
 
-  Folder* GetSelectedFolder();
+    Folder* GetSelectedFolder();
 
-  virtual QList<Footage*> GetSelectedFootage() override;
+    virtual QList<Footage*> GetSelectedFootage() override;
 
-  ProjectViewModel* model();
+    ProjectViewModel* model();
 
-  virtual void SelectAll() override;
-  virtual void DeselectAll() override;
+    virtual void SelectAll() override;
+    virtual void DeselectAll() override;
 
-  virtual void Insert() override;
-  virtual void Overwrite() override;
+    virtual void Insert() override;
+    virtual void Overwrite() override;
 
-  virtual void DeleteSelected() override;
+    virtual void DeleteSelected() override;
 
 public slots:
-  void Edit(Item *item);
+    void Edit(Item *item);
 
 signals:
-  void ProjectNameChanged();
+    void ProjectNameChanged();
 
 private:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  ProjectExplorer* explorer_;
+    ProjectExplorer* explorer_;
 
 private slots:
-  void ItemDoubleClickSlot(Item* item);
+    void ItemDoubleClickSlot(Item* item);
 
-  void ShowNewMenu();
+    void ShowNewMenu();
 
-  void UpdateSubtitle();
+    void UpdateSubtitle();
 
 };
 

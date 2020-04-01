@@ -41,48 +41,48 @@
  * @brief Olive's main window responsible for docking widgets and the main menu bar.
  */
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
 
-  void OpenSequence(Sequence* sequence);
+    void OpenSequence(Sequence* sequence);
 
-  void CloseSequence(Sequence* sequence);
+    void CloseSequence(Sequence* sequence);
 
 public slots:
-  void ProjectOpen(Project *p);
-  void SetFullscreen(bool fullscreen);
-  void ToggleMaximizedPanel();
+    void ProjectOpen(Project *p);
+    void SetFullscreen(bool fullscreen);
+    void ToggleMaximizedPanel();
 
-  void SetDefaultLayout();
+    void SetDefaultLayout();
 
 protected:
-  virtual void closeEvent(QCloseEvent* e) override;
+    virtual void closeEvent(QCloseEvent* e) override;
 
 private:
-  TimelinePanel* AppendTimelinePanel();
+    TimelinePanel* AppendTimelinePanel();
 
-  void TimelineFocused(TimelinePanel *panel);
+    void TimelineFocused(TimelinePanel *panel);
 
-  QByteArray premaximized_state_;
+    QByteArray premaximized_state_;
 
-  // Standard panels
-  NodePanel* node_panel_;
-  ParamPanel* param_panel_;
-  SequenceViewerPanel* sequence_viewer_panel_;
-  FootageViewerPanel* footage_viewer_panel_;
-  ProjectPanel* project_panel_;
-  ToolPanel* tool_panel_;
-  QList<TimelinePanel*> timeline_panels_;
-  AudioMonitorPanel* audio_monitor_panel_;
-  TaskManagerPanel* task_man_panel_;
-  CurvePanel* curve_panel_;
-  PixelSamplerPanel* pixel_sampler_panel_;
+    // Standard panels
+    NodePanel* node_panel_;
+    ParamPanel* param_panel_;
+    SequenceViewerPanel* sequence_viewer_panel_;
+    FootageViewerPanel* footage_viewer_panel_;
+    ProjectPanel* project_panel_;
+    ToolPanel* tool_panel_;
+    QList<TimelinePanel*> timeline_panels_;
+    AudioMonitorPanel* audio_monitor_panel_;
+    TaskManagerPanel* task_man_panel_;
+    CurvePanel* curve_panel_;
+    PixelSamplerPanel* pixel_sampler_panel_;
 
 private slots:
-  void FocusedPanelChanged(PanelWidget* panel);
+    void FocusedPanelChanged(PanelWidget* panel);
 
-  void UpdateTitle();
+    void UpdateTitle();
 
 };
 
