@@ -23,67 +23,66 @@
 
 #include <QMainWindow>
 
-#include "panel/panelmanager.h"
 #include "panel/audiomonitor/audiomonitor.h"
 #include "panel/curve/curve.h"
+#include "panel/footageviewer/footageviewer.h"
 #include "panel/node/node.h"
+#include "panel/panelmanager.h"
 #include "panel/param/param.h"
+#include "panel/pixelsampler/pixelsamplerpanel.h"
 #include "panel/project/project.h"
+#include "panel/sequenceviewer/sequenceviewer.h"
 #include "panel/taskmanager/taskmanager.h"
 #include "panel/timeline/timeline.h"
 #include "panel/tool/tool.h"
-#include "panel/footageviewer/footageviewer.h"
-#include "panel/sequenceviewer/sequenceviewer.h"
-#include "panel/pixelsampler/pixelsamplerpanel.h"
 #include "project/project.h"
 
 /**
  * @brief Olive's main window responsible for docking widgets and the main menu bar.
  */
 class MainWindow : public QMainWindow {
-    Q_OBJECT
-public:
-    MainWindow(QWidget *parent = nullptr);
+  Q_OBJECT
+ public:
+  MainWindow(QWidget* parent = nullptr);
 
-    void OpenSequence(Sequence* sequence);
+  void OpenSequence(Sequence* sequence);
 
-    void CloseSequence(Sequence* sequence);
+  void CloseSequence(Sequence* sequence);
 
-public slots:
-    void ProjectOpen(Project *p);
-    void SetFullscreen(bool fullscreen);
-    void ToggleMaximizedPanel();
+ public slots:
+  void ProjectOpen(Project* p);
+  void SetFullscreen(bool fullscreen);
+  void ToggleMaximizedPanel();
 
-    void SetDefaultLayout();
+  void SetDefaultLayout();
 
-protected:
-    virtual void closeEvent(QCloseEvent* e) override;
+ protected:
+  virtual void closeEvent(QCloseEvent* e) override;
 
-private:
-    TimelinePanel* AppendTimelinePanel();
+ private:
+  TimelinePanel* AppendTimelinePanel();
 
-    void TimelineFocused(TimelinePanel *panel);
+  void TimelineFocused(TimelinePanel* panel);
 
-    QByteArray premaximized_state_;
+  QByteArray premaximized_state_;
 
-    // Standard panels
-    NodePanel* node_panel_;
-    ParamPanel* param_panel_;
-    SequenceViewerPanel* sequence_viewer_panel_;
-    FootageViewerPanel* footage_viewer_panel_;
-    ProjectPanel* project_panel_;
-    ToolPanel* tool_panel_;
-    QList<TimelinePanel*> timeline_panels_;
-    AudioMonitorPanel* audio_monitor_panel_;
-    TaskManagerPanel* task_man_panel_;
-    CurvePanel* curve_panel_;
-    PixelSamplerPanel* pixel_sampler_panel_;
+  // Standard panels
+  NodePanel* node_panel_;
+  ParamPanel* param_panel_;
+  SequenceViewerPanel* sequence_viewer_panel_;
+  FootageViewerPanel* footage_viewer_panel_;
+  ProjectPanel* project_panel_;
+  ToolPanel* tool_panel_;
+  QList<TimelinePanel*> timeline_panels_;
+  AudioMonitorPanel* audio_monitor_panel_;
+  TaskManagerPanel* task_man_panel_;
+  CurvePanel* curve_panel_;
+  PixelSamplerPanel* pixel_sampler_panel_;
 
-private slots:
-    void FocusedPanelChanged(PanelWidget* panel);
+ private slots:
+  void FocusedPanelChanged(PanelWidget* panel);
 
-    void UpdateTitle();
-
+  void UpdateTitle();
 };
 
 #endif

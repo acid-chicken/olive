@@ -1,44 +1,40 @@
 #ifndef PIXELSAMPLERWIDGET_H
 #define PIXELSAMPLERWIDGET_H
 
-#include <QLabel>
 #include <QGroupBox>
+#include <QLabel>
 #include <QWidget>
 
 #include "render/color.h"
 
-class PixelSamplerWidget : public QGroupBox
-{
-    Q_OBJECT
-public:
-    PixelSamplerWidget(QWidget* parent = nullptr);
+class PixelSamplerWidget : public QGroupBox {
+  Q_OBJECT
+ public:
+  PixelSamplerWidget(QWidget* parent = nullptr);
 
-public slots:
-    void SetValues(const Color& color);
+ public slots:
+  void SetValues(const Color& color);
 
-private:
-    void UpdateLabelInternal();
+ private:
+  void UpdateLabelInternal();
 
-    Color color_;
+  Color color_;
 
-    QLabel* label_;
-
+  QLabel* label_;
 };
 
-class ManagedPixelSamplerWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    ManagedPixelSamplerWidget(QWidget* parent = nullptr);
+class ManagedPixelSamplerWidget : public QWidget {
+  Q_OBJECT
+ public:
+  ManagedPixelSamplerWidget(QWidget* parent = nullptr);
 
-public slots:
-    void SetValues(const Color& reference, const Color& display);
+ public slots:
+  void SetValues(const Color& reference, const Color& display);
 
-private:
-    PixelSamplerWidget* reference_view_;
+ private:
+  PixelSamplerWidget* reference_view_;
 
-    PixelSamplerWidget* display_view_;
-
+  PixelSamplerWidget* display_view_;
 };
 
-#endif // PIXELSAMPLERWIDGET_H
+#endif  // PIXELSAMPLERWIDGET_H

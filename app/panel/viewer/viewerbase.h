@@ -5,28 +5,26 @@
 #include "panel/timebased/timebased.h"
 #include "widget/viewer/viewer.h"
 
-class ViewerPanelBase : public TimeBasedPanel
-{
-    Q_OBJECT
-public:
-    ViewerPanelBase(QWidget* parent = nullptr);
+class ViewerPanelBase : public TimeBasedPanel {
+  Q_OBJECT
+ public:
+  ViewerPanelBase(QWidget* parent = nullptr);
 
-    virtual void PlayPause() override;
+  virtual void PlayPause() override;
 
-    virtual void ShuttleLeft() override;
+  virtual void ShuttleLeft() override;
 
-    virtual void ShuttleStop() override;
+  virtual void ShuttleStop() override;
 
-    virtual void ShuttleRight() override;
+  virtual void ShuttleRight() override;
 
-    void ConnectTimeBasedPanel(TimeBasedPanel* panel);
+  void ConnectTimeBasedPanel(TimeBasedPanel* panel);
 
-    void DisconnectTimeBasedPanel(TimeBasedPanel* panel);
+  void DisconnectTimeBasedPanel(TimeBasedPanel* panel);
 
-    VideoRenderBackend* video_renderer() const;
+  VideoRenderBackend* video_renderer() const;
 
-    void ConnectPixelSamplerPanel(PixelSamplerPanel *psp);
-
+  void ConnectPixelSamplerPanel(PixelSamplerPanel* psp);
 };
 
-#endif // VIEWERPANELBASE_H
+#endif  // VIEWERPANELBASE_H

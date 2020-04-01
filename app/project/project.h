@@ -24,8 +24,8 @@
 #include <QObject>
 #include <memory>
 
-#include "render/colormanager.h"
 #include "project/item/folder/folder.h"
+#include "render/colormanager.h"
 
 /**
  * @brief A project instance containing all the data pertaining to the user's project
@@ -38,49 +38,47 @@
  * * Project Settings
  * * Window Layout
  */
-class Project : public QObject
-{
-    Q_OBJECT
-public:
-    Project();
+class Project : public QObject {
+  Q_OBJECT
+ public:
+  Project();
 
-    void Load(QXmlStreamReader* reader, const QAtomicInt* cancelled);
+  void Load(QXmlStreamReader* reader, const QAtomicInt* cancelled);
 
-    void Save(QXmlStreamWriter* writer) const;
+  void Save(QXmlStreamWriter* writer) const;
 
-    Folder* root();
+  Folder* root();
 
-    QString name() const;
+  QString name() const;
 
-    const QString& filename() const;
-    QString pretty_filename() const;
-    void set_filename(const QString& s);
+  const QString& filename() const;
+  QString pretty_filename() const;
+  void set_filename(const QString& s);
 
-    const QString& ocio_config() const;
-    void set_ocio_config(const QString& ocio_config);
+  const QString& ocio_config() const;
+  void set_ocio_config(const QString& ocio_config);
 
-    const QString& default_input_colorspace() const;
-    void set_default_input_colorspace(const QString& colorspace);
+  const QString& default_input_colorspace() const;
+  void set_default_input_colorspace(const QString& colorspace);
 
-    ColorManager* color_manager();
+  ColorManager* color_manager();
 
-    QList<ItemPtr> get_items_of_type(Item::Type type) const;
+  QList<ItemPtr> get_items_of_type(Item::Type type) const;
 
-signals:
-    void NameChanged();
+ signals:
+  void NameChanged();
 
-private:
-    Folder root_;
+ private:
+  Folder root_;
 
-    QString filename_;
+  QString filename_;
 
-    QString ocio_config_;
-    QString default_input_colorspace_;
+  QString ocio_config_;
+  QString default_input_colorspace_;
 
-    ColorManager color_manager_;
-
+  ColorManager color_manager_;
 };
 
 using ProjectPtr = std::shared_ptr<Project>;
 
-#endif // PROJECT_H
+#endif  // PROJECT_H

@@ -5,68 +5,62 @@
 
 #include "input.h"
 
-class NodeValue
-{
-public:
-    NodeValue() = default;
-    NodeValue(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
+class NodeValue {
+ public:
+  NodeValue() = default;
+  NodeValue(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
 
-    const NodeParam::DataType& type() const;
-    const QVariant& data() const;
-    const QString& tag() const;
+  const NodeParam::DataType& type() const;
+  const QVariant& data() const;
+  const QString& tag() const;
 
-private:
-    NodeParam::DataType type_;
-    QVariant data_;
-    QString tag_;
-
+ private:
+  NodeParam::DataType type_;
+  QVariant data_;
+  QString tag_;
 };
 
-class NodeValueTable
-{
-public:
-    NodeValueTable();
+class NodeValueTable {
+ public:
+  NodeValueTable();
 
-    QVariant Get(const NodeParam::DataType& type, const QString& tag = QString()) const;
-    NodeValue GetWithMeta(const NodeParam::DataType& type, const QString& tag = QString()) const;
-    QVariant Take(const NodeParam::DataType& type, const QString& tag = QString());
-    void Push(const NodeValue& value);
-    void Push(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
-    void Prepend(const NodeValue& value);
-    void Prepend(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
-    const NodeValue& At(int index) const;
-    int Count() const;
-    bool Has(const NodeParam::DataType& type) const;
+  QVariant Get(const NodeParam::DataType& type, const QString& tag = QString()) const;
+  NodeValue GetWithMeta(const NodeParam::DataType& type, const QString& tag = QString()) const;
+  QVariant Take(const NodeParam::DataType& type, const QString& tag = QString());
+  void Push(const NodeValue& value);
+  void Push(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
+  void Prepend(const NodeValue& value);
+  void Prepend(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
+  const NodeValue& At(int index) const;
+  int Count() const;
+  bool Has(const NodeParam::DataType& type) const;
 
-    bool isEmpty() const;
+  bool isEmpty() const;
 
-    static NodeValueTable Merge(QList<NodeValueTable> tables);
+  static NodeValueTable Merge(QList<NodeValueTable> tables);
 
-private:
-    int GetInternal(const NodeParam::DataType& type, const QString& tag) const;
+ private:
+  int GetInternal(const NodeParam::DataType& type, const QString& tag) const;
 
-    QList<NodeValue> values_;
-
+  QList<NodeValue> values_;
 };
 
-class NodeValueDatabase
-{
-public:
-    NodeValueDatabase();
+class NodeValueDatabase {
+ public:
+  NodeValueDatabase();
 
-    NodeValueTable operator[](const QString& input_id) const;
-    NodeValueTable operator[](const NodeInput* input) const;
+  NodeValueTable operator[](const QString& input_id) const;
+  NodeValueTable operator[](const NodeInput* input) const;
 
-    void Insert(const QString& key, const NodeValueTable &value);
-    void Insert(const NodeInput* key, const NodeValueTable& value);
+  void Insert(const QString& key, const NodeValueTable& value);
+  void Insert(const NodeInput* key, const NodeValueTable& value);
 
-    NodeValueTable Merge() const;
+  NodeValueTable Merge() const;
 
-private:
-    QHash<QString, NodeValueTable> tables_;
-
+ private:
+  QHash<QString, NodeValueTable> tables_;
 };
 
 Q_DECLARE_METATYPE(NodeValueTable)
 
-#endif // VALUE_H
+#endif  // VALUE_H

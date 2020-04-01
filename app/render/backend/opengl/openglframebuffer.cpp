@@ -23,127 +23,101 @@
 #include <QDebug>
 #include <QOpenGLExtraFunctions>
 
-OpenGLFramebuffer::OpenGLFramebuffer() :
-    context_(nullptr),
-    buffer_(0),
-    texture_(nullptr)
-{
+OpenGLFramebuffer::OpenGLFramebuffer() : context_(nullptr), buffer_(0), texture_(nullptr) {}
+
+OpenGLFramebuffer::~OpenGLFramebuffer() { Destroy(); }
+
+void OpenGLFramebuffer::Create(QOpenGLContext *ctx) {
+  if (ctx == nullptr) {
+    qWarning() << "RenderTexture::Create was passed an invalid context";
+    return;
+  }
+
+  // Free any previous framebuffer
+  Destroy();
+
+  context_ = ctx;
+
+  connect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLFramebuffer::Destroy);
+
+  // Create framebuffer object
+  context_->functions()->glGenFramebuffers(1, &buffer_);
 }
 
-OpenGLFramebuffer::~OpenGLFramebuffer()
-{
-    Destroy();
+void OpenGLFramebuffer::Destroy() {
+  if (context_ != nullptr) {
+    disconnect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLFramebuffer::Destroy);
+
+    context_->functions()->glDeleteFramebuffers(1, &buffer_);
+
+    buffer_ = 0;
+
+    context_ = nullptr;
+  }
 }
 
-void OpenGLFramebuffer::Create(QOpenGLContext *ctx)
-{
-    if (ctx == nullptr) {
-        qWarning() << "RenderTexture::Create was passed an invalid context";
-        return;
-    }
+bool OpenGLFramebuffer::IsCreated() const { return (buffer_ > 0); }
 
-    // Free any previous framebuffer
-    Destroy();
-
-    context_ = ctx;
-
-    connect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLFramebuffer::Destroy);
-
-    // Create framebuffer object
-    context_->functions()->glGenFramebuffers(1, &buffer_);
+void OpenGLFramebuffer::Bind() {
+  if (context_ == nullptr) {
+    return;
+  }
+  context_->functions()->glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
 }
 
-void OpenGLFramebuffer::Destroy()
-{
-    if (context_ != nullptr) {
-        disconnect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLFramebuffer::Destroy);
-
-        context_->functions()->glDeleteFramebuffers(1, &buffer_);
-
-        buffer_ = 0;
-
-        context_ = nullptr;
-    }
+void OpenGLFramebuffer::Release() {
+  if (context_ == nullptr) {
+    return;
+  }
+  context_->functions()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-bool OpenGLFramebuffer::IsCreated() const
-{
-    return (buffer_ > 0);
+void OpenGLFramebuffer::Attach(OpenGLTexture *texture, bool clear) {
+  if (context_ == nullptr) {
+    return;
+  }
+
+  Detach();
+
+  texture_ = texture;
+
+  QOpenGLFunctions *f = context_->functions();
+
+  // bind framebuffer for attaching
+  f->glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
+
+  context_->extraFunctions()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                                     texture_->texture(), 0);
+
+  if (clear) {
+    context_->functions()->glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    context_->functions()->glClear(GL_COLOR_BUFFER_BIT);
+  }
+
+  // release framebuffer
+  f->glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void OpenGLFramebuffer::Bind()
-{
-    if (context_ == nullptr) {
-        return;
-    }
-    context_->functions()->glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
-}
+void OpenGLFramebuffer::Attach(OpenGLTexturePtr texture, bool clear) { Attach(texture.get(), clear); }
 
-void OpenGLFramebuffer::Release()
-{
-    if (context_ == nullptr) {
-        return;
-    }
-    context_->functions()->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
+void OpenGLFramebuffer::Detach() {
+  if (context_ == nullptr) {
+    return;
+  }
 
-void OpenGLFramebuffer::Attach(OpenGLTexture *texture, bool clear)
-{
-    if (context_ == nullptr) {
-        return;
-    }
-
-    Detach();
-
-    texture_ = texture;
-
-    QOpenGLFunctions* f = context_->functions();
+  if (texture_) {
+    QOpenGLFunctions *f = context_->functions();
 
     // bind framebuffer for attaching
     f->glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
 
-    context_->extraFunctions()->glFramebufferTexture2D(
-        GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_->texture(), 0
-    );
-
-    if (clear) {
-        context_->functions()->glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        context_->functions()->glClear(GL_COLOR_BUFFER_BIT);
-    }
+    context_->extraFunctions()->glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
 
     // release framebuffer
     f->glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    texture_ = nullptr;
+  }
 }
 
-void OpenGLFramebuffer::Attach(OpenGLTexturePtr texture, bool clear)
-{
-    Attach(texture.get(), clear);
-}
-
-void OpenGLFramebuffer::Detach()
-{
-    if (context_ == nullptr) {
-        return;
-    }
-
-    if (texture_) {
-        QOpenGLFunctions* f = context_->functions();
-
-        // bind framebuffer for attaching
-        f->glBindFramebuffer(GL_FRAMEBUFFER, buffer_);
-
-        context_->extraFunctions()->glFramebufferTexture2D(
-            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0
-        );
-
-        // release framebuffer
-        f->glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        texture_ = nullptr;
-    }
-}
-
-const GLuint &OpenGLFramebuffer::buffer() const
-{
-    return buffer_;
-}
+const GLuint &OpenGLFramebuffer::buffer() const { return buffer_; }

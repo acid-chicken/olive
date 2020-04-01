@@ -3,30 +3,29 @@
 
 #include "node/node.h"
 
-class VolumeNode : public Node
-{
-public:
-    VolumeNode();
+class VolumeNode : public Node {
+ public:
+  VolumeNode();
 
-    virtual Node* copy() const override;
+  virtual Node* copy() const override;
 
-    virtual QString Name() const override;
-    virtual QString id() const override;
-    virtual QString Category() const override;
-    virtual QString Description() const override;
+  virtual QString Name() const override;
+  virtual QString id() const override;
+  virtual QString Category() const override;
+  virtual QString Description() const override;
 
-    virtual Capabilities GetCapabilities(const NodeValueDatabase&) const override;
-    virtual NodeInput* ProcessesSamplesFrom(const NodeValueDatabase &value) const override;
-    virtual void ProcessSamples(const NodeValueDatabase& values, const AudioRenderingParams& params, const SampleBufferPtr input, SampleBufferPtr output, int index) const override;
+  virtual Capabilities GetCapabilities(const NodeValueDatabase&) const override;
+  virtual NodeInput* ProcessesSamplesFrom(const NodeValueDatabase& value) const override;
+  virtual void ProcessSamples(const NodeValueDatabase& values, const AudioRenderingParams& params,
+                              const SampleBufferPtr input, SampleBufferPtr output, int index) const override;
 
-    virtual void Retranslate() override;
+  virtual void Retranslate() override;
 
-    NodeInput* samples_input() const;
+  NodeInput* samples_input() const;
 
-private:
-    NodeInput* samples_input_;
-    NodeInput* volume_input_;
-
+ private:
+  NodeInput* samples_input_;
+  NodeInput* volume_input_;
 };
 
-#endif // VOLUMENODE_H
+#endif  // VOLUMENODE_H

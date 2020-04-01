@@ -36,36 +36,32 @@
  * `timecode` a user-friendly string representation of a time according to Timecode::Display
  */
 class Timecode {
-public:
-    enum Display {
-        kTimecodeDropFrame,
-        kTimecodeNonDropFrame,
-        kTimecodeSeconds,
-        kFrames,
-        kMilliseconds
-    };
+ public:
+  enum Display { kTimecodeDropFrame, kTimecodeNonDropFrame, kTimecodeSeconds, kFrames, kMilliseconds };
 
-    /**
-     * @brief Convert a timestamp (according to a rational timebase) to a user-friendly string representation
-     */
-    static QString timestamp_to_timecode(const int64_t &timestamp, const rational& timebase, const Display &display, bool show_plus_if_positive = false);
+  /**
+   * @brief Convert a timestamp (according to a rational timebase) to a user-friendly string representation
+   */
+  static QString timestamp_to_timecode(const int64_t& timestamp, const rational& timebase, const Display& display,
+                                       bool show_plus_if_positive = false);
 
-    static int64_t timecode_to_timestamp(const QString& timecode, const rational& timebase, const Display& display, bool *ok = nullptr);
+  static int64_t timecode_to_timestamp(const QString& timecode, const rational& timebase, const Display& display,
+                                       bool* ok = nullptr);
 
-    static rational snap_time_to_timebase(const rational& time, const rational& timebase);
+  static rational snap_time_to_timebase(const rational& time, const rational& timebase);
 
-    static int64_t time_to_timestamp(const rational& time, const rational& timebase);
-    static int64_t time_to_timestamp(const double& time, const rational& timebase);
+  static int64_t time_to_timestamp(const rational& time, const rational& timebase);
+  static int64_t time_to_timestamp(const double& time, const rational& timebase);
 
-    static int64_t rescale_timestamp(const int64_t& ts, const rational& source, const rational& dest);
-    static int64_t rescale_timestamp_ceil(const int64_t& ts, const rational& source, const rational& dest);
+  static int64_t rescale_timestamp(const int64_t& ts, const rational& source, const rational& dest);
+  static int64_t rescale_timestamp_ceil(const int64_t& ts, const rational& source, const rational& dest);
 
-    static rational timestamp_to_time(const int64_t& timestamp, const rational& timebase);
+  static rational timestamp_to_time(const int64_t& timestamp, const rational& timebase);
 
-    static QString time_to_timecode(const rational& time, const rational& timebase, const Display &display, bool show_plus_if_positive = false);
+  static QString time_to_timecode(const rational& time, const rational& timebase, const Display& display,
+                                  bool show_plus_if_positive = false);
 
-    static bool TimebaseIsDropFrame(const rational& timebase);
-
+  static bool TimebaseIsDropFrame(const rational& timebase);
 };
 
-#endif // TIMECODEFUNCTIONS_H
+#endif  // TIMECODEFUNCTIONS_H

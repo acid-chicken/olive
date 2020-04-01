@@ -26,39 +26,38 @@
 #include "common/constructors.h"
 #include "opengltexture.h"
 
-class OpenGLFramebuffer : public QObject
-{
-    Q_OBJECT
-public:
-    OpenGLFramebuffer();
-    virtual ~OpenGLFramebuffer() override;
+class OpenGLFramebuffer : public QObject {
+  Q_OBJECT
+ public:
+  OpenGLFramebuffer();
+  virtual ~OpenGLFramebuffer() override;
 
-    DISABLE_COPY_MOVE(OpenGLFramebuffer)
+  DISABLE_COPY_MOVE(OpenGLFramebuffer)
 
-    void Create(QOpenGLContext *ctx);
+  void Create(QOpenGLContext* ctx);
 
-    bool IsCreated() const;
+  bool IsCreated() const;
 
-    void Bind();
+  void Bind();
 
-    void Release();
+  void Release();
 
-    void Attach(OpenGLTexture* texture, bool clear = false);
-    void Attach(OpenGLTexturePtr texture, bool clear = false);
+  void Attach(OpenGLTexture* texture, bool clear = false);
+  void Attach(OpenGLTexturePtr texture, bool clear = false);
 
-    void Detach();
+  void Detach();
 
-    const GLuint& buffer() const;
+  const GLuint& buffer() const;
 
-public slots:
-    void Destroy();
+ public slots:
+  void Destroy();
 
-private:
-    QOpenGLContext* context_;
+ private:
+  QOpenGLContext* context_;
 
-    GLuint buffer_;
+  GLuint buffer_;
 
-    OpenGLTexture* texture_;
+  OpenGLTexture* texture_;
 };
 
-#endif // OPENGLFRAMEBUFFER_H
+#endif  // OPENGLFRAMEBUFFER_H
