@@ -23,32 +23,32 @@
 #include "ui/style/style.h"
 
 Menu::Menu(QMenuBar *bar, const QObject* receiver, const char* member) :
-  QMenu(bar)
+    QMenu(bar)
 {
-  bar->addMenu(this);
+    bar->addMenu(this);
 
-  if (receiver != nullptr) {
-    connect(this, SIGNAL(aboutToShow()), receiver, member);
-  }
+    if (receiver != nullptr) {
+        connect(this, SIGNAL(aboutToShow()), receiver, member);
+    }
 }
 
 Menu::Menu(Menu *menu, const QObject *receiver, const char *member) :
-  QMenu(menu)
+    QMenu(menu)
 {
-  menu->addMenu(this);
+    menu->addMenu(this);
 
-  if (receiver != nullptr) {
-    connect(this, SIGNAL(aboutToShow()), receiver, member);
-  }
+    if (receiver != nullptr) {
+        connect(this, SIGNAL(aboutToShow()), receiver, member);
+    }
 }
 
 Menu::Menu(QWidget *parent) :
-  QMenu(parent)
+    QMenu(parent)
 {
 }
 
 Menu::Menu(const QString &s, QWidget *parent) :
-  QMenu(s, parent)
+    QMenu(s, parent)
 {
 }
 
@@ -57,39 +57,39 @@ QAction *Menu::AddItem(const QString &id,
                        const char *member,
                        const QString &key)
 {
-  QAction* a = CreateItem(this, id, receiver, member, key);
+    QAction* a = CreateItem(this, id, receiver, member, key);
 
-  addAction(a);
+    addAction(a);
 
-  return a;
+    return a;
 }
 
 QAction* Menu::InsertAlphabetically(const QString &s)
 {
-  QAction* action = new QAction(s);
-  InsertAlphabetically(action);
-  return action;
+    QAction* action = new QAction(s);
+    InsertAlphabetically(action);
+    return action;
 }
 
 void Menu::InsertAlphabetically(QAction *entry)
 {
-  QList<QAction*> actions = this->actions();
+    QList<QAction*> actions = this->actions();
 
-  foreach (QAction* action, actions) {
-    if (action->text() > entry->text()) {
-      insertAction(action, entry);
-      return;
+    foreach (QAction* action, actions) {
+        if (action->text() > entry->text()) {
+            insertAction(action, entry);
+            return;
+        }
     }
-  }
 
-  addAction(entry);
+    addAction(entry);
 }
 
 void Menu::InsertAlphabetically(Menu *menu)
 {
-  QAction* action = new QAction(menu->title());
-  action->setMenu(menu);
-  InsertAlphabetically(action);
+    QAction* action = new QAction(menu->title());
+    action->setMenu(menu);
+    InsertAlphabetically(action);
 }
 
 QAction *Menu::CreateItem(QObject* parent,
@@ -98,38 +98,38 @@ QAction *Menu::CreateItem(QObject* parent,
                           const char *member,
                           const QString &key)
 {
-  QAction* a = new QAction(parent);
+    QAction* a = new QAction(parent);
 
-  ConformItem(a,
-              id,
-              receiver,
-              member,
-              key);
+    ConformItem(a,
+                id,
+                receiver,
+                member,
+                key);
 
-  return a;
+    return a;
 }
 
 void Menu::ConformItem(QAction* a, const QString &id, const QObject *receiver, const char *member, const QString &key)
 {
-  a->setProperty("id", id);
+    a->setProperty("id", id);
 
-  if (!key.isEmpty()) {
-    a->setShortcut(key);
-    a->setProperty("keydefault", key);
+    if (!key.isEmpty()) {
+        a->setShortcut(key);
+        a->setProperty("keydefault", key);
 
-    // Set to application context so that ViewerWindows still trigger shortcuts
-    a->setShortcutContext(Qt::ApplicationShortcut);
-  }
+        // Set to application context so that ViewerWindows still trigger shortcuts
+        a->setShortcutContext(Qt::ApplicationShortcut);
+    }
 
-  if (receiver != nullptr) {
-    connect(a, SIGNAL(triggered(bool)), receiver, member);
-  }
+    if (receiver != nullptr) {
+        connect(a, SIGNAL(triggered(bool)), receiver, member);
+    }
 }
 
 void Menu::SetBooleanAction(QAction *a, bool* boolean)
 {
-  // FIXME: Connect to some boolean function
-  a->setCheckable(true);
-  a->setChecked(*boolean);
-  a->setProperty("boolptr", reinterpret_cast<quintptr>(boolean));
+    // FIXME: Connect to some boolean function
+    a->setCheckable(true);
+    a->setChecked(*boolean);
+    a->setProperty("boolptr", reinterpret_cast<quintptr>(boolean));
 }
