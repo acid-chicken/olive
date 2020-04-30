@@ -22,13 +22,8 @@
 
 OLIVE_NAMESPACE_ENTER
 
-AudioStreamProperties::AudioStreamProperties(AudioStreamPtr stream) :
-    stream_(stream)
-{
-}
+AudioStreamProperties::AudioStreamProperties(AudioStreamPtr stream) : stream_(stream) {}
 
-void AudioStreamProperties::Accept(QUndoCommand*)
-{
-}
+void AudioStreamProperties::Accept(QUndoCommand*) {}
 
 OLIVE_NAMESPACE_EXIT

@@ -31,59 +31,57 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class NodeParamView : public TimeBasedWidget
-{
-    Q_OBJECT
-public:
-    NodeParamView(QWidget* parent = nullptr);
+class NodeParamView : public TimeBasedWidget {
+  Q_OBJECT
+ public:
+  NodeParamView(QWidget* parent = nullptr);
 
-    void SetNodes(QList<Node*> nodes);
-    const QList<Node*>& nodes();
+  void SetNodes(QList<Node*> nodes);
+  const QList<Node*>& nodes();
 
-    Node* GetTimeTarget() const;
+  Node* GetTimeTarget() const;
 
-signals:
-    void InputDoubleClicked(NodeInput* input);
+ signals:
+  void InputDoubleClicked(NodeInput* input);
 
-    void TimeTargetChanged(Node* target);
+  void TimeTargetChanged(Node* target);
 
-    void RequestSelectNode(const QList<Node*>& target);
+  void RequestSelectNode(const QList<Node*>& target);
 
-    void OpenedNode(Node* n);
+  void OpenedNode(Node* n);
 
-    void ClosedNode(Node* n);
+  void ClosedNode(Node* n);
 
-protected:
-    virtual void resizeEvent(QResizeEvent *event) override;
+ protected:
+  virtual void resizeEvent(QResizeEvent* event) override;
 
-    virtual void ScaleChangedEvent(const double &) override;
-    virtual void TimebaseChangedEvent(const rational&) override;
-    virtual void TimeChangedEvent(const int64_t &) override;
+  virtual void ScaleChangedEvent(const double&) override;
+  virtual void TimebaseChangedEvent(const rational&) override;
+  virtual void TimeChangedEvent(const int64_t&) override;
 
-private:
-    void UpdateItemTime(const int64_t &timestamp);
+ private:
+  void UpdateItemTime(const int64_t& timestamp);
 
-    QVBoxLayout* param_layout_;
+  QVBoxLayout* param_layout_;
 
-    KeyframeView* keyframe_view_;
+  KeyframeView* keyframe_view_;
 
-    QList<Node*> nodes_;
+  QList<Node*> nodes_;
 
-    QList<NodeParamViewItem*> items_;
+  QList<NodeParamViewItem*> items_;
 
-    QScrollBar* vertical_scrollbar_;
+  QScrollBar* vertical_scrollbar_;
 
-    QGraphicsRectItem* bottom_item_;
+  QGraphicsRectItem* bottom_item_;
 
-    int last_scroll_val_;
+  int last_scroll_val_;
 
-private slots:
-    void ItemRequestedTimeChanged(const rational& time);
+ private slots:
+  void ItemRequestedTimeChanged(const rational& time);
 
-    void ForceKeyframeViewToScroll(int min, int max);
-
+  void ForceKeyframeViewToScroll(int min, int max);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEPARAMVIEW_H
+#endif  // NODEPARAMVIEW_H

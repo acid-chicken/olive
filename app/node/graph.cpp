@@ -22,61 +22,50 @@
 
 OLIVE_NAMESPACE_ENTER
 
-void NodeGraph::Clear()
-{
-    foreach (Node* node, node_children_) {
-        delete node;
-    }
-    node_children_.clear();
+void NodeGraph::Clear() {
+  foreach (Node *node, node_children_) { delete node; }
+  node_children_.clear();
 }
 
-void NodeGraph::AddNode(Node *node)
-{
-    if (ContainsNode(node)) {
-        return;
-    }
+void NodeGraph::AddNode(Node *node) {
+  if (ContainsNode(node)) {
+    return;
+  }
 
-    node->setParent(this);
+  node->setParent(this);
 
-    connect(node, &Node::EdgeAdded, this, &NodeGraph::EdgeAdded);
-    connect(node, &Node::EdgeRemoved, this, &NodeGraph::EdgeRemoved);
+  connect(node, &Node::EdgeAdded, this, &NodeGraph::EdgeAdded);
+  connect(node, &Node::EdgeRemoved, this, &NodeGraph::EdgeRemoved);
 
-    node_children_.append(node);
+  node_children_.append(node);
 
-    emit NodeAdded(node);
+  emit NodeAdded(node);
 }
 
-void NodeGraph::TakeNode(Node *node, QObject* new_parent)
-{
-    if (!ContainsNode(node)) {
-        return;
-    }
+void NodeGraph::TakeNode(Node *node, QObject *new_parent) {
+  if (!ContainsNode(node)) {
+    return;
+  }
 
-    if (!node->CanBeDeleted()) {
-        qWarning() << "Tried to delete a Node that's been flagged as not deletable";
-        return;
-    }
+  if (!node->CanBeDeleted()) {
+    qWarning() << "Tried to delete a Node that's been flagged as not deletable";
+    return;
+  }
 
-    node->DisconnectAll();
+  node->DisconnectAll();
 
-    disconnect(node, &Node::EdgeAdded, this, &NodeGraph::EdgeAdded);
-    disconnect(node, &Node::EdgeRemoved, this, &NodeGraph::EdgeRemoved);
+  disconnect(node, &Node::EdgeAdded, this, &NodeGraph::EdgeAdded);
+  disconnect(node, &Node::EdgeRemoved, this, &NodeGraph::EdgeRemoved);
 
-    node->setParent(new_parent);
+  node->setParent(new_parent);
 
-    node_children_.removeAll(node);
+  node_children_.removeAll(node);
 
-    emit NodeRemoved(node);
+  emit NodeRemoved(node);
 }
 
-const QList<Node *> &NodeGraph::nodes() const
-{
-    return node_children_;
-}
+const QList<Node *> &NodeGraph::nodes() const { return node_children_; }
 
-bool NodeGraph::ContainsNode(Node *n) const
-{
-    return (n->parent() == this);
-}
+bool NodeGraph::ContainsNode(Node *n) const { return (n->parent() == this); }
 
 OLIVE_NAMESPACE_EXIT

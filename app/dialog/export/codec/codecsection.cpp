@@ -22,9 +22,6 @@
 
 OLIVE_NAMESPACE_ENTER
 
-CodecSection::CodecSection(QWidget *parent) :
-    QWidget(parent)
-{
-}
+CodecSection::CodecSection(QWidget *parent) : QWidget(parent) {}
 
 OLIVE_NAMESPACE_EXIT

@@ -30,20 +30,21 @@
  * properties to be set from CSS and then read by NodeViewItem.
  */
 class NodeViewItemWidget : public QWidget {
-    Q_OBJECT
-    Q_PROPERTY(QColor titlebarColor READ TitleBarColor WRITE SetTitleBarColor DESIGNABLE true)
-    Q_PROPERTY(QColor borderColor READ BorderColor WRITE SetBorderColor DESIGNABLE true)
-public:
-    NodeViewItemWidget() = default;
+  Q_OBJECT
+  Q_PROPERTY(QColor titlebarColor READ TitleBarColor WRITE SetTitleBarColor DESIGNABLE true)
+  Q_PROPERTY(QColor borderColor READ BorderColor WRITE SetBorderColor DESIGNABLE true)
+ public:
+  NodeViewItemWidget() = default;
 
-    QColor TitleBarColor();
-    void SetTitleBarColor(QColor color);
+  QColor TitleBarColor();
+  void SetTitleBarColor(QColor color);
 
-    QColor BorderColor();
-    void SetBorderColor(QColor color);
-private:
-    QColor title_bar_color_;
-    QColor border_color_;
+  QColor BorderColor();
+  void SetBorderColor(QColor color);
+
+ private:
+  QColor title_bar_color_;
+  QColor border_color_;
 };
 
-#endif // NODEVIEWITEMWIDGETPROXY_H
+#endif  // NODEVIEWITEMWIDGETPROXY_H

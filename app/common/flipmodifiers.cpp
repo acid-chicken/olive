@@ -23,19 +23,19 @@
 OLIVE_NAMESPACE_ENTER
 
 Qt::KeyboardModifiers FlipControlAndShiftModifiers(Qt::KeyboardModifiers e) {
-    if (e & Qt::ControlModifier & Qt::ShiftModifier) {
-        return e;
-    }
-
-    if (e & Qt::ShiftModifier) {
-        e |= Qt::ControlModifier;
-        e &= ~Qt::ShiftModifier;
-    } else if (e & Qt::ControlModifier) {
-        e |= Qt::ShiftModifier;
-        e &= ~Qt::ControlModifier;
-    }
-
+  if (e & Qt::ControlModifier & Qt::ShiftModifier) {
     return e;
+  }
+
+  if (e & Qt::ShiftModifier) {
+    e |= Qt::ControlModifier;
+    e &= ~Qt::ShiftModifier;
+  } else if (e & Qt::ControlModifier) {
+    e |= Qt::ShiftModifier;
+    e &= ~Qt::ControlModifier;
+  }
+
+  return e;
 }
 
 OLIVE_NAMESPACE_EXIT

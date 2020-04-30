@@ -26,34 +26,32 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ColorGradientWidget : public ColorSwatchWidget
-{
-    Q_OBJECT
-public:
-    ColorGradientWidget(Qt::Orientation orientation, QWidget* parent = nullptr);
+class ColorGradientWidget : public ColorSwatchWidget {
+  Q_OBJECT
+ public:
+  ColorGradientWidget(Qt::Orientation orientation, QWidget* parent = nullptr);
 
-protected:
-    virtual Color GetColorFromScreenPos(const QPoint& p) const override;
+ protected:
+  virtual Color GetColorFromScreenPos(const QPoint& p) const override;
 
-    virtual void paintEvent(QPaintEvent* e) override;
+  virtual void paintEvent(QPaintEvent* e) override;
 
-    virtual void SelectedColorChangedEvent(const Color& c, bool external) override;
+  virtual void SelectedColorChangedEvent(const Color& c, bool external) override;
 
-private:
-    static Color LerpColor(const Color& a, const Color& b, int i, int max);
+ private:
+  static Color LerpColor(const Color& a, const Color& b, int i, int max);
 
-    QPixmap cached_gradient_;
+  QPixmap cached_gradient_;
 
-    Qt::Orientation orientation_;
+  Qt::Orientation orientation_;
 
-    Color start_;
+  Color start_;
 
-    Color end_;
+  Color end_;
 
-    float val_;
-
+  float val_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLORGRADIENTGLWIDGET_H
+#endif  // COLORGRADIENTGLWIDGET_H

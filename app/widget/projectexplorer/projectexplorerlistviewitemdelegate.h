@@ -30,15 +30,14 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief The delegate that's used to draw items when ProjectExplorer is in List view
  */
-class ProjectExplorerListViewItemDelegate : public QStyledItemDelegate
-{
-public:
-    ProjectExplorerListViewItemDelegate(QObject *parent = nullptr);
+class ProjectExplorerListViewItemDelegate : public QStyledItemDelegate {
+ public:
+  ProjectExplorerListViewItemDelegate(QObject *parent = nullptr);
 
-    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTEXPLORERLISTVIEWITEMDELEGATE_H
+#endif  // PROJECTEXPLORERLISTVIEWITEMDELEGATE_H

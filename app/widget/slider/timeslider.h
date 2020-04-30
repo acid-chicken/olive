@@ -26,27 +26,25 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class TimeSlider : public IntegerSlider
-{
-    Q_OBJECT
-public:
-    TimeSlider(QWidget* parent = nullptr);
+class TimeSlider : public IntegerSlider {
+  Q_OBJECT
+ public:
+  TimeSlider(QWidget* parent = nullptr);
 
-    void SetTimebase(const rational& timebase);
+  void SetTimebase(const rational& timebase);
 
-protected:
-    virtual QString ValueToString(const QVariant& v) override;
+ protected:
+  virtual QString ValueToString(const QVariant& v) override;
 
-    virtual QVariant StringToValue(const QString& s, bool* ok) override;
+  virtual QVariant StringToValue(const QString& s, bool* ok) override;
 
-private:
-    rational timebase_;
+ private:
+  rational timebase_;
 
-private slots:
-    void TimecodeDisplayChanged();
-
+ private slots:
+  void TimecodeDisplayChanged();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMESLIDER_H
+#endif  // TIMESLIDER_H

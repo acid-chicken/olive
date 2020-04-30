@@ -28,15 +28,15 @@
 OLIVE_NAMESPACE_ENTER
 
 class UndoStack : public QUndoStack {
-public:
-    /**
-     * @brief A wrapper for push() that either pushes if the command has children or deletes if not
-     *
-     * This function takes ownership of `command`, and may delete it so it should never be accessed after this call.
-     */
-    void pushIfHasChildren(QUndoCommand* command);
+ public:
+  /**
+   * @brief A wrapper for push() that either pushes if the command has children or deletes if not
+   *
+   * This function takes ownership of `command`, and may delete it so it should never be accessed after this call.
+   */
+  void pushIfHasChildren(QUndoCommand* command);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // UNDOSTACK_H
+#endif  // UNDOSTACK_H

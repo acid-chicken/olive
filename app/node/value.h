@@ -27,74 +27,68 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class NodeValue
-{
-public:
-    NodeValue() = default;
-    NodeValue(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
+class NodeValue {
+ public:
+  NodeValue() = default;
+  NodeValue(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
 
-    const NodeParam::DataType& type() const;
-    const QVariant& data() const;
-    const QString& tag() const;
+  const NodeParam::DataType& type() const;
+  const QVariant& data() const;
+  const QString& tag() const;
 
-    bool operator==(const NodeValue& rhs) const;
+  bool operator==(const NodeValue& rhs) const;
 
-private:
-    NodeParam::DataType type_;
-    QVariant data_;
-    QString tag_;
-
+ private:
+  NodeParam::DataType type_;
+  QVariant data_;
+  QString tag_;
 };
 
-class NodeValueTable
-{
-public:
-    NodeValueTable() = default;
+class NodeValueTable {
+ public:
+  NodeValueTable() = default;
 
-    QVariant Get(const NodeParam::DataType& type, const QString& tag = QString()) const;
-    NodeValue GetWithMeta(const NodeParam::DataType& type, const QString& tag = QString()) const;
-    QVariant Take(const NodeParam::DataType& type, const QString& tag = QString());
-    NodeValue TakeWithMeta(const NodeParam::DataType& type, const QString& tag = QString());
-    void Push(const NodeValue& value);
-    void Push(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
-    void Prepend(const NodeValue& value);
-    void Prepend(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
-    const NodeValue& At(int index) const;
-    NodeValue TakeAt(int index);
-    int Count() const;
-    bool Has(const NodeParam::DataType& type) const;
-    void Remove(const NodeValue& v);
+  QVariant Get(const NodeParam::DataType& type, const QString& tag = QString()) const;
+  NodeValue GetWithMeta(const NodeParam::DataType& type, const QString& tag = QString()) const;
+  QVariant Take(const NodeParam::DataType& type, const QString& tag = QString());
+  NodeValue TakeWithMeta(const NodeParam::DataType& type, const QString& tag = QString());
+  void Push(const NodeValue& value);
+  void Push(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
+  void Prepend(const NodeValue& value);
+  void Prepend(const NodeParam::DataType& type, const QVariant& data, const QString& tag = QString());
+  const NodeValue& At(int index) const;
+  NodeValue TakeAt(int index);
+  int Count() const;
+  bool Has(const NodeParam::DataType& type) const;
+  void Remove(const NodeValue& v);
 
-    bool isEmpty() const;
+  bool isEmpty() const;
 
-    static NodeValueTable Merge(QList<NodeValueTable> tables);
+  static NodeValueTable Merge(QList<NodeValueTable> tables);
 
-private:
-    int GetInternal(const NodeParam::DataType& type, const QString& tag) const;
+ private:
+  int GetInternal(const NodeParam::DataType& type, const QString& tag) const;
 
-    QList<NodeValue> values_;
-
+  QList<NodeValue> values_;
 };
 
-class NodeValueDatabase
-{
-public:
-    NodeValueDatabase() = default;
+class NodeValueDatabase {
+ public:
+  NodeValueDatabase() = default;
 
-    NodeValueTable& operator[](const QString& input_id);
-    NodeValueTable& operator[](const NodeInput* input);
+  NodeValueTable& operator[](const QString& input_id);
+  NodeValueTable& operator[](const NodeInput* input);
 
-    const NodeValueTable operator[](const QString& input_id) const;
-    const NodeValueTable operator[](const NodeInput* input) const;
+  const NodeValueTable operator[](const QString& input_id) const;
+  const NodeValueTable operator[](const NodeInput* input) const;
 
-    void Insert(const QString& key, const NodeValueTable &value);
-    void Insert(const NodeInput* key, const NodeValueTable& value);
+  void Insert(const QString& key, const NodeValueTable& value);
+  void Insert(const NodeInput* key, const NodeValueTable& value);
 
-    NodeValueTable Merge() const;
+  NodeValueTable Merge() const;
 
-private:
-    QHash<QString, NodeValueTable> tables_;
-
+ private:
+  QHash<QString, NodeValueTable> tables_;
 };
 
 OLIVE_NAMESPACE_EXIT
@@ -102,4 +96,4 @@ OLIVE_NAMESPACE_EXIT
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::NodeValueTable)
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::NodeValueDatabase)
 
-#endif // VALUE_H
+#endif  // VALUE_H

@@ -29,40 +29,39 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class FootageComboBox : public QComboBox
-{
-    Q_OBJECT
-public:
-    FootageComboBox(QWidget* parent = nullptr);
+class FootageComboBox : public QComboBox {
+  Q_OBJECT
+ public:
+  FootageComboBox(QWidget* parent = nullptr);
 
-    virtual void showPopup() override;
+  virtual void showPopup() override;
 
-    void SetRoot(const Folder *p);
+  void SetRoot(const Folder* p);
 
-    void SetOnlyShowReadyFootage(bool e);
+  void SetOnlyShowReadyFootage(bool e);
 
-    StreamPtr SelectedFootage();
+  StreamPtr SelectedFootage();
 
-public slots:
-    void SetFootage(StreamPtr f);
+ public slots:
+  void SetFootage(StreamPtr f);
 
-signals:
-    void FootageChanged(StreamPtr f);
+ signals:
+  void FootageChanged(StreamPtr f);
 
-private:
-    void TraverseFolder(const Folder *f, QMenu* m);
+ private:
+  void TraverseFolder(const Folder* f, QMenu* m);
 
-    void UpdateText();
+  void UpdateText();
 
-    static QString FootageToString(Stream* f);
+  static QString FootageToString(Stream* f);
 
-    const Folder* root_;
+  const Folder* root_;
 
-    StreamPtr footage_;
+  StreamPtr footage_;
 
-    bool only_show_ready_footage_;
+  bool only_show_ready_footage_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // FOOTAGECOMBOBOX_H
+#endif  // FOOTAGECOMBOBOX_H

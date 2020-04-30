@@ -30,83 +30,81 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class TimelineViewBase : public HandMovableView, public TimelineScaledObject
-{
-    Q_OBJECT
-public:
-    TimelineViewBase(QWidget* parent = nullptr);
+class TimelineViewBase : public HandMovableView, public TimelineScaledObject {
+  Q_OBJECT
+ public:
+  TimelineViewBase(QWidget* parent = nullptr);
 
-    static const double kMaximumScale;
+  static const double kMaximumScale;
 
-public slots:
-    void SetTime(const int64_t time);
+ public slots:
+  void SetTime(const int64_t time);
 
-    void SetEndTime(const rational& length);
+  void SetEndTime(const rational& length);
 
-signals:
-    void TimeChanged(const int64_t& time);
+ signals:
+  void TimeChanged(const int64_t& time);
 
-    void ScaleChanged(double scale);
+  void ScaleChanged(double scale);
 
-    void RequestCenterScrollOnPlayhead();
+  void RequestCenterScrollOnPlayhead();
 
-protected:
-    virtual void drawForeground(QPainter *painter, const QRectF &rect) override;
+ protected:
+  virtual void drawForeground(QPainter* painter, const QRectF& rect) override;
 
-    virtual void resizeEvent(QResizeEvent *event) override;
+  virtual void resizeEvent(QResizeEvent* event) override;
 
-    virtual void ScaleChangedEvent(const double& scale) override;
+  virtual void ScaleChangedEvent(const double& scale) override;
 
-    virtual void SceneRectUpdateEvent(QRectF&) {}
+  virtual void SceneRectUpdateEvent(QRectF&) {}
 
-    bool HandleZoomFromScroll(QWheelEvent* event);
+  bool HandleZoomFromScroll(QWheelEvent* event);
 
-    bool WheelEventIsAZoomEvent(QWheelEvent* event);
+  bool WheelEventIsAZoomEvent(QWheelEvent* event);
 
-    void SetLimitYAxis(bool e);
+  void SetLimitYAxis(bool e);
 
-    rational GetPlayheadTime() const;
+  rational GetPlayheadTime() const;
 
-    bool PlayheadPress(QMouseEvent* event);
-    bool PlayheadMove(QMouseEvent* event);
-    bool PlayheadRelease(QMouseEvent* event);
+  bool PlayheadPress(QMouseEvent* event);
+  bool PlayheadMove(QMouseEvent* event);
+  bool PlayheadRelease(QMouseEvent* event);
 
-    virtual void TimebaseChangedEvent(const rational &) override;
+  virtual void TimebaseChangedEvent(const rational&) override;
 
-private:
-    qreal GetPlayheadX();
+ private:
+  qreal GetPlayheadX();
 
-    int64_t playhead_;
+  int64_t playhead_;
 
-    TimelinePlayhead playhead_style_;
+  TimelinePlayhead playhead_style_;
 
-    double playhead_scene_left_;
-    double playhead_scene_right_;
+  double playhead_scene_left_;
+  double playhead_scene_right_;
 
-    bool dragging_playhead_;
+  bool dragging_playhead_;
 
-    QGraphicsScene scene_;
+  QGraphicsScene scene_;
 
-    bool limit_y_axis_;
+  bool limit_y_axis_;
 
-    rational end_time_;
+  rational end_time_;
 
-private slots:
-    /**
-     * @brief Slot called whenever the view resizes or the scene contents change to enforce minimum scene sizes
-     */
-    void UpdateSceneRect();
+ private slots:
+  /**
+   * @brief Slot called whenever the view resizes or the scene contents change to enforce minimum scene sizes
+   */
+  void UpdateSceneRect();
 
-    /**
-     * @brief Slot to handle page scrolling of the playhead
-     *
-     * If the playhead is outside the current scroll bounds, this function will scroll to where it is. Otherwise it will
-     * do nothing.
-     */
-    void PageScrollToPlayhead();
-
+  /**
+   * @brief Slot to handle page scrolling of the playhead
+   *
+   * If the playhead is outside the current scroll bounds, this function will scroll to where it is. Otherwise it will
+   * do nothing.
+   */
+  void PageScrollToPlayhead();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEVIEWBASE_H
+#endif  // TIMELINEVIEWBASE_H

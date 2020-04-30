@@ -25,125 +25,118 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class MathNode : public Node
-{
-public:
-    MathNode();
+class MathNode : public Node {
+ public:
+  MathNode();
 
-    virtual Node* copy() const override;
+  virtual Node* copy() const override;
 
-    virtual QString Name() const override;
-    virtual QString id() const override;
-    virtual QString Category() const override;
-    virtual QString Description() const override;
+  virtual QString Name() const override;
+  virtual QString id() const override;
+  virtual QString Category() const override;
+  virtual QString Description() const override;
 
-    virtual void Retranslate() override;
+  virtual void Retranslate() override;
 
-    virtual Capabilities GetCapabilities(const NodeValueDatabase&) const override;
-    virtual QString ShaderID(const NodeValueDatabase&) const override;
-    virtual QString ShaderFragmentCode(const NodeValueDatabase&) const override;
-    virtual QString ShaderVertexCode(const NodeValueDatabase&input) const override;
+  virtual Capabilities GetCapabilities(const NodeValueDatabase&) const override;
+  virtual QString ShaderID(const NodeValueDatabase&) const override;
+  virtual QString ShaderFragmentCode(const NodeValueDatabase&) const override;
+  virtual QString ShaderVertexCode(const NodeValueDatabase& input) const override;
 
-    virtual NodeValue InputValueFromTable(NodeInput* input, NodeValueDatabase &db, bool take) const override;
+  virtual NodeValue InputValueFromTable(NodeInput* input, NodeValueDatabase& db, bool take) const override;
 
-    virtual NodeValueTable Value(NodeValueDatabase &value) const override;
+  virtual NodeValueTable Value(NodeValueDatabase& value) const override;
 
-    virtual NodeInput* ProcessesSamplesFrom(const NodeValueDatabase &value) const override;
-    virtual void ProcessSamples(const NodeValueDatabase &values, const AudioRenderingParams& params, const SampleBufferPtr input, SampleBufferPtr output, int index) const override;
+  virtual NodeInput* ProcessesSamplesFrom(const NodeValueDatabase& value) const override;
+  virtual void ProcessSamples(const NodeValueDatabase& values, const AudioRenderingParams& params,
+                              const SampleBufferPtr input, SampleBufferPtr output, int index) const override;
 
-    NodeInput* param_a_in() const;
-    NodeInput* param_b_in() const;
+  NodeInput* param_a_in() const;
+  NodeInput* param_b_in() const;
 
-    enum Operation {
-        kOpAdd,
-        kOpSubtract,
-        kOpMultiply,
-        kOpDivide,
-        kOpPower
-    };
+  enum Operation { kOpAdd, kOpSubtract, kOpMultiply, kOpDivide, kOpPower };
 
-    Operation GetOperation() const;
-    void SetOperation(Operation o);
+  Operation GetOperation() const;
+  void SetOperation(Operation o);
 
-private:
-    enum Pairing {
-        kPairNone = -1,
+ private:
+  enum Pairing {
+    kPairNone = -1,
 
-        kPairNumberNumber,
-        kPairVecVec,
-        kPairMatrixMatrix,
-        kPairColorColor,
-        kPairTextureTexture,
+    kPairNumberNumber,
+    kPairVecVec,
+    kPairMatrixMatrix,
+    kPairColorColor,
+    kPairTextureTexture,
 
-        kPairVecNumber,
-        kPairMatrixVec,
-        kPairNumberColor,
-        kPairTextureNumber,
-        kPairTextureColor,
-        kPairTextureMatrix,
-        kPairSampleSample,
-        kPairSampleNumber,
+    kPairVecNumber,
+    kPairMatrixVec,
+    kPairNumberColor,
+    kPairTextureNumber,
+    kPairTextureColor,
+    kPairTextureMatrix,
+    kPairSampleSample,
+    kPairSampleNumber,
 
-        kPairCount
-    };
+    kPairCount
+  };
 
-    class PairingCalculator {
-    public:
-        PairingCalculator(const NodeValueTable &table_a, const NodeValueTable &table_b);
+  class PairingCalculator {
+   public:
+    PairingCalculator(const NodeValueTable& table_a, const NodeValueTable& table_b);
 
-        bool FoundMostLikelyPairing() const;
-        Pairing GetMostLikelyPairing() const;
+    bool FoundMostLikelyPairing() const;
+    Pairing GetMostLikelyPairing() const;
 
-        const NodeValue& GetMostLikelyValueA() const;
-        const NodeValue& GetMostLikelyValueB() const;
+    const NodeValue& GetMostLikelyValueA() const;
+    const NodeValue& GetMostLikelyValueB() const;
 
-    private:
-        static QVector<int> GetPairLikelihood(const NodeValueTable& table);
+   private:
+    static QVector<int> GetPairLikelihood(const NodeValueTable& table);
 
-        Pairing most_likely_pairing_;
+    Pairing most_likely_pairing_;
 
-        NodeValue most_likely_value_a_;
+    NodeValue most_likely_value_a_;
 
-        NodeValue most_likely_value_b_;
+    NodeValue most_likely_value_b_;
+  };
 
-    };
+  template <typename T, typename U>
+  T PerformAll(T a, U b) const;
 
-    template<typename T, typename U>
-    T PerformAll(T a, U b) const;
+  template <typename T, typename U>
+  T PerformMultDiv(T a, U b) const;
 
-    template<typename T, typename U>
-    T PerformMultDiv(T a, U b) const;
+  template <typename T, typename U>
+  T PerformAddSub(T a, U b) const;
 
-    template<typename T, typename U>
-    T PerformAddSub(T a, U b) const;
+  template <typename T, typename U>
+  T PerformMult(T a, U b) const;
 
-    template<typename T, typename U>
-    T PerformMult(T a, U b) const;
+  template <typename T, typename U>
+  T PerformAddSubMult(T a, U b) const;
 
-    template<typename T, typename U>
-    T PerformAddSubMult(T a, U b) const;
+  template <typename T, typename U>
+  T PerformAddSubMultDiv(T a, U b) const;
 
-    template<typename T, typename U>
-    T PerformAddSubMultDiv(T a, U b) const;
+  static QString GetShaderUniformType(const NodeParam::DataType& type);
 
-    static QString GetShaderUniformType(const NodeParam::DataType& type);
+  static QString GetShaderVariableCall(const QString& input_id, const NodeParam::DataType& type,
+                                       const QString& coord_op = QString());
 
-    static QString GetShaderVariableCall(const QString& input_id, const NodeParam::DataType& type, const QString &coord_op = QString());
+  static QVector4D RetrieveVector(const NodeValue& val);
 
-    static QVector4D RetrieveVector(const NodeValue& val);
+  static float RetrieveNumber(const NodeValue& val);
 
-    static float RetrieveNumber(const NodeValue& val);
+  static void PushVector(NodeValueTable* output, NodeParam::DataType type, const QVector4D& vec);
 
-    static void PushVector(NodeValueTable* output, NodeParam::DataType type, const QVector4D& vec);
+  NodeInput* method_in_;
 
-    NodeInput* method_in_;
+  NodeInput* param_a_in_;
 
-    NodeInput* param_a_in_;
-
-    NodeInput* param_b_in_;
-
+  NodeInput* param_b_in_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // MATHNODE_H
+#endif  // MATHNODE_H

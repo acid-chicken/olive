@@ -32,27 +32,30 @@
 OLIVE_NAMESPACE_ENTER
 
 class OpenGLWorker : public VideoRenderWorker {
-    Q_OBJECT
-public:
-    OpenGLWorker(VideoRenderFrameCache* frame_cache,
-                 QObject* parent = nullptr);
+  Q_OBJECT
+ public:
+  OpenGLWorker(VideoRenderFrameCache* frame_cache, QObject* parent = nullptr);
 
-signals:
-    void RequestFrameToValue(FramePtr frame, StreamPtr stream, NodeValueTable* table);
+ signals:
+  void RequestFrameToValue(FramePtr frame, StreamPtr stream, NodeValueTable* table);
 
-    void RequestRunNodeAccelerated(const Node *node, const TimeRange &range, NodeValueDatabase &input_params, NodeValueTable& output_params);
+  void RequestRunNodeAccelerated(const Node* node, const TimeRange& range, NodeValueDatabase& input_params,
+                                 NodeValueTable& output_params);
 
-    void RequestTextureToBuffer(const QVariant& texture, int width, int height, const QMatrix4x4& matrix, void *buffer, int linesize);
+  void RequestTextureToBuffer(const QVariant& texture, int width, int height, const QMatrix4x4& matrix, void* buffer,
+                              int linesize);
 
-protected:
-    virtual void FrameToValue(DecoderPtr decoder, StreamPtr stream, const TimeRange &range, NodeValueTable* table) override;
+ protected:
+  virtual void FrameToValue(DecoderPtr decoder, StreamPtr stream, const TimeRange& range,
+                            NodeValueTable* table) override;
 
-    virtual void RunNodeAccelerated(const Node *node, const TimeRange &range, NodeValueDatabase &input_params, NodeValueTable& output_params) override;
+  virtual void RunNodeAccelerated(const Node* node, const TimeRange& range, NodeValueDatabase& input_params,
+                                  NodeValueTable& output_params) override;
 
-    virtual void TextureToBuffer(const QVariant& texture, int width, int height, const QMatrix4x4& matrix, void *buffer, int linesize) override;
-
+  virtual void TextureToBuffer(const QVariant& texture, int width, int height, const QMatrix4x4& matrix, void* buffer,
+                               int linesize) override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // OPENGLPROCESSOR_H
+#endif  // OPENGLPROCESSOR_H

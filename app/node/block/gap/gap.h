@@ -28,24 +28,22 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief Node that represents nothing in its respective track for a certain period of time
  */
-class GapBlock : public Block
-{
-    Q_OBJECT
-public:
-    GapBlock();
+class GapBlock : public Block {
+  Q_OBJECT
+ public:
+  GapBlock();
 
-    virtual Node * copy() const override;
+  virtual Node* copy() const override;
 
-    virtual Type type() const override;
+  virtual Type type() const override;
 
-    virtual QString Name() const override;
-    virtual QString id() const override;
-    virtual QString Description() const override;
+  virtual QString Name() const override;
+  virtual QString id() const override;
+  virtual QString Description() const override;
 
-private:
-
+ private:
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEBLOCK_H
+#endif  // TIMELINEBLOCK_H

@@ -29,63 +29,62 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class NodeMetaReader
-{
-public:
-    NodeMetaReader(const QString& xml_meta_filename);
+class NodeMetaReader {
+ public:
+  NodeMetaReader(const QString& xml_meta_filename);
 
-    QString Name() const;
-    QString ShortName() const;
-    const QString& id() const;
-    QString Category() const;
-    QString Description() const;
+  QString Name() const;
+  QString ShortName() const;
+  const QString& id() const;
+  QString Category() const;
+  QString Description() const;
 
-    const QString& filename() const;
+  const QString& filename() const;
 
-    const QString& frag_code() const;
-    const QString& vert_code() const;
+  const QString& frag_code() const;
+  const QString& vert_code() const;
 
-    const int& iterations() const;
-    NodeInput* iteration_input() const;
+  const int& iterations() const;
+  NodeInput* iteration_input() const;
 
-    const QList<NodeInput*>& inputs() const;
+  const QList<NodeInput*>& inputs() const;
 
-    void Retranslate();
+  void Retranslate();
 
-private:
-    using LanguageMap = QMap<QString, QString>;
+ private:
+  using LanguageMap = QMap<QString, QString>;
 
-    void XMLReadLanguageString(QXmlStreamReader* reader, LanguageMap *map);
-    void XMLReadEffect(QXmlStreamReader *reader);
-    void XMLReadIterations(QXmlStreamReader* reader);
-    void XMLReadParam(QXmlStreamReader* reader);
-    void XMLReadShader(QXmlStreamReader* reader, QString& destination);
+  void XMLReadLanguageString(QXmlStreamReader* reader, LanguageMap* map);
+  void XMLReadEffect(QXmlStreamReader* reader);
+  void XMLReadIterations(QXmlStreamReader* reader);
+  void XMLReadParam(QXmlStreamReader* reader);
+  void XMLReadShader(QXmlStreamReader* reader, QString& destination);
 
-    static QString GetStringForCurrentLanguage(const LanguageMap *language_map);
+  static QString GetStringForCurrentLanguage(const LanguageMap* language_map);
 
-    NodeInput* GetInputWithID(const QString& id) const;
+  NodeInput* GetInputWithID(const QString& id) const;
 
-    QString xml_filename_;
+  QString xml_filename_;
 
-    LanguageMap names_;
-    LanguageMap short_names_;
-    LanguageMap descriptions_;
-    LanguageMap categories_;
-    QMap<QString, LanguageMap > param_names_;
-    QMap<QString, QList<LanguageMap> > combo_names_;
-    QMap<QString, QList<LanguageMap> > combo_descriptions_;
+  LanguageMap names_;
+  LanguageMap short_names_;
+  LanguageMap descriptions_;
+  LanguageMap categories_;
+  QMap<QString, LanguageMap> param_names_;
+  QMap<QString, QList<LanguageMap> > combo_names_;
+  QMap<QString, QList<LanguageMap> > combo_descriptions_;
 
-    QString id_;
+  QString id_;
 
-    QString frag_code_;
-    QString vert_code_;
+  QString frag_code_;
+  QString vert_code_;
 
-    int iterations_;
-    NodeInput* iteration_input_;
+  int iterations_;
+  NodeInput* iteration_input_;
 
-    QList<NodeInput*> inputs_;
+  QList<NodeInput*> inputs_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEMETAREADER_H
+#endif  // NODEMETAREADER_H

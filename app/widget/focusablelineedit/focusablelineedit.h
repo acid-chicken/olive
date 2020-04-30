@@ -27,25 +27,22 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class FocusableLineEdit : public QLineEdit
-{
-    Q_OBJECT
-public:
-    FocusableLineEdit(QWidget* parent = nullptr);
+class FocusableLineEdit : public QLineEdit {
+  Q_OBJECT
+ public:
+  FocusableLineEdit(QWidget *parent = nullptr);
 
-signals:
-    void Confirmed();
+ signals:
+  void Confirmed();
 
-    void Cancelled();
+  void Cancelled();
 
-protected:
-    void keyPressEvent(QKeyEvent *) override;
+ protected:
+  void keyPressEvent(QKeyEvent *) override;
 
-    void focusOutEvent(QFocusEvent *) override;
-
-
+  void focusOutEvent(QFocusEvent *) override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // SLIDERLINEEDIT_H
+#endif  // SLIDERLINEEDIT_H

@@ -28,104 +28,83 @@
 
 OLIVE_NAMESPACE_ENTER
 
-FootageComboBox::FootageComboBox(QWidget *parent) :
-    QComboBox(parent),
-    root_(nullptr),
-    footage_(nullptr),
-    only_show_ready_footage_(true)
-{
+FootageComboBox::FootageComboBox(QWidget* parent)
+    : QComboBox(parent), root_(nullptr), footage_(nullptr), only_show_ready_footage_(true) {}
+
+void FootageComboBox::showPopup() {
+  if (root_ == nullptr || root_->child_count() == 0) {
+    return;
+  }
+
+  Menu menu;
+
+  menu.setMinimumWidth(width());
+
+  TraverseFolder(root_, &menu);
+
+  QAction* selected = menu.exec(parentWidget()->mapToGlobal(pos()));
+
+  if (selected != nullptr) {
+    SetFootage(selected->data().value<StreamPtr>());
+
+    emit FootageChanged(footage_);
+  }
 }
 
-void FootageComboBox::showPopup()
-{
-    if (root_ == nullptr || root_->child_count() == 0) {
-        return;
-    }
+void FootageComboBox::SetRoot(const Folder* p) {
+  root_ = p;
 
-    Menu menu;
-
-    menu.setMinimumWidth(width());
-
-    TraverseFolder(root_, &menu);
-
-    QAction* selected = menu.exec(parentWidget()->mapToGlobal(pos()));
-
-    if (selected != nullptr) {
-        SetFootage(selected->data().value<StreamPtr>());
-
-        emit FootageChanged(footage_);
-    }
+  clear();
 }
 
-void FootageComboBox::SetRoot(const Folder *p)
-{
-    root_ = p;
+void FootageComboBox::SetOnlyShowReadyFootage(bool e) { only_show_ready_footage_ = e; }
 
-    clear();
+StreamPtr FootageComboBox::SelectedFootage() { return footage_; }
+
+void FootageComboBox::SetFootage(StreamPtr f) {
+  // Remove existing single item used to show the footage name
+  footage_ = f;
+
+  UpdateText();
 }
 
-void FootageComboBox::SetOnlyShowReadyFootage(bool e)
-{
-    only_show_ready_footage_ = e;
-}
+void FootageComboBox::TraverseFolder(const Folder* f, QMenu* m) {
+  for (int i = 0; i < f->child_count(); i++) {
+    Item* child = f->child(i);
 
-StreamPtr FootageComboBox::SelectedFootage()
-{
-    return footage_;
-}
+    if (child->CanHaveChildren()) {
+      Menu* sub = new Menu(child->name(), m);
+      m->addMenu(sub);
 
-void FootageComboBox::SetFootage(StreamPtr f)
-{
-    // Remove existing single item used to show the footage name
-    footage_ = f;
+      TraverseFolder(static_cast<Folder*>(child), sub);
 
-    UpdateText();
-}
+    } else if (child->type() == Item::kFootage) {
+      Footage* footage = static_cast<Footage*>(child);
 
-void FootageComboBox::TraverseFolder(const Folder *f, QMenu *m)
-{
-    for (int i=0; i<f->child_count(); i++) {
-        Item* child = f->child(i);
+      if (!only_show_ready_footage_ || footage->status() == Footage::kReady) {
+        Menu* stream_menu = new Menu(footage->name(), m);
+        m->addMenu(stream_menu);
 
-        if (child->CanHaveChildren()) {
-
-            Menu* sub = new Menu(child->name(), m);
-            m->addMenu(sub);
-
-            TraverseFolder(static_cast<Folder*>(child), sub);
-
-        } else if (child->type() == Item::kFootage) {
-
-            Footage* footage = static_cast<Footage*>(child);
-
-            if (!only_show_ready_footage_ || footage->status() == Footage::kReady) {
-                Menu* stream_menu = new Menu(footage->name(), m);
-                m->addMenu(stream_menu);
-
-                foreach (StreamPtr stream, footage->streams()) {
-                    QAction* stream_action = stream_menu->addAction(FootageToString(stream.get()));
-                    stream_action->setData(QVariant::fromValue(stream));
-                    stream_action->setIcon(Stream::IconFromType(stream->type()));
-                }
-            }
+        foreach (StreamPtr stream, footage->streams()) {
+          QAction* stream_action = stream_menu->addAction(FootageToString(stream.get()));
+          stream_action->setData(QVariant::fromValue(stream));
+          stream_action->setIcon(Stream::IconFromType(stream->type()));
         }
+      }
     }
+  }
 }
 
-void FootageComboBox::UpdateText()
-{
+void FootageComboBox::UpdateText() {
+  // Use combobox functions to show the footage name
+  clear();
+
+  if (footage_) {
     // Use combobox functions to show the footage name
-    clear();
-
-    if (footage_) {
-        // Use combobox functions to show the footage name
-        addItem(FootageToString(footage_.get()));
-    }
+    addItem(FootageToString(footage_.get()));
+  }
 }
 
-QString FootageComboBox::FootageToString(Stream *f)
-{
-    return f->description();
-}
+QString FootageComboBox::FootageToString(Stream* f) { return f->description(); }
 
 OLIVE_NAMESPACE_EXIT

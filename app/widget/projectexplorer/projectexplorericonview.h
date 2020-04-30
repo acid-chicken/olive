@@ -21,24 +21,23 @@
 #ifndef PROJECTEXPLORERICONVIEW_H
 #define PROJECTEXPLORERICONVIEW_H
 
-#include "projectexplorerlistviewbase.h"
 #include "projectexplorericonviewitemdelegate.h"
+#include "projectexplorerlistviewbase.h"
 
 OLIVE_NAMESPACE_ENTER
 
 /**
  * @brief The view widget used when ProjectExplorer is in Icon View
  */
-class ProjectExplorerIconView : public ProjectExplorerListViewBase
-{
-    Q_OBJECT
-public:
-    ProjectExplorerIconView(QWidget* parent);
+class ProjectExplorerIconView : public ProjectExplorerListViewBase {
+  Q_OBJECT
+ public:
+  ProjectExplorerIconView(QWidget* parent);
 
-private:
-    ProjectExplorerIconViewItemDelegate delegate_;
+ private:
+  ProjectExplorerIconViewItemDelegate delegate_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTEXPLORERICONVIEW_H
+#endif  // PROJECTEXPLORERICONVIEW_H

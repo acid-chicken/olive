@@ -27,23 +27,22 @@
 OLIVE_NAMESPACE_ENTER
 
 class NodeParamViewConnectedLabel : public QWidget {
-    Q_OBJECT
-public:
-    NodeParamViewConnectedLabel(NodeInput* input, QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  NodeParamViewConnectedLabel(NodeInput* input, QWidget* parent = nullptr);
 
-signals:
-    void ConnectionClicked();
+ signals:
+  void ConnectionClicked();
 
-private slots:
-    void UpdateConnected();
+ private slots:
+  void UpdateConnected();
 
-private:
-    ClickableLabel* connected_to_lbl_;
+ private:
+  ClickableLabel* connected_to_lbl_;
 
-    NodeInput* input_;
-
+  NodeInput* input_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEPARAMVIEWCONNECTEDLABEL_H
+#endif  // NODEPARAMVIEWCONNECTEDLABEL_H

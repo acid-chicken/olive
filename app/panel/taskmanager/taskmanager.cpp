@@ -24,25 +24,20 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TaskManagerPanel::TaskManagerPanel(QWidget* parent) :
-    PanelWidget(QStringLiteral("TaskManagerPanel"), parent)
-{
-    // Create task view
-    view_ = new TaskView(this);
+TaskManagerPanel::TaskManagerPanel(QWidget* parent) : PanelWidget(QStringLiteral("TaskManagerPanel"), parent) {
+  // Create task view
+  view_ = new TaskView(this);
 
-    // Set it as the main widget
-    setWidget(view_);
+  // Set it as the main widget
+  setWidget(view_);
 
-    // Connect task view to the task manager
-    connect(TaskManager::instance(), &TaskManager::TaskAdded, view_, &TaskView::AddTask);
+  // Connect task view to the task manager
+  connect(TaskManager::instance(), &TaskManager::TaskAdded, view_, &TaskView::AddTask);
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-void TaskManagerPanel::Retranslate()
-{
-    SetTitle(tr("Task Manager"));
-}
+void TaskManagerPanel::Retranslate() { SetTitle(tr("Task Manager")); }
 
 OLIVE_NAMESPACE_EXIT

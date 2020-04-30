@@ -22,12 +22,10 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ProjectExplorerIconView::ProjectExplorerIconView(QWidget *parent) :
-    ProjectExplorerListViewBase(parent)
-{
-    setViewMode(QListView::IconMode);
+ProjectExplorerIconView::ProjectExplorerIconView(QWidget *parent) : ProjectExplorerListViewBase(parent) {
+  setViewMode(QListView::IconMode);
 
-    setItemDelegate(&delegate_);
+  setItemDelegate(&delegate_);
 }
 
 OLIVE_NAMESPACE_EXIT

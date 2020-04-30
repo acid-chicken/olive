@@ -21,31 +21,29 @@
 #ifndef TIMELINEVIEWCLIPITEM_H
 #define TIMELINEVIEWCLIPITEM_H
 
-#include "timelineviewrect.h"
 #include "node/block/clip/clip.h"
+#include "timelineviewrect.h"
 
 OLIVE_NAMESPACE_ENTER
 
 /**
  * @brief A graphical representation of a ClipBlock
  */
-class TimelineViewBlockItem : public TimelineViewRect
-{
-public:
-    TimelineViewBlockItem(Block* block, QGraphicsItem* parent = nullptr);
+class TimelineViewBlockItem : public TimelineViewRect {
+ public:
+  TimelineViewBlockItem(Block* block, QGraphicsItem* parent = nullptr);
 
-    Block* block() const;
+  Block* block() const;
 
-    virtual void UpdateRect() override;
+  virtual void UpdateRect() override;
 
-protected:
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+ protected:
+  virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
-private:
-    Block* block_;
-
+ private:
+  Block* block_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEVIEWCLIPITEM_H
+#endif  // TIMELINEVIEWCLIPITEM_H

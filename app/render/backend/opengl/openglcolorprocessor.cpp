@@ -27,64 +27,48 @@
 
 OLIVE_NAMESPACE_ENTER
 
-void OpenGLColorProcessor::Enable(QOpenGLContext *context, bool alpha_is_associated)
-{
-    if (IsEnabled()) {
-        return;
-    }
+void OpenGLColorProcessor::Enable(QOpenGLContext *context, bool alpha_is_associated) {
+  if (IsEnabled()) {
+    return;
+  }
 
-    context_ = context;
+  context_ = context;
 
-    pipeline_ = OpenGLShader::CreateOCIO(context_,
-                                         ocio_lut_,
-                                         GetProcessor(),
-                                         alpha_is_associated);
+  pipeline_ = OpenGLShader::CreateOCIO(context_, ocio_lut_, GetProcessor(), alpha_is_associated);
 
-    connect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLColorProcessor::ClearTexture, Qt::DirectConnection);
+  connect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLColorProcessor::ClearTexture,
+          Qt::DirectConnection);
 }
 
-bool OpenGLColorProcessor::IsEnabled() const
-{
-    return ocio_lut_;
+bool OpenGLColorProcessor::IsEnabled() const { return ocio_lut_; }
+
+OpenGLShaderPtr OpenGLColorProcessor::pipeline() const { return pipeline_; }
+
+void OpenGLColorProcessor::ProcessOpenGL(bool flipped, const QMatrix4x4 &matrix) {
+  OpenGLRenderFunctions::OCIOBlit(pipeline_, ocio_lut_, flipped, matrix);
 }
 
-OpenGLShaderPtr OpenGLColorProcessor::pipeline() const
-{
-    return pipeline_;
+void OpenGLColorProcessor::ClearTexture() {
+  if (IsEnabled()) {
+    // Clean up OCIO LUT texture and shader
+    context_->functions()->glDeleteTextures(1, &ocio_lut_);
+
+    disconnect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLColorProcessor::ClearTexture);
+
+    ocio_lut_ = 0;
+    pipeline_ = nullptr;
+  }
 }
 
-void OpenGLColorProcessor::ProcessOpenGL(bool flipped, const QMatrix4x4& matrix)
-{
-    OpenGLRenderFunctions::OCIOBlit(pipeline_, ocio_lut_, flipped, matrix);
-}
+OpenGLColorProcessor::OpenGLColorProcessor(ColorManager *config, const QString &source_space,
+                                           const ColorTransform &dest_space)
+    : ColorProcessor(config, source_space, dest_space), ocio_lut_(0) {}
 
-void OpenGLColorProcessor::ClearTexture()
-{
-    if (IsEnabled()) {
-        // Clean up OCIO LUT texture and shader
-        context_->functions()->glDeleteTextures(1, &ocio_lut_);
+OpenGLColorProcessor::~OpenGLColorProcessor() { ClearTexture(); }
 
-        disconnect(context_, &QOpenGLContext::aboutToBeDestroyed, this, &OpenGLColorProcessor::ClearTexture);
-
-        ocio_lut_ = 0;
-        pipeline_ = nullptr;
-    }
-}
-
-OpenGLColorProcessor::OpenGLColorProcessor(ColorManager* config, const QString &source_space, const ColorTransform &dest_space) :
-    ColorProcessor(config, source_space, dest_space),
-    ocio_lut_(0)
-{
-}
-
-OpenGLColorProcessor::~OpenGLColorProcessor()
-{
-    ClearTexture();
-}
-
-OpenGLColorProcessorPtr OpenGLColorProcessor::Create(ColorManager *config, const QString &source_space, const ColorTransform &dest_space)
-{
-    return std::make_shared<OpenGLColorProcessor>(config, source_space, dest_space);
+OpenGLColorProcessorPtr OpenGLColorProcessor::Create(ColorManager *config, const QString &source_space,
+                                                     const ColorTransform &dest_space) {
+  return std::make_shared<OpenGLColorProcessor>(config, source_space, dest_space);
 }
 
 OLIVE_NAMESPACE_EXIT

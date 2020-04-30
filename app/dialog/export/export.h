@@ -36,122 +36,120 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ExportDialog : public QDialog
-{
-    Q_OBJECT
-public:
-    ExportDialog(ViewerOutput* viewer_node, QWidget* parent = nullptr);
+class ExportDialog : public QDialog {
+  Q_OBJECT
+ public:
+  ExportDialog(ViewerOutput* viewer_node, QWidget* parent = nullptr);
 
-public slots:
-    virtual void accept() override;
+ public slots:
+  virtual void accept() override;
 
-protected:
-    virtual void closeEvent(QCloseEvent *e) override;
+ protected:
+  virtual void closeEvent(QCloseEvent* e) override;
 
-private:
-    void SetUpFormats();
-    void LoadPresets();
-    void SetDefaultFilename();
+ private:
+  void SetUpFormats();
+  void LoadPresets();
+  void SetDefaultFilename();
 
-    void SetUIElementsEnabled(bool enabled);
+  void SetUIElementsEnabled(bool enabled);
 
-    static int AlignEvenNumber(double d);
+  static int AlignEvenNumber(double d);
 
-    ExportParams GenerateParams() const;
+  ExportParams GenerateParams() const;
 
-    static QString TimeToString(int64_t ms);
+  static QString TimeToString(int64_t ms);
 
-    ViewerOutput* viewer_node_;
+  ViewerOutput* viewer_node_;
 
-    QList<ExportFormat> formats_;
-    int previously_selected_format_;
+  QList<ExportFormat> formats_;
+  int previously_selected_format_;
 
-    QCheckBox* video_enabled_;
-    QCheckBox* audio_enabled_;
+  QCheckBox* video_enabled_;
+  QCheckBox* audio_enabled_;
 
-    QList<ExportCodec> codecs_;
+  QList<ExportCodec> codecs_;
 
-    ViewerWidget* preview_viewer_;
-    QLineEdit* filename_edit_;
-    QComboBox* format_combobox_;
+  ViewerWidget* preview_viewer_;
+  QLineEdit* filename_edit_;
+  QComboBox* format_combobox_;
 
-    Exporter* exporter_;
+  Exporter* exporter_;
 
-    ExportVideoTab* video_tab_;
-    ExportAudioTab* audio_tab_;
+  ExportVideoTab* video_tab_;
+  ExportAudioTab* audio_tab_;
 
-    double video_aspect_ratio_;
+  double video_aspect_ratio_;
 
-    ColorManager* color_manager_;
+  ColorManager* color_manager_;
 
-    QProgressBar* progress_bar_;
+  QProgressBar* progress_bar_;
 
-    QTimer progress_timer_;
-    QLabel* elapsed_label_;
-    QLabel* remaining_label_;
-    qint64 export_start_;
-    double flt_progress_;
+  QTimer progress_timer_;
+  QLabel* elapsed_label_;
+  QLabel* remaining_label_;
+  qint64 export_start_;
+  double flt_progress_;
 
-    QWidget* preferences_area_;
-    QDialogButtonBox* buttons_;
-    QPushButton* export_cancel_btn_;
+  QWidget* preferences_area_;
+  QDialogButtonBox* buttons_;
+  QPushButton* export_cancel_btn_;
 
-    bool cancelled_;
+  bool cancelled_;
 
-    enum Format {
-        kFormatDNxHD,
-        kFormatMatroska,
-        kFormatMPEG4,
-        kFormatOpenEXR,
-        kFormatQuickTime,
-        kFormatPNG,
-        kFormatTIFF,
+  enum Format {
+    kFormatDNxHD,
+    kFormatMatroska,
+    kFormatMPEG4,
+    kFormatOpenEXR,
+    kFormatQuickTime,
+    kFormatPNG,
+    kFormatTIFF,
 
-        kFormatCount
-    };
+    kFormatCount
+  };
 
-    enum Codec {
-        kCodecDNxHD,
-        kCodecH264,
-        kCodecH265,
-        kCodecOpenEXR,
-        kCodecPNG,
-        kCodecProRes,
-        kCodecTIFF,
+  enum Codec {
+    kCodecDNxHD,
+    kCodecH264,
+    kCodecH265,
+    kCodecOpenEXR,
+    kCodecPNG,
+    kCodecProRes,
+    kCodecTIFF,
 
-        kCodecMP2,
-        kCodecMP3,
-        kCodecAAC,
-        kCodecPCM,
+    kCodecMP2,
+    kCodecMP3,
+    kCodecAAC,
+    kCodecPCM,
 
-        kCodecCount
-    };
+    kCodecCount
+  };
 
-private slots:
-    void BrowseFilename();
+ private slots:
+  void BrowseFilename();
 
-    void FormatChanged(int index);
+  void FormatChanged(int index);
 
-    void ResolutionChanged();
+  void ResolutionChanged();
 
-    void VideoCodecChanged();
+  void VideoCodecChanged();
 
-    void UpdateViewerDimensions();
+  void UpdateViewerDimensions();
 
-    void ExporterIsDone();
+  void ExporterIsDone();
 
-    void CancelExport();
+  void CancelExport();
 
-    void UpdateTimeLabels();
+  void UpdateTimeLabels();
 
-    void ProgressUpdated(double p);
+  void ProgressUpdated(double p);
 
 #ifdef Q_OS_WINDOWS
-    void UpdateTaskbarProgress(int progress);
+  void UpdateTaskbarProgress(int progress);
 #endif
-
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // EXPORTDIALOG_H
+#endif  // EXPORTDIALOG_H

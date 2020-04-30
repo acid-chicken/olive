@@ -26,27 +26,14 @@
 OLIVE_NAMESPACE_ENTER
 
 class Timeline {
-public:
-    enum MovementMode {
-        kNone,
-        kMove,
-        kTrimIn,
-        kTrimOut
-    };
+ public:
+  enum MovementMode { kNone, kMove, kTrimIn, kTrimOut };
 
-    enum TrackType {
-        kTrackTypeNone = -1,
-        kTrackTypeVideo,
-        kTrackTypeAudio,
-        kTrackTypeSubtitle,
-        kTrackTypeCount
-    };
+  enum TrackType { kTrackTypeNone = -1, kTrackTypeVideo, kTrackTypeAudio, kTrackTypeSubtitle, kTrackTypeCount };
 
-    static bool IsATrimMode(MovementMode mode) {
-        return mode == kTrimIn || mode == kTrimOut;
-    }
+  static bool IsATrimMode(MovementMode mode) { return mode == kTrimIn || mode == kTrimOut; }
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINECOMMON_H
+#endif  // TIMELINECOMMON_H

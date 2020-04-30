@@ -22,41 +22,21 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TimelineCoordinate::TimelineCoordinate() :
-    track_(Timeline::kTrackTypeNone, 0)
-{
-}
+TimelineCoordinate::TimelineCoordinate() : track_(Timeline::kTrackTypeNone, 0) {}
 
-TimelineCoordinate::TimelineCoordinate(const rational &frame, const TrackReference &track) :
-    frame_(frame),
-    track_(track)
-{
-}
+TimelineCoordinate::TimelineCoordinate(const rational &frame, const TrackReference &track)
+    : frame_(frame), track_(track) {}
 
-TimelineCoordinate::TimelineCoordinate(const rational &frame, const Timeline::TrackType &track_type, const int &track_index) :
-    frame_(frame),
-    track_(track_type, track_index)
-{
-}
+TimelineCoordinate::TimelineCoordinate(const rational &frame, const Timeline::TrackType &track_type,
+                                       const int &track_index)
+    : frame_(frame), track_(track_type, track_index) {}
 
-const rational &TimelineCoordinate::GetFrame() const
-{
-    return frame_;
-}
+const rational &TimelineCoordinate::GetFrame() const { return frame_; }
 
-const TrackReference &TimelineCoordinate::GetTrack() const
-{
-    return track_;
-}
+const TrackReference &TimelineCoordinate::GetTrack() const { return track_; }
 
-void TimelineCoordinate::SetFrame(const rational &frame)
-{
-    frame_ = frame;
-}
+void TimelineCoordinate::SetFrame(const rational &frame) { frame_ = frame; }
 
-void TimelineCoordinate::SetTrack(const TrackReference &track)
-{
-    track_ = track;
-}
+void TimelineCoordinate::SetTrack(const TrackReference &track) { track_ = track; }
 
 OLIVE_NAMESPACE_EXIT

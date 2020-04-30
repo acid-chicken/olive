@@ -33,32 +33,31 @@ OLIVE_NAMESPACE_ENTER
  * A fairly simple subclass of QTreeView that provides a double clicked signal whether the index is valid or not
  * (QAbstractItemView has a doubleClicked() signal but it's only emitted with a valid index).
  */
-class ProjectExplorerTreeView : public QTreeView
-{
-    Q_OBJECT
-public:
-    ProjectExplorerTreeView(QWidget* parent);
+class ProjectExplorerTreeView : public QTreeView {
+  Q_OBJECT
+ public:
+  ProjectExplorerTreeView(QWidget* parent);
 
-protected:
-    /**
-     * @brief Double click event override
-     *
-     * Function that signals DoubleClickedView().
-     *
-     * FIXME: This code is the same as the code in ProjectExplorerListViewBase. Is there a way to merge these two through
-     *
-     */
-    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+ protected:
+  /**
+   * @brief Double click event override
+   *
+   * Function that signals DoubleClickedView().
+   *
+   * FIXME: This code is the same as the code in ProjectExplorerListViewBase. Is there a way to merge these two through
+   *
+   */
+  virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
 
-signals:
-    /**
-     * @brief Unconditional double click signal
-     *
-     * Emits a signal when the view is double clicked but not on any particular item
-     */
-    void DoubleClickedEmptyArea();
+ signals:
+  /**
+   * @brief Unconditional double click signal
+   *
+   * Emits a signal when the view is double clicked but not on any particular item
+   */
+  void DoubleClickedEmptyArea();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTEXPLORERTREEVIEW_H
+#endif  // PROJECTEXPLORERTREEVIEW_H

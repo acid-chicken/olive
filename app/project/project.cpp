@@ -30,147 +30,109 @@
 
 OLIVE_NAMESPACE_ENTER
 
-Project::Project() :
-    is_modified_(false),
-    autorecovery_saved_(true)
-{
-    root_.set_project(this);
-}
+Project::Project() : is_modified_(false), autorecovery_saved_(true) { root_.set_project(this); }
 
-void Project::Load(QXmlStreamReader *reader, const QAtomicInt* cancelled)
-{
-    XMLNodeData xml_node_data;
+void Project::Load(QXmlStreamReader *reader, const QAtomicInt *cancelled) {
+  XMLNodeData xml_node_data;
 
-    while (XMLReadNextStartElement(reader)) {
-        if (reader->name() == QStringLiteral("folder")) {
+  while (XMLReadNextStartElement(reader)) {
+    if (reader->name() == QStringLiteral("folder")) {
+      // Assume this folder is our root
+      root_.Load(reader, xml_node_data, cancelled);
 
-            // Assume this folder is our root
-            root_.Load(reader, xml_node_data, cancelled);
-
-        } else if (reader->name() == QStringLiteral("colormanagement")) {
-
-            // Read color management info
-            while (XMLReadNextStartElement(reader)) {
-                if (reader->name() == QStringLiteral("config")) {
-                    color_manager_.SetConfig(reader->readElementText());
-                } else if (reader->name() == QStringLiteral("default")) {
-                    color_manager_.SetDefaultInputColorSpace(reader->readElementText());
-                } else {
-                    reader->skipCurrentElement();
-                }
-            }
-
-        } else if (reader->name() == QStringLiteral("layout")) {
-
-            Core::instance()->main_window()->LoadLayout(reader, xml_node_data);
-
+    } else if (reader->name() == QStringLiteral("colormanagement")) {
+      // Read color management info
+      while (XMLReadNextStartElement(reader)) {
+        if (reader->name() == QStringLiteral("config")) {
+          color_manager_.SetConfig(reader->readElementText());
+        } else if (reader->name() == QStringLiteral("default")) {
+          color_manager_.SetDefaultInputColorSpace(reader->readElementText());
         } else {
-            reader->skipCurrentElement();
+          reader->skipCurrentElement();
         }
-    }
+      }
 
-    foreach (const XMLNodeData::FootageConnection& con, xml_node_data.footage_connections) {
-        if (con.footage) {
-            con.input->set_standard_value(QVariant::fromValue(xml_node_data.footage_ptrs.value(con.footage)));
-        }
-    }
-}
+    } else if (reader->name() == QStringLiteral("layout")) {
+      Core::instance()->main_window()->LoadLayout(reader, xml_node_data);
 
-void Project::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement("project");
-
-    writer->writeTextElement("url", filename_);
-
-    root_.Save(writer);
-
-    writer->writeStartElement("colormanagement");
-
-    writer->writeTextElement("config", color_manager_.GetConfigFilename());
-
-    writer->writeTextElement("default", color_manager_.GetDefaultInputColorSpace());
-
-    writer->writeEndElement(); // colormanagement
-
-    // Save main window project layout
-    Core::instance()->main_window()->SaveLayout(writer);
-
-    writer->writeEndElement(); // project
-}
-
-Folder *Project::root()
-{
-    return &root_;
-}
-
-QString Project::name() const
-{
-    if (filename_.isEmpty()) {
-        return tr("(untitled)");
     } else {
-        return QFileInfo(filename_).completeBaseName();
+      reader->skipCurrentElement();
     }
-}
+  }
 
-const QString &Project::filename() const
-{
-    return filename_;
-}
-
-QString Project::pretty_filename() const
-{
-    QString fn = filename();
-
-    if (fn.isEmpty()) {
-        return tr("(untitled)");
-    } else {
-        return fn;
+  foreach (const XMLNodeData::FootageConnection &con, xml_node_data.footage_connections) {
+    if (con.footage) {
+      con.input->set_standard_value(QVariant::fromValue(xml_node_data.footage_ptrs.value(con.footage)));
     }
+  }
 }
 
-void Project::set_filename(const QString &s)
-{
-    filename_ = s;
+void Project::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement("project");
 
-    emit NameChanged();
+  writer->writeTextElement("url", filename_);
+
+  root_.Save(writer);
+
+  writer->writeStartElement("colormanagement");
+
+  writer->writeTextElement("config", color_manager_.GetConfigFilename());
+
+  writer->writeTextElement("default", color_manager_.GetDefaultInputColorSpace());
+
+  writer->writeEndElement();  // colormanagement
+
+  // Save main window project layout
+  Core::instance()->main_window()->SaveLayout(writer);
+
+  writer->writeEndElement();  // project
 }
 
-ColorManager *Project::color_manager()
-{
-    return &color_manager_;
+Folder *Project::root() { return &root_; }
+
+QString Project::name() const {
+  if (filename_.isEmpty()) {
+    return tr("(untitled)");
+  } else {
+    return QFileInfo(filename_).completeBaseName();
+  }
 }
 
-QList<ItemPtr> Project::get_items_of_type(Item::Type type) const
-{
-    return root_.get_children_of_type(type, true);
+const QString &Project::filename() const { return filename_; }
+
+QString Project::pretty_filename() const {
+  QString fn = filename();
+
+  if (fn.isEmpty()) {
+    return tr("(untitled)");
+  } else {
+    return fn;
+  }
 }
 
-bool Project::is_modified() const
-{
-    return is_modified_;
+void Project::set_filename(const QString &s) {
+  filename_ = s;
+
+  emit NameChanged();
 }
 
-void Project::set_modified(bool e)
-{
-    is_modified_ = e;
-    autorecovery_saved_ = !e;
+ColorManager *Project::color_manager() { return &color_manager_; }
 
-    emit ModifiedChanged(is_modified_);
+QList<ItemPtr> Project::get_items_of_type(Item::Type type) const { return root_.get_children_of_type(type, true); }
+
+bool Project::is_modified() const { return is_modified_; }
+
+void Project::set_modified(bool e) {
+  is_modified_ = e;
+  autorecovery_saved_ = !e;
+
+  emit ModifiedChanged(is_modified_);
 }
 
-bool Project::has_autorecovery_been_saved() const
-{
-    return autorecovery_saved_;
-}
+bool Project::has_autorecovery_been_saved() const { return autorecovery_saved_; }
 
-void Project::set_autorecovery_saved(bool e)
-{
-    autorecovery_saved_ = e;
-}
+void Project::set_autorecovery_saved(bool e) { autorecovery_saved_ = e; }
 
-bool Project::is_new() const
-{
-    return !is_modified_ && filename_.isEmpty();
-}
+bool Project::is_new() const { return !is_modified_ && filename_.isEmpty(); }
 
 OLIVE_NAMESPACE_EXIT

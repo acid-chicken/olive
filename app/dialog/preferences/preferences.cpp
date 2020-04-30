@@ -26,75 +26,69 @@
 #include <QVBoxLayout>
 
 #include "config/config.h"
-#include "tabs/preferencesgeneraltab.h"
-#include "tabs/preferencesbehaviortab.h"
 #include "tabs/preferencesappearancetab.h"
-#include "tabs/preferencesqualitytab.h"
-#include "tabs/preferencesdisktab.h"
 #include "tabs/preferencesaudiotab.h"
+#include "tabs/preferencesbehaviortab.h"
+#include "tabs/preferencesdisktab.h"
+#include "tabs/preferencesgeneraltab.h"
 #include "tabs/preferenceskeyboardtab.h"
+#include "tabs/preferencesqualitytab.h"
 
 OLIVE_NAMESPACE_ENTER
 
-PreferencesDialog::PreferencesDialog(QWidget *parent, QMenuBar* main_menu_bar) :
-    QDialog(parent)
-{
-    setWindowTitle(tr("Preferences"));
+PreferencesDialog::PreferencesDialog(QWidget* parent, QMenuBar* main_menu_bar) : QDialog(parent) {
+  setWindowTitle(tr("Preferences"));
 
-    QVBoxLayout* layout = new QVBoxLayout(this);
+  QVBoxLayout* layout = new QVBoxLayout(this);
 
-    QSplitter* splitter = new QSplitter();
-    splitter->setChildrenCollapsible(false);
-    layout->addWidget(splitter);
+  QSplitter* splitter = new QSplitter();
+  splitter->setChildrenCollapsible(false);
+  layout->addWidget(splitter);
 
-    list_widget_ = new QListWidget();
+  list_widget_ = new QListWidget();
 
-    preference_pane_stack_ = new QStackedWidget(this);
+  preference_pane_stack_ = new QStackedWidget(this);
 
-    AddTab(new PreferencesGeneralTab(), tr("General"));
-    AddTab(new PreferencesAppearanceTab(), tr("Appearance"));
-    AddTab(new PreferencesBehaviorTab(), tr("Behavior"));
-    AddTab(new PreferencesQualityTab(), tr("Quality"));
-    AddTab(new PreferencesDiskTab(), tr("Disk"));
-    AddTab(new PreferencesAudioTab(), tr("Audio"));
-    AddTab(new PreferencesKeyboardTab(main_menu_bar), tr("Keyboard"));
+  AddTab(new PreferencesGeneralTab(), tr("General"));
+  AddTab(new PreferencesAppearanceTab(), tr("Appearance"));
+  AddTab(new PreferencesBehaviorTab(), tr("Behavior"));
+  AddTab(new PreferencesQualityTab(), tr("Quality"));
+  AddTab(new PreferencesDiskTab(), tr("Disk"));
+  AddTab(new PreferencesAudioTab(), tr("Audio"));
+  AddTab(new PreferencesKeyboardTab(main_menu_bar), tr("Keyboard"));
 
-    splitter->addWidget(list_widget_);
-    splitter->addWidget(preference_pane_stack_);
+  splitter->addWidget(list_widget_);
+  splitter->addWidget(preference_pane_stack_);
 
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
-    buttonBox->setOrientation(Qt::Horizontal);
-    buttonBox->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(this);
+  buttonBox->setOrientation(Qt::Horizontal);
+  buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
 
-    layout->addWidget(buttonBox);
+  layout->addWidget(buttonBox);
 
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 
-    connect(list_widget_, SIGNAL(currentRowChanged(int)), preference_pane_stack_, SLOT(setCurrentIndex(int)));
+  connect(list_widget_, SIGNAL(currentRowChanged(int)), preference_pane_stack_, SLOT(setCurrentIndex(int)));
 }
 
-void PreferencesDialog::accept()
-{
-    foreach (PreferencesTab* tab, tabs_) {
-        if (!tab->Validate()) {
-            return;
-        }
+void PreferencesDialog::accept() {
+  foreach (PreferencesTab* tab, tabs_) {
+    if (!tab->Validate()) {
+      return;
     }
+  }
 
-    foreach (PreferencesTab* tab, tabs_) {
-        tab->Accept();
-    }
+  foreach (PreferencesTab* tab, tabs_) { tab->Accept(); }
 
-    QDialog::accept();
+  QDialog::accept();
 }
 
-void PreferencesDialog::AddTab(PreferencesTab *tab, const QString &title)
-{
-    list_widget_->addItem(title);
-    preference_pane_stack_->addWidget(tab);
+void PreferencesDialog::AddTab(PreferencesTab* tab, const QString& title) {
+  list_widget_->addItem(title);
+  preference_pane_stack_->addWidget(tab);
 
-    tabs_.append(tab);
+  tabs_.append(tab);
 }
 
 OLIVE_NAMESPACE_EXIT

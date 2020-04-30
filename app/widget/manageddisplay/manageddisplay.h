@@ -29,148 +29,146 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ManagedDisplayWidget : public QOpenGLWidget
-{
-    Q_OBJECT
-public:
-    ManagedDisplayWidget(QWidget* parent = nullptr);
+class ManagedDisplayWidget : public QOpenGLWidget {
+  Q_OBJECT
+ public:
+  ManagedDisplayWidget(QWidget* parent = nullptr);
 
-    virtual ~ManagedDisplayWidget() override;
+  virtual ~ManagedDisplayWidget() override;
 
-    /**
-     * @brief Disconnect a ColorManager (equivalent to ConnectColorManager(nullptr))
-     */
-    void DisconnectColorManager();
+  /**
+   * @brief Disconnect a ColorManager (equivalent to ConnectColorManager(nullptr))
+   */
+  void DisconnectColorManager();
 
-    /**
-     * @brief Access currently connected ColorManager (nullptr if none)
-     */
-    ColorManager* color_manager() const;
+  /**
+   * @brief Access currently connected ColorManager (nullptr if none)
+   */
+  ColorManager* color_manager() const;
 
-    /**
-     * @brief Get current color transform
-     */
-    const ColorTransform& GetColorTransform() const;
+  /**
+   * @brief Get current color transform
+   */
+  const ColorTransform& GetColorTransform() const;
 
-    /**
-     * @brief Get menu that can be used to select the display transform
-     */
-    Menu* GetDisplayMenu(QMenu* parent, bool auto_connect = true);
+  /**
+   * @brief Get menu that can be used to select the display transform
+   */
+  Menu* GetDisplayMenu(QMenu* parent, bool auto_connect = true);
 
-    /**
-     * @brief Get menu that can be used to select the view transform
-     */
-    Menu* GetViewMenu(QMenu* parent, bool auto_connect = true);
+  /**
+   * @brief Get menu that can be used to select the view transform
+   */
+  Menu* GetViewMenu(QMenu* parent, bool auto_connect = true);
 
-    /**
-     * @brief Get menu that can be used to select the look transform
-     */
-    Menu* GetLookMenu(QMenu* parent, bool auto_connect = true);
+  /**
+   * @brief Get menu that can be used to select the look transform
+   */
+  Menu* GetLookMenu(QMenu* parent, bool auto_connect = true);
 
-public slots:
-    /**
-     * @brief Replaces the color transform with a new one
-     */
-    void SetColorTransform(const ColorTransform& transform);
+ public slots:
+  /**
+   * @brief Replaces the color transform with a new one
+   */
+  void SetColorTransform(const ColorTransform& transform);
 
-    /**
-     * @brief Connect a ColorManager (ColorManagers usually belong to the Project)
-     */
-    void ConnectColorManager(ColorManager* color_manager);
+  /**
+   * @brief Connect a ColorManager (ColorManagers usually belong to the Project)
+   */
+  void ConnectColorManager(ColorManager* color_manager);
 
-signals:
-    /**
-     * @brief Emitted when the color processor changes
-     */
-    void ColorProcessorChanged(ColorProcessorPtr processor);
+ signals:
+  /**
+   * @brief Emitted when the color processor changes
+   */
+  void ColorProcessorChanged(ColorProcessorPtr processor);
 
-    /**
-     * @brief Emitted when a new color manager is connected
-     */
-    void ColorManagerChanged(ColorManager* color_manager);
+  /**
+   * @brief Emitted when a new color manager is connected
+   */
+  void ColorManagerChanged(ColorManager* color_manager);
 
-protected:
-    /**
-     * @brief Provides access to the color processor (nullptr if none is set)
-     */
-    OpenGLColorProcessorPtr color_service();
+ protected:
+  /**
+   * @brief Provides access to the color processor (nullptr if none is set)
+   */
+  OpenGLColorProcessorPtr color_service();
 
-    /**
-     * @brief Override when setting up OpenGL context
-     */
-    virtual void initializeGL() override;
+  /**
+   * @brief Override when setting up OpenGL context
+   */
+  virtual void initializeGL() override;
 
-    /**
-     * @brief Enables a context menu that allows simple access to the DVL pipeline
-     */
-    void EnableDefaultContextMenu();
+  /**
+   * @brief Enables a context menu that allows simple access to the DVL pipeline
+   */
+  void EnableDefaultContextMenu();
 
-    /**
-     * @brief Function called whenever the processor changes
-     *
-     * Default functionality is just to call update()
-     */
-    virtual void ColorProcessorChangedEvent();
+  /**
+   * @brief Function called whenever the processor changes
+   *
+   * Default functionality is just to call update()
+   */
+  virtual void ColorProcessorChangedEvent();
 
-private:
-    /**
-     * @brief Call this if this user has selected a different display/view/look to recreate the processor
-     */
-    void SetupColorProcessor();
+ private:
+  /**
+   * @brief Call this if this user has selected a different display/view/look to recreate the processor
+   */
+  void SetupColorProcessor();
 
-    /**
-     * @brief Cleanup function
-     */
-    void ClearOCIOLutTexture();
+  /**
+   * @brief Cleanup function
+   */
+  void ClearOCIOLutTexture();
 
-    /**
-     * @brief Connected color manager
-     */
-    ColorManager* color_manager_;
+  /**
+   * @brief Connected color manager
+   */
+  ColorManager* color_manager_;
 
-    /**
-     * @brief Color management service
-     */
-    OpenGLColorProcessorPtr color_service_;
+  /**
+   * @brief Color management service
+   */
+  OpenGLColorProcessorPtr color_service_;
 
-    /**
-     * @brief Internal color transform storage
-     */
-    ColorTransform color_transform_;
+  /**
+   * @brief Internal color transform storage
+   */
+  ColorTransform color_transform_;
 
-private slots:
-    /**
-     * @brief Sets all color settings to the defaults pertaining to this configuration
-     */
-    void ColorConfigChanged();
+ private slots:
+  /**
+   * @brief Sets all color settings to the defaults pertaining to this configuration
+   */
+  void ColorConfigChanged();
 
-    /**
-     * @brief Cleans up resources if context is about to be destroyed
-     */
-    void ContextCleanup();
+  /**
+   * @brief Cleans up resources if context is about to be destroyed
+   */
+  void ContextCleanup();
 
-    /**
-     * @brief The default context menu shown
-     */
-    void ShowDefaultContextMenu();
+  /**
+   * @brief The default context menu shown
+   */
+  void ShowDefaultContextMenu();
 
-    /**
-     * @brief If GetDisplayMenu() is called with `auto_connect` set to true, it will be connected to this
-     */
-    void MenuDisplaySelect(QAction* action);
+  /**
+   * @brief If GetDisplayMenu() is called with `auto_connect` set to true, it will be connected to this
+   */
+  void MenuDisplaySelect(QAction* action);
 
-    /**
-     * @brief If GetViewMenu() is called with `auto_connect` set to true, it will be connected to this
-     */
-    void MenuViewSelect(QAction* action);
+  /**
+   * @brief If GetViewMenu() is called with `auto_connect` set to true, it will be connected to this
+   */
+  void MenuViewSelect(QAction* action);
 
-    /**
-     * @brief If GetLookMenu() is called with `auto_connect` set to true, it will be connected to this
-     */
-    void MenuLookSelect(QAction* action);
-
+  /**
+   * @brief If GetLookMenu() is called with `auto_connect` set to true, it will be connected to this
+   */
+  void MenuLookSelect(QAction* action);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // MANAGEDDISPLAYOBJECT_H
+#endif  // MANAGEDDISPLAYOBJECT_H

@@ -27,15 +27,13 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class CodecSection : public QWidget
-{
-public:
-    CodecSection(QWidget* parent = nullptr);
+class CodecSection : public QWidget {
+ public:
+  CodecSection(QWidget* parent = nullptr);
 
-    virtual void AddOpts(EncodingParams* params) {}
-
+  virtual void AddOpts(EncodingParams* params) {}
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CODECSECTION_H
+#endif  // CODECSECTION_H

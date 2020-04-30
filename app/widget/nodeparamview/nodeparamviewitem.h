@@ -37,115 +37,112 @@
 OLIVE_NAMESPACE_ENTER
 
 class NodeParamViewItemTitleBar : public QWidget {
-public:
-    NodeParamViewItemTitleBar(QWidget* parent = nullptr);
+ public:
+  NodeParamViewItemTitleBar(QWidget* parent = nullptr);
 
-protected:
-    virtual void paintEvent(QPaintEvent *event) override;
+ protected:
+  virtual void paintEvent(QPaintEvent* event) override;
 };
 
 class NodeParamViewItemBody : public QWidget {
-    Q_OBJECT
-public:
-    NodeParamViewItemBody(const QVector<NodeInput*>& inputs, QWidget* parent = nullptr);
+  Q_OBJECT
+ public:
+  NodeParamViewItemBody(const QVector<NodeInput*>& inputs, QWidget* parent = nullptr);
 
-    void SetTimeTarget(Node* target);
+  void SetTimeTarget(Node* target);
 
-    void SetTime(const rational& time);
+  void SetTime(const rational& time);
 
-    void Retranslate();
+  void Retranslate();
 
-    void SignalAllKeyframes();
+  void SignalAllKeyframes();
 
-signals:
-    void KeyframeAdded(NodeKeyframePtr key, int y);
+ signals:
+  void KeyframeAdded(NodeKeyframePtr key, int y);
 
-    void KeyframeRemoved(NodeKeyframePtr key);
+  void KeyframeRemoved(NodeKeyframePtr key);
 
-    void RequestSetTime(const rational& time);
+  void RequestSetTime(const rational& time);
 
-    void InputDoubleClicked(NodeInput* input);
+  void InputDoubleClicked(NodeInput* input);
 
-    void RequestSelectNode(const QList<Node*>& node);
+  void RequestSelectNode(const QList<Node*>& node);
 
-private:
-    void UpdateUIForEdgeConnection(NodeInput* input);
+ private:
+  void UpdateUIForEdgeConnection(NodeInput* input);
 
-    void InputAddedKeyframeInternal(NodeInput* input, NodeKeyframePtr keyframe);
+  void InputAddedKeyframeInternal(NodeInput* input, NodeKeyframePtr keyframe);
 
-    struct InputUI {
-        InputUI();
+  struct InputUI {
+    InputUI();
 
-        ClickableLabel* main_label;
-        NodeParamViewWidgetBridge* widget_bridge;
-        NodeParamViewConnectedLabel* connected_label;
-        NodeParamViewKeyframeControl* key_control;
-    };
+    ClickableLabel* main_label;
+    NodeParamViewWidgetBridge* widget_bridge;
+    NodeParamViewConnectedLabel* connected_label;
+    NodeParamViewKeyframeControl* key_control;
+  };
 
-    QMap<NodeInput*, InputUI> input_ui_map_;
+  QMap<NodeInput*, InputUI> input_ui_map_;
 
-    QVector<NodeParamViewItemBody*> sub_bodies_;
+  QVector<NodeParamViewItemBody*> sub_bodies_;
 
-private slots:
-    void EdgeChanged();
+ private slots:
+  void EdgeChanged();
 
-    void InputKeyframeEnableChanged(bool e);
+  void InputKeyframeEnableChanged(bool e);
 
-    void InputAddedKeyframe(NodeKeyframePtr key);
+  void InputAddedKeyframe(NodeKeyframePtr key);
 
-    void LabelDoubleClicked();
+  void LabelDoubleClicked();
 
-    void ConnectionClicked();
-
+  void ConnectionClicked();
 };
 
-class NodeParamViewItem : public QWidget
-{
-    Q_OBJECT
-public:
-    NodeParamViewItem(Node* node, QWidget* parent = nullptr);
+class NodeParamViewItem : public QWidget {
+  Q_OBJECT
+ public:
+  NodeParamViewItem(Node* node, QWidget* parent = nullptr);
 
-    void SetTimeTarget(Node* target);
+  void SetTimeTarget(Node* target);
 
-    void SetTime(const rational& time);
+  void SetTime(const rational& time);
 
-    Node* GetNode() const;
+  Node* GetNode() const;
 
-public slots:
-    void SignalAllKeyframes();
+ public slots:
+  void SignalAllKeyframes();
 
-signals:
-    void KeyframeAdded(NodeKeyframePtr key, int y);
+ signals:
+  void KeyframeAdded(NodeKeyframePtr key, int y);
 
-    void KeyframeRemoved(NodeKeyframePtr key);
+  void KeyframeRemoved(NodeKeyframePtr key);
 
-    void RequestSetTime(const rational& time);
+  void RequestSetTime(const rational& time);
 
-    void InputDoubleClicked(NodeInput* input);
+  void InputDoubleClicked(NodeInput* input);
 
-    void RequestSelectNode(const QList<Node*>& node);
+  void RequestSelectNode(const QList<Node*>& node);
 
-protected:
-    virtual void changeEvent(QEvent *e) override;
+ protected:
+  virtual void changeEvent(QEvent* e) override;
 
-private:
-    NodeParamViewItemTitleBar* title_bar_;
+ private:
+  NodeParamViewItemTitleBar* title_bar_;
 
-    QLabel* title_bar_lbl_;
+  QLabel* title_bar_lbl_;
 
-    CollapseButton* title_bar_collapse_btn_;
+  CollapseButton* title_bar_collapse_btn_;
 
-    NodeParamViewItemBody* body_;
+  NodeParamViewItemBody* body_;
 
-    Node* node_;
+  Node* node_;
 
-    rational time_;
+  rational time_;
 
-private slots:
-    void Retranslate();
-
+ private slots:
+  void Retranslate();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEPARAMVIEWITEM_H
+#endif  // NODEPARAMVIEWITEM_H

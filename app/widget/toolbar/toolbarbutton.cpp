@@ -22,16 +22,10 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ToolbarButton::ToolbarButton(QWidget *parent, const Tool::Item &tool) :
-    QPushButton(parent),
-    tool_(tool)
-{
-    setCheckable(true);
+ToolbarButton::ToolbarButton(QWidget *parent, const Tool::Item &tool) : QPushButton(parent), tool_(tool) {
+  setCheckable(true);
 }
 
-const Tool::Item &ToolbarButton::tool()
-{
-    return tool_;
-}
+const Tool::Item &ToolbarButton::tool() { return tool_; }
 
 OLIVE_NAMESPACE_EXIT

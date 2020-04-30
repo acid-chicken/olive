@@ -37,197 +37,185 @@ OLIVE_NAMESPACE_ENTER
 
 Config Config::current_config_;
 
-Config::Config()
-{
-    SetDefaults();
+Config::Config() { SetDefaults(); }
+
+QString Config::GetConfigFilePath() {
+  return QDir(FileFunctions::GetConfigurationLocation()).filePath(QStringLiteral("config.xml"));
 }
 
-QString Config::GetConfigFilePath()
-{
-    return QDir(FileFunctions::GetConfigurationLocation()).filePath(QStringLiteral("config.xml"));
+Config &Config::Current() { return current_config_; }
+
+void Config::SetDefaults() {
+  config_map_.clear();
+  config_map_["TimecodeDisplay"] = Timecode::kTimecodeDropFrame;
+  config_map_["DefaultStillLength"] = QVariant::fromValue(rational(2));
+  config_map_["HoverFocus"] = false;
+  config_map_["AudioScrubbing"] = true;
+  config_map_["AutorecoveryInterval"] = 1;
+  config_map_["Language"] = "en_US";
+  config_map_["ScrollZooms"] = false;
+  config_map_["EnableSeekToImport"] = false;
+  config_map_["EditToolAlsoSeeks"] = false;
+  config_map_["EditToolSelectsLinks"] = false;
+  config_map_["EnableDragFilesToTimeline"] = true;
+  config_map_["InvertTimelineScrollAxes"] = true;
+  config_map_["SelectAlsoSeeks"] = false;
+  config_map_["PasteSeeks"] = true;
+  config_map_["SelectAlsoSeeks"] = false;
+  config_map_["SetNameWithMarker"] = false;
+  config_map_["AutoSeekToBeginning"] = true;
+  config_map_["DropFileOnMediaToReplace"] = false;
+  config_map_["AddDefaultEffectsToClips"] = true;
+  config_map_["AutoscaleByDefault"] = false;
+  config_map_["Autoscroll"] = AutoScroll::kPage;
+  config_map_["DefaultViewerDivider"] = 2;
+  config_map_["AutoSelectDivider"] = false;
+  config_map_["SetNameWithMarker"] = false;
+  config_map_["RectifiedWaveforms"] = false;
+  config_map_["DropWithoutSequenceBehavior"] = TimelineWidget::kDWSAsk;
+  config_map_["Loop"] = false;
+
+  config_map_["AudioOutput"] = QString();
+  config_map_["AudioInput"] = QString();
+
+  config_map_["DiskCachePath"] = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+  config_map_["DiskCacheSize"] = 20.0;
+  config_map_["DiskCacheBehind"] = QVariant::fromValue(rational(2));
+  config_map_["DiskCacheAhead"] = QVariant::fromValue(rational(10));
+  config_map_["ClearDiskCacheOnClose"] = false;
+
+  config_map_["DefaultSequenceWidth"] = 1920;
+  config_map_["DefaultSequenceHeight"] = 1080;
+  config_map_["DefaultSequenceFrameRate"] = QVariant::fromValue(rational(1001, 30000));
+  config_map_["DefaultSequenceAudioFrequency"] = 48000;
+  config_map_["DefaultSequenceAudioLayout"] = QVariant::fromValue(static_cast<uint64_t>(AV_CH_LAYOUT_STEREO));
+
+  // Online/offline settings
+  config_map_["OnlinePixelFormat"] = PixelFormat::PIX_FMT_RGBA32F;
+  config_map_["OfflinePixelFormat"] = PixelFormat::PIX_FMT_RGBA16F;
+  config_map_["OnlineOCIOMethod"] = ColorManager::kOCIOAccurate;
+  config_map_["OfflineOCIOMethod"] = ColorManager::kOCIOFast;
 }
 
-Config &Config::Current()
-{
-    return current_config_;
-}
+void Config::Load() {
+  QFile config_file(GetConfigFilePath());
 
-void Config::SetDefaults()
-{
-    config_map_.clear();
-    config_map_["TimecodeDisplay"] = Timecode::kTimecodeDropFrame;
-    config_map_["DefaultStillLength"] = QVariant::fromValue(rational(2));
-    config_map_["HoverFocus"] = false;
-    config_map_["AudioScrubbing"] = true;
-    config_map_["AutorecoveryInterval"] = 1;
-    config_map_["Language"] = "en_US";
-    config_map_["ScrollZooms"] = false;
-    config_map_["EnableSeekToImport"] = false;
-    config_map_["EditToolAlsoSeeks"] = false;
-    config_map_["EditToolSelectsLinks"] = false;
-    config_map_["EnableDragFilesToTimeline"] = true;
-    config_map_["InvertTimelineScrollAxes"] = true;
-    config_map_["SelectAlsoSeeks"] = false;
-    config_map_["PasteSeeks"] = true;
-    config_map_["SelectAlsoSeeks"] = false;
-    config_map_["SetNameWithMarker"] = false;
-    config_map_["AutoSeekToBeginning"] = true;
-    config_map_["DropFileOnMediaToReplace"] = false;
-    config_map_["AddDefaultEffectsToClips"] = true;
-    config_map_["AutoscaleByDefault"] = false;
-    config_map_["Autoscroll"] = AutoScroll::kPage;
-    config_map_["DefaultViewerDivider"] = 2;
-    config_map_["AutoSelectDivider"] = false;
-    config_map_["SetNameWithMarker"] = false;
-    config_map_["RectifiedWaveforms"] = false;
-    config_map_["DropWithoutSequenceBehavior"] = TimelineWidget::kDWSAsk;
-    config_map_["Loop"] = false;
+  if (!config_file.exists()) {
+    return;
+  }
 
-    config_map_["AudioOutput"] = QString();
-    config_map_["AudioInput"] = QString();
+  if (!config_file.open(QFile::ReadOnly)) {
+    qWarning() << QCoreApplication::translate("Config",
+                                              "Failed to load application settings. This session will use "
+                                              "defaults.");
+    return;
+  }
 
-    config_map_["DiskCachePath"] = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-    config_map_["DiskCacheSize"] = 20.0;
-    config_map_["DiskCacheBehind"] = QVariant::fromValue(rational(2));
-    config_map_["DiskCacheAhead"] = QVariant::fromValue(rational(10));
-    config_map_["ClearDiskCacheOnClose"] = false;
+  // Reset to defaults
+  current_config_.SetDefaults();
 
-    config_map_["DefaultSequenceWidth"] = 1920;
-    config_map_["DefaultSequenceHeight"] = 1080;
-    config_map_["DefaultSequenceFrameRate"] = QVariant::fromValue(rational(1001, 30000));
-    config_map_["DefaultSequenceAudioFrequency"] = 48000;
-    config_map_["DefaultSequenceAudioLayout"] = QVariant::fromValue(static_cast<uint64_t>(AV_CH_LAYOUT_STEREO));
+  QXmlStreamReader reader(&config_file);
 
-    // Online/offline settings
-    config_map_["OnlinePixelFormat"] = PixelFormat::PIX_FMT_RGBA32F;
-    config_map_["OfflinePixelFormat"] = PixelFormat::PIX_FMT_RGBA16F;
-    config_map_["OnlineOCIOMethod"] = ColorManager::kOCIOAccurate;
-    config_map_["OfflineOCIOMethod"] = ColorManager::kOCIOFast;
-}
+  QString config_version;
 
-void Config::Load()
-{
-    QFile config_file(GetConfigFilePath());
+  while (XMLReadNextStartElement(&reader)) {
+    if (reader.name() == QStringLiteral("Configuration")) {
+      while (XMLReadNextStartElement(&reader)) {
+        QString key = reader.name().toString();
+        QString value = reader.readElementText();
 
-    if (!config_file.exists()) {
-        return;
-    }
+        if (key == QStringLiteral("Version")) {
+          config_version = value;
 
-    if (!config_file.open(QFile::ReadOnly)) {
-        qWarning() << QCoreApplication::translate("Config", "Failed to load application settings. This session will use "
-                   "defaults.");
-        return;
-    }
+          if (!value.contains(".")) {
+            qDebug() << "CONFIG: This is a 0.1.x config file, upconvert";
+          }
+        } else if (key == QStringLiteral("DefaultSequenceFrameRate") && !config_version.contains('.')) {
+          // 0.1.x stored this value as a float while we now use rationals, we'll use a heuristic to find the closest
+          // supported rational
+          qDebug() << "  CONFIG: Finding closest match to" << value;
 
-    // Reset to defaults
-    current_config_.SetDefaults();
+          double config_fr = value.toDouble();
 
-    QXmlStreamReader reader(&config_file);
+          QList<rational> supported_frame_rates = Core::SupportedFrameRates();
 
-    QString config_version;
+          rational match = supported_frame_rates.first();
+          double match_diff = qAbs(match.toDouble() - config_fr);
 
-    while (XMLReadNextStartElement(&reader)) {
-        if (reader.name() == QStringLiteral("Configuration")) {
-            while (XMLReadNextStartElement(&reader)) {
-                QString key = reader.name().toString();
-                QString value = reader.readElementText();
+          for (int i = 1; i < supported_frame_rates.size(); i++) {
+            double diff = qAbs(supported_frame_rates.at(i).toDouble() - config_fr);
 
-                if (key == QStringLiteral("Version")) {
-                    config_version = value;
-
-                    if (!value.contains(".")) {
-                        qDebug() << "CONFIG: This is a 0.1.x config file, upconvert";
-                    }
-                } else if (key == QStringLiteral("DefaultSequenceFrameRate") && !config_version.contains('.')) {
-                    // 0.1.x stored this value as a float while we now use rationals, we'll use a heuristic to find the closest
-                    // supported rational
-                    qDebug() << "  CONFIG: Finding closest match to" << value;
-
-                    double config_fr = value.toDouble();
-
-                    QList<rational> supported_frame_rates = Core::SupportedFrameRates();
-
-                    rational match = supported_frame_rates.first();
-                    double match_diff = qAbs(match.toDouble() - config_fr);
-
-                    for (int i=1; i<supported_frame_rates.size(); i++) {
-                        double diff = qAbs(supported_frame_rates.at(i).toDouble() - config_fr);
-
-                        if (diff < match_diff) {
-                            match = supported_frame_rates.at(i);
-                            match_diff = diff;
-                        }
-                    }
-
-                    qDebug() << "  CONFIG: Closest match was" << match.toDouble();
-
-                    current_config_[key] = QVariant::fromValue(match.flipped());
-                } else {
-                    current_config_[key] = value;
-                }
+            if (diff < match_diff) {
+              match = supported_frame_rates.at(i);
+              match_diff = diff;
             }
+          }
 
-            //reader.skipCurrentElement();
+          qDebug() << "  CONFIG: Closest match was" << match.toDouble();
+
+          current_config_[key] = QVariant::fromValue(match.flipped());
         } else {
-            reader.skipCurrentElement();
+          current_config_[key] = value;
         }
-    }
+      }
 
-    if (reader.hasError()) {
-        QMessageBox::critical(Core::instance()->main_window(),
-                              QCoreApplication::translate("Config", "Error loading settings"),
-                              QCoreApplication::translate("Config", "Failed to load application settings. This session will "
-                                      "use defaults.\n\n%1").arg(reader.errorString()),
-                              QMessageBox::Ok);
-        current_config_.SetDefaults();
+      // reader.skipCurrentElement();
+    } else {
+      reader.skipCurrentElement();
     }
+  }
 
-    config_file.close();
+  if (reader.hasError()) {
+    QMessageBox::critical(Core::instance()->main_window(),
+                          QCoreApplication::translate("Config", "Error loading settings"),
+                          QCoreApplication::translate("Config",
+                                                      "Failed to load application settings. This session will "
+                                                      "use defaults.\n\n%1")
+                              .arg(reader.errorString()),
+                          QMessageBox::Ok);
+    current_config_.SetDefaults();
+  }
+
+  config_file.close();
 }
 
-void Config::Save()
-{
-    QFile config_file(GetConfigFilePath());
+void Config::Save() {
+  QFile config_file(GetConfigFilePath());
 
-    if (!config_file.open(QFile::WriteOnly)) {
-        QMessageBox::critical(Core::instance()->main_window(),
-                              QCoreApplication::translate("Config", "Error saving settings"),
-                              QCoreApplication::translate("Config", "Failed to save application settings. The application "
-                                      "may lack write permissions to this location."),
-                              QMessageBox::Ok);
-        return;
-    }
+  if (!config_file.open(QFile::WriteOnly)) {
+    QMessageBox::critical(Core::instance()->main_window(),
+                          QCoreApplication::translate("Config", "Error saving settings"),
+                          QCoreApplication::translate("Config",
+                                                      "Failed to save application settings. The application "
+                                                      "may lack write permissions to this location."),
+                          QMessageBox::Ok);
+    return;
+  }
 
-    QXmlStreamWriter writer(&config_file);
+  QXmlStreamWriter writer(&config_file);
 
-    writer.writeStartDocument();
+  writer.writeStartDocument();
 
-    writer.writeStartElement("Configuration");
+  writer.writeStartElement("Configuration");
 
-    // Anything after the hyphen is considered "unimportant" information
-    writer.writeTextElement("Version", QCoreApplication::applicationVersion().split('-').first());
+  // Anything after the hyphen is considered "unimportant" information
+  writer.writeTextElement("Version", QCoreApplication::applicationVersion().split('-').first());
 
-    QMapIterator<QString, QVariant> iterator(current_config_.config_map_);
-    while (iterator.hasNext()) {
-        iterator.next();
-        writer.writeTextElement(iterator.key(), iterator.value().toString());
-    }
+  QMapIterator<QString, QVariant> iterator(current_config_.config_map_);
+  while (iterator.hasNext()) {
+    iterator.next();
+    writer.writeTextElement(iterator.key(), iterator.value().toString());
+  }
 
-    writer.writeEndElement(); // Configuration
+  writer.writeEndElement();  // Configuration
 
-    writer.writeEndDocument();
+  writer.writeEndDocument();
 
-    config_file.close();
+  config_file.close();
 }
 
-QVariant Config::operator[](const QString &key) const
-{
-    return config_map_[key];
-}
+QVariant Config::operator[](const QString &key) const { return config_map_[key]; }
 
-QVariant &Config::operator[](const QString &key)
-{
-    return config_map_[key];
-}
+QVariant &Config::operator[](const QString &key) { return config_map_[key]; }
 
 OLIVE_NAMESPACE_EXIT

@@ -27,20 +27,18 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class DragButton : public QPushButton
-{
-    Q_OBJECT
-public:
-    DragButton(QWidget* parent = nullptr);
+class DragButton : public QPushButton {
+  Q_OBJECT
+ public:
+  DragButton(QWidget* parent = nullptr);
 
-signals:
-    void MousePressed();
+ signals:
+  void MousePressed();
 
-protected:
-    virtual void mousePressEvent(QMouseEvent* event) override;
-
+ protected:
+  virtual void mousePressEvent(QMouseEvent* event) override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // DRAGBUTTON_H
+#endif  // DRAGBUTTON_H

@@ -29,33 +29,31 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ProjectImportManager : public Task
-{
-    Q_OBJECT
-public:
-    ProjectImportManager(ProjectViewModel* model, Folder* folder, const QStringList& filenames);
+class ProjectImportManager : public Task {
+  Q_OBJECT
+ public:
+  ProjectImportManager(ProjectViewModel* model, Folder* folder, const QStringList& filenames);
 
-    const int& GetFileCount();
+  const int& GetFileCount();
 
-protected:
-    virtual void Action() override;
+ protected:
+  virtual void Action() override;
 
-signals:
-    void ImportComplete(QUndoCommand* command);
+ signals:
+  void ImportComplete(QUndoCommand* command);
 
-private:
-    void Import(Folder* folder, const QFileInfoList &import, int& counter, QUndoCommand *parent_command);
+ private:
+  void Import(Folder* folder, const QFileInfoList& import, int& counter, QUndoCommand* parent_command);
 
-    ProjectViewModel* model_;
+  ProjectViewModel* model_;
 
-    Folder* folder_;
+  Folder* folder_;
 
-    QFileInfoList filenames_;
+  QFileInfoList filenames_;
 
-    int file_count_;
-
+  int file_count_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTIMPORTMANAGER_H
+#endif  // PROJECTIMPORTMANAGER_H

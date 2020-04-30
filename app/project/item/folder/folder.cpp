@@ -27,71 +27,58 @@
 
 OLIVE_NAMESPACE_ENTER
 
-Item::Type Folder::type() const
-{
-    return kFolder;
-}
+Item::Type Folder::type() const { return kFolder; }
 
-bool Folder::CanHaveChildren() const
-{
-    return true;
-}
+bool Folder::CanHaveChildren() const { return true; }
 
-QIcon Folder::icon()
-{
-    return icon::Folder;
-}
+QIcon Folder::icon() { return icon::Folder; }
 
-void Folder::Load(QXmlStreamReader *reader, XMLNodeData& xml_node_data, const QAtomicInt *cancelled)
-{
-    XMLAttributeLoop(reader, attr) {
-        if (cancelled && *cancelled) {
-            return;
-        }
-
-        if (attr.name() == QStringLiteral("name")) {
-            set_name(attr.value().toString());
-        } else if (attr.name() == QStringLiteral("ptr")) {
-            xml_node_data.item_ptrs.insert(attr.value().toULongLong(), this);
-        }
+void Folder::Load(QXmlStreamReader *reader, XMLNodeData &xml_node_data, const QAtomicInt *cancelled) {
+  XMLAttributeLoop(reader, attr) {
+    if (cancelled && *cancelled) {
+      return;
     }
 
-    while (XMLReadNextStartElement(reader)) {
-        if (cancelled && *cancelled) {
-            return;
-        }
-
-        ItemPtr child;
-
-        if (reader->name() == QStringLiteral("folder")) {
-            child = std::make_shared<Folder>();
-        } else if (reader->name() == QStringLiteral("footage")) {
-            child = std::make_shared<Footage>();
-        } else if (reader->name() == QStringLiteral("sequence")) {
-            child = std::make_shared<Sequence>();
-        } else {
-            reader->skipCurrentElement();
-            continue;
-        }
-
-        add_child(child);
-        child->Load(reader, xml_node_data, cancelled);
+    if (attr.name() == QStringLiteral("name")) {
+      set_name(attr.value().toString());
+    } else if (attr.name() == QStringLiteral("ptr")) {
+      xml_node_data.item_ptrs.insert(attr.value().toULongLong(), this);
     }
+  }
+
+  while (XMLReadNextStartElement(reader)) {
+    if (cancelled && *cancelled) {
+      return;
+    }
+
+    ItemPtr child;
+
+    if (reader->name() == QStringLiteral("folder")) {
+      child = std::make_shared<Folder>();
+    } else if (reader->name() == QStringLiteral("footage")) {
+      child = std::make_shared<Footage>();
+    } else if (reader->name() == QStringLiteral("sequence")) {
+      child = std::make_shared<Sequence>();
+    } else {
+      reader->skipCurrentElement();
+      continue;
+    }
+
+    add_child(child);
+    child->Load(reader, xml_node_data, cancelled);
+  }
 }
 
-void Folder::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement(QStringLiteral("folder"));
+void Folder::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement(QStringLiteral("folder"));
 
-    writer->writeAttribute(QStringLiteral("name"), name());
+  writer->writeAttribute(QStringLiteral("name"), name());
 
-    writer->writeAttribute(QStringLiteral("ptr"), QString::number(reinterpret_cast<quintptr>(this)));
+  writer->writeAttribute(QStringLiteral("ptr"), QString::number(reinterpret_cast<quintptr>(this)));
 
-    foreach (ItemPtr child, children()) {
-        child->Save(writer);
-    }
+  foreach (ItemPtr child, children()) { child->Save(writer); }
 
-    writer->writeEndElement(); // folder
+  writer->writeEndElement();  // folder
 }
 
 OLIVE_NAMESPACE_EXIT

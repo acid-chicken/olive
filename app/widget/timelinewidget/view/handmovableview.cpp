@@ -26,93 +26,70 @@
 
 OLIVE_NAMESPACE_ENTER
 
-HandMovableView::HandMovableView(QWidget* parent) :
-    QGraphicsView(parent),
-    dragging_hand_(false)
-{
-    connect(Core::instance(), &Core::ToolChanged, this, &HandMovableView::ApplicationToolChanged);
+HandMovableView::HandMovableView(QWidget *parent) : QGraphicsView(parent), dragging_hand_(false) {
+  connect(Core::instance(), &Core::ToolChanged, this, &HandMovableView::ApplicationToolChanged);
 }
 
-void HandMovableView::ApplicationToolChanged(Tool::Item tool)
-{
-    if (tool == Tool::kHand) {
-        setDragMode(ScrollHandDrag);
-    } else {
-        setDragMode(default_drag_mode_);
-    }
-
-    ToolChangedEvent(tool);
-}
-
-bool HandMovableView::HandPress(QMouseEvent *event)
-{
-    if (event->button() == Qt::MiddleButton) {
-        pre_hand_drag_mode_ = dragMode();
-        dragging_hand_ = true;
-
-        setDragMode(ScrollHandDrag);
-
-        // Transform mouse event to act like the left button is pressed
-        QMouseEvent transformed(event->type(),
-                                event->localPos(),
-                                Qt::LeftButton,
-                                Qt::LeftButton,
-                                event->modifiers());
-
-        QGraphicsView::mousePressEvent(&transformed);
-
-        return true;
-    }
-
-    return false;
-}
-
-bool HandMovableView::HandMove(QMouseEvent *event)
-{
-    if (dragging_hand_) {
-        // Transform mouse event to act like the left button is pressed
-        QMouseEvent transformed(event->type(),
-                                event->localPos(),
-                                Qt::LeftButton,
-                                Qt::LeftButton,
-                                event->modifiers());
-
-        QGraphicsView::mouseMoveEvent(&transformed);
-    }
-    return dragging_hand_;
-}
-
-bool HandMovableView::HandRelease(QMouseEvent *event)
-{
-    if (dragging_hand_) {
-        // Transform mouse event to act like the left button is pressed
-        QMouseEvent transformed(event->type(),
-                                event->localPos(),
-                                Qt::LeftButton,
-                                Qt::LeftButton,
-                                event->modifiers());
-
-        QGraphicsView::mouseReleaseEvent(&transformed);
-
-        setDragMode(pre_hand_drag_mode_);
-
-        dragging_hand_ = false;
-
-        return true;
-    }
-
-    return false;
-}
-
-void HandMovableView::SetDefaultDragMode(QGraphicsView::DragMode mode)
-{
-    default_drag_mode_ = mode;
+void HandMovableView::ApplicationToolChanged(Tool::Item tool) {
+  if (tool == Tool::kHand) {
+    setDragMode(ScrollHandDrag);
+  } else {
     setDragMode(default_drag_mode_);
+  }
+
+  ToolChangedEvent(tool);
 }
 
-const QGraphicsView::DragMode &HandMovableView::GetDefaultDragMode() const
-{
-    return default_drag_mode_;
+bool HandMovableView::HandPress(QMouseEvent *event) {
+  if (event->button() == Qt::MiddleButton) {
+    pre_hand_drag_mode_ = dragMode();
+    dragging_hand_ = true;
+
+    setDragMode(ScrollHandDrag);
+
+    // Transform mouse event to act like the left button is pressed
+    QMouseEvent transformed(event->type(), event->localPos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
+
+    QGraphicsView::mousePressEvent(&transformed);
+
+    return true;
+  }
+
+  return false;
 }
+
+bool HandMovableView::HandMove(QMouseEvent *event) {
+  if (dragging_hand_) {
+    // Transform mouse event to act like the left button is pressed
+    QMouseEvent transformed(event->type(), event->localPos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
+
+    QGraphicsView::mouseMoveEvent(&transformed);
+  }
+  return dragging_hand_;
+}
+
+bool HandMovableView::HandRelease(QMouseEvent *event) {
+  if (dragging_hand_) {
+    // Transform mouse event to act like the left button is pressed
+    QMouseEvent transformed(event->type(), event->localPos(), Qt::LeftButton, Qt::LeftButton, event->modifiers());
+
+    QGraphicsView::mouseReleaseEvent(&transformed);
+
+    setDragMode(pre_hand_drag_mode_);
+
+    dragging_hand_ = false;
+
+    return true;
+  }
+
+  return false;
+}
+
+void HandMovableView::SetDefaultDragMode(QGraphicsView::DragMode mode) {
+  default_drag_mode_ = mode;
+  setDragMode(default_drag_mode_);
+}
+
+const QGraphicsView::DragMode &HandMovableView::GetDefaultDragMode() const { return default_drag_mode_; }
 
 OLIVE_NAMESPACE_EXIT

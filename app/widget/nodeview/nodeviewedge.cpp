@@ -32,126 +32,114 @@
 
 OLIVE_NAMESPACE_ENTER
 
-NodeViewEdge::NodeViewEdge(QGraphicsItem *parent) :
-    QGraphicsPathItem(parent),
-    edge_(nullptr),
-    connected_(false),
-    highlighted_(false),
-    flow_dir_(NodeViewCommon::kLeftToRight)
-{
-    setFlag(QGraphicsItem::ItemIsSelectable);
+NodeViewEdge::NodeViewEdge(QGraphicsItem *parent)
+    : QGraphicsPathItem(parent),
+      edge_(nullptr),
+      connected_(false),
+      highlighted_(false),
+      flow_dir_(NodeViewCommon::kLeftToRight) {
+  setFlag(QGraphicsItem::ItemIsSelectable);
 
-    // Ensures this UI object is drawn behind other objects
-    setZValue(-1);
+  // Ensures this UI object is drawn behind other objects
+  setZValue(-1);
 
-    // Use font metrics to set edge width for basic high DPI support
-    edge_width_ = QFontMetrics(QFont()).height() / 12;
+  // Use font metrics to set edge width for basic high DPI support
+  edge_width_ = QFontMetrics(QFont()).height() / 12;
 }
 
-void NodeViewEdge::SetEdge(NodeEdgePtr edge)
-{
-    SetConnected(true);
+void NodeViewEdge::SetEdge(NodeEdgePtr edge) {
+  SetConnected(true);
 
-    // Set the new edge pointer
-    edge_ = edge;
+  // Set the new edge pointer
+  edge_ = edge;
 
-    // Re-adjust the line positioning for this new edge
-    Adjust();
+  // Re-adjust the line positioning for this new edge
+  Adjust();
 }
 
-NodeEdgePtr NodeViewEdge::edge()
-{
-    return edge_;
+NodeEdgePtr NodeViewEdge::edge() { return edge_; }
+
+void NodeViewEdge::Adjust() {
+  if (!edge_ || !scene()) {
+    return;
+  }
+
+  // Get the UI objects of both nodes that this edge connects
+  NodeViewItem *output = static_cast<NodeViewScene *>(scene())->NodeToUIObject(edge_->output()->parentNode());
+  NodeViewItem *input = static_cast<NodeViewScene *>(scene())->NodeToUIObject(edge_->input()->parentNode());
+
+  if (!output || !input) {
+    return;
+  }
+
+  // Draw a line between the two
+  SetPoints(output->GetParamPoint(edge_->output(), output->pos()), input->GetParamPoint(edge_->input(), output->pos()),
+            input->IsExpanded());
 }
 
-void NodeViewEdge::Adjust()
-{
-    if (!edge_ || !scene()) {
-        return;
-    }
+void NodeViewEdge::SetConnected(bool c) {
+  connected_ = c;
 
-    // Get the UI objects of both nodes that this edge connects
-    NodeViewItem* output = static_cast<NodeViewScene*>(scene())->NodeToUIObject(edge_->output()->parentNode());
-    NodeViewItem* input = static_cast<NodeViewScene*>(scene())->NodeToUIObject(edge_->input()->parentNode());
-
-    if (!output || !input) {
-        return;
-    }
-
-    // Draw a line between the two
-    SetPoints(output->GetParamPoint(edge_->output(), output->pos()),
-              input->GetParamPoint(edge_->input(), output->pos()),
-              input->IsExpanded());
+  update();
 }
 
-void NodeViewEdge::SetConnected(bool c)
-{
-    connected_ = c;
+void NodeViewEdge::SetHighlighted(bool e) {
+  highlighted_ = e;
 
-    update();
+  update();
 }
 
-void NodeViewEdge::SetHighlighted(bool e)
-{
-    highlighted_ = e;
+void NodeViewEdge::SetPoints(const QPointF &start, const QPointF &end, bool input_is_expanded) {
+  QPainterPath path;
+  path.moveTo(start);
 
-    update();
+  double half_x = lerp(start.x(), end.x(), 0.5);
+  double half_y = lerp(start.y(), end.y(), 0.5);
+
+  QPointF cp1, cp2;
+
+  if (NodeViewCommon::GetFlowOrientation(flow_dir_) == Qt::Horizontal) {
+    cp1 = QPointF(half_x, start.y());
+  } else {
+    cp1 = QPointF(start.x(), half_y);
+  }
+
+  if (NodeViewCommon::GetFlowOrientation(flow_dir_) == Qt::Horizontal || input_is_expanded) {
+    cp2 = QPointF(half_x, end.y());
+  } else {
+    cp2 = QPointF(end.x(), half_y);
+  }
+
+  path.cubicTo(cp1, cp2, end);
+
+  setPath(path);
 }
 
-void NodeViewEdge::SetPoints(const QPointF &start, const QPointF &end, bool input_is_expanded)
-{
-    QPainterPath path;
-    path.moveTo(start);
+void NodeViewEdge::SetFlowDirection(NodeViewCommon::FlowDirection dir) {
+  flow_dir_ = dir;
 
-    double half_x = lerp(start.x(), end.x(), 0.5);
-    double half_y = lerp(start.y(), end.y(), 0.5);
-
-    QPointF cp1, cp2;
-
-    if (NodeViewCommon::GetFlowOrientation(flow_dir_) == Qt::Horizontal) {
-        cp1 = QPointF(half_x, start.y());
-    } else {
-        cp1 = QPointF(start.x(), half_y);
-    }
-
-    if (NodeViewCommon::GetFlowOrientation(flow_dir_) == Qt::Horizontal || input_is_expanded) {
-        cp2 = QPointF(half_x, end.y());
-    } else {
-        cp2 = QPointF(end.x(), half_y);
-    }
-
-    path.cubicTo(cp1, cp2, end);
-
-    setPath(path);
+  Adjust();
 }
 
-void NodeViewEdge::SetFlowDirection(NodeViewCommon::FlowDirection dir)
-{
-    flow_dir_ = dir;
+void NodeViewEdge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *) {
+  QPalette::ColorGroup group;
+  QPalette::ColorRole role;
 
-    Adjust();
-}
+  if (connected_) {
+    group = QPalette::Active;
+  } else {
+    group = QPalette::Disabled;
+  }
 
-void NodeViewEdge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
-{
-    QPalette::ColorGroup group;
-    QPalette::ColorRole role;
+  if (highlighted_ != bool(option->state & QStyle::State_Selected)) {
+    role = QPalette::Highlight;
+  } else {
+    role = QPalette::Text;
+  }
 
-    if (connected_) {
-        group = QPalette::Active;
-    } else {
-        group = QPalette::Disabled;
-    }
-
-    if (highlighted_ != bool(option->state & QStyle::State_Selected)) {
-        role = QPalette::Highlight;
-    } else {
-        role = QPalette::Text;
-    }
-
-    painter->setPen(QPen(qApp->palette().color(group, role), edge_width_));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawPath(path());
+  painter->setPen(QPen(qApp->palette().color(group, role), edge_width_));
+  painter->setBrush(Qt::NoBrush);
+  painter->drawPath(path());
 }
 
 OLIVE_NAMESPACE_EXIT

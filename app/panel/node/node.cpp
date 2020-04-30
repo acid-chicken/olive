@@ -22,75 +22,40 @@
 
 OLIVE_NAMESPACE_ENTER
 
-NodePanel::NodePanel(QWidget *parent) :
-    PanelWidget(QStringLiteral("NodePanel"), parent)
-{
-    // Create NodeView widget
-    node_view_ = new NodeView(this);
+NodePanel::NodePanel(QWidget *parent) : PanelWidget(QStringLiteral("NodePanel"), parent) {
+  // Create NodeView widget
+  node_view_ = new NodeView(this);
 
-    // Connect node view signals to this panel
-    connect(node_view_, SIGNAL(SelectionChanged(QList<Node*>)), this, SIGNAL(SelectionChanged(QList<Node*>)));
+  // Connect node view signals to this panel
+  connect(node_view_, SIGNAL(SelectionChanged(QList<Node *>)), this, SIGNAL(SelectionChanged(QList<Node *>)));
 
-    // Set it as the main widget of this panel
-    SetWidgetWithPadding(node_view_);
+  // Set it as the main widget of this panel
+  SetWidgetWithPadding(node_view_);
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-void NodePanel::SetGraph(NodeGraph *graph)
-{
-    node_view_->SetGraph(graph);
-}
+void NodePanel::SetGraph(NodeGraph *graph) { node_view_->SetGraph(graph); }
 
-void NodePanel::SelectAll()
-{
-    node_view_->SelectAll();
-}
+void NodePanel::SelectAll() { node_view_->SelectAll(); }
 
-void NodePanel::DeselectAll()
-{
-    node_view_->DeselectAll();
-}
+void NodePanel::DeselectAll() { node_view_->DeselectAll(); }
 
-void NodePanel::DeleteSelected()
-{
-    node_view_->DeleteSelected();
-}
+void NodePanel::DeleteSelected() { node_view_->DeleteSelected(); }
 
-void NodePanel::CutSelected()
-{
-    node_view_->CopySelected(true);
-}
+void NodePanel::CutSelected() { node_view_->CopySelected(true); }
 
-void NodePanel::CopySelected()
-{
-    node_view_->CopySelected(false);
-}
+void NodePanel::CopySelected() { node_view_->CopySelected(false); }
 
-void NodePanel::Paste()
-{
-    node_view_->Paste();
-}
+void NodePanel::Paste() { node_view_->Paste(); }
 
-void NodePanel::Duplicate()
-{
-    node_view_->Duplicate();
-}
+void NodePanel::Duplicate() { node_view_->Duplicate(); }
 
-void NodePanel::Select(const QList<Node *> &nodes)
-{
-    node_view_->Select(nodes);
-}
+void NodePanel::Select(const QList<Node *> &nodes) { node_view_->Select(nodes); }
 
-void NodePanel::SelectWithDependencies(const QList<Node *> &nodes)
-{
-    node_view_->SelectWithDependencies(nodes);
-}
+void NodePanel::SelectWithDependencies(const QList<Node *> &nodes) { node_view_->SelectWithDependencies(nodes); }
 
-void NodePanel::Retranslate()
-{
-    SetTitle(tr("Node Editor"));
-}
+void NodePanel::Retranslate() { SetTitle(tr("Node Editor")); }
 
 OLIVE_NAMESPACE_EXIT

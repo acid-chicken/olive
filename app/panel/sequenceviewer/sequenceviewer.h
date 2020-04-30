@@ -25,16 +25,14 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class SequenceViewerPanel : public ViewerPanel
-{
-public:
-    SequenceViewerPanel(QWidget* parent);
+class SequenceViewerPanel : public ViewerPanel {
+ public:
+  SequenceViewerPanel(QWidget* parent);
 
-protected:
-    virtual void Retranslate() override;
-
+ protected:
+  virtual void Retranslate() override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // SEQUENCEVIEWERPANEL_H
+#endif  // SEQUENCEVIEWERPANEL_H

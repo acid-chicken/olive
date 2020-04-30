@@ -23,38 +23,37 @@
 
 #include <QGraphicsRectItem>
 
-#include "timeline/timelinecoordinate.h"
 #include "../timelinescaledobject.h"
+#include "timeline/timelinecoordinate.h"
 
 OLIVE_NAMESPACE_ENTER
 
 /**
  * @brief A base class for graphical representations of Block nodes
  */
-class TimelineViewRect : public QGraphicsRectItem, public TimelineScaledObject
-{
-public:
-    TimelineViewRect(QGraphicsItem* parent = nullptr);
+class TimelineViewRect : public QGraphicsRectItem, public TimelineScaledObject {
+ public:
+  TimelineViewRect(QGraphicsItem* parent = nullptr);
 
-    void SetYCoords(int y, int height);
+  void SetYCoords(int y, int height);
 
-    const TrackReference& Track();
-    void SetTrack(const TrackReference& track);
+  const TrackReference& Track();
+  void SetTrack(const TrackReference& track);
 
-    virtual void UpdateRect() = 0;
+  virtual void UpdateRect() = 0;
 
-protected:
-    virtual void ScaleChangedEvent(const double &) override;
+ protected:
+  virtual void ScaleChangedEvent(const double&) override;
 
-    virtual void TimebaseChangedEvent(const rational&) override;
+  virtual void TimebaseChangedEvent(const rational&) override;
 
-    int y_;
+  int y_;
 
-    int height_;
+  int height_;
 
-    TrackReference track_;
+  TrackReference track_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEVIEWRECT_H
+#endif  // TIMELINEVIEWRECT_H

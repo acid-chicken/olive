@@ -26,83 +26,75 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ScopePanel::ScopePanel(QWidget* parent) :
-    PanelWidget(QStringLiteral("ScopePanel"), parent)
-{
-    QWidget* central = new QWidget();
-    setWidget(central);
+ScopePanel::ScopePanel(QWidget* parent) : PanelWidget(QStringLiteral("ScopePanel"), parent) {
+  QWidget* central = new QWidget();
+  setWidget(central);
 
-    QVBoxLayout* layout = new QVBoxLayout(central);
+  QVBoxLayout* layout = new QVBoxLayout(central);
 
-    QHBoxLayout* toolbar_layout = new QHBoxLayout();
-    toolbar_layout->setMargin(0);
+  QHBoxLayout* toolbar_layout = new QHBoxLayout();
+  toolbar_layout->setMargin(0);
 
-    scope_type_combobox_ = new QComboBox();
+  scope_type_combobox_ = new QComboBox();
 
-    for (int i=0; i<ScopePanel::kTypeCount; i++) {
-        // These strings get filled in later in Retranslate()
-        scope_type_combobox_->addItem(QString());
-    }
+  for (int i = 0; i < ScopePanel::kTypeCount; i++) {
+    // These strings get filled in later in Retranslate()
+    scope_type_combobox_->addItem(QString());
+  }
 
-    toolbar_layout->addWidget(scope_type_combobox_);
-    toolbar_layout->addStretch();
+  toolbar_layout->addWidget(scope_type_combobox_);
+  toolbar_layout->addStretch();
 
-    layout->addLayout(toolbar_layout);
+  layout->addLayout(toolbar_layout);
 
-    stack_ = new QStackedWidget();
-    layout->addWidget(stack_);
+  stack_ = new QStackedWidget();
+  layout->addWidget(stack_);
 
-    // Create waveform view
-    waveform_view_ = new WaveformScope();
-    stack_->addWidget(waveform_view_);
+  // Create waveform view
+  waveform_view_ = new WaveformScope();
+  stack_->addWidget(waveform_view_);
 
-    // Create histogram
-    histogram_ = new HistogramScope();
-    stack_->addWidget(histogram_);
+  // Create histogram
+  histogram_ = new HistogramScope();
+  stack_->addWidget(histogram_);
 
-    connect(scope_type_combobox_, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged), stack_, &QStackedWidget::setCurrentIndex);
+  connect(scope_type_combobox_, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), stack_,
+          &QStackedWidget::setCurrentIndex);
 
-    Retranslate();
+  Retranslate();
 }
 
-void ScopePanel::SetType(ScopePanel::Type t)
-{
-    scope_type_combobox_->setCurrentIndex(t);
-}
+void ScopePanel::SetType(ScopePanel::Type t) { scope_type_combobox_->setCurrentIndex(t); }
 
-QString ScopePanel::TypeToName(ScopePanel::Type t)
-{
-    switch (t) {
+QString ScopePanel::TypeToName(ScopePanel::Type t) {
+  switch (t) {
     case kTypeWaveform:
-        return tr("Waveform");
+      return tr("Waveform");
     case kTypeHistogram:
-        return tr("Histogram");
+      return tr("Histogram");
     case kTypeCount:
-        break;
-    }
+      break;
+  }
 
-    return QString();
+  return QString();
 }
 
-void ScopePanel::SetReferenceBuffer(Frame *frame)
-{
-    histogram_->SetBuffer(frame);
-    waveform_view_->SetBuffer(frame);
+void ScopePanel::SetReferenceBuffer(Frame* frame) {
+  histogram_->SetBuffer(frame);
+  waveform_view_->SetBuffer(frame);
 }
 
-void ScopePanel::SetColorManager(ColorManager *manager)
-{
-    histogram_->ConnectColorManager(manager);
-    waveform_view_->ConnectColorManager(manager);
+void ScopePanel::SetColorManager(ColorManager* manager) {
+  histogram_->ConnectColorManager(manager);
+  waveform_view_->ConnectColorManager(manager);
 }
 
-void ScopePanel::Retranslate()
-{
-    SetTitle(tr("Scope"));
+void ScopePanel::Retranslate() {
+  SetTitle(tr("Scope"));
 
-    for (int i=0; i<ScopePanel::kTypeCount; i++) {
-        scope_type_combobox_->setItemText(i, TypeToName(static_cast<Type>(i)));
-    }
+  for (int i = 0; i < ScopePanel::kTypeCount; i++) {
+    scope_type_combobox_->setItemText(i, TypeToName(static_cast<Type>(i)));
+  }
 }
 
 OLIVE_NAMESPACE_EXIT

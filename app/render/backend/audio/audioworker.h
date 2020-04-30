@@ -25,20 +25,20 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class AudioWorker : public AudioRenderWorker
-{
-public:
-    AudioWorker(QHash<Node*, Node*>* copy_map, QObject* parent = nullptr);
+class AudioWorker : public AudioRenderWorker {
+ public:
+  AudioWorker(QHash<Node*, Node*>* copy_map, QObject* parent = nullptr);
 
-protected:
-    virtual void FrameToValue(DecoderPtr decoder, StreamPtr stream, const TimeRange &range, NodeValueTable* table) override;
+ protected:
+  virtual void FrameToValue(DecoderPtr decoder, StreamPtr stream, const TimeRange& range,
+                            NodeValueTable* table) override;
 
-    virtual void RunNodeAccelerated(const Node *node, const TimeRange& range, NodeValueDatabase& input_params, NodeValueTable& output_params) override;
+  virtual void RunNodeAccelerated(const Node* node, const TimeRange& range, NodeValueDatabase& input_params,
+                                  NodeValueTable& output_params) override;
 
-private:
-
+ private:
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOWORKER_H
+#endif  // AUDIOWORKER_H

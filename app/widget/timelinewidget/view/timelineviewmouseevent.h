@@ -22,63 +22,58 @@
 #define TIMELINEVIEWMOUSEEVENT_H
 
 #include <QMimeData>
-#include <QPointF>
 #include <QPoint>
+#include <QPointF>
 
 #include "timeline/timelinecoordinate.h"
 
 OLIVE_NAMESPACE_ENTER
 
-class TimelineViewMouseEvent
-{
-public:
-    TimelineViewMouseEvent(const qreal& scene_x,
-                           const double& scale_x,
-                           const rational& timebase,
-                           const TrackReference &track,
-                           const Qt::KeyboardModifiers& modifiers = Qt::NoModifier);
+class TimelineViewMouseEvent {
+ public:
+  TimelineViewMouseEvent(const qreal& scene_x, const double& scale_x, const rational& timebase,
+                         const TrackReference& track, const Qt::KeyboardModifiers& modifiers = Qt::NoModifier);
 
-    TimelineCoordinate GetCoordinates(bool round_time = false) const;
-    const Qt::KeyboardModifiers GetModifiers() const;
+  TimelineCoordinate GetCoordinates(bool round_time = false) const;
+  const Qt::KeyboardModifiers GetModifiers() const;
 
-    /**
-     * @brief Gets the time at this cursor point
-     *
-     * @param round
-     *
-     * If set to true, the time will be rounded to the nearest time. If set to false, the time is floored so the time is
-     * always to the left of the cursor. The former behavior is better for clicking between frames (e.g. razor tool) and
-     * the latter is better for clicking directly on frames (e.g. pointer tool).
-     */
-    rational GetFrame(bool round = false) const;
+  /**
+   * @brief Gets the time at this cursor point
+   *
+   * @param round
+   *
+   * If set to true, the time will be rounded to the nearest time. If set to false, the time is floored so the time is
+   * always to the left of the cursor. The former behavior is better for clicking between frames (e.g. razor tool) and
+   * the latter is better for clicking directly on frames (e.g. pointer tool).
+   */
+  rational GetFrame(bool round = false) const;
 
-    const TrackReference& GetTrack() const;
+  const TrackReference& GetTrack() const;
 
-    const QMimeData *GetMimeData();
-    void SetMimeData(const QMimeData *data);
+  const QMimeData* GetMimeData();
+  void SetMimeData(const QMimeData* data);
 
-    void SetEvent(QEvent* event);
+  void SetEvent(QEvent* event);
 
-    const qreal& GetSceneX() const;
+  const qreal& GetSceneX() const;
 
-    void accept();
-    void ignore();
+  void accept();
+  void ignore();
 
-private:
-    qreal scene_x_;
-    double scale_x_;
-    rational timebase_;
+ private:
+  qreal scene_x_;
+  double scale_x_;
+  rational timebase_;
 
-    TrackReference track_;
+  TrackReference track_;
 
-    Qt::KeyboardModifiers modifiers_;
+  Qt::KeyboardModifiers modifiers_;
 
-    QEvent* source_event_;
+  QEvent* source_event_;
 
-    const QMimeData* mime_data_;
-
+  const QMimeData* mime_data_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEVIEWMOUSEEVENT_H
+#endif  // TIMELINEVIEWMOUSEEVENT_H

@@ -31,32 +31,31 @@ OLIVE_NAMESPACE_ENTER
  * @brief A QListView derivative that contains functionality used by both List view and Icon view (which are both based
  * on QListView)
  */
-class ProjectExplorerListViewBase : public QListView
-{
-    Q_OBJECT
-public:
-    ProjectExplorerListViewBase(QWidget* parent);
+class ProjectExplorerListViewBase : public QListView {
+  Q_OBJECT
+ public:
+  ProjectExplorerListViewBase(QWidget* parent);
 
-protected:
-    /**
-     * @brief Double click event override
-     *
-     * Function that signals DoubleClickedView().
-     *
-     * FIXME: This code is the same as the code in ProjectExplorerTreeView. Is there a way to merge these two through
-     * subclassing?
-     */
-    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
+ protected:
+  /**
+   * @brief Double click event override
+   *
+   * Function that signals DoubleClickedView().
+   *
+   * FIXME: This code is the same as the code in ProjectExplorerTreeView. Is there a way to merge these two through
+   * subclassing?
+   */
+  virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
 
-signals:
-    /**
-     * @brief Unconditional double click signal
-     *
-     * Emits a signal when the view is double clicked but not on any particular item
-     */
-    void DoubleClickedEmptyArea();
+ signals:
+  /**
+   * @brief Unconditional double click signal
+   *
+   * Emits a signal when the view is double clicked but not on any particular item
+   */
+  void DoubleClickedEmptyArea();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTEXPLORERLISTVIEWBASE_H
+#endif  // PROJECTEXPLORERLISTVIEWBASE_H

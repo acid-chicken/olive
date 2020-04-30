@@ -28,101 +28,92 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ColorManager : public QObject
-{
-    Q_OBJECT
-public:
-    ColorManager();
+class ColorManager : public QObject {
+  Q_OBJECT
+ public:
+  ColorManager();
 
-    OCIO::ConstConfigRcPtr GetConfig() const;
+  OCIO::ConstConfigRcPtr GetConfig() const;
 
-    const QString& GetConfigFilename() const;
+  const QString& GetConfigFilename() const;
 
-    static OCIO::ConstConfigRcPtr GetDefaultConfig();
+  static OCIO::ConstConfigRcPtr GetDefaultConfig();
 
-    static void SetUpDefaultConfig();
+  static void SetUpDefaultConfig();
 
-    void SetConfig(const QString& filename);
+  void SetConfig(const QString& filename);
 
-    void SetConfigAndDefaultInput(const QString& filename, const QString& s);
+  void SetConfigAndDefaultInput(const QString& filename, const QString& s);
 
-    static void DisassociateAlpha(FramePtr f);
+  static void DisassociateAlpha(FramePtr f);
 
-    static void AssociateAlpha(FramePtr f);
+  static void AssociateAlpha(FramePtr f);
 
-    static void ReassociateAlpha(FramePtr f);
+  static void ReassociateAlpha(FramePtr f);
 
-    QStringList ListAvailableDisplays();
+  QStringList ListAvailableDisplays();
 
-    QString GetDefaultDisplay();
+  QString GetDefaultDisplay();
 
-    QStringList ListAvailableViews(QString display);
+  QStringList ListAvailableViews(QString display);
 
-    QString GetDefaultView(const QString& display);
+  QString GetDefaultView(const QString& display);
 
-    QStringList ListAvailableLooks();
+  QStringList ListAvailableLooks();
 
-    QStringList ListAvailableInputColorspaces();
+  QStringList ListAvailableInputColorspaces();
 
-    const QString& GetDefaultInputColorSpace() const;
+  const QString& GetDefaultInputColorSpace() const;
 
-    void SetDefaultInputColorSpace(const QString& s);
+  void SetDefaultInputColorSpace(const QString& s);
 
-    const QString& GetReferenceColorSpace() const;
+  const QString& GetReferenceColorSpace() const;
 
-    void SetReferenceColorSpace(const QString& s);
+  void SetReferenceColorSpace(const QString& s);
 
-    QString GetCompliantColorSpace(const QString& s);
+  QString GetCompliantColorSpace(const QString& s);
 
-    ColorTransform GetCompliantColorSpace(const ColorTransform& transform, bool force_display = false);
+  ColorTransform GetCompliantColorSpace(const ColorTransform& transform, bool force_display = false);
 
-    static QStringList ListAvailableInputColorspaces(OCIO::ConstConfigRcPtr config);
+  static QStringList ListAvailableInputColorspaces(OCIO::ConstConfigRcPtr config);
 
-    void GetDefaultLumaCoefs(float* rgb) const;
-    Color GetDefaultLumaCoefs() const;
+  void GetDefaultLumaCoefs(float* rgb) const;
+  Color GetDefaultLumaCoefs() const;
 
-    enum OCIOMethod {
-        kOCIOFast,
-        kOCIOAccurate
-    };
+  enum OCIOMethod { kOCIOFast, kOCIOAccurate };
 
-    static OCIOMethod GetOCIOMethodForMode(RenderMode::Mode mode);
+  static OCIOMethod GetOCIOMethodForMode(RenderMode::Mode mode);
 
-    static void SetOCIOMethodForMode(RenderMode::Mode mode, OCIOMethod method);
+  static void SetOCIOMethodForMode(RenderMode::Mode mode, OCIOMethod method);
 
-signals:
-    void ConfigChanged();
+ signals:
+  void ConfigChanged();
 
-    void DefaultInputColorSpaceChanged();
+  void DefaultInputColorSpaceChanged();
 
-private:
-    void SetConfigInternal(const QString& filename);
+ private:
+  void SetConfigInternal(const QString& filename);
 
-    void SetDefaultInputColorSpaceInternal(const QString& s);
+  void SetDefaultInputColorSpaceInternal(const QString& s);
 
-    OCIO::ConstConfigRcPtr config_;
+  OCIO::ConstConfigRcPtr config_;
 
-    enum AlphaAction {
-        kAssociate,
-        kDisassociate,
-        kReassociate
-    };
+  enum AlphaAction { kAssociate, kDisassociate, kReassociate };
 
-    static void AssociateAlphaPixFmtFilter(AlphaAction action, FramePtr f);
+  static void AssociateAlphaPixFmtFilter(AlphaAction action, FramePtr f);
 
-    template<typename T>
-    static void AssociateAlphaInternal(AlphaAction action, T* data, int pix_count);
+  template <typename T>
+  static void AssociateAlphaInternal(AlphaAction action, T* data, int pix_count);
 
-    QString config_filename_;
+  QString config_filename_;
 
-    QString default_input_color_space_;
+  QString default_input_color_space_;
 
-    QString reference_space_;
+  QString reference_space_;
 
-    static OCIO::ConstConfigRcPtr default_config_;
-
+  static OCIO::ConstConfigRcPtr default_config_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLORSERVICE_H
+#endif  // COLORSERVICE_H

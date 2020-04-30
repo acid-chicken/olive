@@ -21,8 +21,8 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include <memory>
 #include <QVector>
+#include <memory>
 
 #include "common/rational.h"
 #include "render/color.h"
@@ -37,92 +37,90 @@ using FramePtr = std::shared_ptr<Frame>;
 /**
  * @brief Video frame data or audio sample data from a Decoder
  */
-class Frame
-{
-public:
-    Frame();
+class Frame {
+ public:
+  Frame();
 
-    static FramePtr Create();
+  static FramePtr Create();
 
-    const VideoRenderingParams& video_params() const;
-    void set_video_params(const VideoRenderingParams& params);
+  const VideoRenderingParams& video_params() const;
+  void set_video_params(const VideoRenderingParams& params);
 
-    int linesize_pixels() const;
-    int linesize_bytes() const;
-    const int& width() const;
-    const int& height() const;
-    const PixelFormat::Format& format() const;
+  int linesize_pixels() const;
+  int linesize_bytes() const;
+  const int& width() const;
+  const int& height() const;
+  const PixelFormat::Format& format() const;
 
-    Color get_pixel(int x, int y) const;
-    bool contains_pixel(int x, int y) const;
+  Color get_pixel(int x, int y) const;
+  bool contains_pixel(int x, int y) const;
 
-    const rational& sample_aspect_ratio() const;
-    void set_sample_aspect_ratio(const rational& sample_aspect_ratio);
+  const rational& sample_aspect_ratio() const;
+  void set_sample_aspect_ratio(const rational& sample_aspect_ratio);
 
-    /**
-     * @brief Get frame's timestamp.
-     *
-     * This timestamp is always a rational that will equate to the time in seconds.
-     */
-    const rational& timestamp() const;
-    void set_timestamp(const rational& timestamp);
+  /**
+   * @brief Get frame's timestamp.
+   *
+   * This timestamp is always a rational that will equate to the time in seconds.
+   */
+  const rational& timestamp() const;
+  void set_timestamp(const rational& timestamp);
 
-    const int64_t& native_timestamp();
-    void set_native_timestamp(const int64_t& timestamp);
+  const int64_t& native_timestamp();
+  void set_native_timestamp(const int64_t& timestamp);
 
-    /**
-     * @brief Get the data buffer of this frame
-     */
-    char* data();
+  /**
+   * @brief Get the data buffer of this frame
+   */
+  char* data();
 
-    /**
-     * @brief Get the const data buffer of this frame
-     */
-    const char* const_data() const;
+  /**
+   * @brief Get the const data buffer of this frame
+   */
+  const char* const_data() const;
 
-    /**
-     * @brief Allocate memory buffer to store data based on parameters
-     *
-     * For video frames, the width(), height(), and format() must be set for this function to work.
-     *
-     * If a memory buffer has been previously allocated without destroying, this function will destroy it.
-     */
-    void allocate();
+  /**
+   * @brief Allocate memory buffer to store data based on parameters
+   *
+   * For video frames, the width(), height(), and format() must be set for this function to work.
+   *
+   * If a memory buffer has been previously allocated without destroying, this function will destroy it.
+   */
+  void allocate();
 
-    /**
-     * @brief Return whether the frame is allocated or not
-     */
-    bool is_allocated() const;
+  /**
+   * @brief Return whether the frame is allocated or not
+   */
+  bool is_allocated() const;
 
-    /**
-     * @brief Destroy a memory buffer allocated with allocate()
-     */
-    void destroy();
+  /**
+   * @brief Destroy a memory buffer allocated with allocate()
+   */
+  void destroy();
 
-    /**
-     * @brief Returns the size of the array returned in data() in bytes
-     *
-     * Returns 0 if nothing is allocated.
-     */
-    int allocated_size() const;
+  /**
+   * @brief Returns the size of the array returned in data() in bytes
+   *
+   * Returns 0 if nothing is allocated.
+   */
+  int allocated_size() const;
 
-private:
-    VideoRenderingParams params_;
+ private:
+  VideoRenderingParams params_;
 
-    QByteArray data_;
+  QByteArray data_;
 
-    rational timestamp_;
+  rational timestamp_;
 
-    int64_t native_timestamp_;
+  int64_t native_timestamp_;
 
-    rational sample_aspect_ratio_;
+  rational sample_aspect_ratio_;
 
-    int linesize_;
-
+  int linesize_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::FramePtr)
 
-#endif // FRAME_H
+#endif  // FRAME_H

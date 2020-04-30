@@ -25,8 +25,8 @@
 
 #include "core.h"
 #include "panel/footageviewer/footageviewer.h"
-#include "panel/timeline/timeline.h"
 #include "panel/panelmanager.h"
+#include "panel/timeline/timeline.h"
 #include "project/item/sequence/sequence.h"
 #include "widget/menu/menushared.h"
 #include "widget/projecttoolbar/projecttoolbar.h"
@@ -34,213 +34,172 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ProjectPanel::ProjectPanel(QWidget *parent) :
-    PanelWidget(QStringLiteral("ProjectPanel"), parent)
-{
-    // Create main widget and its layout
-    QWidget* central_widget = new QWidget(this);
-    QVBoxLayout* layout = new QVBoxLayout(central_widget);
-    layout->setMargin(0);
+ProjectPanel::ProjectPanel(QWidget* parent) : PanelWidget(QStringLiteral("ProjectPanel"), parent) {
+  // Create main widget and its layout
+  QWidget* central_widget = new QWidget(this);
+  QVBoxLayout* layout = new QVBoxLayout(central_widget);
+  layout->setMargin(0);
 
-    SetWidgetWithPadding(central_widget);
+  SetWidgetWithPadding(central_widget);
 
-    // Set up project toolbar
-    ProjectToolbar* toolbar = new ProjectToolbar(this);
-    layout->addWidget(toolbar);
+  // Set up project toolbar
+  ProjectToolbar* toolbar = new ProjectToolbar(this);
+  layout->addWidget(toolbar);
 
-    // Make toolbar connections
-    connect(toolbar, &ProjectToolbar::NewClicked, this, &ProjectPanel::ShowNewMenu);
-    connect(toolbar, &ProjectToolbar::OpenClicked, Core::instance(), &Core::OpenProject);
-    connect(toolbar, &ProjectToolbar::SaveClicked, Core::instance(), &Core::SaveActiveProject);
-    connect(toolbar, &ProjectToolbar::UndoClicked, Core::instance()->undo_stack(), &QUndoStack::undo);
-    connect(toolbar, &ProjectToolbar::RedoClicked, Core::instance()->undo_stack(), &QUndoStack::redo);
+  // Make toolbar connections
+  connect(toolbar, &ProjectToolbar::NewClicked, this, &ProjectPanel::ShowNewMenu);
+  connect(toolbar, &ProjectToolbar::OpenClicked, Core::instance(), &Core::OpenProject);
+  connect(toolbar, &ProjectToolbar::SaveClicked, Core::instance(), &Core::SaveActiveProject);
+  connect(toolbar, &ProjectToolbar::UndoClicked, Core::instance()->undo_stack(), &QUndoStack::undo);
+  connect(toolbar, &ProjectToolbar::RedoClicked, Core::instance()->undo_stack(), &QUndoStack::redo);
 
-    // Set up main explorer object
-    explorer_ = new ProjectExplorer(this);
-    layout->addWidget(explorer_);
-    connect(explorer_, &ProjectExplorer::DoubleClickedItem, this, &ProjectPanel::ItemDoubleClickSlot);
+  // Set up main explorer object
+  explorer_ = new ProjectExplorer(this);
+  layout->addWidget(explorer_);
+  connect(explorer_, &ProjectExplorer::DoubleClickedItem, this, &ProjectPanel::ItemDoubleClickSlot);
 
-    // Set toolbar's view to the explorer's view
-    toolbar->SetView(explorer_->view_type());
+  // Set toolbar's view to the explorer's view
+  toolbar->SetView(explorer_->view_type());
 
-    // Connect toolbar's view change signal to the explorer's view change slot
-    connect(toolbar,
-            &ProjectToolbar::ViewChanged,
-            explorer_,
-            &ProjectExplorer::set_view_type);
+  // Connect toolbar's view change signal to the explorer's view change slot
+  connect(toolbar, &ProjectToolbar::ViewChanged, explorer_, &ProjectExplorer::set_view_type);
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-Project* ProjectPanel::project() const
-{
-    return explorer_->project();
+Project* ProjectPanel::project() const { return explorer_->project(); }
+
+void ProjectPanel::set_project(Project* p) {
+  if (project()) {
+    disconnect(project(), &Project::NameChanged, this, &ProjectPanel::UpdateSubtitle);
+    disconnect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
+    disconnect(project(), &Project::ModifiedChanged, this, &ProjectPanel::setWindowModified);
+  }
+
+  explorer_->set_project(p);
+
+  if (project()) {
+    connect(project(), &Project::NameChanged, this, &ProjectPanel::UpdateSubtitle);
+    connect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
+    connect(project(), &Project::ModifiedChanged, this, &ProjectPanel::setWindowModified);
+  }
+
+  UpdateSubtitle();
+
+  emit ProjectNameChanged();
+
+  if (p) {
+    setWindowModified(p->is_modified());
+  } else {
+    setWindowModified(false);
+  }
 }
 
-void ProjectPanel::set_project(Project* p)
-{
-    if (project()) {
-        disconnect(project(), &Project::NameChanged, this, &ProjectPanel::UpdateSubtitle);
-        disconnect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
-        disconnect(project(), &Project::ModifiedChanged, this, &ProjectPanel::setWindowModified);
-    }
+QModelIndex ProjectPanel::get_root_index() const { return explorer_->get_root_index(); }
 
-    explorer_->set_project(p);
+void ProjectPanel::set_root(Item* item) {
+  explorer_->set_root(item);
 
-    if (project()) {
-        connect(project(), &Project::NameChanged, this, &ProjectPanel::UpdateSubtitle);
-        connect(project(), &Project::NameChanged, this, &ProjectPanel::ProjectNameChanged);
-        connect(project(), &Project::ModifiedChanged, this, &ProjectPanel::setWindowModified);
-    }
-
-    UpdateSubtitle();
-
-    emit ProjectNameChanged();
-
-    if (p) {
-        setWindowModified(p->is_modified());
-    } else {
-        setWindowModified(false);
-    }
+  Retranslate();
 }
 
-QModelIndex ProjectPanel::get_root_index() const
-{
-    return explorer_->get_root_index();
+QList<Item*> ProjectPanel::SelectedItems() const { return explorer_->SelectedItems(); }
+
+Folder* ProjectPanel::GetSelectedFolder() const { return explorer_->GetSelectedFolder(); }
+
+ProjectViewModel* ProjectPanel::model() const { return explorer_->model(); }
+
+void ProjectPanel::SelectAll() { explorer_->SelectAll(); }
+
+void ProjectPanel::DeselectAll() { explorer_->DeselectAll(); }
+
+void ProjectPanel::Insert() {
+  TimelinePanel* timeline = PanelManager::instance()->MostRecentlyFocused<TimelinePanel>();
+
+  if (timeline) {
+    timeline->InsertFootageAtPlayhead(GetSelectedFootage());
+  }
 }
 
-void ProjectPanel::set_root(Item *item)
-{
-    explorer_->set_root(item);
+void ProjectPanel::Overwrite() {
+  TimelinePanel* timeline = PanelManager::instance()->MostRecentlyFocused<TimelinePanel>();
 
-    Retranslate();
+  if (timeline) {
+    timeline->OverwriteFootageAtPlayhead(GetSelectedFootage());
+  }
 }
 
-QList<Item *> ProjectPanel::SelectedItems() const
-{
-    return explorer_->SelectedItems();
+void ProjectPanel::DeleteSelected() { explorer_->DeleteSelected(); }
+
+void ProjectPanel::Edit(Item* item) { explorer_->Edit(item); }
+
+void ProjectPanel::Retranslate() {
+  if (explorer_->get_root_index().isValid()) {
+    SetTitle(tr("Folder"));
+  } else {
+    SetTitle(tr("Project"));
+  }
+
+  UpdateSubtitle();
 }
 
-Folder *ProjectPanel::GetSelectedFolder() const
-{
-    return explorer_->GetSelectedFolder();
+void ProjectPanel::ItemDoubleClickSlot(Item* item) {
+  if (item == nullptr) {
+    // If the user double clicks on empty space, show the import dialog
+    Core::instance()->DialogImportShow();
+  } else if (item->type() == Item::kFootage) {
+    // Open this footage in a FootageViewer
+    PanelManager::instance()->MostRecentlyFocused<FootageViewerPanel>()->SetFootage(static_cast<Footage*>(item));
+  } else if (item->type() == Item::kSequence) {
+    // Open this sequence in the Timeline
+    Core::instance()->main_window()->OpenSequence(static_cast<Sequence*>(item));
+  }
 }
 
-ProjectViewModel *ProjectPanel::model() const
-{
-    return explorer_->model();
+void ProjectPanel::ShowNewMenu() {
+  Menu new_menu(this);
+
+  MenuShared::instance()->AddItemsForNewMenu(&new_menu);
+
+  new_menu.exec(QCursor::pos());
 }
 
-void ProjectPanel::SelectAll()
-{
-    explorer_->SelectAll();
-}
+void ProjectPanel::UpdateSubtitle() {
+  if (project()) {
+    QString project_title = QStringLiteral("[*]%1").arg(project()->name());
 
-void ProjectPanel::DeselectAll()
-{
-    explorer_->DeselectAll();
-}
-
-void ProjectPanel::Insert()
-{
-    TimelinePanel* timeline = PanelManager::instance()->MostRecentlyFocused<TimelinePanel>();
-
-    if (timeline) {
-        timeline->InsertFootageAtPlayhead(GetSelectedFootage());
-    }
-}
-
-void ProjectPanel::Overwrite()
-{
-    TimelinePanel* timeline = PanelManager::instance()->MostRecentlyFocused<TimelinePanel>();
-
-    if (timeline) {
-        timeline->OverwriteFootageAtPlayhead(GetSelectedFootage());
-    }
-}
-
-void ProjectPanel::DeleteSelected()
-{
-    explorer_->DeleteSelected();
-}
-
-void ProjectPanel::Edit(Item* item)
-{
-    explorer_->Edit(item);
-}
-
-void ProjectPanel::Retranslate()
-{
     if (explorer_->get_root_index().isValid()) {
-        SetTitle(tr("Folder"));
-    } else {
-        SetTitle(tr("Project"));
+      QString folder_path;
+
+      Item* item = static_cast<Item*>(explorer_->get_root_index().internalPointer());
+
+      do {
+        folder_path.prepend(QStringLiteral("/%1").arg(item->name()));
+
+        item = item->parent();
+      } while (item != project()->root());
+
+      project_title.append(folder_path);
     }
 
-    UpdateSubtitle();
+    SetSubtitle(project_title);
+  } else {
+    SetSubtitle(tr("(none)"));
+  }
 }
 
-void ProjectPanel::ItemDoubleClickSlot(Item *item)
-{
-    if (item == nullptr) {
-        // If the user double clicks on empty space, show the import dialog
-        Core::instance()->DialogImportShow();
-    } else if (item->type() == Item::kFootage) {
-        // Open this footage in a FootageViewer
-        PanelManager::instance()->MostRecentlyFocused<FootageViewerPanel>()->SetFootage(static_cast<Footage*>(item));
-    } else if (item->type() == Item::kSequence) {
-        // Open this sequence in the Timeline
-        Core::instance()->main_window()->OpenSequence(static_cast<Sequence*>(item));
+QList<Footage*> ProjectPanel::GetSelectedFootage() const {
+  QList<Item*> items = SelectedItems();
+  QList<Footage*> footage;
+
+  foreach (Item* i, items) {
+    if (i->type() == Item::kFootage) {
+      footage.append(static_cast<Footage*>(i));
     }
-}
+  }
 
-void ProjectPanel::ShowNewMenu()
-{
-    Menu new_menu(this);
-
-    MenuShared::instance()->AddItemsForNewMenu(&new_menu);
-
-    new_menu.exec(QCursor::pos());
-}
-
-void ProjectPanel::UpdateSubtitle()
-{
-    if (project()) {
-        QString project_title = QStringLiteral("[*]%1").arg(project()->name());
-
-        if (explorer_->get_root_index().isValid()) {
-            QString folder_path;
-
-            Item* item = static_cast<Item*>(explorer_->get_root_index().internalPointer());
-
-            do {
-                folder_path.prepend(QStringLiteral("/%1").arg(item->name()));
-
-                item = item->parent();
-            } while (item != project()->root());
-
-            project_title.append(folder_path);
-        }
-
-        SetSubtitle(project_title);
-    } else {
-        SetSubtitle(tr("(none)"));
-    }
-}
-
-QList<Footage *> ProjectPanel::GetSelectedFootage() const
-{
-    QList<Item*> items = SelectedItems();
-    QList<Footage*> footage;
-
-    foreach (Item* i, items) {
-        if (i->type() == Item::kFootage) {
-            footage.append(static_cast<Footage*>(i));
-        }
-    }
-
-    return footage;
+  return footage;
 }
 
 OLIVE_NAMESPACE_EXIT

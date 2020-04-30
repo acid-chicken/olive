@@ -30,55 +30,53 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class AudioMonitor : public QOpenGLWidget
-{
-    Q_OBJECT
-public:
-    AudioMonitor(QWidget* parent = nullptr);
+class AudioMonitor : public QOpenGLWidget {
+  Q_OBJECT
+ public:
+  AudioMonitor(QWidget* parent = nullptr);
 
-    virtual ~AudioMonitor() override;
+  virtual ~AudioMonitor() override;
 
-public slots:
-    void SetParams(const AudioRenderingParams& params);
+ public slots:
+  void SetParams(const AudioRenderingParams& params);
 
-    void OutputDeviceSet(const QString& filename, qint64 offset, int playback_speed);
+  void OutputDeviceSet(const QString& filename, qint64 offset, int playback_speed);
 
-    void Stop();
+  void Stop();
 
-    void OutputPushed(const QByteArray& data);
+  void OutputPushed(const QByteArray& data);
 
-protected:
-    //virtual void paintEvent(QPaintEvent* event) override;
-    virtual void paintGL() override;
+ protected:
+  // virtual void paintEvent(QPaintEvent* event) override;
+  virtual void paintGL() override;
 
-    virtual void mousePressEvent(QMouseEvent* event) override;
+  virtual void mousePressEvent(QMouseEvent* event) override;
 
-private:
-    void SetUpdateLoop(bool e);
+ private:
+  void SetUpdateLoop(bool e);
 
-    void UpdateValuesFromFile(QVector<double> &v);
+  void UpdateValuesFromFile(QVector<double>& v);
 
-    void PushValue(const QVector<double>& v);
+  void PushValue(const QVector<double>& v);
 
-    void BytesToSampleSummary(const QByteArray& bytes, QVector<double>& v);
+  void BytesToSampleSummary(const QByteArray& bytes, QVector<double>& v);
 
-    QVector<double> GetAverages() const;
+  QVector<double> GetAverages() const;
 
-    AudioRenderingParams params_;
+  AudioRenderingParams params_;
 
-    QFile file_;
-    qint64 last_time_;
+  QFile file_;
+  qint64 last_time_;
 
-    int playback_speed_;
+  int playback_speed_;
 
-    QVector< QVector<double> > values_;
-    QVector<bool> peaked_;
+  QVector<QVector<double> > values_;
+  QVector<bool> peaked_;
 
-    QPixmap cached_background_;
-    int cached_channels_;
-
+  QPixmap cached_background_;
+  int cached_channels_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOMONITORWIDGET_H
+#endif  // AUDIOMONITORWIDGET_H

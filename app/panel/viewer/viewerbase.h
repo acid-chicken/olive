@@ -27,40 +27,38 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ViewerPanelBase : public TimeBasedPanel
-{
-    Q_OBJECT
-public:
-    ViewerPanelBase(const QString& object_name, QWidget* parent = nullptr);
+class ViewerPanelBase : public TimeBasedPanel {
+  Q_OBJECT
+ public:
+  ViewerPanelBase(const QString& object_name, QWidget* parent = nullptr);
 
-    virtual void PlayPause() override;
+  virtual void PlayPause() override;
 
-    virtual void PlayInToOut() override;
+  virtual void PlayInToOut() override;
 
-    virtual void ShuttleLeft() override;
+  virtual void ShuttleLeft() override;
 
-    virtual void ShuttleStop() override;
+  virtual void ShuttleStop() override;
 
-    virtual void ShuttleRight() override;
+  virtual void ShuttleRight() override;
 
-    void ConnectTimeBasedPanel(TimeBasedPanel* panel);
+  void ConnectTimeBasedPanel(TimeBasedPanel* panel);
 
-    void DisconnectTimeBasedPanel(TimeBasedPanel* panel);
+  void DisconnectTimeBasedPanel(TimeBasedPanel* panel);
 
-    VideoRenderBackend* video_renderer() const;
+  VideoRenderBackend* video_renderer() const;
 
-    void ConnectPixelSamplerPanel(PixelSamplerPanel *psp);
+  void ConnectPixelSamplerPanel(PixelSamplerPanel* psp);
 
-    /**
-     * @brief Wrapper for ViewerWidget::SetFullScreen()
-     */
-    void SetFullScreen(QScreen* screen = nullptr);
+  /**
+   * @brief Wrapper for ViewerWidget::SetFullScreen()
+   */
+  void SetFullScreen(QScreen* screen = nullptr);
 
-protected:
-    void CreateScopePanel(ScopePanel::Type type);
-
+ protected:
+  void CreateScopePanel(ScopePanel::Type type);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // VIEWERPANELBASE_H
+#endif  // VIEWERPANELBASE_H

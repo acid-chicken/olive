@@ -35,35 +35,34 @@ class NodeInput;
 class NodeOutput;
 class Item;
 
-#define XMLAttributeLoop(reader, item) \
+#define XMLAttributeLoop(reader, item)                      \
   QXmlStreamAttributes __attributes = reader->attributes(); \
   foreach (const QXmlStreamAttribute& item, __attributes)
 
-Node *XMLLoadNode(QXmlStreamReader* reader);
+Node* XMLLoadNode(QXmlStreamReader* reader);
 
 struct XMLNodeData {
-    struct SerializedConnection {
-        NodeInput* input;
-        quintptr output;
-    };
+  struct SerializedConnection {
+    NodeInput* input;
+    quintptr output;
+  };
 
-    struct FootageConnection {
-        NodeInput* input;
-        quintptr footage;
-    };
+  struct FootageConnection {
+    NodeInput* input;
+    quintptr footage;
+  };
 
-    struct BlockLink {
-        Block* block;
-        quintptr link;
-    };
+  struct BlockLink {
+    Block* block;
+    quintptr link;
+  };
 
-    QHash<quintptr, NodeOutput*> output_ptrs;
-    QList<SerializedConnection> desired_connections;
-    QHash<quintptr, StreamPtr> footage_ptrs;
-    QList<FootageConnection> footage_connections;
-    QList<BlockLink> block_links;
-    QHash<quintptr, Item*> item_ptrs;
-
+  QHash<quintptr, NodeOutput*> output_ptrs;
+  QList<SerializedConnection> desired_connections;
+  QHash<quintptr, StreamPtr> footage_ptrs;
+  QList<FootageConnection> footage_connections;
+  QList<BlockLink> block_links;
+  QHash<quintptr, Item*> item_ptrs;
 };
 
 void XMLConnectNodes(const XMLNodeData& xml_node_data, QUndoCommand* command = nullptr);
@@ -74,4 +73,4 @@ void XMLLinkBlocks(const XMLNodeData& xml_node_data);
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // XMLREADLOOP_H
+#endif  // XMLREADLOOP_H

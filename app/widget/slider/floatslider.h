@@ -25,54 +25,48 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class FloatSlider : public SliderBase
-{
-    Q_OBJECT
-public:
-    FloatSlider(QWidget* parent = nullptr);
+class FloatSlider : public SliderBase {
+  Q_OBJECT
+ public:
+  FloatSlider(QWidget* parent = nullptr);
 
-    enum DisplayType {
-        kNormal,
-        kDecibel,
-        kPercentage
-    };
+  enum DisplayType { kNormal, kDecibel, kPercentage };
 
-    double GetValue();
+  double GetValue();
 
-    void SetValue(const double& d);
+  void SetValue(const double& d);
 
-    void SetMinimum(const double& d);
+  void SetMinimum(const double& d);
 
-    void SetMaximum(const double& d);
+  void SetMaximum(const double& d);
 
-    void SetDecimalPlaces(int i);
+  void SetDecimalPlaces(int i);
 
-    void SetDisplayType(const DisplayType& type);
+  void SetDisplayType(const DisplayType& type);
 
-    void SetAutoTrimDecimalPlaces(bool e);
+  void SetAutoTrimDecimalPlaces(bool e);
 
-protected:
-    virtual QString ValueToString(const QVariant& v) override;
+ protected:
+  virtual QString ValueToString(const QVariant& v) override;
 
-    virtual QVariant StringToValue(const QString& s, bool* ok) override;
+  virtual QVariant StringToValue(const QString& s, bool* ok) override;
 
-    virtual double AdjustDragDistanceInternal(const double& start, const double& drag) override;
+  virtual double AdjustDragDistanceInternal(const double& start, const double& drag) override;
 
-signals:
-    void ValueChanged(double);
+ signals:
+  void ValueChanged(double);
 
-private slots:
-    void ConvertValue(QVariant v);
+ private slots:
+  void ConvertValue(QVariant v);
 
-private:
-    DisplayType display_type_;
+ private:
+  DisplayType display_type_;
 
-    int decimal_places_;
+  int decimal_places_;
 
-    bool autotrim_decimal_places_;
-
+  bool autotrim_decimal_places_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // FLOATSLIDER_H
+#endif  // FLOATSLIDER_H

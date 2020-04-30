@@ -30,26 +30,24 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class NodeTraverser : public CancelableObject
-{
-public:
-    NodeTraverser() = default;
+class NodeTraverser : public CancelableObject {
+ public:
+  NodeTraverser() = default;
 
-    NodeValueTable ProcessNode(const NodeDependency &dep);
+  NodeValueTable ProcessNode(const NodeDependency &dep);
 
-protected:
-    NodeValueDatabase GenerateDatabase(const Node *node, const TimeRange &range);
+ protected:
+  NodeValueDatabase GenerateDatabase(const Node *node, const TimeRange &range);
 
-    virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange& range);
+  virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange &range);
 
-    NodeValueTable ProcessInput(const NodeInput* input, const TimeRange &range);
+  NodeValueTable ProcessInput(const NodeInput *input, const TimeRange &range);
 
-    virtual void InputProcessingEvent(NodeInput*, const TimeRange&, NodeValueTable*) {}
+  virtual void InputProcessingEvent(NodeInput *, const TimeRange &, NodeValueTable *) {}
 
-    virtual void ProcessNodeEvent(const Node*, const TimeRange&, NodeValueDatabase&, NodeValueTable&) {}
-
+  virtual void ProcessNodeEvent(const Node *, const TimeRange &, NodeValueDatabase &, NodeValueTable &) {}
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODETRAVERSER_H
+#endif  // NODETRAVERSER_H

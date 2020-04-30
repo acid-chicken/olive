@@ -32,44 +32,42 @@ OLIVE_NAMESPACE_ENTER
 
 class ViewerPanel;
 
-class ScopePanel : public PanelWidget
-{
-    Q_OBJECT
-public:
-    enum Type {
-        kTypeWaveform,
-        kTypeHistogram,
+class ScopePanel : public PanelWidget {
+  Q_OBJECT
+ public:
+  enum Type {
+    kTypeWaveform,
+    kTypeHistogram,
 
-        kTypeCount
-    };
+    kTypeCount
+  };
 
-    ScopePanel(QWidget* parent = nullptr);
+  ScopePanel(QWidget* parent = nullptr);
 
-    void SetType(Type t);
+  void SetType(Type t);
 
-    static QString TypeToName(Type t);
+  static QString TypeToName(Type t);
 
-public slots:
-    void SetReferenceBuffer(Frame* frame);
+ public slots:
+  void SetReferenceBuffer(Frame* frame);
 
-    void SetColorManager(ColorManager* manager);
+  void SetColorManager(ColorManager* manager);
 
-protected:
-    virtual void Retranslate() override;
+ protected:
+  virtual void Retranslate() override;
 
-private:
-    Type type_;
+ private:
+  Type type_;
 
-    QStackedWidget* stack_;
+  QStackedWidget* stack_;
 
-    QComboBox* scope_type_combobox_;
+  QComboBox* scope_type_combobox_;
 
-    WaveformScope* waveform_view_;
+  WaveformScope* waveform_view_;
 
-    HistogramScope* histogram_;
-
+  HistogramScope* histogram_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // SCOPE_PANEL_H
+#endif  // SCOPE_PANEL_H

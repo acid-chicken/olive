@@ -29,46 +29,44 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ColorSwatchWidget : public QWidget
-{
-    Q_OBJECT
-public:
-    ColorSwatchWidget(QWidget* parent = nullptr);
+class ColorSwatchWidget : public QWidget {
+  Q_OBJECT
+ public:
+  ColorSwatchWidget(QWidget* parent = nullptr);
 
-    const Color& GetSelectedColor() const;
+  const Color& GetSelectedColor() const;
 
-    void SetColorProcessor(ColorProcessorPtr to_linear, ColorProcessorPtr to_display);
+  void SetColorProcessor(ColorProcessorPtr to_linear, ColorProcessorPtr to_display);
 
-public slots:
-    void SetSelectedColor(const Color& c);
+ public slots:
+  void SetSelectedColor(const Color& c);
 
-signals:
-    void SelectedColorChanged(const Color& c);
+ signals:
+  void SelectedColorChanged(const Color& c);
 
-protected:
-    virtual void mousePressEvent(QMouseEvent* e) override;
+ protected:
+  virtual void mousePressEvent(QMouseEvent* e) override;
 
-    virtual void mouseMoveEvent(QMouseEvent* e) override;
+  virtual void mouseMoveEvent(QMouseEvent* e) override;
 
-    virtual Color GetColorFromScreenPos(const QPoint& p) const = 0;
+  virtual Color GetColorFromScreenPos(const QPoint& p) const = 0;
 
-    virtual void SelectedColorChangedEvent(const Color& c, bool external);
+  virtual void SelectedColorChangedEvent(const Color& c, bool external);
 
-    Qt::GlobalColor GetUISelectorColor() const;
+  Qt::GlobalColor GetUISelectorColor() const;
 
-    Color GetManagedColor(const Color& input) const;
+  Color GetManagedColor(const Color& input) const;
 
-private:
-    void SetSelectedColorInternal(const Color& c, bool external);
+ private:
+  void SetSelectedColorInternal(const Color& c, bool external);
 
-    Color selected_color_;
+  Color selected_color_;
 
-    ColorProcessorPtr to_linear_processor_;
+  ColorProcessorPtr to_linear_processor_;
 
-    ColorProcessorPtr to_display_processor_;
-
+  ColorProcessorPtr to_display_processor_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLORSWATCHWIDGET_H
+#endif  // COLORSWATCHWIDGET_H

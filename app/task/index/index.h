@@ -26,19 +26,17 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class IndexTask : public Task
-{
-public:
-    IndexTask(StreamPtr stream);
+class IndexTask : public Task {
+ public:
+  IndexTask(StreamPtr stream);
 
-protected:
-    virtual void Action() override;
+ protected:
+  virtual void Action() override;
 
-private:
-    StreamPtr stream_;
-
+ private:
+  StreamPtr stream_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // INDEXTASK_H
+#endif  // INDEXTASK_H

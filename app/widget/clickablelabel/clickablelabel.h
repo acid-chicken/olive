@@ -27,23 +27,21 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ClickableLabel : public QLabel
-{
-    Q_OBJECT
-public:
-    ClickableLabel(const QString& text, QWidget* parent = nullptr);
-    ClickableLabel(QWidget* parent = nullptr);
+class ClickableLabel : public QLabel {
+  Q_OBJECT
+ public:
+  ClickableLabel(const QString& text, QWidget* parent = nullptr);
+  ClickableLabel(QWidget* parent = nullptr);
 
-protected:
-    virtual void mouseReleaseEvent(QMouseEvent* event) override;
-    virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
+ protected:
+  virtual void mouseReleaseEvent(QMouseEvent* event) override;
+  virtual void mouseDoubleClickEvent(QMouseEvent* event) override;
 
-signals:
-    void MouseClicked();
-    void MouseDoubleClicked();
-
+ signals:
+  void MouseClicked();
+  void MouseDoubleClicked();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CLICKABLELABEL_H
+#endif  // CLICKABLELABEL_H

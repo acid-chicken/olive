@@ -27,59 +27,49 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TimelineWidget::SlipTool::SlipTool(TimelineWidget *parent) :
-    PointerTool(parent)
-{
-    SetTrimmingAllowed(false);
-    SetTrackMovementAllowed(false);
+TimelineWidget::SlipTool::SlipTool(TimelineWidget* parent) : PointerTool(parent) {
+  SetTrimmingAllowed(false);
+  SetTrackMovementAllowed(false);
 }
 
-void TimelineWidget::SlipTool::ProcessDrag(const TimelineCoordinate &mouse_pos)
-{
-    // Determine frame movement
-    rational time_movement = drag_start_.GetFrame() - mouse_pos.GetFrame();
+void TimelineWidget::SlipTool::ProcessDrag(const TimelineCoordinate& mouse_pos) {
+  // Determine frame movement
+  rational time_movement = drag_start_.GetFrame() - mouse_pos.GetFrame();
 
-    // Validate slip (enforce all ghosts moving in legal ways)
-    foreach (TimelineViewGhostItem* ghost, parent()->ghost_items_) {
-        if (ghost->MediaIn() + time_movement < 0) {
-            time_movement = -ghost->MediaIn();
-        }
+  // Validate slip (enforce all ghosts moving in legal ways)
+  foreach (TimelineViewGhostItem* ghost, parent()->ghost_items_) {
+    if (ghost->MediaIn() + time_movement < 0) {
+      time_movement = -ghost->MediaIn();
     }
+  }
 
-    // Perform slip
-    foreach (TimelineViewGhostItem* ghost, parent()->ghost_items_) {
-        ghost->SetMediaInAdjustment(time_movement);
-    }
+  // Perform slip
+  foreach (TimelineViewGhostItem* ghost, parent()->ghost_items_) { ghost->SetMediaInAdjustment(time_movement); }
 
-    // Show tooltip
-    // Generate tooltip (showing earliest in point of imported clip)
-    int64_t earliest_timestamp = Timecode::time_to_timestamp(time_movement, parent()->GetToolTipTimebase());
-    QString tooltip_text = Timecode::timestamp_to_timecode(earliest_timestamp,
-                           parent()->GetToolTipTimebase(),
-                           Core::instance()->GetTimecodeDisplay(),
-                           true);
-    // Force tooltip to update (otherwise the tooltip won't move as written in the documentation, and could get in the way
-    // of the cursor)
-    QToolTip::hideText();
-    QToolTip::showText(QCursor::pos(),
-                       tooltip_text,
-                       parent());
+  // Show tooltip
+  // Generate tooltip (showing earliest in point of imported clip)
+  int64_t earliest_timestamp = Timecode::time_to_timestamp(time_movement, parent()->GetToolTipTimebase());
+  QString tooltip_text = Timecode::timestamp_to_timecode(earliest_timestamp, parent()->GetToolTipTimebase(),
+                                                         Core::instance()->GetTimecodeDisplay(), true);
+  // Force tooltip to update (otherwise the tooltip won't move as written in the documentation, and could get in the way
+  // of the cursor)
+  QToolTip::hideText();
+  QToolTip::showText(QCursor::pos(), tooltip_text, parent());
 }
 
-void TimelineWidget::SlipTool::MouseReleaseInternal(TimelineViewMouseEvent *event)
-{
-    Q_UNUSED(event)
+void TimelineWidget::SlipTool::MouseReleaseInternal(TimelineViewMouseEvent* event) {
+  Q_UNUSED(event)
 
-    QUndoCommand* command = new QUndoCommand();
+  QUndoCommand* command = new QUndoCommand();
 
-    // Find earliest point to ripple around
-    foreach (TimelineViewGhostItem* ghost, parent()->ghost_items_) {
-        Block* b = Node::ValueToPtr<Block>(ghost->data(TimelineViewGhostItem::kAttachedBlock));
+  // Find earliest point to ripple around
+  foreach (TimelineViewGhostItem* ghost, parent()->ghost_items_) {
+    Block* b = Node::ValueToPtr<Block>(ghost->data(TimelineViewGhostItem::kAttachedBlock));
 
-        new BlockSetMediaInCommand(b, ghost->GetAdjustedMediaIn(), command);
-    }
+    new BlockSetMediaInCommand(b, ghost->GetAdjustedMediaIn(), command);
+  }
 
-    Core::instance()->undo_stack()->pushIfHasChildren(command);
+  Core::instance()->undo_stack()->pushIfHasChildren(command);
 }
 
 OLIVE_NAMESPACE_EXIT

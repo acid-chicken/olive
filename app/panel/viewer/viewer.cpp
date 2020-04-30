@@ -22,23 +22,20 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ViewerPanel::ViewerPanel(const QString &object_name, QWidget *parent) :
-    ViewerPanelBase(object_name, parent)
-{
-    // Set ViewerWidget as the central widget
-    ViewerWidget* vw = new ViewerWidget();
-    connect(vw, &ViewerWidget::RequestScopePanel, this, &ViewerPanel::CreateScopePanel);
-    SetTimeBasedWidget(vw);
+ViewerPanel::ViewerPanel(const QString &object_name, QWidget *parent) : ViewerPanelBase(object_name, parent) {
+  // Set ViewerWidget as the central widget
+  ViewerWidget *vw = new ViewerWidget();
+  connect(vw, &ViewerWidget::RequestScopePanel, this, &ViewerPanel::CreateScopePanel);
+  SetTimeBasedWidget(vw);
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-void ViewerPanel::Retranslate()
-{
-    ViewerPanelBase::Retranslate();
+void ViewerPanel::Retranslate() {
+  ViewerPanelBase::Retranslate();
 
-    SetTitle(tr("Viewer"));
+  SetTitle(tr("Viewer"));
 }
 
 OLIVE_NAMESPACE_EXIT

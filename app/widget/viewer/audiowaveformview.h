@@ -30,36 +30,35 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class AudioWaveformView : public SeekableWidget
-{
-    Q_OBJECT
-public:
-    AudioWaveformView(QWidget* parent = nullptr);
+class AudioWaveformView : public SeekableWidget {
+  Q_OBJECT
+ public:
+  AudioWaveformView(QWidget* parent = nullptr);
 
-    //void SetData(const QString& file, const AudioRenderingParams& params);
+  // void SetData(const QString& file, const AudioRenderingParams& params);
 
-    void SetBackend(AudioRenderBackend* backend);
+  void SetBackend(AudioRenderBackend* backend);
 
-    static void DrawWaveform(QPainter* painter, const QRect &rect, const double &scale, const SampleSummer::Sum *samples, int nb_samples, int channels);
+  static void DrawWaveform(QPainter* painter, const QRect& rect, const double& scale, const SampleSummer::Sum* samples,
+                           int nb_samples, int channels);
 
-protected:
-    virtual void paintEvent(QPaintEvent* event) override;
+ protected:
+  virtual void paintEvent(QPaintEvent* event) override;
 
-private:
-    AudioRenderBackend* backend_;
+ private:
+  AudioRenderBackend* backend_;
 
-    QPixmap cached_waveform_;
-    QSize cached_size_;
-    double cached_scale_;
-    int cached_scroll_;
+  QPixmap cached_waveform_;
+  QSize cached_size_;
+  double cached_scale_;
+  int cached_scroll_;
 
-private slots:
-    void BackendParamsChanged();
+ private slots:
+  void BackendParamsChanged();
 
-    void ForceUpdate();
-
+  void ForceUpdate();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOWAVEFORMVIEW_H
+#endif  // AUDIOWAVEFORMVIEW_H

@@ -24,86 +24,62 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ViewerPanelBase::ViewerPanelBase(const QString& object_name, QWidget *parent) :
-    TimeBasedPanel(object_name, parent)
-{
+ViewerPanelBase::ViewerPanelBase(const QString &object_name, QWidget *parent) : TimeBasedPanel(object_name, parent) {}
+
+void ViewerPanelBase::PlayPause() { static_cast<ViewerWidget *>(GetTimeBasedWidget())->TogglePlayPause(); }
+
+void ViewerPanelBase::PlayInToOut() { static_cast<ViewerWidget *>(GetTimeBasedWidget())->Play(true); }
+
+void ViewerPanelBase::ShuttleLeft() { static_cast<ViewerWidget *>(GetTimeBasedWidget())->ShuttleLeft(); }
+
+void ViewerPanelBase::ShuttleStop() { static_cast<ViewerWidget *>(GetTimeBasedWidget())->ShuttleStop(); }
+
+void ViewerPanelBase::ShuttleRight() { static_cast<ViewerWidget *>(GetTimeBasedWidget())->ShuttleRight(); }
+
+void ViewerPanelBase::ConnectTimeBasedPanel(TimeBasedPanel *panel) {
+  connect(panel, &TimeBasedPanel::PlayPauseRequested, this, &ViewerPanelBase::PlayPause);
+  connect(panel, &TimeBasedPanel::PlayInToOutRequested, this, &ViewerPanelBase::PlayInToOut);
+  connect(panel, &TimeBasedPanel::ShuttleLeftRequested, this, &ViewerPanelBase::ShuttleLeft);
+  connect(panel, &TimeBasedPanel::ShuttleStopRequested, this, &ViewerPanelBase::ShuttleStop);
+  connect(panel, &TimeBasedPanel::ShuttleRightRequested, this, &ViewerPanelBase::ShuttleRight);
 }
 
-void ViewerPanelBase::PlayPause()
-{
-    static_cast<ViewerWidget*>(GetTimeBasedWidget())->TogglePlayPause();
+void ViewerPanelBase::DisconnectTimeBasedPanel(TimeBasedPanel *panel) {
+  disconnect(panel, &TimeBasedPanel::PlayPauseRequested, this, &ViewerPanelBase::PlayPause);
+  disconnect(panel, &TimeBasedPanel::PlayInToOutRequested, this, &ViewerPanelBase::PlayInToOut);
+  disconnect(panel, &TimeBasedPanel::ShuttleLeftRequested, this, &ViewerPanelBase::ShuttleLeft);
+  disconnect(panel, &TimeBasedPanel::ShuttleStopRequested, this, &ViewerPanelBase::ShuttleStop);
+  disconnect(panel, &TimeBasedPanel::ShuttleRightRequested, this, &ViewerPanelBase::ShuttleRight);
 }
 
-void ViewerPanelBase::PlayInToOut()
-{
-    static_cast<ViewerWidget*>(GetTimeBasedWidget())->Play(true);
+VideoRenderBackend *ViewerPanelBase::video_renderer() const {
+  return static_cast<ViewerWidget *>(GetTimeBasedWidget())->video_renderer();
 }
 
-void ViewerPanelBase::ShuttleLeft()
-{
-    static_cast<ViewerWidget*>(GetTimeBasedWidget())->ShuttleLeft();
+void ViewerPanelBase::ConnectPixelSamplerPanel(PixelSamplerPanel *psp) {
+  ViewerWidget *vw = static_cast<ViewerWidget *>(GetTimeBasedWidget());
+
+  connect(psp, &PixelSamplerPanel::visibilityChanged, vw, &ViewerWidget::SetSignalCursorColorEnabled);
+  connect(vw, &ViewerWidget::CursorColor, psp, &PixelSamplerPanel::SetValues);
 }
 
-void ViewerPanelBase::ShuttleStop()
-{
-    static_cast<ViewerWidget*>(GetTimeBasedWidget())->ShuttleStop();
+void ViewerPanelBase::SetFullScreen(QScreen *screen) {
+  static_cast<ViewerWidget *>(GetTimeBasedWidget())->SetFullScreen(screen);
 }
 
-void ViewerPanelBase::ShuttleRight()
-{
-    static_cast<ViewerWidget*>(GetTimeBasedWidget())->ShuttleRight();
-}
+void ViewerPanelBase::CreateScopePanel(ScopePanel::Type type) {
+  ViewerWidget *vw = static_cast<ViewerWidget *>(GetTimeBasedWidget());
+  ScopePanel *p = Core::instance()->main_window()->AppendScopePanel();
 
-void ViewerPanelBase::ConnectTimeBasedPanel(TimeBasedPanel *panel)
-{
-    connect(panel, &TimeBasedPanel::PlayPauseRequested, this, &ViewerPanelBase::PlayPause);
-    connect(panel, &TimeBasedPanel::PlayInToOutRequested, this, &ViewerPanelBase::PlayInToOut);
-    connect(panel, &TimeBasedPanel::ShuttleLeftRequested, this, &ViewerPanelBase::ShuttleLeft);
-    connect(panel, &TimeBasedPanel::ShuttleStopRequested, this, &ViewerPanelBase::ShuttleStop);
-    connect(panel, &TimeBasedPanel::ShuttleRightRequested, this, &ViewerPanelBase::ShuttleRight);
-}
+  p->SetType(type);
 
-void ViewerPanelBase::DisconnectTimeBasedPanel(TimeBasedPanel *panel)
-{
-    disconnect(panel, &TimeBasedPanel::PlayPauseRequested, this, &ViewerPanelBase::PlayPause);
-    disconnect(panel, &TimeBasedPanel::PlayInToOutRequested, this, &ViewerPanelBase::PlayInToOut);
-    disconnect(panel, &TimeBasedPanel::ShuttleLeftRequested, this, &ViewerPanelBase::ShuttleLeft);
-    disconnect(panel, &TimeBasedPanel::ShuttleStopRequested, this, &ViewerPanelBase::ShuttleStop);
-    disconnect(panel, &TimeBasedPanel::ShuttleRightRequested, this, &ViewerPanelBase::ShuttleRight);
-}
+  // Connect viewer widget texture drawing to scope panel
+  connect(vw, &ViewerWidget::LoadedBuffer, p, &ScopePanel::SetReferenceBuffer);
+  connect(vw, &ViewerWidget::ColorManagerChanged, p, &ScopePanel::SetColorManager);
 
-VideoRenderBackend *ViewerPanelBase::video_renderer() const
-{
-    return static_cast<ViewerWidget*>(GetTimeBasedWidget())->video_renderer();
-}
+  p->SetColorManager(vw->color_manager());
 
-void ViewerPanelBase::ConnectPixelSamplerPanel(PixelSamplerPanel *psp)
-{
-    ViewerWidget* vw = static_cast<ViewerWidget*>(GetTimeBasedWidget());
-
-    connect(psp, &PixelSamplerPanel::visibilityChanged, vw, &ViewerWidget::SetSignalCursorColorEnabled);
-    connect(vw, &ViewerWidget::CursorColor, psp, &PixelSamplerPanel::SetValues);
-}
-
-void ViewerPanelBase::SetFullScreen(QScreen *screen)
-{
-    static_cast<ViewerWidget*>(GetTimeBasedWidget())->SetFullScreen(screen);
-}
-
-void ViewerPanelBase::CreateScopePanel(ScopePanel::Type type)
-{
-    ViewerWidget* vw = static_cast<ViewerWidget*>(GetTimeBasedWidget());
-    ScopePanel* p = Core::instance()->main_window()->AppendScopePanel();
-
-    p->SetType(type);
-
-    // Connect viewer widget texture drawing to scope panel
-    connect(vw, &ViewerWidget::LoadedBuffer, p, &ScopePanel::SetReferenceBuffer);
-    connect(vw, &ViewerWidget::ColorManagerChanged, p, &ScopePanel::SetColorManager);
-
-    p->SetColorManager(vw->color_manager());
-
-    vw->ForceUpdate();
+  vw->ForceUpdate();
 }
 
 OLIVE_NAMESPACE_EXIT

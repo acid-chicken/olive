@@ -36,22 +36,22 @@ OLIVE_NAMESPACE_ENTER
  * Can be considered a QUndoCommand wrapper for NodeParam::ConnectEdge()/
  */
 class NodeEdgeAddCommand : public UndoCommand {
-public:
-    NodeEdgeAddCommand(NodeOutput* output, NodeInput* input, QUndoCommand* parent = nullptr);
+ public:
+  NodeEdgeAddCommand(NodeOutput* output, NodeInput* input, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    NodeOutput* output_;
-    NodeInput* input_;
+ private:
+  NodeOutput* output_;
+  NodeInput* input_;
 
-    NodeEdgePtr old_edge_;
+  NodeEdgePtr old_edge_;
 
-    bool done_;
+  bool done_;
 };
 
 /**
@@ -60,95 +60,85 @@ private:
  * Can be considered a QUndoCommand wrapper for NodeParam::DisonnectEdge()/
  */
 class NodeEdgeRemoveCommand : public UndoCommand {
-public:
-    NodeEdgeRemoveCommand(NodeOutput* output, NodeInput* input, QUndoCommand* parent = nullptr);
-    NodeEdgeRemoveCommand(NodeEdgePtr edge, QUndoCommand* parent = nullptr);
+ public:
+  NodeEdgeRemoveCommand(NodeOutput* output, NodeInput* input, QUndoCommand* parent = nullptr);
+  NodeEdgeRemoveCommand(NodeEdgePtr edge, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    NodeOutput* output_;
-    NodeInput* input_;
+ private:
+  NodeOutput* output_;
+  NodeInput* input_;
 
-    bool done_;
+  bool done_;
 };
 
 class NodeAddCommand : public UndoCommand {
-public:
-    NodeAddCommand(NodeGraph* graph, Node* node, QUndoCommand* parent = nullptr);
+ public:
+  NodeAddCommand(NodeGraph* graph, Node* node, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    QObject memory_manager_;
+ private:
+  QObject memory_manager_;
 
-    NodeGraph* graph_;
-    Node* node_;
+  NodeGraph* graph_;
+  Node* node_;
 };
 
 class NodeRemoveCommand : public UndoCommand {
-public:
-    NodeRemoveCommand(NodeGraph* graph,
-                      const QList<Node*>& nodes,
-                      QUndoCommand* parent = nullptr);
+ public:
+  NodeRemoveCommand(NodeGraph* graph, const QList<Node*>& nodes, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    QObject memory_manager_;
+ private:
+  QObject memory_manager_;
 
-    NodeGraph* graph_;
-    QList<Node*> nodes_;
-    QList<NodeEdgePtr> edges_;
+  NodeGraph* graph_;
+  QList<Node*> nodes_;
+  QList<NodeEdgePtr> edges_;
 };
 
 class NodeRemoveWithExclusiveDeps : public UndoCommand {
-public:
-    NodeRemoveWithExclusiveDeps(NodeGraph* graph,
-                                Node* node,
-                                QUndoCommand* parent = nullptr);
+ public:
+  NodeRemoveWithExclusiveDeps(NodeGraph* graph, Node* node, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-private:
-    NodeRemoveCommand* remove_command_;
+ private:
+  NodeRemoveCommand* remove_command_;
 };
 
 class NodeCopyInputsCommand : public QUndoCommand {
-public:
-    NodeCopyInputsCommand(Node* src,
-                          Node* dest,
-                          bool include_connections = true,
-                          QUndoCommand* parent = nullptr);
+ public:
+  NodeCopyInputsCommand(Node* src, Node* dest, bool include_connections = true, QUndoCommand* parent = nullptr);
 
-    NodeCopyInputsCommand(Node* src,
-                          Node* dest,
-                          QUndoCommand* parent = nullptr);
+  NodeCopyInputsCommand(Node* src, Node* dest, QUndoCommand* parent = nullptr);
 
-protected:
-    virtual void redo() override;
+ protected:
+  virtual void redo() override;
 
-private:
-    Node* src_;
+ private:
+  Node* src_;
 
-    Node* dest_;
+  Node* dest_;
 
-    bool include_connections_;
-
+  bool include_connections_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEVIEWUNDO_H
+#endif  // NODEVIEWUNDO_H

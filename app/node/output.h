@@ -29,29 +29,27 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief A node parameter designed to serve data to the input of another node
  */
-class NodeOutput : public NodeParam
-{
-public:
-    /**
-     * @brief NodeOutput Constructor
-     */
-    NodeOutput(const QString& id);
+class NodeOutput : public NodeParam {
+ public:
+  /**
+   * @brief NodeOutput Constructor
+   */
+  NodeOutput(const QString& id);
 
-    /**
-     * @brief Returns kOutput
-     */
-    virtual Type type() override;
+  /**
+   * @brief Returns kOutput
+   */
+  virtual Type type() override;
 
-    virtual QString name() override;
+  virtual QString name() override;
 
-    virtual void Load(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt* cancelled) override;
+  virtual void Load(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt* cancelled) override;
 
-    virtual void Save(QXmlStreamWriter* writer) const override;
+  virtual void Save(QXmlStreamWriter* writer) const override;
 
-private:
-
+ private:
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEOUTPUT_H
+#endif  // NODEOUTPUT_H

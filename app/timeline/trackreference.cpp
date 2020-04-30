@@ -22,31 +22,14 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TrackReference::TrackReference() :
-    type_(Timeline::kTrackTypeNone),
-    index_(0)
-{
-}
+TrackReference::TrackReference() : type_(Timeline::kTrackTypeNone), index_(0) {}
 
-TrackReference::TrackReference(const Timeline::TrackType &type, const int &index) :
-    type_(type),
-    index_(index)
-{
-}
+TrackReference::TrackReference(const Timeline::TrackType &type, const int &index) : type_(type), index_(index) {}
 
-const Timeline::TrackType &TrackReference::type() const
-{
-    return type_;
-}
+const Timeline::TrackType &TrackReference::type() const { return type_; }
 
-const int &TrackReference::index() const
-{
-    return index_;
-}
+const int &TrackReference::index() const { return index_; }
 
-bool TrackReference::operator==(const TrackReference &ref) const
-{
-    return type_ == ref.type_ && index_ == ref.index_;
-}
+bool TrackReference::operator==(const TrackReference &ref) const { return type_ == ref.type_ && index_ == ref.index_; }
 
 OLIVE_NAMESPACE_EXIT

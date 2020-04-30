@@ -27,21 +27,19 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ConformTask : public Task
-{
-public:
-    ConformTask(AudioStreamPtr stream, const AudioRenderingParams& params);
+class ConformTask : public Task {
+ public:
+  ConformTask(AudioStreamPtr stream, const AudioRenderingParams& params);
 
-protected:
-    virtual void Action() override;
+ protected:
+  virtual void Action() override;
 
-private:
-    AudioStreamPtr stream_;
+ private:
+  AudioStreamPtr stream_;
 
-    AudioRenderingParams params_;
-
+  AudioRenderingParams params_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CONFORMTASK_H
+#endif  // CONFORMTASK_H

@@ -25,48 +25,46 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class TransitionBlock : public Block
-{
-public:
-    TransitionBlock();
+class TransitionBlock : public Block {
+ public:
+  TransitionBlock();
 
-    virtual Type type() const override;
+  virtual Type type() const override;
 
-    NodeInput* out_block_input() const;
-    NodeInput* in_block_input() const;
+  NodeInput* out_block_input() const;
+  NodeInput* in_block_input() const;
 
-    virtual void Retranslate() override;
+  virtual void Retranslate() override;
 
-    rational in_offset() const;
-    rational out_offset() const;
+  rational in_offset() const;
+  rational out_offset() const;
 
-    Block* connected_out_block() const;
-    Block* connected_in_block() const;
+  Block* connected_out_block() const;
+  Block* connected_in_block() const;
 
-    double GetTotalProgress(const rational& time) const;
-    double GetOutProgress(const rational& time) const;
-    double GetInProgress(const rational& time) const;
+  double GetTotalProgress(const rational& time) const;
+  double GetOutProgress(const rational& time) const;
+  double GetInProgress(const rational& time) const;
 
-    virtual void Hash(QCryptographicHash& hash, const rational &time) const override;
+  virtual void Hash(QCryptographicHash& hash, const rational& time) const override;
 
-private:
-    double GetInternalTransitionTime(const rational& time) const;
+ private:
+  double GetInternalTransitionTime(const rational& time) const;
 
-    NodeInput* out_block_input_;
+  NodeInput* out_block_input_;
 
-    NodeInput* in_block_input_;
+  NodeInput* in_block_input_;
 
-    Block* connected_out_block_;
+  Block* connected_out_block_;
 
-    Block* connected_in_block_;
+  Block* connected_in_block_;
 
-private slots:
-    void BlockConnected(NodeEdgePtr edge);
+ private slots:
+  void BlockConnected(NodeEdgePtr edge);
 
-    void BlockDisconnected(NodeEdgePtr edge);
-
+  void BlockDisconnected(NodeEdgePtr edge);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TRANSITIONBLOCK_H
+#endif  // TRANSITIONBLOCK_H

@@ -22,44 +22,29 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TimelineViewRect::TimelineViewRect(QGraphicsItem* parent) :
-    QGraphicsRectItem(parent),
-    y_(0),
-    height_(0)
-{
+TimelineViewRect::TimelineViewRect(QGraphicsItem *parent) : QGraphicsRectItem(parent), y_(0), height_(0) {}
 
+void TimelineViewRect::SetYCoords(int y, int height) {
+  y_ = y;
+  height_ = height;
+
+  UpdateRect();
 }
 
-void TimelineViewRect::SetYCoords(int y, int height)
-{
-    y_ = y;
-    height_ = height;
+const TrackReference &TimelineViewRect::Track() { return track_; }
 
-    UpdateRect();
+void TimelineViewRect::SetTrack(const TrackReference &track) { track_ = track; }
+
+void TimelineViewRect::ScaleChangedEvent(const double &scale) {
+  TimelineScaledObject::ScaleChangedEvent(scale);
+
+  UpdateRect();
 }
 
-const TrackReference &TimelineViewRect::Track()
-{
-    return track_;
-}
+void TimelineViewRect::TimebaseChangedEvent(const rational &tb) {
+  TimelineScaledObject::TimebaseChangedEvent(tb);
 
-void TimelineViewRect::SetTrack(const TrackReference &track)
-{
-    track_ = track;
-}
-
-void TimelineViewRect::ScaleChangedEvent(const double &scale)
-{
-    TimelineScaledObject::ScaleChangedEvent(scale);
-
-    UpdateRect();
-}
-
-void TimelineViewRect::TimebaseChangedEvent(const rational &tb)
-{
-    TimelineScaledObject::TimebaseChangedEvent(tb);
-
-    UpdateRect();
+  UpdateRect();
 }
 
 OLIVE_NAMESPACE_EXIT

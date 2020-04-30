@@ -29,4 +29,4 @@ void crash_handler(int sig);
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CRASHHANDLER_H
+#endif  // CRASHHANDLER_H

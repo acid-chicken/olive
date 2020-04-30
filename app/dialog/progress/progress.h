@@ -28,23 +28,21 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ProgressDialog : public QDialog
-{
-    Q_OBJECT
-public:
-    ProgressDialog(const QString &message, const QString &title, QWidget* parent = nullptr);
+class ProgressDialog : public QDialog {
+  Q_OBJECT
+ public:
+  ProgressDialog(const QString& message, const QString& title, QWidget* parent = nullptr);
 
-public slots:
-    void SetProgress(int value);
+ public slots:
+  void SetProgress(int value);
 
-signals:
-    void Cancelled();
+ signals:
+  void Cancelled();
 
-private:
-    QProgressBar* bar_;
-
+ private:
+  QProgressBar* bar_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROGRESSDIALOG_H
+#endif  // PROGRESSDIALOG_H

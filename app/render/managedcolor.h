@@ -26,27 +26,25 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ManagedColor : public Color
-{
-public:
-    ManagedColor();
-    ManagedColor(const float& r, const float& g, const float& b, const float& a = 1.0f);
-    ManagedColor(const char *data, const PixelFormat::Format &format);
-    ManagedColor(const Color& c);
+class ManagedColor : public Color {
+ public:
+  ManagedColor();
+  ManagedColor(const float& r, const float& g, const float& b, const float& a = 1.0f);
+  ManagedColor(const char* data, const PixelFormat::Format& format);
+  ManagedColor(const Color& c);
 
-    const QString& color_input() const;
-    void set_color_input(const QString &color_input);
+  const QString& color_input() const;
+  void set_color_input(const QString& color_input);
 
-    const ColorTransform& color_output() const;
-    void set_color_output(const ColorTransform &color_output);
+  const ColorTransform& color_output() const;
+  void set_color_output(const ColorTransform& color_output);
 
-private:
-    QString color_input_;
+ private:
+  QString color_input_;
 
-    ColorTransform color_transform_;
-
+  ColorTransform color_transform_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // MANAGEDCOLOR_H
+#endif  // MANAGEDCOLOR_H

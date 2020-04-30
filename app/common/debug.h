@@ -31,4 +31,4 @@ void DebugHandler(QtMsgType type, const QMessageLogContext &context, const QStri
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // DEBUG_H
+#endif  // DEBUG_H

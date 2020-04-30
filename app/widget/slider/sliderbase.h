@@ -27,101 +27,96 @@
 #include "widget/focusablelineedit/focusablelineedit.h"
 
 OLIVE_NAMESPACE_ENTER
-class SliderBase : public QStackedWidget
-{
-    Q_OBJECT
-public:
-    enum Mode {
-        kString,
-        kInteger,
-        kFloat
-    };
+class SliderBase : public QStackedWidget {
+  Q_OBJECT
+ public:
+  enum Mode { kString, kInteger, kFloat };
 
-    SliderBase(Mode mode, QWidget* parent = nullptr);
+  SliderBase(Mode mode, QWidget* parent = nullptr);
 
-    void SetDragMultiplier(const double& d);
+  void SetDragMultiplier(const double& d);
 
-    void SetRequireValidInput(bool e);
+  void SetRequireValidInput(bool e);
 
-    void SetAlignment(Qt::Alignment alignment);
+  void SetAlignment(Qt::Alignment alignment);
 
-    bool IsTristate() const;
-    void SetTristate();
+  bool IsTristate() const;
+  void SetTristate();
 
-    bool IsDragging() const;
+  bool IsDragging() const;
 
-    void SetFormat(const QString& s);
-    void ClearFormat();
+  void SetFormat(const QString& s);
+  void ClearFormat();
 
-signals:
-    void ValueChanged(QVariant v);
+ signals:
+  void ValueChanged(QVariant v);
 
-protected:
-    const QVariant& Value();
+ protected:
+  const QVariant& Value();
 
-    void SetValue(const QVariant& v);
+  void SetValue(const QVariant& v);
 
-    void SetMinimumInternal(const QVariant& v);
+  void SetMinimumInternal(const QVariant& v);
 
-    void SetMaximumInternal(const QVariant& v);
+  void SetMaximumInternal(const QVariant& v);
 
-    void UpdateLabel(const QVariant& v);
+  void UpdateLabel(const QVariant& v);
 
-    virtual double AdjustDragDistanceInternal(const double& start, const double& drag);
+  virtual double AdjustDragDistanceInternal(const double& start, const double& drag);
 
-    virtual QString ValueToString(const QVariant &v);
+  virtual QString ValueToString(const QVariant& v);
 
-    virtual QVariant StringToValue(const QString& s, bool* ok);
+  virtual QVariant StringToValue(const QString& s, bool* ok);
 
-    virtual void changeEvent(QEvent* e) override;
+  virtual void changeEvent(QEvent* e) override;
 
-    void ForceLabelUpdate();
+  void ForceLabelUpdate();
 
-    double drag_multiplier_;
+  double drag_multiplier_;
 
-private:
-    const QVariant& ClampValue(const QVariant& v);
+ private:
+  const QVariant& ClampValue(const QVariant& v);
 
-    QString GetFormat() const;
+  QString GetFormat() const;
 
-    SliderLabel* label_;
+  SliderLabel* label_;
 
-    FocusableLineEdit* editor_;
+  FocusableLineEdit* editor_;
 
-    QVariant value_;
+  QVariant value_;
 
-    bool has_min_;
-    QVariant min_value_;
+  bool has_min_;
+  QVariant min_value_;
 
-    bool has_max_;
-    QVariant max_value_;
+  bool has_max_;
+  QVariant max_value_;
 
-    Mode mode_;
+  Mode mode_;
 
-    bool dragged_;
+  bool dragged_;
 
-    double dragged_diff_;
+  double dragged_diff_;
 
-    QVariant temp_dragged_value_;
+  QVariant temp_dragged_value_;
 
-    bool require_valid_input_;
+  bool require_valid_input_;
 
-    bool tristate_;
+  bool tristate_;
 
-    QString custom_format_;
+  QString custom_format_;
 
-private slots:
-    void LabelPressed();
+ private slots:
+  void LabelPressed();
 
-    void LabelClicked();
+  void LabelClicked();
 
-    void LabelDragged(int i);
+  void LabelDragged(int i);
 
-    void LineEditConfirmed();
+  void LineEditConfirmed();
 
-    void LineEditCancelled();
+  void LineEditCancelled();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // SLIDERBASE_H
+#endif  // SLIDERBASE_H

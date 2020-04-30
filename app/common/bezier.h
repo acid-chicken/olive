@@ -25,18 +25,17 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class Bezier
-{
-public:
-    static double QuadraticXtoT(double x, double a, double b, double c);
+class Bezier {
+ public:
+  static double QuadraticXtoT(double x, double a, double b, double c);
 
-    static double QuadraticTtoY(double a, double b, double c, double t);
+  static double QuadraticTtoY(double a, double b, double c, double t);
 
-    static double CubicXtoT(double x_target, double a, double b, double c, double d);
+  static double CubicXtoT(double x_target, double a, double b, double c, double d);
 
-    static double CubicTtoY(double a, double b, double c, double d, double t);
+  static double CubicTtoY(double a, double b, double c, double d, double t);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // BEZIER_H
+#endif  // BEZIER_H

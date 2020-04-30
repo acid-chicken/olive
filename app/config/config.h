@@ -30,29 +30,29 @@
 OLIVE_NAMESPACE_ENTER
 
 class Config {
-public:
-    static Config& Current();
+ public:
+  static Config& Current();
 
-    void SetDefaults();
+  void SetDefaults();
 
-    static void Load();
+  static void Load();
 
-    static void Save();
+  static void Save();
 
-    QVariant operator[](const QString&) const;
+  QVariant operator[](const QString&) const;
 
-    QVariant& operator[](const QString&);
+  QVariant& operator[](const QString&);
 
-private:
-    Config();
+ private:
+  Config();
 
-    QMap<QString, QVariant> config_map_;
+  QMap<QString, QVariant> config_map_;
 
-    static Config current_config_;
+  static Config current_config_;
 
-    static QString GetConfigFilePath();
+  static QString GetConfigFilePath();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CONFIG_H
+#endif  // CONFIG_H

@@ -28,19 +28,17 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class VideoInput : public MediaInput
-{
-public:
-    VideoInput() = default;
+class VideoInput : public MediaInput {
+ public:
+  VideoInput() = default;
 
-    virtual Node* copy() const override;
+  virtual Node* copy() const override;
 
-    virtual QString Name() const override;
-    virtual QString id() const override;
-    virtual QString Description() const override;
-
+  virtual QString Name() const override;
+  virtual QString id() const override;
+  virtual QString Description() const override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // VIDEOINPUT_H
+#endif  // VIDEOINPUT_H

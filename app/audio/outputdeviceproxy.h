@@ -31,38 +31,36 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief QIODevice wrapper that can adjust speed/reverse an audio file
  */
-class AudioOutputDeviceProxy : public QIODevice
-{
-    Q_OBJECT
-public:
-    AudioOutputDeviceProxy() = default;
+class AudioOutputDeviceProxy : public QIODevice {
+  Q_OBJECT
+ public:
+  AudioOutputDeviceProxy() = default;
 
-    virtual ~AudioOutputDeviceProxy() override;
+  virtual ~AudioOutputDeviceProxy() override;
 
-    void SetParameters(const AudioRenderingParams& params);
+  void SetParameters(const AudioRenderingParams &params);
 
-    void SetDevice(const QString &filename, qint64 offset, int playback_speed);
+  void SetDevice(const QString &filename, qint64 offset, int playback_speed);
 
-    virtual void close() override;
+  virtual void close() override;
 
-protected:
-    virtual qint64 readData(char *data, qint64 maxlen) override;
+ protected:
+  virtual qint64 readData(char *data, qint64 maxlen) override;
 
-    virtual qint64 writeData(const char *data, qint64 maxSize) override;
+  virtual qint64 writeData(const char *data, qint64 maxSize) override;
 
-private:
-    qint64 ReverseAwareRead(char* data, qint64 maxlen);
+ private:
+  qint64 ReverseAwareRead(char *data, qint64 maxlen);
 
-    QFile file_;
+  QFile file_;
 
-    TempoProcessor tempo_processor_;
+  TempoProcessor tempo_processor_;
 
-    AudioRenderingParams params_;
+  AudioRenderingParams params_;
 
-    int playback_speed_;
-
+  int playback_speed_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOOUTPUTDEVICEPROXY_H
+#endif  // AUDIOOUTPUTDEVICEPROXY_H

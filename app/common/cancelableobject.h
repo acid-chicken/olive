@@ -28,25 +28,17 @@
 OLIVE_NAMESPACE_ENTER
 
 class CancelableObject {
-public:
-    CancelableObject() :
-        cancelled_(false)
-    {
-    }
+ public:
+  CancelableObject() : cancelled_(false) {}
 
-    void Cancel() {
-        cancelled_ = true;
-    }
+  void Cancel() { cancelled_ = true; }
 
-    const QAtomicInt& IsCancelled() const {
-        return cancelled_;
-    }
+  const QAtomicInt& IsCancelled() const { return cancelled_; }
 
-private:
-    QAtomicInt cancelled_;
-
+ private:
+  QAtomicInt cancelled_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CANCELABLEOBJECT_H
+#endif  // CANCELABLEOBJECT_H

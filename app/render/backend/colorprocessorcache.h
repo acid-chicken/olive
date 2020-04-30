@@ -31,4 +31,4 @@ using ColorProcessorCache = RenderCache<QString, ColorProcessorPtr>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLORPROCESSORCACHE_H
+#endif  // COLORPROCESSORCACHE_H

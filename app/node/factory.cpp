@@ -25,149 +25,143 @@
 #include "block/clip/clip.h"
 #include "block/gap/gap.h"
 #include "block/transition/externaltransition.h"
+#include "external.h"
 #include "generator/matrix/matrix.h"
-#include "input/media/video/video.h"
 #include "input/media/audio/audio.h"
+#include "input/media/video/video.h"
 #include "input/time/timeinput.h"
 #include "math/math/math.h"
 #include "math/trigonometry/trigonometry.h"
 #include "output/track/track.h"
 #include "output/viewer/viewer.h"
-#include "external.h"
 
 OLIVE_NAMESPACE_ENTER
 QList<Node*> NodeFactory::library_;
 
-void NodeFactory::Initialize()
-{
-    Destroy();
+void NodeFactory::Initialize() {
+  Destroy();
 
-    // Add internal types
-    for (int i=0; i<kInternalNodeCount; i++) {
-        library_.append(CreateInternal(static_cast<InternalID>(i)));
-    }
+  // Add internal types
+  for (int i = 0; i < kInternalNodeCount; i++) {
+    library_.append(CreateInternal(static_cast<InternalID>(i)));
+  }
 
-    library_.append(new ExternalNode(":/shaders/blur.xml"));
-    library_.append(new ExternalNode(":/shaders/solid.xml"));
-    library_.append(new ExternalNode(":/shaders/stroke.xml"));
-    library_.append(new ExternalNode(":/shaders/alphaover.xml"));
-    library_.append(new ExternalNode(":/shaders/dropshadow.xml"));
-    library_.append(new ExternalTransition(":/shaders/crossdissolve.xml"));
-    library_.append(new ExternalTransition(":/shaders/diptoblack.xml"));
+  library_.append(new ExternalNode(":/shaders/blur.xml"));
+  library_.append(new ExternalNode(":/shaders/solid.xml"));
+  library_.append(new ExternalNode(":/shaders/stroke.xml"));
+  library_.append(new ExternalNode(":/shaders/alphaover.xml"));
+  library_.append(new ExternalNode(":/shaders/dropshadow.xml"));
+  library_.append(new ExternalTransition(":/shaders/crossdissolve.xml"));
+  library_.append(new ExternalTransition(":/shaders/diptoblack.xml"));
 }
 
-void NodeFactory::Destroy()
-{
-    qDeleteAll(library_);
-    library_.clear();
+void NodeFactory::Destroy() {
+  qDeleteAll(library_);
+  library_.clear();
 }
 
-Menu *NodeFactory::CreateMenu(QWidget* parent)
-{
-    Menu* menu = new Menu(parent);
-    menu->setToolTipsVisible(true);
+Menu* NodeFactory::CreateMenu(QWidget* parent) {
+  Menu* menu = new Menu(parent);
+  menu->setToolTipsVisible(true);
 
-    for (int i=0; i<library_.size(); i++) {
-        Node* n = library_.at(i);
+  for (int i = 0; i < library_.size(); i++) {
+    Node* n = library_.at(i);
 
-        // Make sure nodes are up-to-date with the current translation
-        n->Retranslate();
+    // Make sure nodes are up-to-date with the current translation
+    n->Retranslate();
 
-        QStringList path = n->Category().split('/');
+    QStringList path = n->Category().split('/');
 
-        Menu* destination = menu;
+    Menu* destination = menu;
 
-        // Find destination menu based on category hierarchy
-        foreach (const QString& dir_name, path) {
-            // Ignore an empty directory
-            if (dir_name.isEmpty()) {
-                continue;
-            }
+    // Find destination menu based on category hierarchy
+    foreach (const QString& dir_name, path) {
+      // Ignore an empty directory
+      if (dir_name.isEmpty()) {
+        continue;
+      }
 
-            // See if a menu with this dir_name already exists
-            bool found_cat = false;
-            QList<QAction*> menu_actions = destination->actions();
-            foreach (QAction* action, menu_actions) {
-                if (action->menu() && action->menu()->title() == dir_name) {
-                    destination = static_cast<Menu*>(action->menu());
-                    found_cat = true;
-                    break;
-                }
-            }
-
-            // Create menu here if it doesn't exist
-            if (!found_cat) {
-                Menu* new_category = new Menu(dir_name, destination);
-                destination->InsertAlphabetically(new_category);
-                destination = new_category;
-            }
+      // See if a menu with this dir_name already exists
+      bool found_cat = false;
+      QList<QAction*> menu_actions = destination->actions();
+      foreach (QAction* action, menu_actions) {
+        if (action->menu() && action->menu()->title() == dir_name) {
+          destination = static_cast<Menu*>(action->menu());
+          found_cat = true;
+          break;
         }
+      }
 
-        // Add entry to menu
-        QAction* a = destination->InsertAlphabetically(n->Name());
-        a->setData(i);
-        a->setToolTip(n->Description());
+      // Create menu here if it doesn't exist
+      if (!found_cat) {
+        Menu* new_category = new Menu(dir_name, destination);
+        destination->InsertAlphabetically(new_category);
+        destination = new_category;
+      }
     }
 
-    return menu;
+    // Add entry to menu
+    QAction* a = destination->InsertAlphabetically(n->Name());
+    a->setData(i);
+    a->setToolTip(n->Description());
+  }
+
+  return menu;
 }
 
-Node* NodeFactory::CreateFromMenuAction(QAction *action)
-{
-    int library_index = action->data().toInt();
+Node* NodeFactory::CreateFromMenuAction(QAction* action) {
+  int library_index = action->data().toInt();
 
-    if (library_index >= 0 && library_index < library_.size()) {
-        return library_.at(library_index)->copy();
+  if (library_index >= 0 && library_index < library_.size()) {
+    return library_.at(library_index)->copy();
+  }
+
+  return nullptr;
+}
+
+Node* NodeFactory::CreateFromID(const QString& id) {
+  foreach (Node* n, library_) {
+    if (n->id() == id) {
+      return n->copy();
     }
+  }
 
-    return nullptr;
+  return nullptr;
 }
 
-Node *NodeFactory::CreateFromID(const QString &id)
-{
-    foreach (Node* n, library_) {
-        if (n->id() == id) {
-            return n->copy();
-        }
-    }
-
-    return nullptr;
-}
-
-Node *NodeFactory::CreateInternal(const NodeFactory::InternalID &id)
-{
-    switch (id) {
+Node* NodeFactory::CreateInternal(const NodeFactory::InternalID& id) {
+  switch (id) {
     case kClipBlock:
-        return new ClipBlock();
+      return new ClipBlock();
     case kGapBlock:
-        return new GapBlock();
+      return new GapBlock();
     case kMatrixGenerator:
-        return new MatrixGenerator();
+      return new MatrixGenerator();
     case kVideoInput:
-        return new VideoInput();
+      return new VideoInput();
     case kAudioInput:
-        return new AudioInput();
+      return new AudioInput();
     case kTrackOutput:
-        return new TrackOutput();
+      return new TrackOutput();
     case kViewerOutput:
-        return new ViewerOutput();
+      return new ViewerOutput();
     case kAudioVolume:
-        return new VolumeNode();
+      return new VolumeNode();
     case kAudioPanning:
-        return new PanNode();
+      return new PanNode();
     case kMath:
-        return new MathNode();
+      return new MathNode();
     case kTrigonometry:
-        return new TrigonometryNode();
+      return new TrigonometryNode();
     case kTime:
-        return new TimeInput();
+      return new TimeInput();
 
     case kInternalNodeCount:
-        break;
-    }
+      break;
+  }
 
-    // We should never get here
-    abort();
+  // We should never get here
+  abort();
 }
 
 OLIVE_NAMESPACE_EXIT

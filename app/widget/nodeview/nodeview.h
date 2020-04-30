@@ -26,8 +26,8 @@
 
 #include "node/graph.h"
 #include "nodeviewscene.h"
-#include "widget/timelinewidget/view/handmovableview.h"
 #include "widget/nodecopypaste/nodecopypaste.h"
+#include "widget/timelinewidget/view/handmovableview.h"
 
 OLIVE_NAMESPACE_ENTER
 
@@ -37,117 +37,115 @@ OLIVE_NAMESPACE_ENTER
  * This widget takes a NodeGraph object and constructs a QGraphicsScene representing its data, viewing and allowing
  * the user to make modifications to it.
  */
-class NodeView : public HandMovableView, public NodeCopyPasteWidget
-{
-    Q_OBJECT
-public:
-    NodeView(QWidget* parent);
+class NodeView : public HandMovableView, public NodeCopyPasteWidget {
+  Q_OBJECT
+ public:
+  NodeView(QWidget* parent);
 
-    virtual ~NodeView() override;
+  virtual ~NodeView() override;
 
-    /**
-     * @brief Sets the graph to view
-     */
-    void SetGraph(NodeGraph* graph);
+  /**
+   * @brief Sets the graph to view
+   */
+  void SetGraph(NodeGraph* graph);
 
-    /**
-     * @brief Delete selected nodes from graph (user-friendly/undoable)
-     */
-    void DeleteSelected();
+  /**
+   * @brief Delete selected nodes from graph (user-friendly/undoable)
+   */
+  void DeleteSelected();
 
-    void SelectAll();
-    void DeselectAll();
+  void SelectAll();
+  void DeselectAll();
 
-    void Select(const QList<Node*>& nodes);
-    void SelectWithDependencies(QList<Node *> nodes);
+  void Select(const QList<Node*>& nodes);
+  void SelectWithDependencies(QList<Node*> nodes);
 
-    void CopySelected(bool cut);
-    void Paste();
+  void CopySelected(bool cut);
+  void Paste();
 
-    void Duplicate();
+  void Duplicate();
 
-signals:
-    /**
-     * @brief Signal emitted when the selected nodes have changed
-     */
-    void SelectionChanged(QList<Node*> selected_nodes);
+ signals:
+  /**
+   * @brief Signal emitted when the selected nodes have changed
+   */
+  void SelectionChanged(QList<Node*> selected_nodes);
 
-protected:
-    virtual void keyPressEvent(QKeyEvent *event) override;
+ protected:
+  virtual void keyPressEvent(QKeyEvent* event) override;
 
-    virtual void mousePressEvent(QMouseEvent *event) override;
-    virtual void mouseMoveEvent(QMouseEvent *event) override;
-    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+  virtual void mousePressEvent(QMouseEvent* event) override;
+  virtual void mouseMoveEvent(QMouseEvent* event) override;
+  virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
-    virtual void wheelEvent(QWheelEvent* event) override;
+  virtual void wheelEvent(QWheelEvent* event) override;
 
-private:
-    void PlaceNode(NodeViewItem* n, const QPointF& pos);
+ private:
+  void PlaceNode(NodeViewItem* n, const QPointF& pos);
 
-    void AttachNodesToCursor(const QList<Node*>& nodes);
+  void AttachNodesToCursor(const QList<Node*>& nodes);
 
-    void AttachItemsToCursor(const QList<NodeViewItem*>& items);
+  void AttachItemsToCursor(const QList<NodeViewItem*>& items);
 
-    void DetachItemsFromCursor();
+  void DetachItemsFromCursor();
 
-    void SetFlowDirection(NodeViewCommon::FlowDirection dir);
+  void SetFlowDirection(NodeViewCommon::FlowDirection dir);
 
-    void MoveAttachedNodesToCursor(const QPoint &p);
+  void MoveAttachedNodesToCursor(const QPoint& p);
 
-    NodeGraph* graph_;
+  NodeGraph* graph_;
 
-    struct AttachedItem {
-        NodeViewItem* item;
-        QPointF original_pos;
-    };
+  struct AttachedItem {
+    NodeViewItem* item;
+    QPointF original_pos;
+  };
 
-    QList<AttachedItem> attached_items_;
+  QList<AttachedItem> attached_items_;
 
-    NodeViewEdge* drop_edge_;
-    NodeInput* drop_input_;
+  NodeViewEdge* drop_edge_;
+  NodeInput* drop_input_;
 
-    NodeViewScene scene_;
+  NodeViewScene scene_;
 
-private slots:
-    /**
-     * @brief Internal function triggered when any change is signalled from the QGraphicsScene
-     *
-     * Current primary function is to inform all NodeViewEdges to re-adjust in case any Nodes have moved
-     */
-    void ItemsChanged();
+ private slots:
+  /**
+   * @brief Internal function triggered when any change is signalled from the QGraphicsScene
+   *
+   * Current primary function is to inform all NodeViewEdges to re-adjust in case any Nodes have moved
+   */
+  void ItemsChanged();
 
-    /**
-     * @brief Receiver for when the scene's selected items change
-     */
-    void SceneSelectionChangedSlot();
+  /**
+   * @brief Receiver for when the scene's selected items change
+   */
+  void SceneSelectionChangedSlot();
 
-    /**
-     * @brief Receiver for when the user right clicks (or otherwise requests a context menu)
-     */
-    void ShowContextMenu(const QPoint &pos);
+  /**
+   * @brief Receiver for when the user right clicks (or otherwise requests a context menu)
+   */
+  void ShowContextMenu(const QPoint& pos);
 
-    /**
-     * @brief Receiver for when the user requests a new node from the add menu
-     */
-    void CreateNodeSlot(QAction* action);
+  /**
+   * @brief Receiver for when the user requests a new node from the add menu
+   */
+  void CreateNodeSlot(QAction* action);
 
-    /**
-     * @brief Receiver for setting the direction from the context menu
-     */
-    void ContextMenuSetDirection(QAction* action);
+  /**
+   * @brief Receiver for setting the direction from the context menu
+   */
+  void ContextMenuSetDirection(QAction* action);
 
-    /**
-     * @brief Receiver for auto-position descendents menu action
-     */
-    void AutoPositionDescendents();
+  /**
+   * @brief Receiver for auto-position descendents menu action
+   */
+  void AutoPositionDescendents();
 
-    /**
-     * @brief Receiver for labelling a node from the context menu
-     */
-    void ContextMenuLabelNode();
-
+  /**
+   * @brief Receiver for labelling a node from the context menu
+   */
+  void ContextMenuLabelNode();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEVIEW_H
+#endif  // NODEVIEW_H

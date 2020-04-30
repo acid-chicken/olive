@@ -21,26 +21,25 @@
 #ifndef TASKMANAGER_PANEL_H
 #define TASKMANAGER_PANEL_H
 
-#include "widget/taskview/taskview.h"
 #include "widget/panel/panel.h"
+#include "widget/taskview/taskview.h"
 
 OLIVE_NAMESPACE_ENTER
 
 /**
  * @brief A PanelWidget wrapper around a TaskView widget
  */
-class TaskManagerPanel : public PanelWidget
-{
-    Q_OBJECT
-public:
-    TaskManagerPanel(QWidget* parent);
+class TaskManagerPanel : public PanelWidget {
+  Q_OBJECT
+ public:
+  TaskManagerPanel(QWidget* parent);
 
-private:
-    virtual void Retranslate() override;
+ private:
+  virtual void Retranslate() override;
 
-    TaskView* view_;
+  TaskView* view_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TASKMANAGER_H
+#endif  // TASKMANAGER_H

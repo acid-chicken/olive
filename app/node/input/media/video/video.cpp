@@ -31,24 +31,12 @@
 
 OLIVE_NAMESPACE_ENTER
 
-Node *VideoInput::copy() const
-{
-    return new VideoInput();
-}
+Node *VideoInput::copy() const { return new VideoInput(); }
 
-QString VideoInput::Name() const
-{
-    return tr("Video Input");
-}
+QString VideoInput::Name() const { return tr("Video Input"); }
 
-QString VideoInput::id() const
-{
-    return QStringLiteral("org.olivevideoeditor.Olive.videoinput");
-}
+QString VideoInput::id() const { return QStringLiteral("org.olivevideoeditor.Olive.videoinput"); }
 
-QString VideoInput::Description() const
-{
-    return tr("Import a video footage stream.");
-}
+QString VideoInput::Description() const { return tr("Import a video footage stream."); }
 
 OLIVE_NAMESPACE_EXIT

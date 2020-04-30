@@ -24,7 +24,6 @@
 #define OLIVE_NAMESPACE olive
 
 #define OLIVE_NAMESPACE_ENTER namespace OLIVE_NAMESPACE {
-
 #define OLIVE_NAMESPACE_EXIT }
 
 OLIVE_NAMESPACE_ENTER
@@ -54,8 +53,8 @@ OLIVE_NAMESPACE_EXIT
  * use our own functions for portability.
  */
 
-#define DISABLE_COPY(Class) \
-  Class(const Class &) = delete;\
+#define DISABLE_COPY(Class)      \
+  Class(const Class &) = delete; \
   Class &operator=(const Class &) = delete;
 
 #define DISABLE_MOVE(Class) \
@@ -63,7 +62,7 @@ OLIVE_NAMESPACE_EXIT
   Class &operator=(Class &&) = delete;
 
 #define DISABLE_COPY_MOVE(Class) \
-  DISABLE_COPY(Class) \
+  DISABLE_COPY(Class)            \
   DISABLE_MOVE(Class)
 
-#endif // OLIVECOMMONDEFINE_H
+#endif  // OLIVECOMMONDEFINE_H

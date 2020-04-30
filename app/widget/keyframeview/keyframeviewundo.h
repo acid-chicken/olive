@@ -27,46 +27,46 @@
 OLIVE_NAMESPACE_ENTER
 
 class KeyframeSetTypeCommand : public UndoCommand {
-public:
-    KeyframeSetTypeCommand(NodeKeyframePtr key, NodeKeyframe::Type type, QUndoCommand* parent = nullptr);
+ public:
+  KeyframeSetTypeCommand(NodeKeyframePtr key, NodeKeyframe::Type type, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    NodeKeyframePtr key_;
+ private:
+  NodeKeyframePtr key_;
 
-    NodeKeyframe::Type old_type_;
+  NodeKeyframe::Type old_type_;
 
-    NodeKeyframe::Type new_type_;
-
+  NodeKeyframe::Type new_type_;
 };
 
 class KeyframeSetBezierControlPoint : public UndoCommand {
-public:
-    KeyframeSetBezierControlPoint(NodeKeyframePtr key, NodeKeyframe::BezierType mode, const QPointF& point, QUndoCommand* parent = nullptr);
-    KeyframeSetBezierControlPoint(NodeKeyframePtr key, NodeKeyframe::BezierType mode, const QPointF& new_point, const QPointF& old_point, QUndoCommand* parent = nullptr);
+ public:
+  KeyframeSetBezierControlPoint(NodeKeyframePtr key, NodeKeyframe::BezierType mode, const QPointF& point,
+                                QUndoCommand* parent = nullptr);
+  KeyframeSetBezierControlPoint(NodeKeyframePtr key, NodeKeyframe::BezierType mode, const QPointF& new_point,
+                                const QPointF& old_point, QUndoCommand* parent = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+  virtual Project* GetRelevantProject() const override;
 
-protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+ protected:
+  virtual void redo_internal() override;
+  virtual void undo_internal() override;
 
-private:
-    NodeKeyframePtr key_;
+ private:
+  NodeKeyframePtr key_;
 
-    NodeKeyframe::BezierType mode_;
+  NodeKeyframe::BezierType mode_;
 
-    QPointF old_point_;
+  QPointF old_point_;
 
-    QPointF new_point_;
-
+  QPointF new_point_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // KEYFRAMEVIEWUNDO_H
+#endif  // KEYFRAMEVIEWUNDO_H

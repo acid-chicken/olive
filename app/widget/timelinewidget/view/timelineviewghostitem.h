@@ -32,80 +32,74 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief A graphical representation of changes the user is making before they apply it
  */
-class TimelineViewGhostItem : public TimelineViewRect
-{
-public:
-    enum DataType {
-        kAttachedBlock,
-        kReferenceBlock,
-        kAttachedFootage
-    };
+class TimelineViewGhostItem : public TimelineViewRect {
+ public:
+  enum DataType { kAttachedBlock, kReferenceBlock, kAttachedFootage };
 
-    TimelineViewGhostItem(QGraphicsItem* parent = nullptr);
+  TimelineViewGhostItem(QGraphicsItem* parent = nullptr);
 
-    static TimelineViewGhostItem* FromBlock(Block *block, const TrackReference &track, int y, int height);
+  static TimelineViewGhostItem* FromBlock(Block* block, const TrackReference& track, int y, int height);
 
-    bool CanHaveZeroLength() const;
+  bool CanHaveZeroLength() const;
 
-    bool CanMoveTracks() const;
-    void SetCanMoveTracks(bool e);
+  bool CanMoveTracks() const;
+  void SetCanMoveTracks(bool e);
 
-    void SetInvisible(bool invisible);
+  void SetInvisible(bool invisible);
 
-    const rational& In() const;
-    const rational& Out() const;
-    const rational& MediaIn() const;
+  const rational& In() const;
+  const rational& Out() const;
+  const rational& MediaIn() const;
 
-    rational Length() const;
-    rational AdjustedLength() const;
+  rational Length() const;
+  rational AdjustedLength() const;
 
-    void SetIn(const rational& in);
-    void SetOut(const rational& out);
-    void SetMediaIn(const rational& media_in);
+  void SetIn(const rational& in);
+  void SetOut(const rational& out);
+  void SetMediaIn(const rational& media_in);
 
-    void SetInAdjustment(const rational& in_adj);
-    void SetOutAdjustment(const rational& out_adj);
-    void SetTrackAdjustment(const int& track_adj);
-    void SetMediaInAdjustment(const rational& media_in_adj);
+  void SetInAdjustment(const rational& in_adj);
+  void SetOutAdjustment(const rational& out_adj);
+  void SetTrackAdjustment(const int& track_adj);
+  void SetMediaInAdjustment(const rational& media_in_adj);
 
-    const rational& InAdjustment() const;
-    const rational& OutAdjustment() const;
-    const rational& MediaInAdjustment() const;
-    const int& TrackAdjustment() const;
+  const rational& InAdjustment() const;
+  const rational& OutAdjustment() const;
+  const rational& MediaInAdjustment() const;
+  const int& TrackAdjustment() const;
 
-    rational GetAdjustedIn() const;
-    rational GetAdjustedOut() const;
-    rational GetAdjustedMediaIn() const;
-    TrackReference GetAdjustedTrack() const;
+  rational GetAdjustedIn() const;
+  rational GetAdjustedOut() const;
+  rational GetAdjustedMediaIn() const;
+  TrackReference GetAdjustedTrack() const;
 
-    const Timeline::MovementMode& mode() const;
-    void SetMode(const Timeline::MovementMode& mode);
+  const Timeline::MovementMode& mode() const;
+  void SetMode(const Timeline::MovementMode& mode);
 
-    bool HasBeenAdjusted() const;
+  bool HasBeenAdjusted() const;
 
-    virtual void UpdateRect() override;
+  virtual void UpdateRect() override;
 
-protected:
+ protected:
+ private:
+  rational in_;
+  rational out_;
+  rational media_in_;
 
-private:
-    rational in_;
-    rational out_;
-    rational media_in_;
+  rational in_adj_;
+  rational out_adj_;
+  rational media_in_adj_;
 
-    rational in_adj_;
-    rational out_adj_;
-    rational media_in_adj_;
+  int track_adj_;
 
-    int track_adj_;
+  StreamPtr stream_;
 
-    StreamPtr stream_;
+  Timeline::MovementMode mode_;
 
-    Timeline::MovementMode mode_;
-
-    bool can_have_zero_length_;
-    bool can_move_tracks_;
+  bool can_have_zero_length_;
+  bool can_move_tracks_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEVIEWGHOSTITEM_H
+#endif  // TIMELINEVIEWGHOSTITEM_H

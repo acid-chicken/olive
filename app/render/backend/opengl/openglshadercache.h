@@ -32,4 +32,4 @@ using OpenGLShaderCache = RenderCache<QString, OpenGLShaderPtr>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // OPENGLSHADERCACHE_H
+#endif  // OPENGLSHADERCACHE_H

@@ -28,34 +28,32 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ColorButton : public QPushButton
-{
-    Q_OBJECT
-public:
-    ColorButton(ColorManager* color_manager, QWidget* parent = nullptr);
+class ColorButton : public QPushButton {
+  Q_OBJECT
+ public:
+  ColorButton(ColorManager* color_manager, QWidget* parent = nullptr);
 
-    const ManagedColor& GetColor() const;
+  const ManagedColor& GetColor() const;
 
-public slots:
-    void SetColor(const ManagedColor& c);
+ public slots:
+  void SetColor(const ManagedColor& c);
 
-signals:
-    void ColorChanged(const ManagedColor& c);
+ signals:
+  void ColorChanged(const ManagedColor& c);
 
-private slots:
-    void ShowColorDialog();
+ private slots:
+  void ShowColorDialog();
 
-private:
-    void UpdateColor();
+ private:
+  void UpdateColor();
 
-    ColorManager* color_manager_;
+  ColorManager* color_manager_;
 
-    ManagedColor color_;
+  ManagedColor color_;
 
-    ColorProcessorPtr color_processor_;
-
+  ColorProcessorPtr color_processor_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLORBUTTON_H
+#endif  // COLORBUTTON_H

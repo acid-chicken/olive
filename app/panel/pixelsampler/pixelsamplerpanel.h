@@ -26,22 +26,20 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class PixelSamplerPanel : public PanelWidget
-{
-    Q_OBJECT
-public:
-    PixelSamplerPanel(QWidget* parent = nullptr);
+class PixelSamplerPanel : public PanelWidget {
+  Q_OBJECT
+ public:
+  PixelSamplerPanel(QWidget* parent = nullptr);
 
-public slots:
-    void SetValues(const Color& reference, const Color& display);
+ public slots:
+  void SetValues(const Color& reference, const Color& display);
 
-private:
-    virtual void Retranslate() override;
+ private:
+  virtual void Retranslate() override;
 
-    ManagedPixelSamplerWidget* sampler_widget_;
-
+  ManagedPixelSamplerWidget* sampler_widget_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PIXELSAMPLERPANEL_H
+#endif  // PIXELSAMPLERPANEL_H

@@ -29,52 +29,50 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class OpenGLTextureCache
-{
-public:
-    class Reference {
-    public:
-        Reference(OpenGLTextureCache* parent, OpenGLTexturePtr texture);
-        ~Reference();
+class OpenGLTextureCache {
+ public:
+  class Reference {
+   public:
+    Reference(OpenGLTextureCache* parent, OpenGLTexturePtr texture);
+    ~Reference();
 
-        DISABLE_COPY_MOVE(Reference)
+    DISABLE_COPY_MOVE(Reference)
 
-        OpenGLTexturePtr texture();
+    OpenGLTexturePtr texture();
 
-        void ParentKilled();
+    void ParentKilled();
 
-    private:
-        OpenGLTextureCache* parent_;
+   private:
+    OpenGLTextureCache* parent_;
 
-        OpenGLTexturePtr texture_;
-    };
+    OpenGLTexturePtr texture_;
+  };
 
-    using ReferencePtr = std::shared_ptr<Reference>;
+  using ReferencePtr = std::shared_ptr<Reference>;
 
-    OpenGLTextureCache() = default;
+  OpenGLTextureCache() = default;
 
-    ~OpenGLTextureCache();
+  ~OpenGLTextureCache();
 
-    DISABLE_COPY_MOVE(OpenGLTextureCache)
+  DISABLE_COPY_MOVE(OpenGLTextureCache)
 
-    ReferencePtr Get(QOpenGLContext *ctx, const VideoRenderingParams& params, FramePtr frame);
-    ReferencePtr Get(QOpenGLContext *ctx, const VideoRenderingParams& params, Frame* frame);
-    ReferencePtr Get(QOpenGLContext *ctx, const VideoRenderingParams& params, const void *data, int linesize);
-    ReferencePtr Get(QOpenGLContext *ctx, const VideoRenderingParams& params);
+  ReferencePtr Get(QOpenGLContext* ctx, const VideoRenderingParams& params, FramePtr frame);
+  ReferencePtr Get(QOpenGLContext* ctx, const VideoRenderingParams& params, Frame* frame);
+  ReferencePtr Get(QOpenGLContext* ctx, const VideoRenderingParams& params, const void* data, int linesize);
+  ReferencePtr Get(QOpenGLContext* ctx, const VideoRenderingParams& params);
 
-private:
-    void Relinquish(Reference* ref);
+ private:
+  void Relinquish(Reference* ref);
 
-    QMutex lock_;
+  QMutex lock_;
 
-    QList<OpenGLTexturePtr> available_textures_;
+  QList<OpenGLTexturePtr> available_textures_;
 
-    QList<Reference*> existing_references_;
-
+  QList<Reference*> existing_references_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::OpenGLTextureCache::ReferencePtr)
 
-#endif // OPENGLTEXTURECACHE_H
+#endif  // OPENGLTEXTURECACHE_H

@@ -25,51 +25,42 @@
 
 OLIVE_NAMESPACE_ENTER
 
-NodeOutput::NodeOutput(const QString &id) :
-    NodeParam(id)
-{
+NodeOutput::NodeOutput(const QString &id) : NodeParam(id) {}
+
+NodeParam::Type NodeOutput::type() { return kOutput; }
+
+QString NodeOutput::name() {
+  if (name_.isEmpty()) {
+    return tr("Output");
+  }
+
+  return NodeParam::name();
 }
 
-NodeParam::Type NodeOutput::type()
-{
-    return kOutput;
-}
-
-QString NodeOutput::name()
-{
-    if (name_.isEmpty()) {
-        return tr("Output");
+void NodeOutput::Load(QXmlStreamReader *reader, XMLNodeData &xml_node_data, const QAtomicInt *cancelled) {
+  XMLAttributeLoop(reader, attr) {
+    if (cancelled && *cancelled) {
+      return;
     }
 
-    return NodeParam::name();
-}
+    if (attr.name() == "ptr") {
+      quintptr saved_ptr = attr.value().toULongLong();
 
-void NodeOutput::Load(QXmlStreamReader* reader, XMLNodeData &xml_node_data, const QAtomicInt *cancelled)
-{
-    XMLAttributeLoop(reader, attr) {
-        if (cancelled && *cancelled) {
-            return;
-        }
-
-        if (attr.name() == "ptr") {
-            quintptr saved_ptr = attr.value().toULongLong();
-
-            xml_node_data.output_ptrs.insert(saved_ptr, this);
-        }
+      xml_node_data.output_ptrs.insert(saved_ptr, this);
     }
+  }
 
-    reader->skipCurrentElement();
+  reader->skipCurrentElement();
 }
 
-void NodeOutput::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement("output");
+void NodeOutput::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement("output");
 
-    writer->writeAttribute("id", id());
+  writer->writeAttribute("id", id());
 
-    writer->writeAttribute("ptr", QString::number(reinterpret_cast<quintptr>(this)));
+  writer->writeAttribute("ptr", QString::number(reinterpret_cast<quintptr>(this)));
 
-    writer->writeEndElement(); // output
+  writer->writeEndElement();  // output
 }
 
 OLIVE_NAMESPACE_EXIT

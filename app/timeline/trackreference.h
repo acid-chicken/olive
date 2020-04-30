@@ -25,25 +25,24 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class TrackReference
-{
-public:
-    TrackReference();
+class TrackReference {
+ public:
+  TrackReference();
 
-    TrackReference(const Timeline::TrackType& type, const int& index);
+  TrackReference(const Timeline::TrackType& type, const int& index);
 
-    const Timeline::TrackType& type() const;
+  const Timeline::TrackType& type() const;
 
-    const int& index() const;
+  const int& index() const;
 
-    bool operator==(const TrackReference& ref) const;
+  bool operator==(const TrackReference& ref) const;
 
-private:
-    Timeline::TrackType type_;
+ private:
+  Timeline::TrackType type_;
 
-    int index_;
+  int index_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TRACKREFERENCE_H
+#endif  // TRACKREFERENCE_H

@@ -21,9 +21,9 @@
 #ifndef PROJECTTOOLBAR_H
 #define PROJECTTOOLBAR_H
 
-#include <QWidget>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QWidget>
 
 #include "common/define.h"
 
@@ -37,56 +37,51 @@ OLIVE_NAMESPACE_ENTER
  *
  * This object's signals can be connected to various functions in the application for better user experience.
  */
-class ProjectToolbar : public QWidget
-{
-    Q_OBJECT
-public:
-    ProjectToolbar(QWidget* parent);
+class ProjectToolbar : public QWidget {
+  Q_OBJECT
+ public:
+  ProjectToolbar(QWidget* parent);
 
-    enum ViewType {
-        TreeView,
-        ListView,
-        IconView
-    };
+  enum ViewType { TreeView, ListView, IconView };
 
-public slots:
-    void SetView(ViewType type);
+ public slots:
+  void SetView(ViewType type);
 
-protected:
-    void changeEvent(QEvent *) override;
+ protected:
+  void changeEvent(QEvent*) override;
 
-signals:
-    void NewClicked();
-    void OpenClicked();
-    void SaveClicked();
+ signals:
+  void NewClicked();
+  void OpenClicked();
+  void SaveClicked();
 
-    void UndoClicked();
-    void RedoClicked();
+  void UndoClicked();
+  void RedoClicked();
 
-    void SearchChanged(const QString&);
+  void SearchChanged(const QString&);
 
-    void ViewChanged(ViewType type);
+  void ViewChanged(ViewType type);
 
-private:
-    void Retranslate();
-    void UpdateIcons();
+ private:
+  void Retranslate();
+  void UpdateIcons();
 
-    QPushButton* new_button_;
-    QPushButton* open_button_;
-    QPushButton* save_button_;
-    QPushButton* undo_button_;
-    QPushButton* redo_button_;
+  QPushButton* new_button_;
+  QPushButton* open_button_;
+  QPushButton* save_button_;
+  QPushButton* undo_button_;
+  QPushButton* redo_button_;
 
-    QLineEdit* search_field_;
+  QLineEdit* search_field_;
 
-    QPushButton* tree_button_;
-    QPushButton* list_button_;
-    QPushButton* icon_button_;
+  QPushButton* tree_button_;
+  QPushButton* list_button_;
+  QPushButton* icon_button_;
 
-private slots:
-    void ViewButtonClicked();
+ private slots:
+  void ViewButtonClicked();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTTOOLBAR_H
+#endif  // PROJECTTOOLBAR_H

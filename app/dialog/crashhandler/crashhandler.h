@@ -27,19 +27,17 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class CrashHandlerDialog : public QDialog
-{
-    Q_OBJECT
-public:
-    CrashHandlerDialog(const char* log_file);
+class CrashHandlerDialog : public QDialog {
+  Q_OBJECT
+ public:
+  CrashHandlerDialog(const char* log_file);
 
-public slots:
-    virtual void accept() override;
+ public slots:
+  virtual void accept() override;
 
-    virtual void reject() override;
-
+  virtual void reject() override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CRASHHANDLERDIALOG_H
+#endif  // CRASHHANDLERDIALOG_H

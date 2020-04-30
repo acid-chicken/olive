@@ -36,25 +36,24 @@ OLIVE_NAMESPACE_ENTER
  * is necessary since TaskViewItem will automatically delete itself (thus removing itself from the TaskView) when the
  * Task finishes.
  */
-class TaskView : public QScrollArea
-{
-    Q_OBJECT
-public:
-    TaskView(QWidget* parent);
+class TaskView : public QScrollArea {
+  Q_OBJECT
+ public:
+  TaskView(QWidget* parent);
 
-public slots:
-    /**
-     * @brief Creates a TaskViewItem, connects it to a Task, and adds it to this widget
-     *
-     * Connect this to TaskManager::TaskAdded().
-     */
-    void AddTask(Task* t);
+ public slots:
+  /**
+   * @brief Creates a TaskViewItem, connects it to a Task, and adds it to this widget
+   *
+   * Connect this to TaskManager::TaskAdded().
+   */
+  void AddTask(Task* t);
 
-private:
-    QWidget* central_widget_;
-    QVBoxLayout* layout_;
+ private:
+  QWidget* central_widget_;
+  QVBoxLayout* layout_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TASKVIEW_H
+#endif  // TASKVIEW_H

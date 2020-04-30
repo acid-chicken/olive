@@ -36,31 +36,30 @@ class NodeInput;
  * To simplify memory management, it's recommended to use NodeEdgePtr instead of raw pointers when working with
  * NodeEdge.
  */
-class NodeEdge
-{
-public:
-    /**
-     * @brief Create a node edge connecting an output to an input
-     */
-    NodeEdge(NodeOutput* output, NodeInput* input);
+class NodeEdge {
+ public:
+  /**
+   * @brief Create a node edge connecting an output to an input
+   */
+  NodeEdge(NodeOutput* output, NodeInput* input);
 
-    /**
-     * @brief Return the output parameter this edge is connected to
-     */
-    NodeOutput* output();
+  /**
+   * @brief Return the output parameter this edge is connected to
+   */
+  NodeOutput* output();
 
-    /**
-     * @brief Return the input parameter this edge is connected to
-     */
-    NodeInput* input();
+  /**
+   * @brief Return the input parameter this edge is connected to
+   */
+  NodeInput* input();
 
-private:
-    NodeOutput* output_;
-    NodeInput* input_;
+ private:
+  NodeOutput* output_;
+  NodeInput* input_;
 };
 
 using NodeEdgePtr = std::shared_ptr<NodeEdge>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // EDGE_H
+#endif  // EDGE_H

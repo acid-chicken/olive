@@ -26,40 +26,23 @@
 OLIVE_NAMESPACE_ENTER
 
 class ViewerSafeMarginInfo {
-public:
-    ViewerSafeMarginInfo() :
-        enabled_(false)
-    {
-    }
+ public:
+  ViewerSafeMarginInfo() : enabled_(false) {}
 
-    ViewerSafeMarginInfo(bool enabled, double ratio = 0) :
-        enabled_(enabled),
-        ratio_(ratio)
-    {
-    }
+  ViewerSafeMarginInfo(bool enabled, double ratio = 0) : enabled_(enabled), ratio_(ratio) {}
 
-    bool is_enabled() const
-    {
-        return enabled_;
-    }
+  bool is_enabled() const { return enabled_; }
 
-    bool custom_ratio() const
-    {
-        return (ratio_ > 0);
-    }
+  bool custom_ratio() const { return (ratio_ > 0); }
 
-    double ratio() const
-    {
-        return ratio_;
-    }
+  double ratio() const { return ratio_; }
 
-private:
-    bool enabled_;
+ private:
+  bool enabled_;
 
-    double ratio_;
-
+  double ratio_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // VIEWERSAFEMARGININFO_H
+#endif  // VIEWERSAFEMARGININFO_H

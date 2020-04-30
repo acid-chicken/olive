@@ -34,66 +34,64 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ExportVideoTab : public QWidget
-{
-    Q_OBJECT
-public:
-    ExportVideoTab(ColorManager* color_manager, QWidget* parent = nullptr);
+class ExportVideoTab : public QWidget {
+  Q_OBJECT
+ public:
+  ExportVideoTab(ColorManager* color_manager, QWidget* parent = nullptr);
 
-    QComboBox* codec_combobox() const;
+  QComboBox* codec_combobox() const;
 
-    IntegerSlider* width_slider() const;
-    IntegerSlider* height_slider() const;
-    QCheckBox* maintain_aspect_checkbox() const;
-    QComboBox* scaling_method_combobox() const;
+  IntegerSlider* width_slider() const;
+  IntegerSlider* height_slider() const;
+  QCheckBox* maintain_aspect_checkbox() const;
+  QComboBox* scaling_method_combobox() const;
 
-    const rational& frame_rate() const;
-    void set_frame_rate(const rational& frame_rate);
+  const rational& frame_rate() const;
+  void set_frame_rate(const rational& frame_rate);
 
-    QString CurrentOCIOColorSpace();
+  QString CurrentOCIOColorSpace();
 
-    CodecSection* GetCodecSection() const;
-    void SetCodecSection(CodecSection* section);
-    ImageSection* image_section() const;
-    H264Section* h264_section() const;
+  CodecSection* GetCodecSection() const;
+  void SetCodecSection(CodecSection* section);
+  ImageSection* image_section() const;
+  H264Section* h264_section() const;
 
-    const int& threads() const;
+  const int& threads() const;
 
-signals:
-    void ColorSpaceChanged(const QString& colorspace);
+ signals:
+  void ColorSpaceChanged(const QString& colorspace);
 
-private:
-    QWidget* SetupResolutionSection();
-    QWidget* SetupColorSection();
-    QWidget* SetupCodecSection();
+ private:
+  QWidget* SetupResolutionSection();
+  QWidget* SetupColorSection();
+  QWidget* SetupCodecSection();
 
-    QComboBox* codec_combobox_;
-    QComboBox* frame_rate_combobox_;
-    QCheckBox* maintain_aspect_checkbox_;
-    QComboBox* scaling_method_combobox_;
+  QComboBox* codec_combobox_;
+  QComboBox* frame_rate_combobox_;
+  QCheckBox* maintain_aspect_checkbox_;
+  QComboBox* scaling_method_combobox_;
 
-    QStackedWidget* codec_stack_;
-    ImageSection* image_section_;
-    H264Section* h264_section_;
+  QStackedWidget* codec_stack_;
+  ImageSection* image_section_;
+  H264Section* h264_section_;
 
-    ColorSpaceChooser* color_space_chooser_;
+  ColorSpaceChooser* color_space_chooser_;
 
-    IntegerSlider* width_slider_;
-    IntegerSlider* height_slider_;
+  IntegerSlider* width_slider_;
+  IntegerSlider* height_slider_;
 
-    QList<rational> frame_rates_;
+  QList<rational> frame_rates_;
 
-    ColorManager* color_manager_;
+  ColorManager* color_manager_;
 
-    int threads_;
+  int threads_;
 
-private slots:
-    void MaintainAspectRatioChanged(bool val);
+ private slots:
+  void MaintainAspectRatioChanged(bool val);
 
-    void OpenAdvancedDialog();
-
+  void OpenAdvancedDialog();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // EXPORTVIDEOTAB_H
+#endif  // EXPORTVIDEOTAB_H

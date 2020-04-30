@@ -28,41 +28,39 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class KeyframeViewItem : public QObject, public QGraphicsRectItem, public TimeTargetObject
-{
-    Q_OBJECT
-public:
-    KeyframeViewItem(NodeKeyframePtr key, QGraphicsItem *parent = nullptr);
+class KeyframeViewItem : public QObject, public QGraphicsRectItem, public TimeTargetObject {
+  Q_OBJECT
+ public:
+  KeyframeViewItem(NodeKeyframePtr key, QGraphicsItem *parent = nullptr);
 
-    void SetOverrideY(qreal vertical_center);
+  void SetOverrideY(qreal vertical_center);
 
-    void SetScale(double scale);
+  void SetScale(double scale);
 
-    void SetOverrideBrush(const QBrush& b);
+  void SetOverrideBrush(const QBrush &b);
 
-    NodeKeyframePtr key() const;
+  NodeKeyframePtr key() const;
 
-protected:
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+ protected:
+  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
-    virtual void TimeTargetChangedEvent(Node* ) override;
+  virtual void TimeTargetChangedEvent(Node *) override;
 
-private:
-    NodeKeyframePtr key_;
+ private:
+  NodeKeyframePtr key_;
 
-    double scale_;
+  double scale_;
 
-    qreal vert_center_;
+  qreal vert_center_;
 
-    bool use_custom_brush_;
+  bool use_custom_brush_;
 
-private slots:
-    void UpdatePos();
+ private slots:
+  void UpdatePos();
 
-    void Redraw();
-
+  void Redraw();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // KEYFRAMEVIEWITEM_H
+#endif  // KEYFRAMEVIEWITEM_H

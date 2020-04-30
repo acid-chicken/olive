@@ -26,13 +26,11 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class CLITaskDialog : public CLIProgressDialog
-{
-public:
-    CLITaskDialog(Task *task, QObject* parent = nullptr);
-
+class CLITaskDialog : public CLIProgressDialog {
+ public:
+  CLITaskDialog(Task* task, QObject* parent = nullptr);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // CLITASKDIALOG_H
+#endif  // CLITASKDIALOG_H

@@ -30,42 +30,40 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class WaveformScope : public ManagedDisplayWidget
-{
-    Q_OBJECT
-public:
-    WaveformScope(QWidget* parent = nullptr);
+class WaveformScope : public ManagedDisplayWidget {
+  Q_OBJECT
+ public:
+  WaveformScope(QWidget* parent = nullptr);
 
-    virtual ~WaveformScope() override;
+  virtual ~WaveformScope() override;
 
-public slots:
-    void SetBuffer(Frame* frame);
+ public slots:
+  void SetBuffer(Frame* frame);
 
-protected:
-    virtual void initializeGL() override;
+ protected:
+  virtual void initializeGL() override;
 
-    virtual void paintGL() override;
+  virtual void paintGL() override;
 
-    virtual void showEvent(QShowEvent* e) override;
+  virtual void showEvent(QShowEvent* e) override;
 
-private:
-    void UploadTextureFromBuffer();
+ private:
+  void UploadTextureFromBuffer();
 
-    OpenGLShaderPtr pipeline_;
+  OpenGLShaderPtr pipeline_;
 
-    OpenGLTexture texture_;
+  OpenGLTexture texture_;
 
-    OpenGLTexture managed_tex_;
+  OpenGLTexture managed_tex_;
 
-    OpenGLFramebuffer framebuffer_;
+  OpenGLFramebuffer framebuffer_;
 
-    Frame* buffer_;
+  Frame* buffer_;
 
-private slots:
-    void CleanUp();
-
+ private slots:
+  void CleanUp();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // WAVEFORMSCOPE_H
+#endif  // WAVEFORMSCOPE_H

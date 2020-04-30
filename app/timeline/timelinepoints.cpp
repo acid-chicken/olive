@@ -24,48 +24,34 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TimelineMarkerList *TimelinePoints::markers()
-{
-    return &markers_;
-}
+TimelineMarkerList *TimelinePoints::markers() { return &markers_; }
 
-const TimelineMarkerList *TimelinePoints::markers() const
-{
-    return &markers_;
-}
+const TimelineMarkerList *TimelinePoints::markers() const { return &markers_; }
 
-const TimelineWorkArea *TimelinePoints::workarea() const
-{
-    return &workarea_;
-}
+const TimelineWorkArea *TimelinePoints::workarea() const { return &workarea_; }
 
-void TimelinePoints::Load(QXmlStreamReader *reader)
-{
-    while (XMLReadNextStartElement(reader)) {
-        if (reader->name() == QStringLiteral("markers")) {
-            markers_.Load(reader);
-        } else if (reader->name() == QStringLiteral("workarea")) {
-            workarea_.Load(reader);
-        } else {
-            reader->skipCurrentElement();
-        }
+void TimelinePoints::Load(QXmlStreamReader *reader) {
+  while (XMLReadNextStartElement(reader)) {
+    if (reader->name() == QStringLiteral("markers")) {
+      markers_.Load(reader);
+    } else if (reader->name() == QStringLiteral("workarea")) {
+      workarea_.Load(reader);
+    } else {
+      reader->skipCurrentElement();
     }
+  }
 }
 
-void TimelinePoints::Save(QXmlStreamWriter *writer) const
-{
-    writer->writeStartElement(QStringLiteral("points"));
+void TimelinePoints::Save(QXmlStreamWriter *writer) const {
+  writer->writeStartElement(QStringLiteral("points"));
 
-    workarea_.Save(writer);
+  workarea_.Save(writer);
 
-    markers_.Save(writer);
+  markers_.Save(writer);
 
-    writer->writeEndElement(); // points
+  writer->writeEndElement();  // points
 }
 
-TimelineWorkArea *TimelinePoints::workarea()
-{
-    return &workarea_;
-}
+TimelineWorkArea *TimelinePoints::workarea() { return &workarea_; }
 
 OLIVE_NAMESPACE_EXIT

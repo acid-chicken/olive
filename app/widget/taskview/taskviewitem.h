@@ -39,22 +39,20 @@ OLIVE_NAMESPACE_ENTER
  *
  * The main entry point is SetTask() after a Task and TaskViewItem objects are created.
  */
-class TaskViewItem : public QFrame
-{
-    Q_OBJECT
-public:
-    TaskViewItem(Task *task, QWidget* parent = nullptr);
+class TaskViewItem : public QFrame {
+  Q_OBJECT
+ public:
+  TaskViewItem(Task* task, QWidget* parent = nullptr);
 
-private:
-    QLabel* task_name_lbl_;
-    QProgressBar* progress_bar_;
-    QPushButton* cancel_btn_;
-    QLabel* task_status_lbl_;
+ private:
+  QLabel* task_name_lbl_;
+  QProgressBar* progress_bar_;
+  QPushButton* cancel_btn_;
+  QLabel* task_status_lbl_;
 
-    Task* task_;
-
+  Task* task_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TASKVIEWITEM_H
+#endif  // TASKVIEWITEM_H

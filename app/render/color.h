@@ -32,95 +32,71 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief High precision 32-bit float based RGBA color value
  */
-class Color
-{
-public:
-    Color()
-    {
-        for (int i=0; i<kRGBAChannels; i++) {
-            data_[i] = 0;
-        }
+class Color {
+ public:
+  Color() {
+    for (int i = 0; i < kRGBAChannels; i++) {
+      data_[i] = 0;
     }
+  }
 
-    Color(const float& r, const float& g, const float& b, const float& a = 1.0f)
-    {
-        data_[0] = r;
-        data_[1] = g;
-        data_[2] = b;
-        data_[3] = a;
-    }
+  Color(const float& r, const float& g, const float& b, const float& a = 1.0f) {
+    data_[0] = r;
+    data_[1] = g;
+    data_[2] = b;
+    data_[3] = a;
+  }
 
-    Color(const char *data, const PixelFormat::Format &format);
+  Color(const char* data, const PixelFormat::Format& format);
 
-    /**
-     * @brief Creates a Color struct from hue/saturation/value
-     *
-     * Hue expects a value between 0.0 and 360.0. Saturation and Value expect a value between 0.0 and 1.0.
-     */
-    static Color fromHsv(const float& h, const float& s, const float &v);
+  /**
+   * @brief Creates a Color struct from hue/saturation/value
+   *
+   * Hue expects a value between 0.0 and 360.0. Saturation and Value expect a value between 0.0 and 1.0.
+   */
+  static Color fromHsv(const float& h, const float& s, const float& v);
 
-    const float& red() const {
-        return data_[0];
-    }
-    const float& green() const {
-        return data_[1];
-    }
-    const float& blue() const {
-        return data_[2];
-    }
-    const float& alpha() const {
-        return data_[3];
-    }
+  const float& red() const { return data_[0]; }
+  const float& green() const { return data_[1]; }
+  const float& blue() const { return data_[2]; }
+  const float& alpha() const { return data_[3]; }
 
-    void toHsv(float* hue, float* sat, float* val) const;
-    float hsv_hue() const;
-    float hsv_saturation() const;
-    float value() const;
+  void toHsv(float* hue, float* sat, float* val) const;
+  float hsv_hue() const;
+  float hsv_saturation() const;
+  float value() const;
 
-    void toHsl(float* hue, float* sat, float* lightness) const;
-    float hsl_hue() const;
-    float hsl_saturation() const;
-    float lightness() const;
+  void toHsl(float* hue, float* sat, float* lightness) const;
+  float hsl_hue() const;
+  float hsl_saturation() const;
+  float lightness() const;
 
-    void set_red(const float& red) {
-        data_[0] = red;
-    }
-    void set_green(const float& green) {
-        data_[1] = green;
-    }
-    void set_blue(const float& blue) {
-        data_[2] = blue;
-    }
-    void set_alpha(const float& alpha) {
-        data_[3] = alpha;
-    }
+  void set_red(const float& red) { data_[0] = red; }
+  void set_green(const float& green) { data_[1] = green; }
+  void set_blue(const float& blue) { data_[2] = blue; }
+  void set_alpha(const float& alpha) { data_[3] = alpha; }
 
-    float* data() {
-        return data_;
-    }
-    const float* data() const {
-        return data_;
-    }
+  float* data() { return data_; }
+  const float* data() const { return data_; }
 
-    static Color fromData(const char* data, const PixelFormat::Format& format);
+  static Color fromData(const char* data, const PixelFormat::Format& format);
 
-    QColor toQColor() const;
+  QColor toQColor() const;
 
-    // Assignment math operators
-    const Color& operator+=(const Color& rhs);
-    const Color& operator-=(const Color& rhs);
-    const Color& operator*=(const float& rhs);
-    const Color& operator/=(const float& rhs);
+  // Assignment math operators
+  const Color& operator+=(const Color& rhs);
+  const Color& operator-=(const Color& rhs);
+  const Color& operator*=(const float& rhs);
+  const Color& operator/=(const float& rhs);
 
-    // Binary math operators
-    Color operator+(const Color& rhs) const;
-    Color operator-(const Color& rhs) const;
-    Color operator*(const float& rhs) const;
-    Color operator/(const float& rhs) const;
+  // Binary math operators
+  Color operator+(const Color& rhs) const;
+  Color operator-(const Color& rhs) const;
+  Color operator*(const float& rhs) const;
+  Color operator/(const float& rhs) const;
 
-private:
-    float data_[kRGBAChannels];
-
+ private:
+  float data_[kRGBAChannels];
 };
 
 OLIVE_NAMESPACE_EXIT
@@ -129,4 +105,4 @@ QDebug operator<<(QDebug debug, const OLIVE_NAMESPACE::Color& r);
 
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::Color)
 
-#endif // COLOR_H
+#endif  // COLOR_H

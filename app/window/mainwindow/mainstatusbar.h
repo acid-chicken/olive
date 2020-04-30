@@ -31,30 +31,28 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief Shows abbreviated information from a TaskManager object
  */
-class MainStatusBar : public QStatusBar
-{
-    Q_OBJECT
-public:
-    MainStatusBar(QWidget* parent = nullptr);
+class MainStatusBar : public QStatusBar {
+  Q_OBJECT
+ public:
+  MainStatusBar(QWidget* parent = nullptr);
 
-    void ConnectTaskManager(TaskManager* manager);
+  void ConnectTaskManager(TaskManager* manager);
 
-signals:
-    void DoubleClicked();
+ signals:
+  void DoubleClicked();
 
-protected:
-    virtual void mouseDoubleClickEvent(QMouseEvent* e) override;
+ protected:
+  virtual void mouseDoubleClickEvent(QMouseEvent* e) override;
 
-private slots:
-    void UpdateStatus();
+ private slots:
+  void UpdateStatus();
 
-private:
-    TaskManager* manager_;
+ private:
+  TaskManager* manager_;
 
-    QProgressBar* bar_;
-
+  QProgressBar* bar_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // MAINSTATUSBAR_H
+#endif  // MAINSTATUSBAR_H

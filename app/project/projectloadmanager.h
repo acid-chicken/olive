@@ -26,23 +26,21 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ProjectLoadManager : public Task
-{
-    Q_OBJECT
-public:
-    ProjectLoadManager(const QString& filename);
+class ProjectLoadManager : public Task {
+  Q_OBJECT
+ public:
+  ProjectLoadManager(const QString& filename);
 
-protected:
-    virtual void Action() override;
+ protected:
+  virtual void Action() override;
 
-signals:
-    void ProjectLoaded(OLIVE_NAMESPACE::ProjectPtr project);
+ signals:
+  void ProjectLoaded(OLIVE_NAMESPACE::ProjectPtr project);
 
-private:
-    QString filename_;
-
+ private:
+  QString filename_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTLOADMANAGER_H
+#endif  // PROJECTLOADMANAGER_H

@@ -29,51 +29,49 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class NodeParamViewWidgetBridge : public QObject, public TimeTargetObject
-{
-    Q_OBJECT
-public:
-    NodeParamViewWidgetBridge(NodeInput* input, QObject* parent);
+class NodeParamViewWidgetBridge : public QObject, public TimeTargetObject {
+  Q_OBJECT
+ public:
+  NodeParamViewWidgetBridge(NodeInput* input, QObject* parent);
 
-    void SetTime(const rational& time);
+  void SetTime(const rational& time);
 
-    const QList<QWidget*>& widgets() const;
+  const QList<QWidget*>& widgets() const;
 
-private:
-    void CreateWidgets();
+ private:
+  void CreateWidgets();
 
-    void SetInputValue(const QVariant& value, int track);
+  void SetInputValue(const QVariant& value, int track);
 
-    void SetInputValueInternal(const QVariant& value, int track, QUndoCommand* command);
+  void SetInputValueInternal(const QVariant& value, int track, QUndoCommand* command);
 
-    void ProcessSlider(SliderBase* slider, const QVariant& value);
+  void ProcessSlider(SliderBase* slider, const QVariant& value);
 
-    void CreateSliders(int count);
+  void CreateSliders(int count);
 
-    void UpdateWidgetValues();
+  void UpdateWidgetValues();
 
-    rational GetCurrentTimeAsNodeTime() const;
+  rational GetCurrentTimeAsNodeTime() const;
 
-    NodeInput* input_;
+  NodeInput* input_;
 
-    QList<QWidget*> widgets_;
+  QList<QWidget*> widgets_;
 
-    rational time_;
+  rational time_;
 
-    bool dragging_;
-    bool drag_created_keyframe_;
-    QVariant drag_old_value_;
-    NodeKeyframePtr dragging_keyframe_;
+  bool dragging_;
+  bool drag_created_keyframe_;
+  QVariant drag_old_value_;
+  NodeKeyframePtr dragging_keyframe_;
 
-private slots:
-    void WidgetCallback();
+ private slots:
+  void WidgetCallback();
 
-    void InputValueChanged(const TimeRange& range);
+  void InputValueChanged(const TimeRange& range);
 
-    void PropertyChanged(const QString& key, const QVariant& value);
-
+  void PropertyChanged(const QString& key, const QVariant& value);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEPARAMVIEWWIDGETBRIDGE_H
+#endif  // NODEPARAMVIEWWIDGETBRIDGE_H

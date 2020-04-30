@@ -22,9 +22,6 @@
 
 OLIVE_NAMESPACE_ENTER
 
-bool PreferencesTab::Validate()
-{
-    return true;
-}
+bool PreferencesTab::Validate() { return true; }
 
 OLIVE_NAMESPACE_EXIT

@@ -33,25 +33,23 @@ OLIVE_NAMESPACE_ENTER
  * The Item base class already has support for children, but this functionality is disabled by default
  * (see CanHaveChildren() override). The Folder is a specific type that enables this functionality.
  */
-class Folder : public Item
-{
-public:
-    Folder() = default;
+class Folder : public Item {
+ public:
+  Folder() = default;
 
-    virtual Type type() const override;
+  virtual Type type() const override;
 
-    virtual bool CanHaveChildren() const override;
+  virtual bool CanHaveChildren() const override;
 
-    virtual QIcon icon() override;
+  virtual QIcon icon() override;
 
-    virtual void Load(QXmlStreamReader* reader, XMLNodeData &xml_node_data, const QAtomicInt *cancelled) override;
+  virtual void Load(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt* cancelled) override;
 
-    virtual void Save(QXmlStreamWriter* writer) const override;
+  virtual void Save(QXmlStreamWriter* writer) const override;
 
-private:
-
+ private:
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // FOLDER_H
+#endif  // FOLDER_H

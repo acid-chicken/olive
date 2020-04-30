@@ -27,46 +27,44 @@
 
 OLIVE_NAMESPACE_ENTER
 
-PreferencesAppearanceTab::PreferencesAppearanceTab()
-{
-    QVBoxLayout* layout = new QVBoxLayout(this);
-    layout->setMargin(0);
+PreferencesAppearanceTab::PreferencesAppearanceTab() {
+  QVBoxLayout* layout = new QVBoxLayout(this);
+  layout->setMargin(0);
 
-    QGridLayout* appearance_layout = new QGridLayout();
-    layout->addLayout(appearance_layout);
+  QGridLayout* appearance_layout = new QGridLayout();
+  layout->addLayout(appearance_layout);
 
-    int row = 0;
+  int row = 0;
 
-    // Appearance -> Theme
-    appearance_layout->addWidget(new QLabel(tr("Theme")), row, 0);
+  // Appearance -> Theme
+  appearance_layout->addWidget(new QLabel(tr("Theme")), row, 0);
 
-    style_ = new QComboBox();
+  style_ = new QComboBox();
 
-    style_list_ = StyleManager::ListInternal();
+  style_list_ = StyleManager::ListInternal();
 
-    foreach (StyleDescriptor s, style_list_) {
-        style_->addItem(s.name(), s.path());
+  foreach (StyleDescriptor s, style_list_) {
+    style_->addItem(s.name(), s.path());
 
-        if (s.path() == StyleManager::GetStyle()) {
-            style_->setCurrentIndex(style_->count()-1);
-        }
+    if (s.path() == StyleManager::GetStyle()) {
+      style_->setCurrentIndex(style_->count() - 1);
     }
+  }
 
-    appearance_layout->addWidget(style_, row, 1, 1, 2);
+  appearance_layout->addWidget(style_, row, 1, 1, 2);
 
-    row++;
+  row++;
 
-    layout->addStretch();
+  layout->addStretch();
 }
 
-void PreferencesAppearanceTab::Accept()
-{
-    QString style_path = style_->currentData().toString();
+void PreferencesAppearanceTab::Accept() {
+  QString style_path = style_->currentData().toString();
 
-    if (style_path != StyleManager::GetStyle()) {
-        StyleManager::SetStyle(style_path);
-        Config::Current()["Style"] = style_path;
-    }
+  if (style_path != StyleManager::GetStyle()) {
+    StyleManager::SetStyle(style_path);
+    Config::Current()["Style"] = style_path;
+  }
 }
 
 OLIVE_NAMESPACE_EXIT

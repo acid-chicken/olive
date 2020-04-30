@@ -26,90 +26,85 @@
 
 OLIVE_NAMESPACE_ENTER
 
-Node* XMLLoadNode(QXmlStreamReader* reader)
-{
-    QString node_id;
-    quintptr node_ptr = 0;
-    QPointF node_pos;
-    QString node_label;
+Node* XMLLoadNode(QXmlStreamReader* reader) {
+  QString node_id;
+  quintptr node_ptr = 0;
+  QPointF node_pos;
+  QString node_label;
 
-    XMLAttributeLoop(reader, attr) {
-        if (attr.name() == QStringLiteral("id")) {
-            node_id = attr.value().toString();
-        } else if (attr.name() == QStringLiteral("ptr")) {
-            node_ptr = attr.value().toULongLong();
-        } else if (attr.name() == QStringLiteral("pos")) {
-            QStringList pos = attr.value().toString().split(':');
+  XMLAttributeLoop(reader, attr) {
+    if (attr.name() == QStringLiteral("id")) {
+      node_id = attr.value().toString();
+    } else if (attr.name() == QStringLiteral("ptr")) {
+      node_ptr = attr.value().toULongLong();
+    } else if (attr.name() == QStringLiteral("pos")) {
+      QStringList pos = attr.value().toString().split(':');
 
-            // Protection in case this file has been messed with
-            if (pos.size() == 2) {
-                node_pos.setX(pos.at(0).toDouble());
-                node_pos.setY(pos.at(1).toDouble());
-            }
-        } else if (attr.name() == QStringLiteral("label")) {
-            node_label = attr.value().toString();
-        }
+      // Protection in case this file has been messed with
+      if (pos.size() == 2) {
+        node_pos.setX(pos.at(0).toDouble());
+        node_pos.setY(pos.at(1).toDouble());
+      }
+    } else if (attr.name() == QStringLiteral("label")) {
+      node_label = attr.value().toString();
     }
+  }
 
-    if (node_id.isEmpty()) {
-        qWarning() << "Found node with no ID";
-        return nullptr;
-    }
+  if (node_id.isEmpty()) {
+    qWarning() << "Found node with no ID";
+    return nullptr;
+  }
 
-    Node* node = NodeFactory::CreateFromID(node_id);
+  Node* node = NodeFactory::CreateFromID(node_id);
 
-    if (node) {
-        node->setProperty("xml_ptr", node_ptr);
-        node->SetPosition(node_pos);
-        node->SetLabel(node_label);
-    } else {
-        qWarning() << "Failed to load" << node_id << "- no node with that ID is installed";
-    }
+  if (node) {
+    node->setProperty("xml_ptr", node_ptr);
+    node->SetPosition(node_pos);
+    node->SetLabel(node_label);
+  } else {
+    qWarning() << "Failed to load" << node_id << "- no node with that ID is installed";
+  }
 
-    return node;
+  return node;
 }
 
-void XMLConnectNodes(const XMLNodeData &xml_node_data, QUndoCommand *command)
-{
-    foreach (const XMLNodeData::SerializedConnection& con, xml_node_data.desired_connections) {
-        NodeOutput* out = xml_node_data.output_ptrs.value(con.output);
+void XMLConnectNodes(const XMLNodeData& xml_node_data, QUndoCommand* command) {
+  foreach (const XMLNodeData::SerializedConnection& con, xml_node_data.desired_connections) {
+    NodeOutput* out = xml_node_data.output_ptrs.value(con.output);
 
-        if (out) {
-            if (command) {
-                new NodeEdgeAddCommand(out, con.input, command);
-            } else {
-                NodeParam::ConnectEdge(out, con.input);
-            }
-        }
+    if (out) {
+      if (command) {
+        new NodeEdgeAddCommand(out, con.input, command);
+      } else {
+        NodeParam::ConnectEdge(out, con.input);
+      }
     }
+  }
 }
 
-bool XMLReadNextStartElement(QXmlStreamReader *reader)
-{
-    QXmlStreamReader::TokenType token;
+bool XMLReadNextStartElement(QXmlStreamReader* reader) {
+  QXmlStreamReader::TokenType token;
 
-    while ((token = reader->readNext()) != QXmlStreamReader::Invalid
-            && token != QXmlStreamReader::EndDocument) {
-        if (reader->isEndElement()) {
-            return false;
-        } else if (reader->isStartElement()) {
-            return true;
-        }
+  while ((token = reader->readNext()) != QXmlStreamReader::Invalid && token != QXmlStreamReader::EndDocument) {
+    if (reader->isEndElement()) {
+      return false;
+    } else if (reader->isStartElement()) {
+      return true;
     }
+  }
 
-    return false;
+  return false;
 }
 
-void XMLLinkBlocks(const XMLNodeData &xml_node_data)
-{
-    foreach (const XMLNodeData::BlockLink& l1, xml_node_data.block_links) {
-        foreach (const XMLNodeData::BlockLink& l2, xml_node_data.block_links) {
-            if (l1.link == l2.block->property("xml_ptr")) {
-                Block::Link(l1.block, l2.block);
-                break;
-            }
-        }
+void XMLLinkBlocks(const XMLNodeData& xml_node_data) {
+  foreach (const XMLNodeData::BlockLink& l1, xml_node_data.block_links) {
+    foreach (const XMLNodeData::BlockLink& l2, xml_node_data.block_links) {
+      if (l1.link == l2.block->property("xml_ptr")) {
+        Block::Link(l1.block, l2.block);
+        break;
+      }
     }
+  }
 }
 
 OLIVE_NAMESPACE_EXIT

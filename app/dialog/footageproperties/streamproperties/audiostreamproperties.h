@@ -26,17 +26,16 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class AudioStreamProperties : public StreamProperties
-{
-public:
-    AudioStreamProperties(AudioStreamPtr stream);
+class AudioStreamProperties : public StreamProperties {
+ public:
+  AudioStreamProperties(AudioStreamPtr stream);
 
-    virtual void Accept(QUndoCommand* parent) override;
+  virtual void Accept(QUndoCommand* parent) override;
 
-private:
-    AudioStreamPtr stream_;
+ private:
+  AudioStreamPtr stream_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOSTREAMPROPERTIES_H
+#endif  // AUDIOSTREAMPROPERTIES_H

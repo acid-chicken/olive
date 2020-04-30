@@ -28,40 +28,35 @@
 OLIVE_NAMESPACE_ENTER
 
 class ExportParams : public EncodingParams {
-public:
-    enum VideoScalingMethod {
-        kFit,
-        kStretch,
-        kCrop
-    };
+ public:
+  enum VideoScalingMethod { kFit, kStretch, kCrop };
 
-    ExportParams();
+  ExportParams();
 
-    const QString& encoder() const;
-    void set_encoder(const QString& id);
+  const QString& encoder() const;
+  void set_encoder(const QString& id);
 
-    bool has_custom_range() const;
-    const TimeRange& custom_range() const;
-    void set_custom_range(const TimeRange& custom_range);
+  bool has_custom_range() const;
+  const TimeRange& custom_range() const;
+  void set_custom_range(const TimeRange& custom_range);
 
-    const VideoScalingMethod& video_scaling_method() const;
-    void set_video_scaling_method(const VideoScalingMethod& video_scaling_method);
+  const VideoScalingMethod& video_scaling_method() const;
+  void set_video_scaling_method(const VideoScalingMethod& video_scaling_method);
 
-    const ColorTransform& color_transform() const;
-    void set_color_transform(const ColorTransform& color_transform);
+  const ColorTransform& color_transform() const;
+  void set_color_transform(const ColorTransform& color_transform);
 
-private:
-    QString encoder_id_;
+ private:
+  QString encoder_id_;
 
-    VideoScalingMethod video_scaling_method_;
+  VideoScalingMethod video_scaling_method_;
 
-    bool has_custom_range_;
-    TimeRange custom_range_;
+  bool has_custom_range_;
+  TimeRange custom_range_;
 
-    ColorTransform color_transform_;
-
+  ColorTransform color_transform_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // EXPORTPARAMS_H
+#endif  // EXPORTPARAMS_H

@@ -35,119 +35,113 @@ OLIVE_NAMESPACE_ENTER
  * which will copy the block's name, length, and media in point. It does not copy any node-specific parameters like any
  * input values or connections as per standard with Node::copy().
  */
-class Block : public Node
-{
-    Q_OBJECT
-public:
-    Block();
+class Block : public Node {
+  Q_OBJECT
+ public:
+  Block();
 
-    enum Type {
-        kClip,
-        kGap,
-        kTransition
-    };
+  enum Type { kClip, kGap, kTransition };
 
-    virtual Type type() const = 0;
+  virtual Type type() const = 0;
 
-    virtual QString Category() const override;
+  virtual QString Category() const override;
 
-    const rational& in() const;
-    const rational& out() const;
-    void set_in(const rational& in);
-    void set_out(const rational& out);
+  const rational& in() const;
+  const rational& out() const;
+  void set_in(const rational& in);
+  void set_out(const rational& out);
 
-    rational length() const;
-    void set_length_and_media_out(const rational &length);
-    void set_length_and_media_in(const rational &length);
+  rational length() const;
+  void set_length_and_media_out(const rational& length);
+  void set_length_and_media_in(const rational& length);
 
-    Block* previous();
-    Block* next();
-    void set_previous(Block* previous);
-    void set_next(Block* next);
+  Block* previous();
+  Block* next();
+  void set_previous(Block* previous);
+  void set_next(Block* next);
 
-    rational media_in() const;
-    void set_media_in(const rational& media_in);
+  rational media_in() const;
+  void set_media_in(const rational& media_in);
 
-    rational media_out() const;
+  rational media_out() const;
 
-    rational speed() const;
-    void set_speed(const rational& speed);
-    bool is_still() const;
-    bool is_reversed() const;
+  rational speed() const;
+  void set_speed(const rational& speed);
+  bool is_still() const;
+  bool is_reversed() const;
 
-    bool is_enabled() const;
-    void set_enabled(bool e);
+  bool is_enabled() const;
+  void set_enabled(bool e);
 
-    QString block_name() const;
-    void set_block_name(const QString& name);
+  QString block_name() const;
+  void set_block_name(const QString& name);
 
-    static bool Link(Block* a, Block* b);
-    static void Link(const QList<Block*>& blocks);
-    static bool Unlink(Block* a, Block* b);
-    static void Unlink(const QList<Block*>& blocks);
-    static bool AreLinked(Block* a, Block* b);
-    const QVector<Block*>& linked_clips();
-    bool HasLinks();
+  static bool Link(Block* a, Block* b);
+  static void Link(const QList<Block*>& blocks);
+  static bool Unlink(Block* a, Block* b);
+  static void Unlink(const QList<Block*>& blocks);
+  static bool AreLinked(Block* a, Block* b);
+  const QVector<Block*>& linked_clips();
+  bool HasLinks();
 
-    virtual bool IsBlock() const override;
+  virtual bool IsBlock() const override;
 
-    virtual void Retranslate() override;
+  virtual void Retranslate() override;
 
-    NodeInput* length_input() const;
-    NodeInput* media_in_input() const;
-    NodeInput* speed_input() const;
+  NodeInput* length_input() const;
+  NodeInput* media_in_input() const;
+  NodeInput* speed_input() const;
 
-    virtual void InvalidateCache(const TimeRange& range, NodeInput* from, NodeInput* source) override;
+  virtual void InvalidateCache(const TimeRange& range, NodeInput* from, NodeInput* source) override;
 
-public slots:
+ public slots:
 
-signals:
-    /**
-     * @brief Signal emitted when this Block is refreshed
-     *
-     * Can be used as essentially a "changed" signal for UI widgets to know when to update their views
-     */
-    void Refreshed();
+ signals:
+  /**
+   * @brief Signal emitted when this Block is refreshed
+   *
+   * Can be used as essentially a "changed" signal for UI widgets to know when to update their views
+   */
+  void Refreshed();
 
-    void LengthChanged(const rational& length);
+  void LengthChanged(const rational& length);
 
-    void LinksChanged();
+  void LinksChanged();
 
-    void NameChanged();
+  void NameChanged();
 
-    void EnabledChanged();
+  void EnabledChanged();
 
-protected:
-    rational SequenceToMediaTime(const rational& sequence_time) const;
+ protected:
+  rational SequenceToMediaTime(const rational& sequence_time) const;
 
-    rational MediaToSequenceTime(const rational& media_time) const;
+  rational MediaToSequenceTime(const rational& media_time) const;
 
-    virtual void LoadInternal(QXmlStreamReader* reader, XMLNodeData& xml_node_data) override;
+  virtual void LoadInternal(QXmlStreamReader* reader, XMLNodeData& xml_node_data) override;
 
-    virtual void SaveInternal(QXmlStreamWriter* writer) const override;
+  virtual void SaveInternal(QXmlStreamWriter* writer) const override;
 
-    virtual QList<NodeInput*> GetInputsToHash() const override;
+  virtual QList<NodeInput*> GetInputsToHash() const override;
 
-    Block* previous_;
-    Block* next_;
+  Block* previous_;
+  Block* next_;
 
-private:
-    NodeInput* name_input_;
-    NodeInput* length_input_;
-    NodeInput* media_in_input_;
-    NodeInput* speed_input_;
-    NodeInput* enabled_input_;
+ private:
+  NodeInput* name_input_;
+  NodeInput* length_input_;
+  NodeInput* media_in_input_;
+  NodeInput* speed_input_;
+  NodeInput* enabled_input_;
 
-    rational in_point_;
-    rational out_point_;
+  rational in_point_;
+  rational out_point_;
 
-    QVector<Block*> linked_clips_;
+  QVector<Block*> linked_clips_;
 
-private slots:
-    void LengthInputChanged();
-
+ private slots:
+  void LengthInputChanged();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // BLOCK_H
+#endif  // BLOCK_H

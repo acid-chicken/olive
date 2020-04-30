@@ -33,21 +33,19 @@ OLIVE_NAMESPACE_ENTER
  * A simple derivative of QGridLayout that provides a automatic row/column layout based on a specified maximum
  * column count.
  */
-class ColumnedGridLayout : public QGridLayout
-{
-    Q_OBJECT
-public:
-    ColumnedGridLayout(QWidget* parent = nullptr,
-                       int maximum_columns = 0);
+class ColumnedGridLayout : public QGridLayout {
+  Q_OBJECT
+ public:
+  ColumnedGridLayout(QWidget* parent = nullptr, int maximum_columns = 0);
 
-    void Add(QWidget* widget);
-    int MaximumColumns() const;
-    void SetMaximumColumns(int maximum_columns);
+  void Add(QWidget* widget);
+  int MaximumColumns() const;
+  void SetMaximumColumns(int maximum_columns);
 
-private:
-    int maximum_columns_;
+ private:
+  int maximum_columns_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLUMNEDGRIDLAYOUT_H
+#endif  // COLUMNEDGRIDLAYOUT_H

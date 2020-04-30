@@ -29,56 +29,55 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class PreferencesAudioTab : public PreferencesTab
-{
-    Q_OBJECT
-public:
-    PreferencesAudioTab();
+class PreferencesAudioTab : public PreferencesTab {
+  Q_OBJECT
+ public:
+  PreferencesAudioTab();
 
-    virtual void Accept() override;
+  virtual void Accept() override;
 
-private:
-    /**
-     * @brief UI widget for selecting the output audio device
-     */
-    QComboBox* audio_output_devices_;
+ private:
+  /**
+   * @brief UI widget for selecting the output audio device
+   */
+  QComboBox* audio_output_devices_;
 
-    /**
-     * @brief UI widget for selecting the input audio device
-     */
-    QComboBox* audio_input_devices_;
+  /**
+   * @brief UI widget for selecting the input audio device
+   */
+  QComboBox* audio_input_devices_;
 
-    /**
-     * @brief UI widget for selecting the audio sampling rates
-     */
-    QComboBox* audio_sample_rate_;
+  /**
+   * @brief UI widget for selecting the audio sampling rates
+   */
+  QComboBox* audio_sample_rate_;
 
-    /**
-     * @brief UI widget for editing the recording channels
-     */
-    QComboBox* recording_combobox_;
+  /**
+   * @brief UI widget for editing the recording channels
+   */
+  QComboBox* recording_combobox_;
 
-    /**
-     * @brief Button that triggers a refresh of the available audio devices
-     */
-    QPushButton* refresh_devices_btn_;
+  /**
+   * @brief Button that triggers a refresh of the available audio devices
+   */
+  QPushButton* refresh_devices_btn_;
 
-private slots:
-    void RefreshDevices();
+ private slots:
+  void RefreshDevices();
 
-    void RetrieveOutputList();
+  void RetrieveOutputList();
 
-    void RetrieveInputList();
+  void RetrieveInputList();
 
-private:
-    void RetrieveDeviceLists();
+ private:
+  void RetrieveDeviceLists();
 
-    void UpdateRefreshButtonEnabled();
+  void UpdateRefreshButtonEnabled();
 
-    static void PopulateComboBox(QComboBox* cb, bool still_refreshing, const QList<QAudioDeviceInfo>& list, const QString &preferred);
-
+  static void PopulateComboBox(QComboBox* cb, bool still_refreshing, const QList<QAudioDeviceInfo>& list,
+                               const QString& preferred);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PREFERENCESAUDIOTAB_H
+#endif  // PREFERENCESAUDIOTAB_H

@@ -29,16 +29,15 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief The view widget used when ProjectExplorer is in List View
  */
-class ProjectExplorerListView : public ProjectExplorerListViewBase
-{
-    Q_OBJECT
-public:
-    ProjectExplorerListView(QWidget* parent);
+class ProjectExplorerListView : public ProjectExplorerListViewBase {
+  Q_OBJECT
+ public:
+  ProjectExplorerListView(QWidget* parent);
 
-private:
-    ProjectExplorerListViewItemDelegate delegate_;
+ private:
+  ProjectExplorerListViewItemDelegate delegate_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTEXPLORERLISTVIEW_H
+#endif  // PROJECTEXPLORERLISTVIEW_H

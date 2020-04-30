@@ -29,39 +29,33 @@ OLIVE_NAMESPACE_ENTER
 class OpenGLColorProcessor;
 using OpenGLColorProcessorPtr = std::shared_ptr<OpenGLColorProcessor>;
 
-class OpenGLColorProcessor : public QObject, public ColorProcessor
-{
-    Q_OBJECT
-public:
-    OpenGLColorProcessor(ColorManager *config,
-                         const QString& input,
-                         const ColorTransform& dest);
+class OpenGLColorProcessor : public QObject, public ColorProcessor {
+  Q_OBJECT
+ public:
+  OpenGLColorProcessor(ColorManager* config, const QString& input, const ColorTransform& dest);
 
-    virtual ~OpenGLColorProcessor() override;
+  virtual ~OpenGLColorProcessor() override;
 
-    static OpenGLColorProcessorPtr Create(ColorManager* config,
-                                          const QString& input,
-                                          const ColorTransform& dest);
+  static OpenGLColorProcessorPtr Create(ColorManager* config, const QString& input, const ColorTransform& dest);
 
-    void Enable(QOpenGLContext* context, bool alpha_is_associated);
-    bool IsEnabled() const;
+  void Enable(QOpenGLContext* context, bool alpha_is_associated);
+  bool IsEnabled() const;
 
-    OpenGLShaderPtr pipeline() const;
+  OpenGLShaderPtr pipeline() const;
 
-    void ProcessOpenGL(bool flipped = false, const QMatrix4x4& matrix = QMatrix4x4());
+  void ProcessOpenGL(bool flipped = false, const QMatrix4x4& matrix = QMatrix4x4());
 
-private:
-    QOpenGLContext* context_;
+ private:
+  QOpenGLContext* context_;
 
-    GLuint ocio_lut_;
+  GLuint ocio_lut_;
 
-    OpenGLShaderPtr pipeline_;
+  OpenGLShaderPtr pipeline_;
 
-private slots:
-    void ClearTexture();
-
+ private slots:
+  void ClearTexture();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // OPENGLCOLORPROCESSOR_H
+#endif  // OPENGLCOLORPROCESSOR_H

@@ -24,37 +24,34 @@
 #include <QSplitter>
 #include <QWidget>
 
-#include "view/timelineview.h"
 #include "trackview/trackview.h"
+#include "view/timelineview.h"
 
 OLIVE_NAMESPACE_ENTER
 
-class TimelineAndTrackView : public QWidget
-{
-public:
-    TimelineAndTrackView(Qt::Alignment vertical_alignment = Qt::AlignTop,
-                         QWidget* parent = nullptr);
+class TimelineAndTrackView : public QWidget {
+ public:
+  TimelineAndTrackView(Qt::Alignment vertical_alignment = Qt::AlignTop, QWidget* parent = nullptr);
 
-    QSplitter* splitter() const;
+  QSplitter* splitter() const;
 
-    TimelineView* view() const;
+  TimelineView* view() const;
 
-    TrackView* track_view() const;
+  TrackView* track_view() const;
 
-private:
-    QSplitter* splitter_;
+ private:
+  QSplitter* splitter_;
 
-    TimelineView* view_;
+  TimelineView* view_;
 
-    TrackView* track_view_;
+  TrackView* track_view_;
 
-private slots:
-    void ViewValueChanged(int v);
+ private slots:
+  void ViewValueChanged(int v);
 
-    void TracksValueChanged(int v);
-
+  void TracksValueChanged(int v);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEANDTRACKVIEW_H
+#endif  // TIMELINEANDTRACKVIEW_H

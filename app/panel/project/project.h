@@ -31,57 +31,55 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief A PanelWidget wrapper around a ProjectExplorer and a ProjectToolbar
  */
-class ProjectPanel : public PanelWidget, public FootageManagementPanel
-{
-    Q_OBJECT
-public:
-    ProjectPanel(QWidget* parent);
+class ProjectPanel : public PanelWidget, public FootageManagementPanel {
+  Q_OBJECT
+ public:
+  ProjectPanel(QWidget* parent);
 
-    Project* project() const;
-    void set_project(Project* p);
+  Project* project() const;
+  void set_project(Project* p);
 
-    QModelIndex get_root_index() const;
+  QModelIndex get_root_index() const;
 
-    void set_root(Item* item);
+  void set_root(Item* item);
 
-    QList<Item*> SelectedItems() const;
+  QList<Item*> SelectedItems() const;
 
-    Folder* GetSelectedFolder() const;
+  Folder* GetSelectedFolder() const;
 
-    virtual QList<Footage*> GetSelectedFootage() const override;
+  virtual QList<Footage*> GetSelectedFootage() const override;
 
-    ProjectViewModel* model() const;
+  ProjectViewModel* model() const;
 
-    virtual void SelectAll() override;
-    virtual void DeselectAll() override;
+  virtual void SelectAll() override;
+  virtual void DeselectAll() override;
 
-    virtual void Insert() override;
-    virtual void Overwrite() override;
+  virtual void Insert() override;
+  virtual void Overwrite() override;
 
-    virtual void DeleteSelected() override;
+  virtual void DeleteSelected() override;
 
-public slots:
-    void Edit(Item *item);
+ public slots:
+  void Edit(Item* item);
 
-signals:
-    void ProjectNameChanged();
+ signals:
+  void ProjectNameChanged();
 
-private:
-    virtual void Retranslate() override;
+ private:
+  virtual void Retranslate() override;
 
-    ProjectExplorer* explorer_;
+  ProjectExplorer* explorer_;
 
-private slots:
-    void ItemDoubleClickSlot(Item* item);
+ private slots:
+  void ItemDoubleClickSlot(Item* item);
 
-    void ShowNewMenu();
+  void ShowNewMenu();
 
-    void UpdateSubtitle();
-
+  void UpdateSubtitle();
 };
 
 OLIVE_NAMESPACE_EXIT
 
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::ProjectPtr)
 
-#endif // PROJECT_PANEL_H
+#endif  // PROJECT_PANEL_H

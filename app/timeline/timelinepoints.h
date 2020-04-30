@@ -29,27 +29,25 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class TimelinePoints
-{
-public:
-    TimelinePoints() = default;
+class TimelinePoints {
+ public:
+  TimelinePoints() = default;
 
-    TimelineMarkerList* markers();
-    const TimelineMarkerList* markers() const;
+  TimelineMarkerList* markers();
+  const TimelineMarkerList* markers() const;
 
-    TimelineWorkArea* workarea();
-    const TimelineWorkArea* workarea() const;
+  TimelineWorkArea* workarea();
+  const TimelineWorkArea* workarea() const;
 
-    void Load(QXmlStreamReader* reader);
-    void Save(QXmlStreamWriter* writer) const;
+  void Load(QXmlStreamReader* reader);
+  void Save(QXmlStreamWriter* writer) const;
 
-private:
-    TimelineMarkerList markers_;
+ private:
+  TimelineMarkerList markers_;
 
-    TimelineWorkArea workarea_;
-
+  TimelineWorkArea workarea_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMELINEPOINTS_H
+#endif  // TIMELINEPOINTS_H

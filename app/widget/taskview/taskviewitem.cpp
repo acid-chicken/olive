@@ -26,43 +26,40 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TaskViewItem::TaskViewItem(Task* task, QWidget *parent) :
-    QFrame(parent),
-    task_(task)
-{
-    // Draw border around this item
-    setFrameShape(QFrame::StyledPanel);
+TaskViewItem::TaskViewItem(Task* task, QWidget* parent) : QFrame(parent), task_(task) {
+  // Draw border around this item
+  setFrameShape(QFrame::StyledPanel);
 
-    // Create layout
-    QVBoxLayout* layout = new QVBoxLayout(this);
+  // Create layout
+  QVBoxLayout* layout = new QVBoxLayout(this);
 
-    // Create header label
-    task_name_lbl_ = new QLabel(this);
-    task_name_lbl_->setText(task_->GetTitle());
-    layout->addWidget(task_name_lbl_);
+  // Create header label
+  task_name_lbl_ = new QLabel(this);
+  task_name_lbl_->setText(task_->GetTitle());
+  layout->addWidget(task_name_lbl_);
 
-    // Create center layout (combines progress bar and a cancel button)
-    QHBoxLayout* middle_layout = new QHBoxLayout();
-    layout->addLayout(middle_layout);
+  // Create center layout (combines progress bar and a cancel button)
+  QHBoxLayout* middle_layout = new QHBoxLayout();
+  layout->addLayout(middle_layout);
 
-    // Create progress bar
-    progress_bar_ = new QProgressBar(this);
-    progress_bar_->setRange(0, 100);
-    middle_layout->addWidget(progress_bar_);
+  // Create progress bar
+  progress_bar_ = new QProgressBar(this);
+  progress_bar_->setRange(0, 100);
+  middle_layout->addWidget(progress_bar_);
 
-    // Create cancel button
-    cancel_btn_ = new QPushButton(this);
-    cancel_btn_->setIcon(icon::Error);
-    middle_layout->addWidget(cancel_btn_);
+  // Create cancel button
+  cancel_btn_ = new QPushButton(this);
+  cancel_btn_->setIcon(icon::Error);
+  middle_layout->addWidget(cancel_btn_);
 
-    // Create status label
-    task_status_lbl_ = new QLabel(this);
-    layout->addWidget(task_status_lbl_);
+  // Create status label
+  task_status_lbl_ = new QLabel(this);
+  layout->addWidget(task_status_lbl_);
 
-    // Connect to the task
-    connect(task_, &Task::ProgressChanged, progress_bar_, &QProgressBar::setValue);
-    connect(task_, &Task::Removed, this, &TaskViewItem::deleteLater);
-    connect(cancel_btn_, &QPushButton::clicked, task_, &Task::Cancel, Qt::DirectConnection);
+  // Connect to the task
+  connect(task_, &Task::ProgressChanged, progress_bar_, &QProgressBar::setValue);
+  connect(task_, &Task::Removed, this, &TaskViewItem::deleteLater);
+  connect(cancel_btn_, &QPushButton::clicked, task_, &Task::Cancel, Qt::DirectConnection);
 }
 
 OLIVE_NAMESPACE_EXIT

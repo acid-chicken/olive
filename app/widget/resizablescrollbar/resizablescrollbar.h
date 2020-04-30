@@ -27,44 +27,38 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ResizableScrollBar : public QScrollBar
-{
-    Q_OBJECT
-public:
-    ResizableScrollBar(QWidget* parent = nullptr);
-    ResizableScrollBar(Qt::Orientation orientation, QWidget* parent = nullptr);
+class ResizableScrollBar : public QScrollBar {
+  Q_OBJECT
+ public:
+  ResizableScrollBar(QWidget* parent = nullptr);
+  ResizableScrollBar(Qt::Orientation orientation, QWidget* parent = nullptr);
 
-signals:
-    void RequestScale(const double& multiplier);
+ signals:
+  void RequestScale(const double& multiplier);
 
-protected:
-    virtual void mousePressEvent(QMouseEvent* event) override;
+ protected:
+  virtual void mousePressEvent(QMouseEvent* event) override;
 
-    virtual void mouseMoveEvent(QMouseEvent* event) override;
+  virtual void mouseMoveEvent(QMouseEvent* event) override;
 
-    virtual void mouseReleaseEvent(QMouseEvent* event) override;
+  virtual void mouseReleaseEvent(QMouseEvent* event) override;
 
-private:
-    static const int kHandleWidth;
+ private:
+  static const int kHandleWidth;
 
-    enum MouseHandleState {
-        kNotInHandle,
-        kInTopHandle,
-        kInBottomHandle
-    };
+  enum MouseHandleState { kNotInHandle, kInTopHandle, kInBottomHandle };
 
-    void Init();
+  void Init();
 
-    int GetActiveMousePos(QMouseEvent* event);
+  int GetActiveMousePos(QMouseEvent* event);
 
-    MouseHandleState mouse_handle_state_;
+  MouseHandleState mouse_handle_state_;
 
-    bool mouse_dragging_;
+  bool mouse_dragging_;
 
-    int mouse_drag_start_;
-
+  int mouse_drag_start_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // RESIZABLESCROLLBAR_H
+#endif  // RESIZABLESCROLLBAR_H

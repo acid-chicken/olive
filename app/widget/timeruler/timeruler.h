@@ -29,49 +29,47 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class TimeRuler : public SeekableWidget
-{
-    Q_OBJECT
-public:
-    TimeRuler(bool text_visible = true, bool cache_status_visible = false, QWidget* parent = nullptr);
+class TimeRuler : public SeekableWidget {
+  Q_OBJECT
+ public:
+  TimeRuler(bool text_visible = true, bool cache_status_visible = false, QWidget* parent = nullptr);
 
-    void SetCenteredText(bool c);
+  void SetCenteredText(bool c);
 
-public slots:
-    void CacheInvalidatedRange(const TimeRange &range);
+ public slots:
+  void CacheInvalidatedRange(const TimeRange& range);
 
-    void CacheTimeReady(const rational& time);
+  void CacheTimeReady(const rational& time);
 
-    void SetCacheStatusLength(const rational& length);
+  void SetCacheStatusLength(const rational& length);
 
-protected:
-    virtual void paintEvent(QPaintEvent* e) override;
+ protected:
+  virtual void paintEvent(QPaintEvent* e) override;
 
-    virtual void TimebaseChangedEvent(const rational& tb) override;
+  virtual void TimebaseChangedEvent(const rational& tb) override;
 
-private:
-    void UpdateHeight();
+ private:
+  void UpdateHeight();
 
-    int CacheStatusHeight() const;
+  int CacheStatusHeight() const;
 
-    int cache_status_height_;
+  int cache_status_height_;
 
-    int minimum_gap_between_lines_;
+  int minimum_gap_between_lines_;
 
-    bool text_visible_;
+  bool text_visible_;
 
-    bool centered_text_;
+  bool centered_text_;
 
-    double timebase_flipped_dbl_;
+  double timebase_flipped_dbl_;
 
-    bool show_cache_status_;
+  bool show_cache_status_;
 
-    rational cache_length_;
+  rational cache_length_;
 
-    TimeRangeList dirty_cache_ranges_;
-
+  TimeRangeList dirty_cache_ranges_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // TIMERULER_H
+#endif  // TIMERULER_H

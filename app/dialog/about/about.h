@@ -33,22 +33,21 @@ OLIVE_NAMESPACE_ENTER
  * The About dialog (accessible through Help > About). Contains license and version information. This can be run from
  * anywhere
  */
-class AboutDialog : public QDialog
-{
-    Q_OBJECT
-public:
-    /**
-     * @brief AboutDialog Constructor
-     *
-     * Creates About dialog.
-     *
-     * @param parent
-     *
-     * QWidget parent object. Usually this will be MainWindow.
-     */
-    explicit AboutDialog(QWidget *parent = nullptr);
+class AboutDialog : public QDialog {
+  Q_OBJECT
+ public:
+  /**
+   * @brief AboutDialog Constructor
+   *
+   * Creates About dialog.
+   *
+   * @param parent
+   *
+   * QWidget parent object. Usually this will be MainWindow.
+   */
+  explicit AboutDialog(QWidget *parent = nullptr);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // ABOUTDIALOG_H
+#endif  // ABOUTDIALOG_H

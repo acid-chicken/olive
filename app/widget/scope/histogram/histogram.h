@@ -31,73 +31,69 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class HistogramScopeWorker : public QThread
-{
-    Q_OBJECT
-public:
-    HistogramScopeWorker();
+class HistogramScopeWorker : public QThread {
+  Q_OBJECT
+ public:
+  HistogramScopeWorker();
 
-    // Thread-safe
-    void QueueNext(const Frame& f, ColorProcessorPtr processor, int width);
+  // Thread-safe
+  void QueueNext(const Frame& f, ColorProcessorPtr processor, int width);
 
-    // Thread-safe
-    void Cancel();
+  // Thread-safe
+  void Cancel();
 
-protected:
-    virtual void run() override;
+ protected:
+  virtual void run() override;
 
-signals:
-    void Finished(QVector<double> red, QVector<double> green, QVector<double> blue);
+ signals:
+  void Finished(QVector<double> red, QVector<double> green, QVector<double> blue);
 
-private:
-    QAtomicInt cancelled_;
+ private:
+  QAtomicInt cancelled_;
 
-    QMutex next_lock_;
-    QWaitCondition next_wait_;
-    Frame next_;
-    int next_width_;
-    ColorProcessorPtr next_processor_;
-
+  QMutex next_lock_;
+  QWaitCondition next_wait_;
+  Frame next_;
+  int next_width_;
+  ColorProcessorPtr next_processor_;
 };
 
-class HistogramScope : public ManagedDisplayWidget
-{
-    Q_OBJECT
-public:
-    HistogramScope(QWidget* parent = nullptr);
+class HistogramScope : public ManagedDisplayWidget {
+  Q_OBJECT
+ public:
+  HistogramScope(QWidget* parent = nullptr);
 
-    virtual ~HistogramScope() override;
+  virtual ~HistogramScope() override;
 
-public slots:
-    void SetBuffer(Frame* frame);
+ public slots:
+  void SetBuffer(Frame* frame);
 
-protected:
-    virtual void paintGL() override;
+ protected:
+  virtual void paintGL() override;
 
-    virtual void resizeEvent(QResizeEvent* e) override;
+  virtual void resizeEvent(QResizeEvent* e) override;
 
-    virtual void ColorProcessorChangedEvent() override;
+  virtual void ColorProcessorChangedEvent() override;
 
-    virtual void showEvent(QShowEvent* e) override;
+  virtual void showEvent(QShowEvent* e) override;
 
-private:
-    void StartUpdate();
+ private:
+  void StartUpdate();
 
-    Frame* buffer_;
+  Frame* buffer_;
 
-    QVector<double> red_val_;
+  QVector<double> red_val_;
 
-    QVector<double> green_val_;
+  QVector<double> green_val_;
 
-    QVector<double> blue_val_;
+  QVector<double> blue_val_;
 
-    HistogramScopeWorker worker_;
+  HistogramScopeWorker worker_;
 
-private slots:
-    void FinishedProcessing(QVector<double> red, QVector<double> green, QVector<double> blue);
-
+ private slots:
+  void FinishedProcessing(QVector<double> red, QVector<double> green, QVector<double> blue);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // HISTOGRAMSCOPE_H
+#endif  // HISTOGRAMSCOPE_H

@@ -24,41 +24,19 @@
 
 OLIVE_NAMESPACE_ENTER
 
-NodeDependency::NodeDependency() :
-    node_(nullptr)
-{
-}
+NodeDependency::NodeDependency() : node_(nullptr) {}
 
-NodeDependency::NodeDependency(const Node *node, const TimeRange &range) :
-    node_(node),
-    range_(range)
-{
-}
+NodeDependency::NodeDependency(const Node *node, const TimeRange &range) : node_(node), range_(range) {}
 
-NodeDependency::NodeDependency(const Node *node, const rational &in, const rational &out) :
-    node_(node),
-    range_(in, out)
-{
-}
+NodeDependency::NodeDependency(const Node *node, const rational &in, const rational &out)
+    : node_(node), range_(in, out) {}
 
-const Node *NodeDependency::node() const
-{
-    return node_;
-}
+const Node *NodeDependency::node() const { return node_; }
 
-const rational& NodeDependency::in() const
-{
-    return range_.in();
-}
+const rational &NodeDependency::in() const { return range_.in(); }
 
-const rational &NodeDependency::out() const
-{
-    return range_.out();
-}
+const rational &NodeDependency::out() const { return range_.out(); }
 
-const TimeRange &NodeDependency::range() const
-{
-    return range_;
-}
+const TimeRange &NodeDependency::range() const { return range_; }
 
 OLIVE_NAMESPACE_EXIT

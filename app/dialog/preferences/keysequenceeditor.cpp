@@ -24,29 +24,22 @@
 
 OLIVE_NAMESPACE_ENTER
 
-KeySequenceEditor::KeySequenceEditor(QWidget* parent, QAction* a)
-    : QKeySequenceEdit(parent), action(a) {
-    setKeySequence(action->shortcut());
+KeySequenceEditor::KeySequenceEditor(QWidget* parent, QAction* a) : QKeySequenceEdit(parent), action(a) {
+  setKeySequence(action->shortcut());
 }
 
-void KeySequenceEditor::set_action_shortcut() {
-    action->setShortcut(keySequence());
-}
+void KeySequenceEditor::set_action_shortcut() { action->setShortcut(keySequence()); }
 
-void KeySequenceEditor::reset_to_default() {
-    setKeySequence(action->property("keydefault").toString());
-}
+void KeySequenceEditor::reset_to_default() { setKeySequence(action->property("keydefault").toString()); }
 
-QString KeySequenceEditor::action_name() {
-    return action->property("id").toString();
-}
+QString KeySequenceEditor::action_name() { return action->property("id").toString(); }
 
 QString KeySequenceEditor::export_shortcut() {
-    QString ks = keySequence().toString();
-    if (ks != action->property("keydefault")) {
-        return action->property("id").toString() + "\t" + ks;
-    }
-    return nullptr;
+  QString ks = keySequence().toString();
+  if (ks != action->property("keydefault")) {
+    return action->property("id").toString() + "\t" + ks;
+  }
+  return nullptr;
 }
 
 OLIVE_NAMESPACE_EXIT

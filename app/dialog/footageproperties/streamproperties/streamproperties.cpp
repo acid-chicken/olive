@@ -22,9 +22,6 @@
 
 OLIVE_NAMESPACE_ENTER
 
-StreamProperties::StreamProperties(QWidget *parent) :
-    QWidget(parent)
-{
-}
+StreamProperties::StreamProperties(QWidget *parent) : QWidget(parent) {}
 
 OLIVE_NAMESPACE_EXIT

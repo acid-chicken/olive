@@ -27,122 +27,87 @@
 
 OLIVE_NAMESPACE_ENTER
 
-ImageStream::ImageStream() :
-    premultiplied_alpha_(false)
-{
-    set_type(kImage);
+ImageStream::ImageStream() : premultiplied_alpha_(false) { set_type(kImage); }
+
+void ImageStream::FootageSetEvent(Footage *f) {
+  // For some reason this connection fails if we don't explicitly specify DirectConnection
+  connect(f->project()->color_manager(), &ColorManager::ConfigChanged, this, &ImageStream::ColorConfigChanged,
+          Qt::DirectConnection);
+
+  connect(f->project()->color_manager(), &ColorManager::DefaultInputColorSpaceChanged, this,
+          &ImageStream::DefaultColorSpaceChanged, Qt::DirectConnection);
 }
 
-void ImageStream::FootageSetEvent(Footage *f)
-{
-    // For some reason this connection fails if we don't explicitly specify DirectConnection
-    connect(f->project()->color_manager(),
-            &ColorManager::ConfigChanged,
-            this,
-            &ImageStream::ColorConfigChanged,
-            Qt::DirectConnection);
-
-    connect(f->project()->color_manager(),
-            &ColorManager::DefaultInputColorSpaceChanged,
-            this,
-            &ImageStream::DefaultColorSpaceChanged,
-            Qt::DirectConnection);
-}
-
-void ImageStream::LoadCustomParameters(QXmlStreamReader *reader)
-{
-    while (XMLReadNextStartElement(reader)) {
-        if (reader->name() == QStringLiteral("colorspace")) {
-            set_colorspace(reader->readElementText());
-        } else {
-            reader->skipCurrentElement();
-        }
-    }
-}
-
-void ImageStream::SaveCustomParameters(QXmlStreamWriter *writer) const
-{
-    writer->writeTextElement("colorspace", colorspace_);
-}
-
-QString ImageStream::description() const
-{
-    return QCoreApplication::translate("Stream", "%1: Image - %2x%3").arg(QString::number(index()),
-            QString::number(width()),
-            QString::number(height()));
-}
-
-const int &ImageStream::width() const
-{
-    return width_;
-}
-
-void ImageStream::set_width(const int &width)
-{
-    width_ = width;
-}
-
-const int &ImageStream::height() const
-{
-    return height_;
-}
-
-void ImageStream::set_height(const int &height)
-{
-    height_ = height;
-}
-
-bool ImageStream::premultiplied_alpha() const
-{
-    return premultiplied_alpha_;
-}
-
-void ImageStream::set_premultiplied_alpha(bool e)
-{
-    premultiplied_alpha_ = e;
-
-    emit ParametersChanged();
-}
-
-const QString &ImageStream::colorspace(bool default_if_empty) const
-{
-    if (colorspace_.isEmpty() && default_if_empty) {
-        return footage()->project()->color_manager()->GetDefaultInputColorSpace();
+void ImageStream::LoadCustomParameters(QXmlStreamReader *reader) {
+  while (XMLReadNextStartElement(reader)) {
+    if (reader->name() == QStringLiteral("colorspace")) {
+      set_colorspace(reader->readElementText());
     } else {
-        return colorspace_;
+      reader->skipCurrentElement();
     }
+  }
 }
 
-void ImageStream::set_colorspace(const QString &color)
-{
-    colorspace_ = color;
+void ImageStream::SaveCustomParameters(QXmlStreamWriter *writer) const {
+  writer->writeTextElement("colorspace", colorspace_);
+}
 
+QString ImageStream::description() const {
+  return QCoreApplication::translate("Stream", "%1: Image - %2x%3")
+      .arg(QString::number(index()), QString::number(width()), QString::number(height()));
+}
+
+const int &ImageStream::width() const { return width_; }
+
+void ImageStream::set_width(const int &width) { width_ = width; }
+
+const int &ImageStream::height() const { return height_; }
+
+void ImageStream::set_height(const int &height) { height_ = height; }
+
+bool ImageStream::premultiplied_alpha() const { return premultiplied_alpha_; }
+
+void ImageStream::set_premultiplied_alpha(bool e) {
+  premultiplied_alpha_ = e;
+
+  emit ParametersChanged();
+}
+
+const QString &ImageStream::colorspace(bool default_if_empty) const {
+  if (colorspace_.isEmpty() && default_if_empty) {
+    return footage()->project()->color_manager()->GetDefaultInputColorSpace();
+  } else {
+    return colorspace_;
+  }
+}
+
+void ImageStream::set_colorspace(const QString &color) {
+  colorspace_ = color;
+
+  emit ParametersChanged();
+}
+
+void ImageStream::ColorConfigChanged() {
+  ColorManager *color_manager = footage()->project()->color_manager();
+
+  // Check if this colorspace is in the new config
+  if (!colorspace_.isEmpty()) {
+    QStringList colorspaces = color_manager->ListAvailableInputColorspaces();
+    if (!colorspaces.contains(colorspace_)) {
+      // Set to empty if not
+      colorspace_.clear();
+    }
+  }
+
+  // Either way, the color calculation has likely changed so we signal here
+  emit ParametersChanged();
+}
+
+void ImageStream::DefaultColorSpaceChanged() {
+  // If no colorspace is set, this stream uses the default color space and it's just changed
+  if (colorspace_.isEmpty()) {
     emit ParametersChanged();
-}
-
-void ImageStream::ColorConfigChanged()
-{
-    ColorManager* color_manager = footage()->project()->color_manager();
-
-    // Check if this colorspace is in the new config
-    if (!colorspace_.isEmpty()) {
-        QStringList colorspaces = color_manager->ListAvailableInputColorspaces();
-        if (!colorspaces.contains(colorspace_)) {
-            // Set to empty if not
-            colorspace_.clear();
-        }
-    }
-
-    // Either way, the color calculation has likely changed so we signal here
-    emit ParametersChanged();
-}
-
-void ImageStream::DefaultColorSpaceChanged()
-{
-    // If no colorspace is set, this stream uses the default color space and it's just changed
-    if (colorspace_.isEmpty()) {
-        emit ParametersChanged();
-    }
+  }
 }
 
 OLIVE_NAMESPACE_EXIT

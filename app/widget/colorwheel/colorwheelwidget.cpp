@@ -31,150 +31,129 @@ OLIVE_NAMESPACE_ENTER
 #define M_180_OVER_PI 57.295791433133264917914229473464
 #define M_RADIAN_TO_0_1 0.15915497620314795810531730409296
 
-ColorWheelWidget::ColorWheelWidget(QWidget *parent) :
-    ColorSwatchWidget(parent),
-    val_(1.0f),
-    force_redraw_(false)
-{
+ColorWheelWidget::ColorWheelWidget(QWidget *parent) : ColorSwatchWidget(parent), val_(1.0f), force_redraw_(false) {}
+
+Color ColorWheelWidget::GetColorFromScreenPos(const QPoint &p) const {
+  return GetColorFromTriangle(GetTriangleFromCoords(rect().center(), p));
 }
 
-Color ColorWheelWidget::GetColorFromScreenPos(const QPoint &p) const
-{
-    return GetColorFromTriangle(GetTriangleFromCoords(rect().center(), p));
+void ColorWheelWidget::resizeEvent(QResizeEvent *e) {
+  ColorSwatchWidget::resizeEvent(e);
+
+  emit DiameterChanged(GetDiameter());
 }
 
-void ColorWheelWidget::resizeEvent(QResizeEvent *e)
-{
-    ColorSwatchWidget::resizeEvent(e);
+void ColorWheelWidget::paintEvent(QPaintEvent *e) {
+  ColorSwatchWidget::paintEvent(e);
 
-    emit DiameterChanged(GetDiameter());
-}
+  int diameter = GetDiameter();
 
-void ColorWheelWidget::paintEvent(QPaintEvent *e)
-{
-    ColorSwatchWidget::paintEvent(e);
+  // Half diameter
+  int radius = diameter / 2;
 
-    int diameter = GetDiameter();
+  if (cached_wheel_.width() != diameter || force_redraw_) {
+    cached_wheel_ = QPixmap(QSize(diameter, diameter));
+    cached_wheel_.fill(Qt::transparent);
+    force_redraw_ = false;
 
-    // Half diameter
-    int radius = diameter / 2;
+    QPainter p(&cached_wheel_);
+    QPoint center(radius, radius);
 
-    if (cached_wheel_.width() != diameter || force_redraw_) {
-        cached_wheel_ = QPixmap(QSize(diameter, diameter));
-        cached_wheel_.fill(Qt::transparent);
-        force_redraw_ = false;
+    for (int i = 0; i < diameter; i++) {
+      for (int j = 0; j < diameter; j++) {
+        Triangle tri = GetTriangleFromCoords(center, j, i);
 
-        QPainter p(&cached_wheel_);
-        QPoint center(radius, radius);
+        if (tri.hypotenuse <= radius) {
+          Color managed = GetManagedColor(GetColorFromTriangle(tri));
+          QColor c = managed.toQColor();
 
-        for (int i=0; i<diameter; i++) {
-            for (int j=0; j<diameter; j++) {
-                Triangle tri = GetTriangleFromCoords(center, j, i);
+          // Very basic antialiasing around the edges of the wheel
+          qreal alpha = qMin(1.0, radius - tri.hypotenuse);
+          c.setAlphaF(alpha);
 
-                if (tri.hypotenuse <= radius) {
-                    Color managed = GetManagedColor(GetColorFromTriangle(tri));
-                    QColor c = managed.toQColor();
+          p.setPen(c);
 
-                    // Very basic antialiasing around the edges of the wheel
-                    qreal alpha = qMin(1.0, radius - tri.hypotenuse);
-                    c.setAlphaF(alpha);
-
-                    p.setPen(c);
-
-                    p.drawPoint(i, j);
-                }
-            }
+          p.drawPoint(i, j);
         }
+      }
     }
+  }
 
-    QPainter p(this);
+  QPainter p(this);
 
-    // Draw wheel pixmap
-    int x, y;
+  // Draw wheel pixmap
+  int x, y;
 
-    if (width() == height()) {
-        x = 0;
-        y = 0;
-    } else if (width() > height()) {
-        x = (width() - height()) / 2;
-        y = 0;
-    } else {
-        x = 0;
-        y = (height() - width()) / 2;
-    }
+  if (width() == height()) {
+    x = 0;
+    y = 0;
+  } else if (width() > height()) {
+    x = (width() - height()) / 2;
+    y = 0;
+  } else {
+    x = 0;
+    y = (height() - width()) / 2;
+  }
 
-    p.drawPixmap(x, y, cached_wheel_);
+  p.drawPixmap(x, y, cached_wheel_);
 
+  // Draw selection
+  // Really rough algorithm for determining whether the selector UI should be white or black
 
-    // Draw selection
-    // Really rough algorithm for determining whether the selector UI should be white or black
+  int selector_radius = qMax(1, radius / 32);
+  p.setPen(QPen(GetUISelectorColor(), qMax(1, selector_radius / 4)));
+  p.setBrush(Qt::NoBrush);
 
-
-    int selector_radius = qMax(1, radius / 32);
-    p.setPen(QPen(GetUISelectorColor(), qMax(1, selector_radius / 4)));
-    p.setBrush(Qt::NoBrush);
-
-    p.drawEllipse(GetCoordsFromColor(GetSelectedColor()), selector_radius, selector_radius);
+  p.drawEllipse(GetCoordsFromColor(GetSelectedColor()), selector_radius, selector_radius);
 }
 
-void ColorWheelWidget::SelectedColorChangedEvent(const Color &c, bool external)
-{
-    if (external) {
-        force_redraw_ = true;
-        val_ = clamp(c.value(), 0.0f, 1.0f);
-    }
+void ColorWheelWidget::SelectedColorChangedEvent(const Color &c, bool external) {
+  if (external) {
+    force_redraw_ = true;
+    val_ = clamp(c.value(), 0.0f, 1.0f);
+  }
 }
 
-int ColorWheelWidget::GetDiameter() const
-{
-    return qMin(width(), height());
+int ColorWheelWidget::GetDiameter() const { return qMin(width(), height()); }
+
+qreal ColorWheelWidget::GetRadius() const { return GetDiameter() * 0.5; }
+
+ColorWheelWidget::Triangle ColorWheelWidget::GetTriangleFromCoords(const QPoint &center, const QPoint &p) const {
+  return GetTriangleFromCoords(center, p.y(), p.x());
 }
 
-qreal ColorWheelWidget::GetRadius() const
-{
-    return GetDiameter() * 0.5;
+ColorWheelWidget::Triangle ColorWheelWidget::GetTriangleFromCoords(const QPoint &center, qreal y, qreal x) const {
+  qreal opposite = y - center.y();
+  qreal adjacent = x - center.x();
+  qreal hypotenuse = qSqrt(qPow(adjacent, 2) + qPow(opposite, 2));
+
+  return {opposite, adjacent, hypotenuse};
 }
 
-ColorWheelWidget::Triangle ColorWheelWidget::GetTriangleFromCoords(const QPoint &center, const QPoint &p) const
-{
-    return GetTriangleFromCoords(center, p.y(), p.x());
+Color ColorWheelWidget::GetColorFromTriangle(const ColorWheelWidget::Triangle &tri) const {
+  qreal hue = qAtan2(tri.opposite, tri.adjacent) * M_180_OVER_PI + 180.0;
+  qreal sat = qMin(1.0, (tri.hypotenuse / GetRadius()));
+
+  return Color::fromHsv(hue, sat, val_);
 }
 
-ColorWheelWidget::Triangle ColorWheelWidget::GetTriangleFromCoords(const QPoint &center, qreal y, qreal x) const
-{
-    qreal opposite = y - center.y();
-    qreal adjacent = x - center.x();
-    qreal hypotenuse = qSqrt(qPow(adjacent, 2) + qPow(opposite, 2));
+QPoint ColorWheelWidget::GetCoordsFromColor(const Color &c) const {
+  float hue, sat, val;
+  c.toHsv(&hue, &sat, &val);
 
-    return {opposite, adjacent, hypotenuse};
-}
+  qreal hypotenuse = sat * GetRadius();
 
-Color ColorWheelWidget::GetColorFromTriangle(const ColorWheelWidget::Triangle &tri) const
-{
-    qreal hue = qAtan2(tri.opposite, tri.adjacent) * M_180_OVER_PI + 180.0;
-    qreal sat = qMin(1.0, (tri.hypotenuse / GetRadius()));
+  qreal radian_angle = (hue - 180.0) / M_180_OVER_PI;
 
-    return Color::fromHsv(hue, sat, val_);
-}
+  qreal opposite = qSin(radian_angle) * hypotenuse;
 
-QPoint ColorWheelWidget::GetCoordsFromColor(const Color &c) const
-{
-    float hue, sat, val;
-    c.toHsv(&hue, &sat, &val);
+  qreal adjacent = qCos(radian_angle) * hypotenuse;
 
-    qreal hypotenuse = sat * GetRadius();
+  QPoint pos(qRound(adjacent), qRound(opposite));
 
-    qreal radian_angle = (hue - 180.0) / M_180_OVER_PI;
+  pos += rect().center();
 
-    qreal opposite = qSin(radian_angle) * hypotenuse;
-
-    qreal adjacent = qCos(radian_angle) * hypotenuse;
-
-    QPoint pos(qRound(adjacent), qRound(opposite));
-
-    pos += rect().center();
-
-    return pos;
+  return pos;
 }
 
 OLIVE_NAMESPACE_EXIT

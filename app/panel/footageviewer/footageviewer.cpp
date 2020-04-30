@@ -24,39 +24,35 @@
 
 OLIVE_NAMESPACE_ENTER
 
-FootageViewerPanel::FootageViewerPanel(QWidget *parent) :
-    ViewerPanelBase(QStringLiteral("FootageViewerPanel"), parent)
-{
-    // Set ViewerWidget as the central widget
-    FootageViewerWidget* fvw = new FootageViewerWidget();
-    connect(fvw, &FootageViewerWidget::RequestScopePanel, this, &FootageViewerPanel::CreateScopePanel);
-    SetTimeBasedWidget(fvw);
+FootageViewerPanel::FootageViewerPanel(QWidget *parent)
+    : ViewerPanelBase(QStringLiteral("FootageViewerPanel"), parent) {
+  // Set ViewerWidget as the central widget
+  FootageViewerWidget *fvw = new FootageViewerWidget();
+  connect(fvw, &FootageViewerWidget::RequestScopePanel, this, &FootageViewerPanel::CreateScopePanel);
+  SetTimeBasedWidget(fvw);
 
-    // Set strings
+  // Set strings
+  Retranslate();
+}
+
+QList<Footage *> FootageViewerPanel::GetSelectedFootage() const {
+  return {static_cast<FootageViewerWidget *>(GetTimeBasedWidget())->GetFootage()};
+}
+
+void FootageViewerPanel::SetFootage(Footage *f) {
+  static_cast<FootageViewerWidget *>(GetTimeBasedWidget())->SetFootage(f);
+
+  if (f) {
+    SetSubtitle(f->name());
+  } else {
     Retranslate();
+  }
 }
 
-QList<Footage *> FootageViewerPanel::GetSelectedFootage() const
-{
-    return {static_cast<FootageViewerWidget*>(GetTimeBasedWidget())->GetFootage()};
-}
+void FootageViewerPanel::Retranslate() {
+  ViewerPanelBase::Retranslate();
 
-void FootageViewerPanel::SetFootage(Footage *f)
-{
-    static_cast<FootageViewerWidget*>(GetTimeBasedWidget())->SetFootage(f);
-
-    if (f) {
-        SetSubtitle(f->name());
-    } else {
-        Retranslate();
-    }
-}
-
-void FootageViewerPanel::Retranslate()
-{
-    ViewerPanelBase::Retranslate();
-
-    SetTitle(tr("Footage Viewer"));
+  SetTitle(tr("Footage Viewer"));
 }
 
 OLIVE_NAMESPACE_EXIT

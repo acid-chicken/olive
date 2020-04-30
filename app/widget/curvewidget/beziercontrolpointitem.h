@@ -27,42 +27,40 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class BezierControlPointItem : public QObject, public QGraphicsRectItem
-{
-public:
-    BezierControlPointItem(NodeKeyframePtr key, NodeKeyframe::BezierType mode, QGraphicsItem* parent = nullptr);
+class BezierControlPointItem : public QObject, public QGraphicsRectItem {
+ public:
+  BezierControlPointItem(NodeKeyframePtr key, NodeKeyframe::BezierType mode, QGraphicsItem* parent = nullptr);
 
-    void SetXScale(double scale);
+  void SetXScale(double scale);
 
-    void SetYScale(double scale);
+  void SetYScale(double scale);
 
-    NodeKeyframePtr key() const;
+  NodeKeyframePtr key() const;
 
-    const NodeKeyframe::BezierType& mode() const;
+  const NodeKeyframe::BezierType& mode() const;
 
-    QPointF GetCorrespondingKeyframeHandle() const;
+  QPointF GetCorrespondingKeyframeHandle() const;
 
-    void SetCorrespondingKeyframeHandle(const QPointF& handle);
+  void SetCorrespondingKeyframeHandle(const QPointF& handle);
 
-    void SetOpposingKeyframeHandle(const QPointF& handle);
+  void SetOpposingKeyframeHandle(const QPointF& handle);
 
-protected:
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+ protected:
+  virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 
-private:
-    NodeKeyframePtr key_;
+ private:
+  NodeKeyframePtr key_;
 
-    NodeKeyframe::BezierType mode_;
+  NodeKeyframe::BezierType mode_;
 
-    double x_scale_;
+  double x_scale_;
 
-    double y_scale_;
+  double y_scale_;
 
-private slots:
-    void UpdatePos();
-
+ private slots:
+  void UpdatePos();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // BEZIERCONTROLPOINTITEM_H
+#endif  // BEZIERCONTROLPOINTITEM_H

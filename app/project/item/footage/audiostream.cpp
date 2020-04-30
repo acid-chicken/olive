@@ -22,115 +22,84 @@
 
 OLIVE_NAMESPACE_ENTER
 
-AudioStream::AudioStream() :
-    index_done_(false)
-{
-    set_type(kAudio);
+AudioStream::AudioStream() : index_done_(false) { set_type(kAudio); }
+
+QString AudioStream::description() const {
+  return QCoreApplication::translate("Stream", "%1: Audio - %2 Channels, %3Hz")
+      .arg(QString::number(index()), QString::number(channels()), QString::number(sample_rate()));
 }
 
-QString AudioStream::description() const
-{
-    return QCoreApplication::translate("Stream", "%1: Audio - %2 Channels, %3Hz").arg(QString::number(index()),
-            QString::number(channels()),
-            QString::number(sample_rate()));
+const int &AudioStream::channels() const { return channels_; }
+
+void AudioStream::set_channels(const int &channels) { channels_ = channels; }
+
+const uint64_t &AudioStream::channel_layout() const { return layout_; }
+
+void AudioStream::set_channel_layout(const uint64_t &layout) { layout_ = layout; }
+
+const int &AudioStream::sample_rate() const { return sample_rate_; }
+
+void AudioStream::set_sample_rate(const int &sample_rate) { sample_rate_ = sample_rate; }
+
+const rational &AudioStream::index_length() {
+  QMutexLocker locker(&index_access_lock_);
+
+  return index_length_;
 }
 
-const int &AudioStream::channels() const
-{
-    return channels_;
-}
-
-void AudioStream::set_channels(const int &channels)
-{
-    channels_ = channels;
-}
-
-const uint64_t &AudioStream::channel_layout() const
-{
-    return layout_;
-}
-
-void AudioStream::set_channel_layout(const uint64_t &layout)
-{
-    layout_ = layout;
-}
-
-const int &AudioStream::sample_rate() const
-{
-    return sample_rate_;
-}
-
-void AudioStream::set_sample_rate(const int &sample_rate)
-{
-    sample_rate_ = sample_rate;
-}
-
-const rational &AudioStream::index_length()
-{
+void AudioStream::set_index_length(const rational &index_length) {
+  {
     QMutexLocker locker(&index_access_lock_);
 
-    return index_length_;
+    index_length_ = index_length;
+  }
+
+  emit IndexChanged();
 }
 
-void AudioStream::set_index_length(const rational &index_length)
-{
-    {
-        QMutexLocker locker(&index_access_lock_);
+const bool &AudioStream::index_done() {
+  QMutexLocker locker(&index_access_lock_);
 
-        index_length_ = index_length;
-    }
-
-    emit IndexChanged();
+  return index_done_;
 }
 
-const bool &AudioStream::index_done()
-{
+void AudioStream::set_index_done(const bool &index_done) {
+  {
     QMutexLocker locker(&index_access_lock_);
 
-    return index_done_;
+    index_done_ = index_done;
+  }
+
+  emit IndexChanged();
 }
 
-void AudioStream::set_index_done(const bool& index_done)
-{
-    {
-        QMutexLocker locker(&index_access_lock_);
+void AudioStream::clear_index() {
+  QMutexLocker locker(&index_access_lock_);
 
-        index_done_ = index_done;
+  index_done_ = false;
+  index_length_ = 0;
+}
+
+bool AudioStream::has_conformed_version(const AudioRenderingParams &params) {
+  QMutexLocker locker(&index_access_lock_);
+
+  foreach (const AudioRenderingParams &p, conformed_) {
+    if (p == params) {
+      return true;
     }
+  }
 
-    emit IndexChanged();
+  return false;
 }
 
-void AudioStream::clear_index()
-{
+void AudioStream::append_conformed_version(const AudioRenderingParams &params) {
+  {
     QMutexLocker locker(&index_access_lock_);
 
-    index_done_ = false;
-    index_length_ = 0;
-}
+    conformed_.append(params);
+  }
 
-bool AudioStream::has_conformed_version(const AudioRenderingParams &params)
-{
-    QMutexLocker locker(&index_access_lock_);
-
-    foreach (const AudioRenderingParams& p, conformed_) {
-        if (p == params) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-void AudioStream::append_conformed_version(const AudioRenderingParams &params)
-{
-    {
-        QMutexLocker locker(&index_access_lock_);
-
-        conformed_.append(params);
-    }
-
-    emit ConformAppended(params);
+  emit ConformAppended(params);
 }
 
 OLIVE_NAMESPACE_EXIT

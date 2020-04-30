@@ -28,47 +28,46 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief A Stream derivative containing video-specific information
  */
-class ImageStream : public Stream
-{
-    Q_OBJECT
-public:
-    ImageStream();
+class ImageStream : public Stream {
+  Q_OBJECT
+ public:
+  ImageStream();
 
-    virtual QString description() const override;
+  virtual QString description() const override;
 
-    const int& width() const;
-    void set_width(const int& width);
+  const int& width() const;
+  void set_width(const int& width);
 
-    const int& height() const;
-    void set_height(const int& height);
+  const int& height() const;
+  void set_height(const int& height);
 
-    bool premultiplied_alpha() const;
-    void set_premultiplied_alpha(bool e);
+  bool premultiplied_alpha() const;
+  void set_premultiplied_alpha(bool e);
 
-    const QString& colorspace(bool default_if_empty = true) const;
-    void set_colorspace(const QString& color);
+  const QString& colorspace(bool default_if_empty = true) const;
+  void set_colorspace(const QString& color);
 
-protected:
-    virtual void FootageSetEvent(Footage*) override;
+ protected:
+  virtual void FootageSetEvent(Footage*) override;
 
-    virtual void LoadCustomParameters(QXmlStreamReader *reader) override;
+  virtual void LoadCustomParameters(QXmlStreamReader* reader) override;
 
-    virtual void SaveCustomParameters(QXmlStreamWriter* writer) const override;
+  virtual void SaveCustomParameters(QXmlStreamWriter* writer) const override;
 
-private:
-    int width_;
-    int height_;
-    bool premultiplied_alpha_;
-    QString colorspace_;
+ private:
+  int width_;
+  int height_;
+  bool premultiplied_alpha_;
+  QString colorspace_;
 
-private slots:
-    void ColorConfigChanged();
+ private slots:
+  void ColorConfigChanged();
 
-    void DefaultColorSpaceChanged();
+  void DefaultColorSpaceChanged();
 };
 
 using ImageStreamPtr = std::shared_ptr<ImageStream>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // IMAGESTREAM_H
+#endif  // IMAGESTREAM_H

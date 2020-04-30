@@ -30,26 +30,24 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class OpenGLBackend : public VideoRenderBackend
-{
-    Q_OBJECT
-public:
-    OpenGLBackend(QObject* parent = nullptr);
+class OpenGLBackend : public VideoRenderBackend {
+  Q_OBJECT
+ public:
+  OpenGLBackend(QObject* parent = nullptr);
 
-    virtual ~OpenGLBackend() override;
+  virtual ~OpenGLBackend() override;
 
-protected:
-    virtual bool InitInternal() override;
+ protected:
+  virtual bool InitInternal() override;
 
-    virtual void CloseInternal() override;
+  virtual void CloseInternal() override;
 
-    virtual void ParamsChangedEvent() override;
+  virtual void ParamsChangedEvent() override;
 
-private:
-    OpenGLProxy* proxy_;
-
+ private:
+  OpenGLProxy* proxy_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // OPENGLBACKEND_H
+#endif  // OPENGLBACKEND_H

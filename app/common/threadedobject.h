@@ -27,24 +27,22 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ThreadedObject
-{
-public:
+class ThreadedObject {
+ public:
+  void LockMutex();
+  void UnlockMutex();
+  bool TryLockMutex(int timeout = 0);
 
-    void LockMutex();
-    void UnlockMutex();
-    bool TryLockMutex(int timeout = 0);
+  void LockDeletes();
+  void UnlockDeletes();
+  bool AreDeletesLocked();
 
-    void LockDeletes();
-    void UnlockDeletes();
-    bool AreDeletesLocked();
+ private:
+  QMutex threadobj_main_lock_;
 
-private:
-    QMutex threadobj_main_lock_;
-
-    QAtomicInt threadobj_delete_lock_;
+  QAtomicInt threadobj_delete_lock_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // THREADEDOBJECT_H
+#endif  // THREADEDOBJECT_H

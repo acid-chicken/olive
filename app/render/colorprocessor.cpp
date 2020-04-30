@@ -20,72 +20,54 @@
 
 #include "colorprocessor.h"
 
-#include "common/define.h"
 #include "colormanager.h"
+#include "common/define.h"
 
 OLIVE_NAMESPACE_ENTER
 
-ColorProcessor::ColorProcessor(ColorManager *config, const QString &input, const ColorTransform &transform)
-{
-    const QString& output = (transform.output().isEmpty()) ? config->GetDefaultDisplay() : transform.output();
+ColorProcessor::ColorProcessor(ColorManager *config, const QString &input, const ColorTransform &transform) {
+  const QString &output = (transform.output().isEmpty()) ? config->GetDefaultDisplay() : transform.output();
 
-    if (transform.is_display()) {
+  if (transform.is_display()) {
+    const QString &view = (transform.view().isEmpty()) ? config->GetDefaultView(output) : transform.view();
 
-        const QString& view = (transform.view().isEmpty()) ? config->GetDefaultView(output) : transform.view();
+    OCIO::DisplayTransformRcPtr display_transform = OCIO::DisplayTransform::Create();
 
-        OCIO::DisplayTransformRcPtr display_transform = OCIO::DisplayTransform::Create();
+    display_transform->setInputColorSpaceName(input.toUtf8());
+    display_transform->setDisplay(output.toUtf8());
+    display_transform->setView(view.toUtf8());
 
-        display_transform->setInputColorSpaceName(input.toUtf8());
-        display_transform->setDisplay(output.toUtf8());
-        display_transform->setView(view.toUtf8());
-
-        if (!transform.look().isEmpty()) {
-            display_transform->setLooksOverride(transform.look().toUtf8());
-            display_transform->setLooksOverrideEnabled(true);
-        }
-
-        processor_ = config->GetConfig()->getProcessor(display_transform);
-
-    } else {
-
-        processor_ = config->GetConfig()->getProcessor(input.toUtf8(),
-                     output.toUtf8());
-
+    if (!transform.look().isEmpty()) {
+      display_transform->setLooksOverride(transform.look().toUtf8());
+      display_transform->setLooksOverrideEnabled(true);
     }
+
+    processor_ = config->GetConfig()->getProcessor(display_transform);
+
+  } else {
+    processor_ = config->GetConfig()->getProcessor(input.toUtf8(), output.toUtf8());
+  }
 }
 
-void ColorProcessor::ConvertFrame(Frame *f)
-{
-    OCIO::PackedImageDesc img(reinterpret_cast<float*>(f->data()),
-                              f->width(),
-                              f->height(),
-                              PixelFormat::ChannelCount(f->format()),
-                              OCIO::AutoStride,
-                              OCIO::AutoStride,
-                              f->linesize_bytes());
+void ColorProcessor::ConvertFrame(Frame *f) {
+  OCIO::PackedImageDesc img(reinterpret_cast<float *>(f->data()), f->width(), f->height(),
+                            PixelFormat::ChannelCount(f->format()), OCIO::AutoStride, OCIO::AutoStride,
+                            f->linesize_bytes());
 
-    processor_->apply(img);
+  processor_->apply(img);
 }
 
-Color ColorProcessor::ConvertColor(Color in)
-{
-    processor_->applyRGBA(in.data());
-    return in;
+Color ColorProcessor::ConvertColor(Color in) {
+  processor_->applyRGBA(in.data());
+  return in;
 }
 
-ColorProcessorPtr ColorProcessor::Create(ColorManager *config, const QString& input, const ColorTransform &transform)
-{
-    return std::make_shared<ColorProcessor>(config, input, transform);
+ColorProcessorPtr ColorProcessor::Create(ColorManager *config, const QString &input, const ColorTransform &transform) {
+  return std::make_shared<ColorProcessor>(config, input, transform);
 }
 
-OCIO::ConstProcessorRcPtr ColorProcessor::GetProcessor()
-{
-    return processor_;
-}
+OCIO::ConstProcessorRcPtr ColorProcessor::GetProcessor() { return processor_; }
 
-void ColorProcessor::ConvertFrame(FramePtr f)
-{
-    ConvertFrame(f.get());
-}
+void ColorProcessor::ConvertFrame(FramePtr f) { ConvertFrame(f.get()); }
 
 OLIVE_NAMESPACE_EXIT

@@ -43,4 +43,4 @@ int QFontMetricsWidth(QFontMetrics fm, const QString& s);
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // QTVERSIONABSTRACTION_H
+#endif  // QTVERSIONABSTRACTION_H

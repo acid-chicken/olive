@@ -25,28 +25,27 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class StringSlider : public SliderBase
-{
-    Q_OBJECT
-public:
-    StringSlider(QWidget* parent = nullptr);
+class StringSlider : public SliderBase {
+  Q_OBJECT
+ public:
+  StringSlider(QWidget* parent = nullptr);
 
-    void SetDragMultiplier(const double& d) = delete;
+  void SetDragMultiplier(const double& d) = delete;
 
-    QString GetValue();
+  QString GetValue();
 
-    void SetValue(const QString& v);
+  void SetValue(const QString& v);
 
-protected:
-    virtual QString ValueToString(const QVariant& value) override;
+ protected:
+  virtual QString ValueToString(const QVariant& value) override;
 
-signals:
-    void ValueChanged(QString);
+ signals:
+  void ValueChanged(QString);
 
-private slots:
-    void ConvertValue(QVariant v);
+ private slots:
+  void ConvertValue(QVariant v);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // STRINGSLIDER_H
+#endif  // STRINGSLIDER_H

@@ -28,31 +28,25 @@
 OLIVE_NAMESPACE_ENTER
 
 class NodeViewCommon {
-public:
-    enum FlowDirection {
-        kTopToBottom,
-        kBottomToTop,
-        kLeftToRight,
-        kRightToLeft
-    };
+ public:
+  enum FlowDirection { kTopToBottom, kBottomToTop, kLeftToRight, kRightToLeft };
 
-    static Qt::Orientation GetFlowOrientation(FlowDirection dir) {
-        if (dir == kTopToBottom || dir == kBottomToTop) {
-            return Qt::Vertical;
-        } else {
-            return Qt::Horizontal;
-        }
+  static Qt::Orientation GetFlowOrientation(FlowDirection dir) {
+    if (dir == kTopToBottom || dir == kBottomToTop) {
+      return Qt::Vertical;
+    } else {
+      return Qt::Horizontal;
     }
+  }
 
-    static bool DirectionsAreOpposing(FlowDirection a, FlowDirection b) {
-        return ((a == NodeViewCommon::kLeftToRight && b == NodeViewCommon::kRightToLeft)
-                || (a == NodeViewCommon::kRightToLeft && b == NodeViewCommon::kLeftToRight)
-                || (a == NodeViewCommon::kTopToBottom && b == NodeViewCommon::kBottomToTop)
-                || (a == NodeViewCommon::kBottomToTop && b == NodeViewCommon::kTopToBottom));
-    }
-
+  static bool DirectionsAreOpposing(FlowDirection a, FlowDirection b) {
+    return ((a == NodeViewCommon::kLeftToRight && b == NodeViewCommon::kRightToLeft) ||
+            (a == NodeViewCommon::kRightToLeft && b == NodeViewCommon::kLeftToRight) ||
+            (a == NodeViewCommon::kTopToBottom && b == NodeViewCommon::kBottomToTop) ||
+            (a == NodeViewCommon::kBottomToTop && b == NodeViewCommon::kTopToBottom));
+  }
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // NODEVIEWCOMMON_H
+#endif  // NODEVIEWCOMMON_H

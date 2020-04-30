@@ -29,49 +29,47 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ColorWheelWidget : public ColorSwatchWidget
-{
-    Q_OBJECT
-public:
-    ColorWheelWidget(QWidget* parent = nullptr);
+class ColorWheelWidget : public ColorSwatchWidget {
+  Q_OBJECT
+ public:
+  ColorWheelWidget(QWidget* parent = nullptr);
 
-signals:
-    void DiameterChanged(int radius);
+ signals:
+  void DiameterChanged(int radius);
 
-protected:
-    virtual Color GetColorFromScreenPos(const QPoint& p) const override;
+ protected:
+  virtual Color GetColorFromScreenPos(const QPoint& p) const override;
 
-    virtual void resizeEvent(QResizeEvent* e) override;
+  virtual void resizeEvent(QResizeEvent* e) override;
 
-    virtual void paintEvent(QPaintEvent* e) override;
+  virtual void paintEvent(QPaintEvent* e) override;
 
-    virtual void SelectedColorChangedEvent(const Color& c, bool external) override;
+  virtual void SelectedColorChangedEvent(const Color& c, bool external) override;
 
-private:
-    int GetDiameter() const;
+ private:
+  int GetDiameter() const;
 
-    qreal GetRadius() const;
+  qreal GetRadius() const;
 
-    struct Triangle {
-        qreal opposite;
-        qreal adjacent;
-        qreal hypotenuse;
-    };
+  struct Triangle {
+    qreal opposite;
+    qreal adjacent;
+    qreal hypotenuse;
+  };
 
-    Triangle GetTriangleFromCoords(const QPoint &center, const QPoint& p) const;
-    Triangle GetTriangleFromCoords(const QPoint &center, qreal y, qreal x) const;
+  Triangle GetTriangleFromCoords(const QPoint& center, const QPoint& p) const;
+  Triangle GetTriangleFromCoords(const QPoint& center, qreal y, qreal x) const;
 
-    Color GetColorFromTriangle(const Triangle& tri) const;
-    QPoint GetCoordsFromColor(const Color& c) const;
+  Color GetColorFromTriangle(const Triangle& tri) const;
+  QPoint GetCoordsFromColor(const Color& c) const;
 
-    QPixmap cached_wheel_;
+  QPixmap cached_wheel_;
 
-    float val_;
+  float val_;
 
-    bool force_redraw_;
-
+  bool force_redraw_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // COLORWHEELWIDGET_H
+#endif  // COLORWHEELWIDGET_H

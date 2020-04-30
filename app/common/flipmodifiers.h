@@ -31,4 +31,4 @@ Qt::KeyboardModifiers FlipControlAndShiftModifiers(Qt::KeyboardModifiers e);
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // FLIPMODIFIERS_H
+#endif  // FLIPMODIFIERS_H

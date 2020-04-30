@@ -33,202 +33,147 @@ const int kDecibelStep = 6;
 const int kDecibelMinimum = -200;
 const int kMaximumSmoothness = 8;
 
-AudioMonitor::AudioMonitor(QWidget *parent) :
-    QOpenGLWidget(parent),
-    cached_channels_(0)
-{
-    values_.resize(kMaximumSmoothness);
+AudioMonitor::AudioMonitor(QWidget *parent) : QOpenGLWidget(parent), cached_channels_(0) {
+  values_.resize(kMaximumSmoothness);
 
-    connect(AudioManager::instance(), &AudioManager::OutputDeviceStarted, this, &AudioMonitor::OutputDeviceSet);
-    connect(AudioManager::instance(), &AudioManager::OutputPushed, this, &AudioMonitor::OutputPushed);
-    connect(AudioManager::instance(), &AudioManager::AudioParamsChanged, this, &AudioMonitor::SetParams);
-    connect(AudioManager::instance(), &AudioManager::Stopped, this, &AudioMonitor::Stop);
+  connect(AudioManager::instance(), &AudioManager::OutputDeviceStarted, this, &AudioMonitor::OutputDeviceSet);
+  connect(AudioManager::instance(), &AudioManager::OutputPushed, this, &AudioMonitor::OutputPushed);
+  connect(AudioManager::instance(), &AudioManager::AudioParamsChanged, this, &AudioMonitor::SetParams);
+  connect(AudioManager::instance(), &AudioManager::Stopped, this, &AudioMonitor::Stop);
 }
 
-AudioMonitor::~AudioMonitor()
-{
-    Stop();
+AudioMonitor::~AudioMonitor() { Stop(); }
+
+void AudioMonitor::SetParams(const AudioRenderingParams &params) {
+  params_ = params;
+
+  for (int i = 0; i < values_.size(); i++) {
+    values_[i].resize(params_.channel_count());
+    values_[i].fill(0);
+  }
+
+  peaked_.resize(params_.channel_count());
+  peaked_.fill(false);
 }
 
-void AudioMonitor::SetParams(const AudioRenderingParams &params)
-{
-    params_ = params;
+void AudioMonitor::OutputDeviceSet(const QString &filename, qint64 offset, int playback_speed) {
+  Stop();
 
-    for (int i=0; i<values_.size(); i++) {
-        values_[i].resize(params_.channel_count());
-        values_[i].fill(0);
-    }
+  file_.setFileName(filename);
 
-    peaked_.resize(params_.channel_count());
-    peaked_.fill(false);
+  if (!file_.open(QFile::ReadOnly)) {
+    qWarning() << "Failed to open" << filename;
+    return;
+  }
+
+  file_.seek(offset);
+
+  playback_speed_ = playback_speed;
+
+  last_time_ = QDateTime::currentMSecsSinceEpoch();
+
+  SetUpdateLoop(true);
 }
 
-void AudioMonitor::OutputDeviceSet(const QString &filename, qint64 offset, int playback_speed)
-{
-    Stop();
-
-    file_.setFileName(filename);
-
-    if (!file_.open(QFile::ReadOnly)) {
-        qWarning() << "Failed to open" << filename;
-        return;
-    }
-
-    file_.seek(offset);
-
-    playback_speed_ = playback_speed;
-
-    last_time_ = QDateTime::currentMSecsSinceEpoch();
-
-    SetUpdateLoop(true);
+void AudioMonitor::Stop() {
+  if (file_.isOpen()) {
+    file_.close();
+  }
 }
 
-void AudioMonitor::Stop()
-{
-    if (file_.isOpen()) {
-        file_.close();
-    }
+void AudioMonitor::OutputPushed(const QByteArray &data) {
+  QVector<double> v(params_.channel_count(), 0);
+
+  BytesToSampleSummary(data, v);
+
+  PushValue(v);
+
+  SetUpdateLoop(true);
 }
 
-void AudioMonitor::OutputPushed(const QByteArray &data)
-{
-    QVector<double> v(params_.channel_count(), 0);
+void AudioMonitor::SetUpdateLoop(bool e) {
+  if (e) {
+    connect(this, &AudioMonitor::frameSwapped, this, static_cast<void (AudioMonitor::*)()>(&AudioMonitor::update));
 
-    BytesToSampleSummary(data, v);
-
-    PushValue(v);
-
-    SetUpdateLoop(true);
+    update();
+  } else {
+    disconnect(this, &AudioMonitor::frameSwapped, this, static_cast<void (AudioMonitor::*)()>(&AudioMonitor::update));
+  }
 }
 
-void AudioMonitor::SetUpdateLoop(bool e)
-{
-    if (e) {
-        connect(this, &AudioMonitor::frameSwapped, this, static_cast<void(AudioMonitor::*)()>(&AudioMonitor::update));
+void AudioMonitor::paintGL() {
+  QPainter p(this);
+  p.fillRect(rect(), palette().window().color());
 
-        update();
-    } else {
-        disconnect(this, &AudioMonitor::frameSwapped, this, static_cast<void(AudioMonitor::*)()>(&AudioMonitor::update));
-    }
-}
+  if (!params_.channel_count()) {
+    return;
+  }
 
-void AudioMonitor::paintGL()
-{
-    QPainter p(this);
-    p.fillRect(rect(), palette().window().color());
+  QFontMetrics fm = p.fontMetrics();
 
-    if (!params_.channel_count()) {
-        return;
-    }
+  int peaks_y = 0;
+  int font_height = fm.height();
 
-    QFontMetrics fm = p.fontMetrics();
+  // Create rect where decibel markings will go on the side
+  QRect db_labels_rect = rect();
+  db_labels_rect.setWidth(QFontMetricsWidth(p.fontMetrics(), "-00"));
+  db_labels_rect.adjust(0, font_height, 0, 0);
 
-    int peaks_y = 0;
-    int font_height = fm.height();
+  // Determine rect where the main meter will go
+  QRect full_meter_rect = rect();
+  full_meter_rect.adjust(db_labels_rect.width(), font_height, 0, 0);
 
-    // Create rect where decibel markings will go on the side
-    QRect db_labels_rect = rect();
-    db_labels_rect.setWidth(QFontMetricsWidth(p.fontMetrics(), "-00"));
-    db_labels_rect.adjust(0, font_height, 0, 0);
+  // Width of each channel in the meter
+  int channel_width = full_meter_rect.width() / params_.channel_count();
 
-    // Determine rect where the main meter will go
-    QRect full_meter_rect = rect();
-    full_meter_rect.adjust(db_labels_rect.width(), font_height, 0, 0);
+  if (cached_background_.size() != size() || cached_channels_ != params_.channel_count()) {
+    cached_channels_ = params_.channel_count();
 
-    // Width of each channel in the meter
-    int channel_width = full_meter_rect.width() / params_.channel_count();
+    // Generate new background
+    cached_background_ = QPixmap(size());
+    cached_background_.fill(Qt::transparent);
 
-    if (cached_background_.size() != size()
-            || cached_channels_ != params_.channel_count()) {
+    QPainter cached_painter(&cached_background_);
 
-        cached_channels_ = params_.channel_count();
+    {
+      // Draw decibel markings
+      QRect last_db_marking_rect;
 
-        // Generate new background
-        cached_background_ = QPixmap(size());
-        cached_background_.fill(Qt::transparent);
+      cached_painter.setPen(palette().text().color());
 
-        QPainter cached_painter(&cached_background_);
+      for (int i = 0; i >= kDecibelMinimum; i -= kDecibelStep) {
+        QString db_label;
 
-        {
-            // Draw decibel markings
-            QRect last_db_marking_rect;
-
-            cached_painter.setPen(palette().text().color());
-
-            for (int i=0; i>=kDecibelMinimum; i-=kDecibelStep) {
-                QString db_label;
-
-                if (i <= kDecibelMinimum) {
-                    db_label = "-∞";
-                } else {
-                    db_label = QStringLiteral("%1").arg(i);
-                }
-
-                qreal log_val = QAudio::convertVolume(i, QAudio::DecibelVolumeScale, QAudio::LogarithmicVolumeScale);
-
-                QRect db_marking_rect = db_labels_rect;
-                db_marking_rect.adjust(0, db_labels_rect.height() - qRound(log_val * db_labels_rect.height()), 0, 0);
-                db_marking_rect.setHeight(fm.height());
-
-                // Prevent any dB markings overlapping
-                if (i == 0 || !db_marking_rect.intersects(last_db_marking_rect)) {
-                    cached_painter.drawText(db_marking_rect, Qt::AlignRight, db_label);
-                    cached_painter.drawLine(db_marking_rect.topLeft(), db_marking_rect.topRight());
-
-                    last_db_marking_rect = db_marking_rect;
-                }
-            }
+        if (i <= kDecibelMinimum) {
+          db_label = "-∞";
+        } else {
+          db_label = QStringLiteral("%1").arg(i);
         }
 
-        {
-            // Draw bars
-            QLinearGradient g(full_meter_rect.topLeft(), full_meter_rect.bottomLeft());
-            g.setStops({
-                QGradientStop(0.0, Qt::red),
-                QGradientStop(0.25, Qt::yellow),
-                QGradientStop(1.0, Qt::green)
-            });
+        qreal log_val = QAudio::convertVolume(i, QAudio::DecibelVolumeScale, QAudio::LogarithmicVolumeScale);
 
-            cached_painter.setPen(Qt::black);
+        QRect db_marking_rect = db_labels_rect;
+        db_marking_rect.adjust(0, db_labels_rect.height() - qRound(log_val * db_labels_rect.height()), 0, 0);
+        db_marking_rect.setHeight(fm.height());
 
-            for (int i=0; i<params_.channel_count(); i++) {
-                int channel_x = full_meter_rect.x() + channel_width * i;
+        // Prevent any dB markings overlapping
+        if (i == 0 || !db_marking_rect.intersects(last_db_marking_rect)) {
+          cached_painter.drawText(db_marking_rect, Qt::AlignRight, db_label);
+          cached_painter.drawLine(db_marking_rect.topLeft(), db_marking_rect.topRight());
 
-                QRect peaks_rect(channel_x, peaks_y, channel_width, font_height);
-
-                QRect meter_rect = full_meter_rect;
-                meter_rect.setX(channel_x);
-                meter_rect.setWidth(channel_width);
-
-                // Draw peak rects
-                cached_painter.setBrush(Qt::red);
-                cached_painter.drawRect(peaks_rect);
-
-                // Draw gradient meter
-                cached_painter.setBrush(g);
-                cached_painter.drawRect(meter_rect);
-            }
+          last_db_marking_rect = db_marking_rect;
         }
+      }
     }
 
-    p.drawPixmap(0, 0, cached_background_);
+    {
+      // Draw bars
+      QLinearGradient g(full_meter_rect.topLeft(), full_meter_rect.bottomLeft());
+      g.setStops({QGradientStop(0.0, Qt::red), QGradientStop(0.25, Qt::yellow), QGradientStop(1.0, Qt::green)});
 
-    QVector<double> v(params_.channel_count(), 0);
+      cached_painter.setPen(Qt::black);
 
-    if (file_.isOpen()) {
-        UpdateValuesFromFile(v);
-    }
-
-    PushValue(v);
-
-    QVector<double> vals = GetAverages();
-
-    p.setBrush(QColor(0, 0, 0, 128));
-    p.setPen(Qt::NoPen);
-
-    bool all_zeroes = true;
-
-    for (int i=0; i<params_.channel_count(); i++) {
+      for (int i = 0; i < params_.channel_count(); i++) {
         int channel_x = full_meter_rect.x() + channel_width * i;
 
         QRect peaks_rect(channel_x, peaks_y, channel_width, font_height);
@@ -237,92 +182,125 @@ void AudioMonitor::paintGL()
         meter_rect.setX(channel_x);
         meter_rect.setWidth(channel_width);
 
-        // Validate value and whether it peaked
-        double vol = vals.at(i);
-        if (vol > 1.0) {
-            peaked_[i] = true;
-        }
+        // Draw peak rects
+        cached_painter.setBrush(Qt::red);
+        cached_painter.drawRect(peaks_rect);
 
-        if (all_zeroes && !qIsNull(vol)) {
-            all_zeroes = false;
-        }
+        // Draw gradient meter
+        cached_painter.setBrush(g);
+        cached_painter.drawRect(meter_rect);
+      }
+    }
+  }
 
-        // Convert val to logarithmic scale
-        vol = QAudio::convertVolume(vol, QAudio::LinearVolumeScale, QAudio::LogarithmicVolumeScale);
+  p.drawPixmap(0, 0, cached_background_);
 
-        meter_rect.adjust(0, 0, 0, -qRound(meter_rect.height() * vol));
-        p.drawRect(meter_rect);
+  QVector<double> v(params_.channel_count(), 0);
 
-        if (!peaked_.at(i)) {
-            p.drawRect(peaks_rect);
-        }
+  if (file_.isOpen()) {
+    UpdateValuesFromFile(v);
+  }
+
+  PushValue(v);
+
+  QVector<double> vals = GetAverages();
+
+  p.setBrush(QColor(0, 0, 0, 128));
+  p.setPen(Qt::NoPen);
+
+  bool all_zeroes = true;
+
+  for (int i = 0; i < params_.channel_count(); i++) {
+    int channel_x = full_meter_rect.x() + channel_width * i;
+
+    QRect peaks_rect(channel_x, peaks_y, channel_width, font_height);
+
+    QRect meter_rect = full_meter_rect;
+    meter_rect.setX(channel_x);
+    meter_rect.setWidth(channel_width);
+
+    // Validate value and whether it peaked
+    double vol = vals.at(i);
+    if (vol > 1.0) {
+      peaked_[i] = true;
     }
 
-    if (all_zeroes && !file_.isOpen()) {
-        // Optimize by disabling the update loop
-        SetUpdateLoop(false);
-    }
-}
-
-void AudioMonitor::mousePressEvent(QMouseEvent *)
-{
-    peaked_.fill(false);
-    update();
-}
-
-void AudioMonitor::UpdateValuesFromFile(QVector<double>& v)
-{
-    // Determines how many milliseconds have passed since last update
-    qint64 current_time = QDateTime::currentMSecsSinceEpoch();
-    qint64 time_passed = current_time - last_time_;
-
-    // Determine how many bytes this is
-    int bytes_to_read = params_.time_to_bytes(static_cast<double>(time_passed) * 0.001);
-
-    QByteArray b = file_.read(bytes_to_read);;
-
-    BytesToSampleSummary(b, v);
-
-    last_time_ = current_time;
-}
-
-void AudioMonitor::PushValue(const QVector<double> &v)
-{
-    values_.removeFirst();
-    values_.append(v);
-}
-
-void AudioMonitor::BytesToSampleSummary(const QByteArray &b, QVector<double> &v)
-{
-    const float* samples = reinterpret_cast<const float*>(b.constData());
-    int nb_samples = b.size() / sizeof(float);
-
-    for (int i=0; i<nb_samples; i++) {
-        int channel = i % params_.channel_count();
-
-        float abs_sample = samples[i];
-
-        if (abs_sample > v.at(channel)) {
-            v.replace(channel, abs_sample);
-        }
-    }
-}
-
-QVector<double> AudioMonitor::GetAverages() const
-{
-    QVector<double> v(params_.channel_count(), 0);
-
-    for (int i=0; i<values_.size(); i++) {
-        for (int j=0; j<v.size(); j++) {
-            v[j] += values_.at(i).at(j);
-        }
+    if (all_zeroes && !qIsNull(vol)) {
+      all_zeroes = false;
     }
 
-    for (int i=0; i<v.size(); i++) {
-        v[i] /= static_cast<double>(values_.size());
-    }
+    // Convert val to logarithmic scale
+    vol = QAudio::convertVolume(vol, QAudio::LinearVolumeScale, QAudio::LogarithmicVolumeScale);
 
-    return v;
+    meter_rect.adjust(0, 0, 0, -qRound(meter_rect.height() * vol));
+    p.drawRect(meter_rect);
+
+    if (!peaked_.at(i)) {
+      p.drawRect(peaks_rect);
+    }
+  }
+
+  if (all_zeroes && !file_.isOpen()) {
+    // Optimize by disabling the update loop
+    SetUpdateLoop(false);
+  }
+}
+
+void AudioMonitor::mousePressEvent(QMouseEvent *) {
+  peaked_.fill(false);
+  update();
+}
+
+void AudioMonitor::UpdateValuesFromFile(QVector<double> &v) {
+  // Determines how many milliseconds have passed since last update
+  qint64 current_time = QDateTime::currentMSecsSinceEpoch();
+  qint64 time_passed = current_time - last_time_;
+
+  // Determine how many bytes this is
+  int bytes_to_read = params_.time_to_bytes(static_cast<double>(time_passed) * 0.001);
+
+  QByteArray b = file_.read(bytes_to_read);
+  ;
+
+  BytesToSampleSummary(b, v);
+
+  last_time_ = current_time;
+}
+
+void AudioMonitor::PushValue(const QVector<double> &v) {
+  values_.removeFirst();
+  values_.append(v);
+}
+
+void AudioMonitor::BytesToSampleSummary(const QByteArray &b, QVector<double> &v) {
+  const float *samples = reinterpret_cast<const float *>(b.constData());
+  int nb_samples = b.size() / sizeof(float);
+
+  for (int i = 0; i < nb_samples; i++) {
+    int channel = i % params_.channel_count();
+
+    float abs_sample = samples[i];
+
+    if (abs_sample > v.at(channel)) {
+      v.replace(channel, abs_sample);
+    }
+  }
+}
+
+QVector<double> AudioMonitor::GetAverages() const {
+  QVector<double> v(params_.channel_count(), 0);
+
+  for (int i = 0; i < values_.size(); i++) {
+    for (int j = 0; j < v.size(); j++) {
+      v[j] += values_.at(i).at(j);
+    }
+  }
+
+  for (int i = 0; i < v.size(); i++) {
+    v[i] /= static_cast<double>(values_.size());
+  }
+
+  return v;
 }
 
 OLIVE_NAMESPACE_EXIT

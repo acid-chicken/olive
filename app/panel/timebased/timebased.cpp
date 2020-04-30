@@ -22,192 +22,102 @@
 
 OLIVE_NAMESPACE_ENTER
 
-TimeBasedPanel::TimeBasedPanel(const QString &object_name, QWidget *parent) :
-    PanelWidget(object_name, parent),
-    widget_(nullptr)
-{
+TimeBasedPanel::TimeBasedPanel(const QString &object_name, QWidget *parent)
+    : PanelWidget(object_name, parent), widget_(nullptr) {}
+
+rational TimeBasedPanel::GetTime() { return widget_->GetTime(); }
+
+void TimeBasedPanel::GoToStart() { widget_->GoToStart(); }
+
+void TimeBasedPanel::PrevFrame() { widget_->PrevFrame(); }
+
+void TimeBasedPanel::NextFrame() { widget_->NextFrame(); }
+
+void TimeBasedPanel::GoToEnd() { widget_->GoToEnd(); }
+
+void TimeBasedPanel::ZoomIn() { widget_->ZoomIn(); }
+
+void TimeBasedPanel::ZoomOut() { widget_->ZoomOut(); }
+
+void TimeBasedPanel::SetTimebase(const rational &timebase) { widget_->SetTimebase(timebase); }
+
+void TimeBasedPanel::SetTimestamp(const int64_t &timestamp) { widget_->SetTimestamp(timestamp); }
+
+void TimeBasedPanel::GoToPrevCut() { widget_->GoToPrevCut(); }
+
+void TimeBasedPanel::GoToNextCut() { widget_->GoToNextCut(); }
+
+void TimeBasedPanel::PlayPause() { emit PlayPauseRequested(); }
+
+void TimeBasedPanel::PlayInToOut() { emit PlayInToOutRequested(); }
+
+void TimeBasedPanel::ShuttleLeft() { emit ShuttleLeftRequested(); }
+
+void TimeBasedPanel::ShuttleStop() { emit ShuttleStopRequested(); }
+
+void TimeBasedPanel::ShuttleRight() { emit ShuttleRightRequested(); }
+
+TimeBasedWidget *TimeBasedPanel::GetTimeBasedWidget() const { return widget_; }
+
+ViewerOutput *TimeBasedPanel::GetConnectedViewer() const { return widget_->GetConnectedNode(); }
+
+TimeRuler *TimeBasedPanel::ruler() const { return widget_->ruler(); }
+
+void TimeBasedPanel::ConnectViewerNode(ViewerOutput *node) {
+  if (widget_->GetConnectedNode()) {
+    disconnect(widget_->GetConnectedNode(), &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
+  }
+
+  widget_->ConnectViewerNode(node);
+
+  if (node) {
+    connect(node, &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
+  }
+
+  // Update strings
+  Retranslate();
 }
 
-rational TimeBasedPanel::GetTime()
-{
-    return widget_->GetTime();
+void TimeBasedPanel::SetTimeBasedWidget(TimeBasedWidget *widget) {
+  if (widget_) {
+    disconnect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
+    disconnect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
+  }
+
+  widget_ = widget;
+
+  if (widget_) {
+    connect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
+    connect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
+  }
+
+  SetWidgetWithPadding(widget_);
 }
 
-void TimeBasedPanel::GoToStart()
-{
-    widget_->GoToStart();
+void TimeBasedPanel::Retranslate() {
+  if (GetTimeBasedWidget()->GetConnectedNode()) {
+    SetSubtitle(GetTimeBasedWidget()->GetConnectedNode()->media_name());
+  } else {
+    SetSubtitle(tr("(none)"));
+  }
 }
 
-void TimeBasedPanel::PrevFrame()
-{
-    widget_->PrevFrame();
-}
+void TimeBasedPanel::SetIn() { GetTimeBasedWidget()->SetInAtPlayhead(); }
 
-void TimeBasedPanel::NextFrame()
-{
-    widget_->NextFrame();
-}
+void TimeBasedPanel::SetOut() { GetTimeBasedWidget()->SetOutAtPlayhead(); }
 
-void TimeBasedPanel::GoToEnd()
-{
-    widget_->GoToEnd();
-}
+void TimeBasedPanel::ResetIn() { GetTimeBasedWidget()->ResetIn(); }
 
-void TimeBasedPanel::ZoomIn()
-{
-    widget_->ZoomIn();
-}
+void TimeBasedPanel::ResetOut() { GetTimeBasedWidget()->ResetOut(); }
 
-void TimeBasedPanel::ZoomOut()
-{
-    widget_->ZoomOut();
-}
+void TimeBasedPanel::ClearInOut() { GetTimeBasedWidget()->ClearInOutPoints(); }
 
-void TimeBasedPanel::SetTimebase(const rational &timebase)
-{
-    widget_->SetTimebase(timebase);
-}
+void TimeBasedPanel::SetMarker() { GetTimeBasedWidget()->SetMarker(); }
 
-void TimeBasedPanel::SetTimestamp(const int64_t &timestamp)
-{
-    widget_->SetTimestamp(timestamp);
-}
+void TimeBasedPanel::ToggleShowAll() { GetTimeBasedWidget()->ToggleShowAll(); }
 
-void TimeBasedPanel::GoToPrevCut()
-{
-    widget_->GoToPrevCut();
-}
+void TimeBasedPanel::GoToIn() { GetTimeBasedWidget()->GoToIn(); }
 
-void TimeBasedPanel::GoToNextCut()
-{
-    widget_->GoToNextCut();
-}
-
-void TimeBasedPanel::PlayPause()
-{
-    emit PlayPauseRequested();
-}
-
-void TimeBasedPanel::PlayInToOut()
-{
-    emit PlayInToOutRequested();
-}
-
-void TimeBasedPanel::ShuttleLeft()
-{
-    emit ShuttleLeftRequested();
-}
-
-void TimeBasedPanel::ShuttleStop()
-{
-    emit ShuttleStopRequested();
-}
-
-void TimeBasedPanel::ShuttleRight()
-{
-    emit ShuttleRightRequested();
-}
-
-TimeBasedWidget *TimeBasedPanel::GetTimeBasedWidget() const
-{
-    return widget_;
-}
-
-ViewerOutput *TimeBasedPanel::GetConnectedViewer() const
-{
-    return widget_->GetConnectedNode();
-}
-
-TimeRuler *TimeBasedPanel::ruler() const
-{
-    return widget_->ruler();
-}
-
-void TimeBasedPanel::ConnectViewerNode(ViewerOutput *node)
-{
-    if (widget_->GetConnectedNode()) {
-        disconnect(widget_->GetConnectedNode(), &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
-    }
-
-    widget_->ConnectViewerNode(node);
-
-    if (node) {
-        connect(node, &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
-    }
-
-    // Update strings
-    Retranslate();
-}
-
-void TimeBasedPanel::SetTimeBasedWidget(TimeBasedWidget *widget)
-{
-    if (widget_) {
-        disconnect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
-        disconnect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
-    }
-
-    widget_ = widget;
-
-    if (widget_) {
-        connect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
-        connect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
-    }
-
-    SetWidgetWithPadding(widget_);
-}
-
-void TimeBasedPanel::Retranslate()
-{
-    if (GetTimeBasedWidget()->GetConnectedNode()) {
-        SetSubtitle(GetTimeBasedWidget()->GetConnectedNode()->media_name());
-    } else {
-        SetSubtitle(tr("(none)"));
-    }
-}
-
-void TimeBasedPanel::SetIn()
-{
-    GetTimeBasedWidget()->SetInAtPlayhead();
-}
-
-void TimeBasedPanel::SetOut()
-{
-    GetTimeBasedWidget()->SetOutAtPlayhead();
-}
-
-void TimeBasedPanel::ResetIn()
-{
-    GetTimeBasedWidget()->ResetIn();
-}
-
-void TimeBasedPanel::ResetOut()
-{
-    GetTimeBasedWidget()->ResetOut();
-}
-
-void TimeBasedPanel::ClearInOut()
-{
-    GetTimeBasedWidget()->ClearInOutPoints();
-}
-
-void TimeBasedPanel::SetMarker()
-{
-    GetTimeBasedWidget()->SetMarker();
-}
-
-void TimeBasedPanel::ToggleShowAll()
-{
-    GetTimeBasedWidget()->ToggleShowAll();
-}
-
-void TimeBasedPanel::GoToIn()
-{
-    GetTimeBasedWidget()->GoToIn();
-}
-
-void TimeBasedPanel::GoToOut()
-{
-    GetTimeBasedWidget()->GoToOut();
-}
+void TimeBasedPanel::GoToOut() { GetTimeBasedWidget()->GoToOut(); }
 
 OLIVE_NAMESPACE_EXIT

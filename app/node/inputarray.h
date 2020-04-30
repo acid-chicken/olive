@@ -25,51 +25,49 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class NodeInputArray : public NodeInput
-{
-    Q_OBJECT
-public:
-    NodeInputArray(const QString &id, const DataType& type, const QVariant& default_value = 0);
+class NodeInputArray : public NodeInput {
+  Q_OBJECT
+ public:
+  NodeInputArray(const QString& id, const DataType& type, const QVariant& default_value = 0);
 
-    virtual bool IsArray() const override;
+  virtual bool IsArray() const override;
 
-    int GetSize() const;
+  int GetSize() const;
 
-    void Prepend();
-    void Append();
-    void InsertAt(int index);
-    void RemoveLast();
-    void RemoveAt(int index);
-    void SetSize(int size);
+  void Prepend();
+  void Append();
+  void InsertAt(int index);
+  void RemoveLast();
+  void RemoveAt(int index);
+  void SetSize(int size);
 
-    bool ContainsSubParameter(NodeInput* input) const;
-    int IndexOfSubParameter(NodeInput* input) const;
+  bool ContainsSubParameter(NodeInput* input) const;
+  int IndexOfSubParameter(NodeInput* input) const;
 
-    NodeInput* First() const;
-    NodeInput* Last() const;
-    NodeInput* At(int index) const;
+  NodeInput* First() const;
+  NodeInput* Last() const;
+  NodeInput* At(int index) const;
 
-    const QVector<NodeInput*>& sub_params();
+  const QVector<NodeInput*>& sub_params();
 
-signals:
-    void SizeChanged(int size);
+ signals:
+  void SizeChanged(int size);
 
-    void SubParamEdgeAdded(NodeEdgePtr edge);
+  void SubParamEdgeAdded(NodeEdgePtr edge);
 
-    void SubParamEdgeRemoved(NodeEdgePtr edge);
+  void SubParamEdgeRemoved(NodeEdgePtr edge);
 
-protected:
-    virtual void LoadInternal(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt *cancelled) override;
+ protected:
+  virtual void LoadInternal(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt* cancelled) override;
 
-    virtual void SaveInternal(QXmlStreamWriter* writer) const override;
+  virtual void SaveInternal(QXmlStreamWriter* writer) const override;
 
-private:
-    QVector<NodeInput*> sub_params_;
+ private:
+  QVector<NodeInput*> sub_params_;
 
-    QVariant default_value_;
-
+  QVariant default_value_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // INPUTARRAY_H
+#endif  // INPUTARRAY_H

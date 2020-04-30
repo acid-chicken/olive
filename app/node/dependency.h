@@ -30,23 +30,23 @@ OLIVE_NAMESPACE_ENTER
 class Node;
 
 class NodeDependency {
-public:
-    NodeDependency();
-    NodeDependency(const Node* node, const TimeRange& range);
-    NodeDependency(const Node* node, const rational& in, const rational &out);
+ public:
+  NodeDependency();
+  NodeDependency(const Node* node, const TimeRange& range);
+  NodeDependency(const Node* node, const rational& in, const rational& out);
 
-    const Node* node() const;
-    const rational& in() const;
-    const rational& out() const;
-    const TimeRange& range() const;
+  const Node* node() const;
+  const rational& in() const;
+  const rational& out() const;
+  const TimeRange& range() const;
 
-private:
-    const Node* node_;
-    TimeRange range_;
+ private:
+  const Node* node_;
+  TimeRange range_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
 Q_DECLARE_METATYPE(OLIVE_NAMESPACE::NodeDependency)
 
-#endif // NODEDEPENDENCY_H
+#endif  // NODEDEPENDENCY_H

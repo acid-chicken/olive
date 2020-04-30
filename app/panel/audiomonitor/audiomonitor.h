@@ -29,18 +29,16 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief PanelWidget wrapper around an AudioMonitor
  */
-class AudioMonitorPanel : public PanelWidget
-{
-public:
-    AudioMonitorPanel(QWidget* parent = nullptr);
+class AudioMonitorPanel : public PanelWidget {
+ public:
+  AudioMonitorPanel(QWidget* parent = nullptr);
 
-private:
-    virtual void Retranslate() override;
+ private:
+  virtual void Retranslate() override;
 
-    AudioMonitor* audio_monitor_;
-
+  AudioMonitor* audio_monitor_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOMONITORPANEL_H
+#endif  // AUDIOMONITORPANEL_H

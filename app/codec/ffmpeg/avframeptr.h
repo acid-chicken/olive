@@ -25,36 +25,29 @@ extern "C" {
 #include <libavcodec/avcodec.h>
 }
 
-#include <memory>
 #include <QDateTime>
+#include <memory>
 
 #include "common/define.h"
 
 OLIVE_NAMESPACE_ENTER
 
 class AVFrameWrapper {
-public:
-    AVFrameWrapper() {
-        frame_ = av_frame_alloc();
-    }
+ public:
+  AVFrameWrapper() { frame_ = av_frame_alloc(); }
 
-    virtual ~AVFrameWrapper() {
-        av_frame_free(&frame_);
-    }
+  virtual ~AVFrameWrapper() { av_frame_free(&frame_); }
 
-    DISABLE_COPY_MOVE(AVFrameWrapper)
+  DISABLE_COPY_MOVE(AVFrameWrapper)
 
-    inline AVFrame* frame() const {
-        return frame_;
-    }
+  inline AVFrame* frame() const { return frame_; }
 
-private:
-    AVFrame* frame_;
-
+ private:
+  AVFrame* frame_;
 };
 
 using AVFramePtr = std::shared_ptr<AVFrameWrapper>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AVFRAMEPTR_H
+#endif  // AVFRAMEPTR_H

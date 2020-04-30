@@ -23,8 +23,8 @@
 
 #include <QOpenGLFunctions>
 
-#include "panel/viewer/viewerbase.h"
 #include "panel/project/footagemanagementpanel.h"
+#include "panel/viewer/viewerbase.h"
 
 OLIVE_NAMESPACE_ENTER
 
@@ -32,19 +32,18 @@ OLIVE_NAMESPACE_ENTER
  * @brief Dockable wrapper around a ViewerWidget
  */
 class FootageViewerPanel : public ViewerPanelBase, public FootageManagementPanel {
-    Q_OBJECT
-public:
-    FootageViewerPanel(QWidget* parent);
+  Q_OBJECT
+ public:
+  FootageViewerPanel(QWidget* parent);
 
-    virtual QList<Footage*> GetSelectedFootage() const override;
+  virtual QList<Footage*> GetSelectedFootage() const override;
 
-    void SetFootage(Footage* f);
+  void SetFootage(Footage* f);
 
-protected:
-    virtual void Retranslate() override;
-
+ protected:
+  virtual void Retranslate() override;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // FOOTAGE_VIEWER_PANEL_H
+#endif  // FOOTAGE_VIEWER_PANEL_H

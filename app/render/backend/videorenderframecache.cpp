@@ -27,137 +27,116 @@
 
 OLIVE_NAMESPACE_ENTER
 
-void VideoRenderFrameCache::Clear()
-{
-    time_hash_map_.clear();
+void VideoRenderFrameCache::Clear() {
+  time_hash_map_.clear();
 
-    {
-        QMutexLocker locker(&currently_caching_lock_);
-        currently_caching_list_.clear();
-    }
-
-    cache_id_.clear();
-}
-
-bool VideoRenderFrameCache::HasHash(const QByteArray &hash, const PixelFormat::Format& format)
-{
-    return QFileInfo::exists(CachePathName(hash, format)) && !IsCaching(hash);
-}
-
-bool VideoRenderFrameCache::IsCaching(const QByteArray &hash)
-{
+  {
     QMutexLocker locker(&currently_caching_lock_);
+    currently_caching_list_.clear();
+  }
 
-    return currently_caching_list_.contains(hash);
+  cache_id_.clear();
 }
 
-bool VideoRenderFrameCache::TryCache(const QByteArray &hash)
-{
-    QMutexLocker locker(&currently_caching_lock_);
-
-    if (!currently_caching_list_.contains(hash)) {
-        currently_caching_list_.append(hash);
-        return true;
-    }
-
-    return false;
+bool VideoRenderFrameCache::HasHash(const QByteArray &hash, const PixelFormat::Format &format) {
+  return QFileInfo::exists(CachePathName(hash, format)) && !IsCaching(hash);
 }
 
-void VideoRenderFrameCache::SetCacheID(const QString &id)
-{
-    Clear();
+bool VideoRenderFrameCache::IsCaching(const QByteArray &hash) {
+  QMutexLocker locker(&currently_caching_lock_);
 
-    cache_id_ = id;
+  return currently_caching_list_.contains(hash);
 }
 
-QByteArray VideoRenderFrameCache::TimeToHash(const rational &time) const
-{
-    return time_hash_map_.value(time);
+bool VideoRenderFrameCache::TryCache(const QByteArray &hash) {
+  QMutexLocker locker(&currently_caching_lock_);
+
+  if (!currently_caching_list_.contains(hash)) {
+    currently_caching_list_.append(hash);
+    return true;
+  }
+
+  return false;
 }
 
-void VideoRenderFrameCache::SetHash(const rational &time, const QByteArray &hash)
-{
-    time_hash_map_.insert(time, hash);
+void VideoRenderFrameCache::SetCacheID(const QString &id) {
+  Clear();
+
+  cache_id_ = id;
 }
 
-void VideoRenderFrameCache::Truncate(const rational &time)
-{
-    QMap<rational, QByteArray>::iterator i = time_hash_map_.begin();
+QByteArray VideoRenderFrameCache::TimeToHash(const rational &time) const { return time_hash_map_.value(time); }
 
-    while (i != time_hash_map_.end()) {
-        if (i.key() >= time) {
-            i = time_hash_map_.erase(i);
-        } else {
-            i++;
-        }
-    }
-}
+void VideoRenderFrameCache::SetHash(const rational &time, const QByteArray &hash) { time_hash_map_.insert(time, hash); }
 
-void VideoRenderFrameCache::RemoveHashFromCurrentlyCaching(const QByteArray &hash)
-{
-    QMutexLocker locker(&currently_caching_lock_);
+void VideoRenderFrameCache::Truncate(const rational &time) {
+  QMap<rational, QByteArray>::iterator i = time_hash_map_.begin();
 
-    currently_caching_list_.removeOne(hash);
-}
-
-QList<rational> VideoRenderFrameCache::FramesWithHash(const QByteArray &hash) const
-{
-    QList<rational> times;
-
-    QMap<rational, QByteArray>::const_iterator iterator;
-
-    for (iterator=time_hash_map_.begin(); iterator!=time_hash_map_.end(); iterator++) {
-        if (iterator.value() == hash) {
-            times.append(iterator.key());
-        }
-    }
-
-    return times;
-}
-
-QList<rational> VideoRenderFrameCache::TakeFramesWithHash(const QByteArray &hash)
-{
-    QList<rational> times;
-
-    QMap<rational, QByteArray>::iterator iterator = time_hash_map_.begin();
-
-    while (iterator != time_hash_map_.end()) {
-        if (iterator.value() == hash) {
-            times.append(iterator.key());
-
-            iterator = time_hash_map_.erase(iterator);
-        } else {
-            iterator++;
-        }
-    }
-
-    return times;
-}
-
-const QMap<rational, QByteArray> &VideoRenderFrameCache::time_hash_map() const
-{
-    return time_hash_map_;
-}
-
-QString VideoRenderFrameCache::CachePathName(const QByteArray& hash, const PixelFormat::Format& pix_fmt) const
-{
-    QString ext;
-
-    if (pix_fmt == PixelFormat::PIX_FMT_RGB8
-            || pix_fmt == PixelFormat::PIX_FMT_RGBA8
-            || pix_fmt == PixelFormat::PIX_FMT_RGB16U
-            || pix_fmt == PixelFormat::PIX_FMT_RGBA16U) {
-        ext = QStringLiteral("jpg");
+  while (i != time_hash_map_.end()) {
+    if (i.key() >= time) {
+      i = time_hash_map_.erase(i);
     } else {
-        ext = QStringLiteral("exr");
+      i++;
     }
+  }
+}
 
-    QDir cache_dir(QDir(FileFunctions::GetMediaCacheLocation()).filePath(QString(hash.left(1).toHex())));
-    cache_dir.mkpath(".");
+void VideoRenderFrameCache::RemoveHashFromCurrentlyCaching(const QByteArray &hash) {
+  QMutexLocker locker(&currently_caching_lock_);
 
-    QString filename = QStringLiteral("%1.%2").arg(QString(hash.mid(1).toHex()), ext);
+  currently_caching_list_.removeOne(hash);
+}
 
-    return cache_dir.filePath(filename);
+QList<rational> VideoRenderFrameCache::FramesWithHash(const QByteArray &hash) const {
+  QList<rational> times;
+
+  QMap<rational, QByteArray>::const_iterator iterator;
+
+  for (iterator = time_hash_map_.begin(); iterator != time_hash_map_.end(); iterator++) {
+    if (iterator.value() == hash) {
+      times.append(iterator.key());
+    }
+  }
+
+  return times;
+}
+
+QList<rational> VideoRenderFrameCache::TakeFramesWithHash(const QByteArray &hash) {
+  QList<rational> times;
+
+  QMap<rational, QByteArray>::iterator iterator = time_hash_map_.begin();
+
+  while (iterator != time_hash_map_.end()) {
+    if (iterator.value() == hash) {
+      times.append(iterator.key());
+
+      iterator = time_hash_map_.erase(iterator);
+    } else {
+      iterator++;
+    }
+  }
+
+  return times;
+}
+
+const QMap<rational, QByteArray> &VideoRenderFrameCache::time_hash_map() const { return time_hash_map_; }
+
+QString VideoRenderFrameCache::CachePathName(const QByteArray &hash, const PixelFormat::Format &pix_fmt) const {
+  QString ext;
+
+  if (pix_fmt == PixelFormat::PIX_FMT_RGB8 || pix_fmt == PixelFormat::PIX_FMT_RGBA8 ||
+      pix_fmt == PixelFormat::PIX_FMT_RGB16U || pix_fmt == PixelFormat::PIX_FMT_RGBA16U) {
+    ext = QStringLiteral("jpg");
+  } else {
+    ext = QStringLiteral("exr");
+  }
+
+  QDir cache_dir(QDir(FileFunctions::GetMediaCacheLocation()).filePath(QString(hash.left(1).toHex())));
+  cache_dir.mkpath(".");
+
+  QString filename = QStringLiteral("%1.%2").arg(QString(hash.mid(1).toHex()), ext);
+
+  return cache_dir.filePath(filename);
 }
 
 OLIVE_NAMESPACE_EXIT
