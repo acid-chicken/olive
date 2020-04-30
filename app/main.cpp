@@ -40,69 +40,69 @@ extern "C" {
 #include "common/debug.h"
 
 int main(int argc, char *argv[]) {
-  signal(SIGSEGV, OLIVE_NAMESPACE::crash_handler);
-  signal(SIGABRT, OLIVE_NAMESPACE::crash_handler);
+    signal(SIGSEGV, OLIVE_NAMESPACE::crash_handler);
+    signal(SIGABRT, OLIVE_NAMESPACE::crash_handler);
 
-  // Set OpenGL display profile (3.2 Core)
-  QSurfaceFormat format;
-  format.setVersion(3, 2);
-  format.setDepthBufferSize(24);
-  format.setProfile(QSurfaceFormat::CoreProfile);
-  QSurfaceFormat::setDefaultFormat(format);
+    // Set OpenGL display profile (3.2 Core)
+    QSurfaceFormat format;
+    format.setVersion(3, 2);
+    format.setDepthBufferSize(24);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+    QSurfaceFormat::setDefaultFormat(format);
 
-  QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-  QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-  // Create application instance
-  QApplication a(argc, argv);
+    // Create application instance
+    QApplication a(argc, argv);
 
-  // Set application metadata
-  QCoreApplication::setOrganizationName("olivevideoeditor.org");
-  QCoreApplication::setOrganizationDomain("olivevideoeditor.org");
-  QCoreApplication::setApplicationName("Olive");
+    // Set application metadata
+    QCoreApplication::setOrganizationName("olivevideoeditor.org");
+    QCoreApplication::setOrganizationDomain("olivevideoeditor.org");
+    QCoreApplication::setApplicationName("Olive");
 
-  QString app_version = APPVERSION;
+    QString app_version = APPVERSION;
 #ifdef GITHASH
-  // Anything after the hyphen is considered "unimportant" information. Text BEFORE the hyphen is used in version
-  // checking project files and config files
-  app_version.append("-");
-  app_version.append(GITHASH);
+    // Anything after the hyphen is considered "unimportant" information. Text BEFORE the hyphen is used in version
+    // checking project files and config files
+    app_version.append("-");
+    app_version.append(GITHASH);
 #endif
 
-  QCoreApplication::setApplicationVersion(app_version);
+    QCoreApplication::setApplicationVersion(app_version);
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 7, 0))
-  QGuiApplication::setDesktopFileName("org.olivevideoeditor.Olive");
+    QGuiApplication::setDesktopFileName("org.olivevideoeditor.Olive");
 #endif
 
-  // Set up debug handler
-  qInstallMessageHandler(OLIVE_NAMESPACE::DebugHandler);
+    // Set up debug handler
+    qInstallMessageHandler(OLIVE_NAMESPACE::DebugHandler);
 
-  // Register FFmpeg codecs and filters (deprecated in 4.0+)
+    // Register FFmpeg codecs and filters (deprecated in 4.0+)
 #if LIBAVFORMAT_VERSION_INT < AV_VERSION_INT(58, 9, 100)
-  av_register_all();
+    av_register_all();
 #endif
 #if LIBAVFILTER_VERSION_INT < AV_VERSION_INT(7, 14, 100)
-  avfilter_register_all();
+    avfilter_register_all();
 #endif
 
-  int exit_code;
+    int exit_code;
 
-  // Start core
-  if (OLIVE_NAMESPACE::Core::instance()->Start()) {
+    // Start core
+    if (OLIVE_NAMESPACE::Core::instance()->Start()) {
 
-    // Run application loop and receive exit code
-    exit_code = a.exec();
+        // Run application loop and receive exit code
+        exit_code = a.exec();
 
-  } else {
+    } else {
 
-    // Core failed to start, exit now
-    exit_code = 1;
+        // Core failed to start, exit now
+        exit_code = 1;
 
-  }
+    }
 
-  // Clear core memory
-  OLIVE_NAMESPACE::Core::instance()->Stop();
+    // Clear core memory
+    OLIVE_NAMESPACE::Core::instance()->Stop();
 
-  return exit_code;
+    return exit_code;
 }

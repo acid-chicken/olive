@@ -10,15 +10,15 @@ OLIVE_NAMESPACE_ENTER
 
 class ExportAdvancedVideoDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ExportAdvancedVideoDialog(QWidget* parent = nullptr);
+    ExportAdvancedVideoDialog(QWidget* parent = nullptr);
 
-  int threads() const;
-  void set_threads(int t);
+    int threads() const;
+    void set_threads(int t);
 
 private:
-  IntegerSlider* thread_slider_;
+    IntegerSlider* thread_slider_;
 
 };
 

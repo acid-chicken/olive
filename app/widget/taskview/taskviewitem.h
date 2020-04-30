@@ -41,17 +41,17 @@ OLIVE_NAMESPACE_ENTER
  */
 class TaskViewItem : public QFrame
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TaskViewItem(Task *task, QWidget* parent = nullptr);
+    TaskViewItem(Task *task, QWidget* parent = nullptr);
 
 private:
-  QLabel* task_name_lbl_;
-  QProgressBar* progress_bar_;
-  QPushButton* cancel_btn_;
-  QLabel* task_status_lbl_;
+    QLabel* task_name_lbl_;
+    QProgressBar* progress_bar_;
+    QPushButton* cancel_btn_;
+    QLabel* task_status_lbl_;
 
-  Task* task_;
+    Task* task_;
 
 };
 

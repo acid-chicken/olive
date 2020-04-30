@@ -23,10 +23,10 @@
 OLIVE_NAMESPACE_ENTER
 
 CLITaskDialog::CLITaskDialog(Task *task, QObject* parent) :
-  CLIProgressDialog(task->GetTitle(), parent)
+    CLIProgressDialog(task->GetTitle(), parent)
 {
-  // FIXME: Still developing this, don't try to use
-  task->Start();
+    // FIXME: Still developing this, don't try to use
+    task->Start();
 }
 
 OLIVE_NAMESPACE_EXIT

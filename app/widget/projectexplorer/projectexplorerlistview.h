@@ -31,12 +31,12 @@ OLIVE_NAMESPACE_ENTER
  */
 class ProjectExplorerListView : public ProjectExplorerListViewBase
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectExplorerListView(QWidget* parent);
+    ProjectExplorerListView(QWidget* parent);
 
 private:
-  ProjectExplorerListViewItemDelegate delegate_;
+    ProjectExplorerListViewItemDelegate delegate_;
 };
 
 OLIVE_NAMESPACE_EXIT

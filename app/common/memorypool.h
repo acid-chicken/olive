@@ -49,299 +49,299 @@ template <typename T>
 class MemoryPool
 {
 public:
-  /**
-   * @brief Constructor
-   * @param element_count
-   *
-   * Number of elements per arena
-   */
-  MemoryPool(int element_count) {
-    element_count_ = element_count;
-  }
-
-  /**
-   * @brief Destructor
-   *
-   * Deletes all arenas.
-   */
-  virtual ~MemoryPool() {
-    qDeleteAll(arenas_);
-  }
-
-  DISABLE_COPY_MOVE(MemoryPool)
-
-  /**
-   * @brief Returns whether any arenas are successfully allocated
-   */
-  inline bool IsAllocated() const {
-    return !arenas_.isEmpty();
-  }
-
-  /**
-   * @brief Returns current number of allocated arenas
-   */
-  inline int GetArenaCount() const {
-    return arenas_.size();
-  }
-
-  class Arena;
-
-  /**
-   * @brief A handle for a chunk of memory in an arena
-   *
-   * Calling Get() on the pool or arena will return a shared pointer to an element which will contain a pointer to
-   * the desired object/data in data(). When Element is destroyed (i.e. when ElementPtr goes out of scope), the memory
-   * is released back into the pool so it can be used by another class.
-   */
-  class Element {
-  public:
     /**
-     * @brief Element Constructor
+     * @brief Constructor
+     * @param element_count
      *
-     * There is no need to use this outside of the memory pool's internal functions.
+     * Number of elements per arena
      */
-    Element(Arena* parent, T* data) {
-      parent_ = parent;
-      data_ = data;
-      accessed_ = QDateTime::currentMSecsSinceEpoch();
+    MemoryPool(int element_count) {
+        element_count_ = element_count;
     }
 
     /**
-     * @brief Element Destructor
+     * @brief Destructor
      *
-     * Automatically releases this element's memory back to the arena it was retrieved from.
+     * Deletes all arenas.
      */
-    ~Element() {
-      parent_->Release(this);
+    virtual ~MemoryPool() {
+        qDeleteAll(arenas_);
     }
 
-    DISABLE_COPY_MOVE(Element)
+    DISABLE_COPY_MOVE(MemoryPool)
 
     /**
-     * @brief Access data represented in the pool
+     * @brief Returns whether any arenas are successfully allocated
      */
-    inline T* data() const {
-      return data_;
-    }
-
-    inline const int64_t& timestamp() const {
-      return timestamp_;
-    }
-
-    inline void set_timestamp(const int64_t& timestamp) {
-      timestamp_ = timestamp;
+    inline bool IsAllocated() const {
+        return !arenas_.isEmpty();
     }
 
     /**
-     * @brief Register that this element has been accessed
+     * @brief Returns current number of allocated arenas
+     */
+    inline int GetArenaCount() const {
+        return arenas_.size();
+    }
+
+    class Arena;
+
+    /**
+     * @brief A handle for a chunk of memory in an arena
      *
-     * \see last_accessed()
+     * Calling Get() on the pool or arena will return a shared pointer to an element which will contain a pointer to
+     * the desired object/data in data(). When Element is destroyed (i.e. when ElementPtr goes out of scope), the memory
+     * is released back into the pool so it can be used by another class.
      */
-    inline void access() {
-      accessed_ = QDateTime::currentMSecsSinceEpoch();
-    }
+    class Element {
+    public:
+        /**
+         * @brief Element Constructor
+         *
+         * There is no need to use this outside of the memory pool's internal functions.
+         */
+        Element(Arena* parent, T* data) {
+            parent_ = parent;
+            data_ = data;
+            accessed_ = QDateTime::currentMSecsSinceEpoch();
+        }
+
+        /**
+         * @brief Element Destructor
+         *
+         * Automatically releases this element's memory back to the arena it was retrieved from.
+         */
+        ~Element() {
+            parent_->Release(this);
+        }
+
+        DISABLE_COPY_MOVE(Element)
+
+        /**
+         * @brief Access data represented in the pool
+         */
+        inline T* data() const {
+            return data_;
+        }
+
+        inline const int64_t& timestamp() const {
+            return timestamp_;
+        }
+
+        inline void set_timestamp(const int64_t& timestamp) {
+            timestamp_ = timestamp;
+        }
+
+        /**
+         * @brief Register that this element has been accessed
+         *
+         * \see last_accessed()
+         */
+        inline void access() {
+            accessed_ = QDateTime::currentMSecsSinceEpoch();
+        }
+
+        /**
+         * @brief Returns the last time `access()` was called on this function
+         *
+         * Useful for determining the relative age of an element (i.e. if it hasn't been accessed for a certain amount of
+         * time, it can probably be freed back into the pool). This requires all usages to call `access()`.
+         */
+        inline const int64_t& last_accessed() const {
+            return accessed_;
+        }
+
+    private:
+        Arena* parent_;
+
+        T* data_;
+
+        int64_t timestamp_;
+
+        int64_t accessed_;
+
+    };
+
+    using ElementPtr = std::shared_ptr<Element>;
 
     /**
-     * @brief Returns the last time `access()` was called on this function
+     * @brief A memory pool arena - a subsection of memory
      *
-     * Useful for determining the relative age of an element (i.e. if it hasn't been accessed for a certain amount of
-     * time, it can probably be freed back into the pool). This requires all usages to call `access()`.
+     * The pool itself does not store memory, it stores "arenas". This is so that the pool can handle the situation of
+     * an arena becoming full with no more memory to lend. A pool can automatically allocate another arena and continue
+     * providing memory (and freeing arenas when they're no longer in use).
      */
-    inline const int64_t& last_accessed() const {
-      return accessed_;
-    }
+    class Arena {
+    public:
+        Arena(MemoryPool* parent) {
+            parent_ = parent;
+            data_ = nullptr;
+            use_count_ = 0;
+        }
 
-  private:
-    Arena* parent_;
+        ~Arena() {
+            // FIXME: Invalidate elements that have been lent out?
 
-    T* data_;
+            delete [] data_;
+        }
 
-    int64_t timestamp_;
+        DISABLE_COPY_MOVE(Arena)
 
-    int64_t accessed_;
+        /**
+         * @brief Returns an element if there is free memory to do so
+         */
+        ElementPtr Get() {
+            QMutexLocker locker(&lock_);
 
-  };
+            for (int i=0; i<available_.size(); i++) {
+                if (available_.at(i)) {
+                    // This buffer is available
+                    available_.replace(i, false);
+                    use_count_++;
+                    return std::make_shared<Element>(this, reinterpret_cast<T*>(data_ + i * element_sz_));
+                }
+            }
 
-  using ElementPtr = std::shared_ptr<Element>;
+            return nullptr;
+        }
 
-  /**
-   * @brief A memory pool arena - a subsection of memory
-   *
-   * The pool itself does not store memory, it stores "arenas". This is so that the pool can handle the situation of
-   * an arena becoming full with no more memory to lend. A pool can automatically allocate another arena and continue
-   * providing memory (and freeing arenas when they're no longer in use).
-   */
-  class Arena {
-  public:
-    Arena(MemoryPool* parent) {
-      parent_ = parent;
-      data_ = nullptr;
-      use_count_ = 0;
-    }
+        /**
+         * @brief Releases an element back into the pool for use elsewhere
+         */
+        void Release(Element* e) {
+            QMutexLocker locker(&lock_);
+            quintptr diff = reinterpret_cast<quintptr>(e->data()) - reinterpret_cast<quintptr>(data_);
 
-    ~Arena() {
-      // FIXME: Invalidate elements that have been lent out?
+            int index = diff / element_sz_;
 
-      delete [] data_;
-    }
+            available_.replace(index, true);
+            use_count_--;
 
-    DISABLE_COPY_MOVE(Arena)
+            if (!use_count_) {
+                locker.unlock();
+                parent_->ArenaIsEmpty(this);
+            }
+        }
+
+        const int& GetUsageCount() {
+            QMutexLocker locker(&lock_);
+            return use_count_;
+        }
+
+        bool Allocate(size_t ele_sz, size_t nb_elements) {
+            if (IsAllocated()) {
+                return true;
+            }
+
+            element_sz_ = ele_sz;
+
+            if ((data_ = new char[element_sz_ * nb_elements])) {
+                available_.resize(nb_elements);
+                available_.fill(true);
+
+                return true;
+            } else {
+                available_.clear();
+                data_ = nullptr;
+
+                return false;
+            }
+        }
+
+        inline int GetElementCount() const {
+            return available_.size();
+        }
+
+        inline bool IsAllocated() const {
+            return data_;
+        }
+
+    private:
+        MemoryPool* parent_;
+
+        char* data_;
+
+        QVector<bool> available_;
+
+        QMutex lock_;
+
+        size_t element_sz_;
+
+        int use_count_;
+
+    };
 
     /**
-     * @brief Returns an element if there is free memory to do so
+     * @brief Retrieves an element from an available arena
      */
     ElementPtr Get() {
-      QMutexLocker locker(&lock_);
+        QMutexLocker locker(&lock_);
 
-      for (int i=0;i<available_.size();i++) {
-        if (available_.at(i)) {
-          // This buffer is available
-          available_.replace(i, false);
-          use_count_++;
-          return std::make_shared<Element>(this, reinterpret_cast<T*>(data_ + i * element_sz_));
+        // Attempt to get an element from an arena
+        foreach (Arena* a, arenas_) {
+            ElementPtr e = a->Get();
+
+            if (e) {
+                return e;
+            }
         }
-      }
 
-      return nullptr;
+        // All arenas were empty, we'll need to create a new one
+        if (arenas_.isEmpty()) {
+            qDebug() << "No arenas, creating new...";
+        } else {
+            qDebug() << "All arenas are full, creating new...";
+        }
+
+        size_t ele_sz = GetElementSize();
+
+        if (!ele_sz) {
+            qCritical() << "Failed to create arena, element size was 0";
+            return nullptr;
+        }
+
+        if (element_count_ <= 0) {
+            qCritical() << "Failed to create arena, element count was invalid:" << element_count_;
+            return nullptr;
+        }
+
+        Arena* a = new Arena(this);
+        if (!a->Allocate(ele_sz, element_count_)) {
+            qCritical() << "Failed to create arena, allocation failed. Out of memory?";
+            delete a;
+            return nullptr;
+        }
+
+        arenas_.append(a);
+        return a->Get();
     }
 
-    /**
-     * @brief Releases an element back into the pool for use elsewhere
-     */
-    void Release(Element* e) {
-      QMutexLocker locker(&lock_);
-      quintptr diff = reinterpret_cast<quintptr>(e->data()) - reinterpret_cast<quintptr>(data_);
+    void ArenaIsEmpty(Arena* a) {
+        QMutexLocker locker(&lock_);
 
-      int index = diff / element_sz_;
-
-      available_.replace(index, true);
-      use_count_--;
-
-      if (!use_count_) {
-        locker.unlock();
-        parent_->ArenaIsEmpty(this);
-      }
+        if (!a->GetUsageCount()) {
+            qDebug() << "Removing an empty arena";
+            arenas_.removeOne(a);
+            delete a;
+        }
     }
-
-    const int& GetUsageCount() {
-      QMutexLocker locker(&lock_);
-      return use_count_;
-    }
-
-    bool Allocate(size_t ele_sz, size_t nb_elements) {
-      if (IsAllocated()) {
-        return true;
-      }
-
-      element_sz_ = ele_sz;
-
-      if ((data_ = new char[element_sz_ * nb_elements])) {
-        available_.resize(nb_elements);
-        available_.fill(true);
-
-        return true;
-      } else {
-        available_.clear();
-        data_ = nullptr;
-
-        return false;
-      }
-    }
-
-    inline int GetElementCount() const {
-      return available_.size();
-    }
-
-    inline bool IsAllocated() const {
-      return data_;
-    }
-
-  private:
-    MemoryPool* parent_;
-
-    char* data_;
-
-    QVector<bool> available_;
-
-    QMutex lock_;
-
-    size_t element_sz_;
-
-    int use_count_;
-
-  };
-
-  /**
-   * @brief Retrieves an element from an available arena
-   */
-  ElementPtr Get() {
-    QMutexLocker locker(&lock_);
-
-    // Attempt to get an element from an arena
-    foreach (Arena* a, arenas_) {
-      ElementPtr e = a->Get();
-
-      if (e) {
-        return e;
-      }
-    }
-
-    // All arenas were empty, we'll need to create a new one
-    if (arenas_.isEmpty()) {
-      qDebug() << "No arenas, creating new...";
-    } else {
-      qDebug() << "All arenas are full, creating new...";
-    }
-
-    size_t ele_sz = GetElementSize();
-
-    if (!ele_sz) {
-      qCritical() << "Failed to create arena, element size was 0";
-      return nullptr;
-    }
-
-    if (element_count_ <= 0) {
-      qCritical() << "Failed to create arena, element count was invalid:" << element_count_;
-      return nullptr;
-    }
-
-    Arena* a = new Arena(this);
-    if (!a->Allocate(ele_sz, element_count_)) {
-      qCritical() << "Failed to create arena, allocation failed. Out of memory?";
-      delete a;
-      return nullptr;
-    }
-
-    arenas_.append(a);
-    return a->Get();
-  }
-
-  void ArenaIsEmpty(Arena* a) {
-    QMutexLocker locker(&lock_);
-
-    if (!a->GetUsageCount()) {
-      qDebug() << "Removing an empty arena";
-      arenas_.removeOne(a);
-      delete a;
-    }
-  }
 
 protected:
-  /**
-   * @brief The size of each element
-   *
-   * Override this to use a custom size (e.g. a char array where T = char but the element size is > 1)
-   */
-  virtual size_t GetElementSize() {
-    return sizeof(T);
-  }
+    /**
+     * @brief The size of each element
+     *
+     * Override this to use a custom size (e.g. a char array where T = char but the element size is > 1)
+     */
+    virtual size_t GetElementSize() {
+        return sizeof(T);
+    }
 
 private:
-  int element_count_;
+    int element_count_;
 
-  QLinkedList<Arena*> arenas_;
+    QLinkedList<Arena*> arenas_;
 
-  QMutex lock_;
+    QMutex lock_;
 
 };
 

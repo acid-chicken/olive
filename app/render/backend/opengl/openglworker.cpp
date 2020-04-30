@@ -32,27 +32,27 @@
 OLIVE_NAMESPACE_ENTER
 
 OpenGLWorker::OpenGLWorker(VideoRenderFrameCache *frame_cache, QObject *parent) :
-  VideoRenderWorker(frame_cache, parent)
+    VideoRenderWorker(frame_cache, parent)
 {
 }
 
 void OpenGLWorker::FrameToValue(DecoderPtr decoder, StreamPtr stream, const TimeRange &range, NodeValueTable *table)
 {
-  FramePtr frame = decoder->RetrieveVideo(range.in(), video_params().divider());
+    FramePtr frame = decoder->RetrieveVideo(range.in(), video_params().divider());
 
-  if (frame) {
-    emit RequestFrameToValue(frame, stream, table);
-  }
+    if (frame) {
+        emit RequestFrameToValue(frame, stream, table);
+    }
 }
 
 void OpenGLWorker::RunNodeAccelerated(const Node *node, const TimeRange &range, NodeValueDatabase &input_params, NodeValueTable &output_params)
 {
-  emit RequestRunNodeAccelerated(node, range, input_params, output_params);
+    emit RequestRunNodeAccelerated(node, range, input_params, output_params);
 }
 
 void OpenGLWorker::TextureToBuffer(const QVariant &tex_in, int width, int height, const QMatrix4x4& matrix, void *buffer, int linesize)
 {
-  emit RequestTextureToBuffer(tex_in, width, height, matrix, buffer, linesize);
+    emit RequestTextureToBuffer(tex_in, width, height, matrix, buffer, linesize);
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -32,21 +32,21 @@ OLIVE_NAMESPACE_ENTER
 class NodeOutput : public NodeParam
 {
 public:
-  /**
-   * @brief NodeOutput Constructor
-   */
-  NodeOutput(const QString& id);
+    /**
+     * @brief NodeOutput Constructor
+     */
+    NodeOutput(const QString& id);
 
-  /**
-   * @brief Returns kOutput
-   */
-  virtual Type type() override;
+    /**
+     * @brief Returns kOutput
+     */
+    virtual Type type() override;
 
-  virtual QString name() override;
+    virtual QString name() override;
 
-  virtual void Load(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt* cancelled) override;
+    virtual void Load(QXmlStreamReader* reader, XMLNodeData& xml_node_data, const QAtomicInt* cancelled) override;
 
-  virtual void Save(QXmlStreamWriter* writer) const override;
+    virtual void Save(QXmlStreamWriter* writer) const override;
 
 private:
 

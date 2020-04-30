@@ -30,17 +30,17 @@ OLIVE_NAMESPACE_ENTER
  */
 class GapBlock : public Block
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  GapBlock();
+    GapBlock();
 
-  virtual Node * copy() const override;
+    virtual Node * copy() const override;
 
-  virtual Type type() const override;
+    virtual Type type() const override;
 
-  virtual QString Name() const override;
-  virtual QString id() const override;
-  virtual QString Description() const override;
+    virtual QString Name() const override;
+    virtual QString id() const override;
+    virtual QString Description() const override;
 
 private:
 

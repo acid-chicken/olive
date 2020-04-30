@@ -31,40 +31,40 @@ OLIVE_NAMESPACE_ENTER
 class NodeFactory
 {
 public:
-  enum InternalID {
-    kViewerOutput,
-    kClipBlock,
-    kGapBlock,
-    kAudioInput,
-    kMatrixGenerator,
-    kVideoInput,
-    kTrackOutput,
-    kAudioVolume,
-    kAudioPanning,
-    kMath,
-    kTime,
-    kTrigonometry,
+    enum InternalID {
+        kViewerOutput,
+        kClipBlock,
+        kGapBlock,
+        kAudioInput,
+        kMatrixGenerator,
+        kVideoInput,
+        kTrackOutput,
+        kAudioVolume,
+        kAudioPanning,
+        kMath,
+        kTime,
+        kTrigonometry,
 
-    // Count value
-    kInternalNodeCount
-  };
+        // Count value
+        kInternalNodeCount
+    };
 
-  NodeFactory() = default;
+    NodeFactory() = default;
 
-  static void Initialize();
+    static void Initialize();
 
-  static void Destroy();
+    static void Destroy();
 
-  static Menu* CreateMenu(QWidget *parent);
+    static Menu* CreateMenu(QWidget *parent);
 
-  static Node* CreateFromMenuAction(QAction* action);
+    static Node* CreateFromMenuAction(QAction* action);
 
-  static Node* CreateFromID(const QString& id);
+    static Node* CreateFromID(const QString& id);
 
 private:
-  static Node* CreateInternal(const InternalID& id);
+    static Node* CreateInternal(const InternalID& id);
 
-  static QList<Node*> library_;
+    static QList<Node*> library_;
 };
 
 OLIVE_NAMESPACE_EXIT

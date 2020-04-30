@@ -30,20 +30,30 @@ template<class K, class V>
 class RenderCache
 {
 public:
-  RenderCache() = default;
+    RenderCache() = default;
 
-  void Clear(){values_.clear();}
+    void Clear() {
+        values_.clear();
+    }
 
-  void Add(K key, V val){values_.insert(key, val);}
+    void Add(K key, V val) {
+        values_.insert(key, val);
+    }
 
-  V Get(K key) const {return values_.value(key);}
+    V Get(K key) const {
+        return values_.value(key);
+    }
 
-  bool Has(K key) const {return values_.contains(key);}
+    bool Has(K key) const {
+        return values_.contains(key);
+    }
 
-  void Remove(K key) {values_.remove(key);}
+    void Remove(K key) {
+        values_.remove(key);
+    }
 
 private:
-  QHash<K, V> values_;
+    QHash<K, V> values_;
 
 };
 

@@ -32,31 +32,31 @@ OLIVE_NAMESPACE_ENTER
 
 class PreferencesDiskTab : public PreferencesTab
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PreferencesDiskTab();
+    PreferencesDiskTab();
 
-  virtual void Accept() override;
+    virtual void Accept() override;
 
 private:
-  QLineEdit* disk_cache_location_;
+    QLineEdit* disk_cache_location_;
 
-  FloatSlider* maximum_cache_slider_;
+    FloatSlider* maximum_cache_slider_;
 
-  FloatSlider* cache_ahead_slider_;
+    FloatSlider* cache_ahead_slider_;
 
-  FloatSlider* cache_behind_slider_;
+    FloatSlider* cache_behind_slider_;
 
-  QCheckBox* clear_disk_cache_;
+    QCheckBox* clear_disk_cache_;
 
-  QPushButton* clear_cache_btn_;
+    QPushButton* clear_cache_btn_;
 
 private slots:
-  void DiskCacheLineEditChanged();
+    void DiskCacheLineEditChanged();
 
-  void BrowseDiskCachePath();
+    void BrowseDiskCachePath();
 
-  void ClearDiskCache();
+    void ClearDiskCache();
 
 };
 

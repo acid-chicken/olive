@@ -39,24 +39,24 @@ class NodeInput;
 class NodeEdge
 {
 public:
-  /**
-   * @brief Create a node edge connecting an output to an input
-   */
-  NodeEdge(NodeOutput* output, NodeInput* input);
+    /**
+     * @brief Create a node edge connecting an output to an input
+     */
+    NodeEdge(NodeOutput* output, NodeInput* input);
 
-  /**
-   * @brief Return the output parameter this edge is connected to
-   */
-  NodeOutput* output();
+    /**
+     * @brief Return the output parameter this edge is connected to
+     */
+    NodeOutput* output();
 
-  /**
-   * @brief Return the input parameter this edge is connected to
-   */
-  NodeInput* input();
+    /**
+     * @brief Return the input parameter this edge is connected to
+     */
+    NodeInput* input();
 
 private:
-  NodeOutput* output_;
-  NodeInput* input_;
+    NodeOutput* output_;
+    NodeInput* input_;
 };
 
 using NodeEdgePtr = std::shared_ptr<NodeEdge>;

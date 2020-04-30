@@ -34,26 +34,26 @@ OLIVE_NAMESPACE_ENTER
 class ExternalNode : public Node
 {
 public:
-  ExternalNode(const QString& xml_meta_filename);
+    ExternalNode(const QString& xml_meta_filename);
 
-  virtual Node* copy() const override;
+    virtual Node* copy() const override;
 
-  virtual QString Name() const override;
-  virtual QString ShortName() const override;
-  virtual QString id() const override;
-  virtual QString Category() const override;
-  virtual QString Description() const override;
+    virtual QString Name() const override;
+    virtual QString ShortName() const override;
+    virtual QString id() const override;
+    virtual QString Category() const override;
+    virtual QString Description() const override;
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  virtual Capabilities GetCapabilities(const NodeValueDatabase&) const override;
-  virtual QString ShaderVertexCode(const NodeValueDatabase&) const override;
-  virtual QString ShaderFragmentCode(const NodeValueDatabase&) const override;
-  virtual int ShaderIterations() const override;
-  virtual NodeInput* ShaderIterativeInput() const override;
+    virtual Capabilities GetCapabilities(const NodeValueDatabase&) const override;
+    virtual QString ShaderVertexCode(const NodeValueDatabase&) const override;
+    virtual QString ShaderFragmentCode(const NodeValueDatabase&) const override;
+    virtual int ShaderIterations() const override;
+    virtual NodeInput* ShaderIterativeInput() const override;
 
 private:
-  NodeMetaReader meta_;
+    NodeMetaReader meta_;
 };
 
 OLIVE_NAMESPACE_EXIT

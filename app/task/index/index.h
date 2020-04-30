@@ -29,13 +29,13 @@ OLIVE_NAMESPACE_ENTER
 class IndexTask : public Task
 {
 public:
-  IndexTask(StreamPtr stream);
+    IndexTask(StreamPtr stream);
 
 protected:
-  virtual void Action() override;
+    virtual void Action() override;
 
 private:
-  StreamPtr stream_;
+    StreamPtr stream_;
 
 };
 

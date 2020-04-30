@@ -23,56 +23,56 @@
 OLIVE_NAMESPACE_ENTER
 
 CurvePanel::CurvePanel(QWidget *parent) :
-  TimeBasedPanel(QStringLiteral("CurvePanel"), parent)
+    TimeBasedPanel(QStringLiteral("CurvePanel"), parent)
 {
-  // Create main widget and set it
-  SetTimeBasedWidget(new CurveWidget());
+    // Create main widget and set it
+    SetTimeBasedWidget(new CurveWidget());
 
-  // Set strings
-  Retranslate();
+    // Set strings
+    Retranslate();
 }
 
 NodeInput *CurvePanel::GetInput() const
 {
-  return static_cast<CurveWidget*>(GetTimeBasedWidget())->GetInput();
+    return static_cast<CurveWidget*>(GetTimeBasedWidget())->GetInput();
 }
 
 void CurvePanel::SetInput(NodeInput *input)
 {
-  static_cast<CurveWidget*>(GetTimeBasedWidget())->SetInput(input);
+    static_cast<CurveWidget*>(GetTimeBasedWidget())->SetInput(input);
 
-  Retranslate();
+    Retranslate();
 }
 
 void CurvePanel::SetTimeTarget(Node *target)
 {
-  static_cast<CurveWidget*>(GetTimeBasedWidget())->SetTimeTarget(target);
+    static_cast<CurveWidget*>(GetTimeBasedWidget())->SetTimeTarget(target);
 }
 
 void CurvePanel::IncreaseTrackHeight()
 {
-  CurveWidget* c = static_cast<CurveWidget*>(GetTimeBasedWidget());
-  c->SetVerticalScale(c->GetVerticalScale() * 2);
+    CurveWidget* c = static_cast<CurveWidget*>(GetTimeBasedWidget());
+    c->SetVerticalScale(c->GetVerticalScale() * 2);
 }
 
 void CurvePanel::DecreaseTrackHeight()
 {
-  CurveWidget* c = static_cast<CurveWidget*>(GetTimeBasedWidget());
-  c->SetVerticalScale(c->GetVerticalScale() * 0.5);
+    CurveWidget* c = static_cast<CurveWidget*>(GetTimeBasedWidget());
+    c->SetVerticalScale(c->GetVerticalScale() * 0.5);
 }
 
 void CurvePanel::Retranslate()
 {
-  TimeBasedPanel::Retranslate();
+    TimeBasedPanel::Retranslate();
 
-  SetTitle(tr("Curve Editor"));
+    SetTitle(tr("Curve Editor"));
 
-  NodeInput* connected_input = static_cast<CurveWidget*>(GetTimeBasedWidget())->GetInput();
-  if (connected_input) {
-    SetSubtitle(connected_input->name());
-  } else {
-    SetSubtitle(QString());
-  }
+    NodeInput* connected_input = static_cast<CurveWidget*>(GetTimeBasedWidget())->GetInput();
+    if (connected_input) {
+        SetSubtitle(connected_input->name());
+    } else {
+        SetSubtitle(QString());
+    }
 }
 
 OLIVE_NAMESPACE_EXIT

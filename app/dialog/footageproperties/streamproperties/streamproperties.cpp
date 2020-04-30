@@ -23,7 +23,7 @@
 OLIVE_NAMESPACE_ENTER
 
 StreamProperties::StreamProperties(QWidget *parent) :
-  QWidget(parent)
+    QWidget(parent)
 {
 }
 

@@ -27,15 +27,15 @@ OLIVE_NAMESPACE_ENTER
 
 class KeyframeView : public KeyframeViewBase
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  KeyframeView(QWidget* parent = nullptr);
+    KeyframeView(QWidget* parent = nullptr);
 
 protected:
-  virtual void wheelEvent(QWheelEvent* event) override;
+    virtual void wheelEvent(QWheelEvent* event) override;
 
 public slots:
-  void AddKeyframe(NodeKeyframePtr key, int y);
+    void AddKeyframe(NodeKeyframePtr key, int y);
 
 };
 

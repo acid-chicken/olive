@@ -28,10 +28,10 @@ OLIVE_NAMESPACE_ENTER
 class SequenceViewerPanel : public ViewerPanel
 {
 public:
-  SequenceViewerPanel(QWidget* parent);
+    SequenceViewerPanel(QWidget* parent);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

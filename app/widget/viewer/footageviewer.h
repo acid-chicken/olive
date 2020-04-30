@@ -30,35 +30,35 @@ OLIVE_NAMESPACE_ENTER
 
 class FootageViewerWidget : public ViewerWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  FootageViewerWidget(QWidget* parent = nullptr);
+    FootageViewerWidget(QWidget* parent = nullptr);
 
-  Footage* GetFootage() const;
-  void SetFootage(Footage* footage);
+    Footage* GetFootage() const;
+    void SetFootage(Footage* footage);
 
 protected:
-  virtual TimelinePoints* ConnectTimelinePoints() override;
+    virtual TimelinePoints* ConnectTimelinePoints() override;
 
-  virtual Project* GetTimelinePointsProject() override;
+    virtual Project* GetTimelinePointsProject() override;
 
 private:
-  void StartFootageDragInternal(bool enable_video, bool enable_audio);
+    void StartFootageDragInternal(bool enable_video, bool enable_audio);
 
-  Footage* footage_;
+    Footage* footage_;
 
-  VideoInput* video_node_;
+    VideoInput* video_node_;
 
-  AudioInput* audio_node_;
+    AudioInput* audio_node_;
 
-  ViewerOutput* viewer_node_;
+    ViewerOutput* viewer_node_;
 
 private slots:
-  void StartFootageDrag();
+    void StartFootageDrag();
 
-  void StartVideoDrag();
+    void StartVideoDrag();
 
-  void StartAudioDrag();
+    void StartAudioDrag();
 
 };
 

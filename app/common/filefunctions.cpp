@@ -33,121 +33,121 @@ OLIVE_NAMESPACE_ENTER
 
 QString FileFunctions::GetUniqueFileIdentifier(const QString &filename)
 {
-  QFileInfo info(filename);
+    QFileInfo info(filename);
 
-  if (!info.exists()) {
-    return QString();
-  }
+    if (!info.exists()) {
+        return QString();
+    }
 
-  QCryptographicHash hash(QCryptographicHash::Sha1);
+    QCryptographicHash hash(QCryptographicHash::Sha1);
 
-  hash.addData(info.absoluteFilePath().toUtf8());
+    hash.addData(info.absoluteFilePath().toUtf8());
 
-  hash.addData(info.lastModified().toString().toUtf8());
+    hash.addData(info.lastModified().toString().toUtf8());
 
-  QByteArray result = hash.result();
+    QByteArray result = hash.result();
 
-  return QString(result.toHex());
+    return QString(result.toHex());
 }
 
 QString FileFunctions::GetMediaIndexLocation()
 {
-  QDir local_appdata_dir(Config::Current()["DiskCachePath"].toString());
+    QDir local_appdata_dir(Config::Current()["DiskCachePath"].toString());
 
-  QDir media_index_dir = local_appdata_dir.filePath("mediaindex");
+    QDir media_index_dir = local_appdata_dir.filePath("mediaindex");
 
-  // Attempt to ensure this folder exists
-  media_index_dir.mkpath(".");
+    // Attempt to ensure this folder exists
+    media_index_dir.mkpath(".");
 
-  return media_index_dir.absolutePath();
+    return media_index_dir.absolutePath();
 }
 
 QString FileFunctions::GetMediaIndexFilename(const QString &filename)
 {
-  return QDir(GetMediaIndexLocation()).filePath(filename);
+    return QDir(GetMediaIndexLocation()).filePath(filename);
 }
 
 QString FileFunctions::GetMediaCacheLocation()
 {
-  QDir local_appdata_dir(Config::Current()["DiskCachePath"].toString());
+    QDir local_appdata_dir(Config::Current()["DiskCachePath"].toString());
 
-  QDir media_cache_dir = local_appdata_dir.filePath("mediacache");
+    QDir media_cache_dir = local_appdata_dir.filePath("mediacache");
 
-  // Attempt to ensure this folder exists
-  media_cache_dir.mkpath(".");
+    // Attempt to ensure this folder exists
+    media_cache_dir.mkpath(".");
 
-  return media_cache_dir.absolutePath();
+    return media_cache_dir.absolutePath();
 }
 
 QString FileFunctions::GetConfigurationLocation()
 {
-  if (IsPortable()) {
-    return GetApplicationPath();
-  } else {
-    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-  }
+    if (IsPortable()) {
+        return GetApplicationPath();
+    } else {
+        return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    }
 }
 
 bool FileFunctions::IsPortable()
 {
-  return QFileInfo::exists(QDir(GetApplicationPath()).filePath("portable"));
+    return QFileInfo::exists(QDir(GetApplicationPath()).filePath("portable"));
 }
 
 QString FileFunctions::GetApplicationPath()
 {
-  return QCoreApplication::applicationDirPath();
+    return QCoreApplication::applicationDirPath();
 }
 
 QString FileFunctions::GetTempFilePath()
 {
-  QString temp_path = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
-                           .filePath(QCoreApplication::organizationName()))
-                   .filePath(QCoreApplication::applicationName());
+    QString temp_path = QDir(QDir(QStandardPaths::writableLocation(QStandardPaths::TempLocation))
+                             .filePath(QCoreApplication::organizationName()))
+                        .filePath(QCoreApplication::applicationName());
 
-  // Ensure it exists
-  QDir(temp_path).mkpath(".");
+    // Ensure it exists
+    QDir(temp_path).mkpath(".");
 
-  return temp_path;
+    return temp_path;
 }
 
 void FileFunctions::CopyDirectory(const QString &source, const QString &dest, bool overwrite)
 {
-  QDir d(source);
+    QDir d(source);
 
-  if (!d.exists()) {
-    qCritical() << "Failed to copy directory, source" << source << "didn't exist";
-    return;
-  }
-
-  QDir dest_dir(dest);
-
-  if (!dest_dir.mkpath(QStringLiteral("."))) {
-    qCritical() << "Failed to create destination directory" << dest;
-    return;
-  }
-
-  QFileInfoList l = d.entryInfoList();
-
-  foreach (const QFileInfo& info, l) {
-    // QDir::NoDotAndDotDot continues to not work, so we have to check manually
-    if (info.fileName() == QStringLiteral(".") || info.fileName() == QStringLiteral("..")) {
-      continue;
+    if (!d.exists()) {
+        qCritical() << "Failed to copy directory, source" << source << "didn't exist";
+        return;
     }
 
-    QString dest_file_path = dest_dir.filePath(info.fileName());
+    QDir dest_dir(dest);
 
-    if (info.isDir()) {
-      // Copy dir
-      CopyDirectory(info.absoluteFilePath(), dest_file_path, overwrite);
-    } else {
-      // Copy file
-      if (overwrite && QFile::exists(dest_file_path)) {
-        QFile::remove(dest_file_path);
-      }
-
-      QFile::copy(info.absoluteFilePath(), dest_file_path);
+    if (!dest_dir.mkpath(QStringLiteral("."))) {
+        qCritical() << "Failed to create destination directory" << dest;
+        return;
     }
-  }
+
+    QFileInfoList l = d.entryInfoList();
+
+    foreach (const QFileInfo& info, l) {
+        // QDir::NoDotAndDotDot continues to not work, so we have to check manually
+        if (info.fileName() == QStringLiteral(".") || info.fileName() == QStringLiteral("..")) {
+            continue;
+        }
+
+        QString dest_file_path = dest_dir.filePath(info.fileName());
+
+        if (info.isDir()) {
+            // Copy dir
+            CopyDirectory(info.absoluteFilePath(), dest_file_path, overwrite);
+        } else {
+            // Copy file
+            if (overwrite && QFile::exists(dest_file_path)) {
+                QFile::remove(dest_file_path);
+            }
+
+            QFile::copy(info.absoluteFilePath(), dest_file_path);
+        }
+    }
 }
 
 OLIVE_NAMESPACE_EXIT

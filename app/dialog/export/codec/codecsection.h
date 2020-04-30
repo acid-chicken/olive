@@ -30,9 +30,9 @@ OLIVE_NAMESPACE_ENTER
 class CodecSection : public QWidget
 {
 public:
-  CodecSection(QWidget* parent = nullptr);
+    CodecSection(QWidget* parent = nullptr);
 
-  virtual void AddOpts(EncodingParams* params){}
+    virtual void AddOpts(EncodingParams* params) {}
 
 };
 

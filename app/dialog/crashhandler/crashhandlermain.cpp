@@ -24,14 +24,14 @@
 
 int main(int argc, char *argv[])
 {
-  if (argc < 2) {
-    return 1;
-  }
+    if (argc < 2) {
+        return 1;
+    }
 
-  QApplication a(argc, argv);
+    QApplication a(argc, argv);
 
-  OLIVE_NAMESPACE::CrashHandlerDialog chd(argv[1]);
-  chd.open();
+    OLIVE_NAMESPACE::CrashHandlerDialog chd(argv[1]);
+    chd.open();
 
-  return a.exec();
+    return a.exec();
 }

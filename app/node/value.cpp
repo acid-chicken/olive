@@ -24,207 +24,207 @@ OLIVE_NAMESPACE_ENTER
 
 NodeValueTable& NodeValueDatabase::operator[](const QString &input_id)
 {
-  return tables_[input_id];
+    return tables_[input_id];
 }
 
 NodeValueTable& NodeValueDatabase::operator[](const NodeInput *input)
 {
-  return tables_[input->id()];
+    return tables_[input->id()];
 }
 
 const NodeValueTable NodeValueDatabase::operator[](const QString &input_id) const
 {
-  return tables_[input_id];
+    return tables_[input_id];
 }
 
 const NodeValueTable NodeValueDatabase::operator[](const NodeInput *input) const
 {
-  return tables_[input->id()];
+    return tables_[input->id()];
 }
 
 void NodeValueDatabase::Insert(const QString &key, const NodeValueTable &value)
 {
-  tables_.insert(key, value);
+    tables_.insert(key, value);
 }
 
 void NodeValueDatabase::Insert(const NodeInput *key, const NodeValueTable &value)
 {
-  tables_.insert(key->id(), value);
+    tables_.insert(key->id(), value);
 }
 
 NodeValueTable NodeValueDatabase::Merge() const
 {
-  return NodeValueTable::Merge(tables_.values());
+    return NodeValueTable::Merge(tables_.values());
 }
 
 NodeValue::NodeValue(const NodeParam::DataType &type, const QVariant &data, const QString &tag) :
-  type_(type),
-  data_(data),
-  tag_(tag)
+    type_(type),
+    data_(data),
+    tag_(tag)
 {
 }
 
 const NodeParam::DataType &NodeValue::type() const
 {
-  return type_;
+    return type_;
 }
 
 const QString &NodeValue::tag() const
 {
-  return tag_;
+    return tag_;
 }
 
 bool NodeValue::operator==(const NodeValue &rhs) const
 {
-  return type_ == rhs.type_ && tag_ == rhs.tag_ && data_ == rhs.data_;
+    return type_ == rhs.type_ && tag_ == rhs.tag_ && data_ == rhs.data_;
 }
 
 const QVariant &NodeValue::data() const
 {
-  return data_;
+    return data_;
 }
 
 QVariant NodeValueTable::Get(const NodeParam::DataType &type, const QString &tag) const
 {
-  return GetWithMeta(type, tag).data();
+    return GetWithMeta(type, tag).data();
 }
 
 NodeValue NodeValueTable::GetWithMeta(const NodeParam::DataType &type, const QString &tag) const
 {
-  int value_index = GetInternal(type, tag);
+    int value_index = GetInternal(type, tag);
 
-  if (value_index >= 0) {
-    return values_.at(value_index);
-  }
+    if (value_index >= 0) {
+        return values_.at(value_index);
+    }
 
-  return NodeValue(NodeParam::kNone, QVariant());
+    return NodeValue(NodeParam::kNone, QVariant());
 }
 
 QVariant NodeValueTable::Take(const NodeParam::DataType &type, const QString &tag)
 {
-  return TakeWithMeta(type, tag).data();
+    return TakeWithMeta(type, tag).data();
 }
 
 NodeValue NodeValueTable::TakeWithMeta(const NodeParam::DataType &type, const QString &tag)
 {
-  int value_index = GetInternal(type, tag);
+    int value_index = GetInternal(type, tag);
 
-  if (value_index >= 0) {
-    return values_.takeAt(value_index);
-  }
+    if (value_index >= 0) {
+        return values_.takeAt(value_index);
+    }
 
-  return NodeValue(NodeParam::kNone, QVariant());
+    return NodeValue(NodeParam::kNone, QVariant());
 }
 
 void NodeValueTable::Push(const NodeValue &value)
 {
-  values_.append(value);
+    values_.append(value);
 }
 
 void NodeValueTable::Push(const NodeParam::DataType &type, const QVariant &data, const QString &tag)
 {
-  Push(NodeValue(type, data, tag));
+    Push(NodeValue(type, data, tag));
 }
 
 void NodeValueTable::Prepend(const NodeValue &value)
 {
-  values_.prepend(value);
+    values_.prepend(value);
 }
 
 void NodeValueTable::Prepend(const NodeParam::DataType &type, const QVariant &data, const QString &tag)
 {
-  Prepend(NodeValue(type, data, tag));
+    Prepend(NodeValue(type, data, tag));
 }
 
 const NodeValue &NodeValueTable::At(int index) const
 {
-  return values_.at(index);
+    return values_.at(index);
 }
 
 NodeValue NodeValueTable::TakeAt(int index)
 {
-  return values_.takeAt(index);
+    return values_.takeAt(index);
 }
 
 int NodeValueTable::Count() const
 {
-  return values_.size();
+    return values_.size();
 }
 
 bool NodeValueTable::Has(const NodeParam::DataType &type) const
 {
-  for (int i=values_.size() - 1;i>=0;i--) {
-    const NodeValue& v = values_.at(i);
+    for (int i=values_.size() - 1; i>=0; i--) {
+        const NodeValue& v = values_.at(i);
 
-    if (v.type() & type) {
-      return true;
+        if (v.type() & type) {
+            return true;
+        }
     }
-  }
 
-  return false;
+    return false;
 }
 
 void NodeValueTable::Remove(const NodeValue &v)
 {
-  for (int i=values_.size() - 1;i>=0;i--) {
-    const NodeValue& compare = values_.at(i);
+    for (int i=values_.size() - 1; i>=0; i--) {
+        const NodeValue& compare = values_.at(i);
 
-    if (compare == v) {
-      values_.removeAt(i);
-      return;
+        if (compare == v) {
+            values_.removeAt(i);
+            return;
+        }
     }
-  }
 }
 
 bool NodeValueTable::isEmpty() const
 {
-  return values_.isEmpty();
+    return values_.isEmpty();
 }
 
 NodeValueTable NodeValueTable::Merge(QList<NodeValueTable> tables)
 {
 
 
-  if (tables.size() == 1) {
-    return tables.first();
-  }
-
-  int row = 0;
-
-  NodeValueTable merged_table;
-
-  // Slipstreams all tables together
-  // FIXME: I don't actually know if this is the right approach...
-  foreach (const NodeValueTable& t, tables) {
-    if (row >= t.Count()) {
-      continue;
+    if (tables.size() == 1) {
+        return tables.first();
     }
 
-    int row_index = t.Count() - 1 - row;
+    int row = 0;
 
-    merged_table.Prepend(t.At(row_index));
-  }
+    NodeValueTable merged_table;
 
-  return merged_table;
+    // Slipstreams all tables together
+    // FIXME: I don't actually know if this is the right approach...
+    foreach (const NodeValueTable& t, tables) {
+        if (row >= t.Count()) {
+            continue;
+        }
+
+        int row_index = t.Count() - 1 - row;
+
+        merged_table.Prepend(t.At(row_index));
+    }
+
+    return merged_table;
 }
 
 int NodeValueTable::GetInternal(const NodeParam::DataType &type, const QString &tag) const
 {
-  int index = -1;
+    int index = -1;
 
-  for (int i=values_.size() - 1;i>=0;i--) {
-    const NodeValue& v = values_.at(i);
+    for (int i=values_.size() - 1; i>=0; i--) {
+        const NodeValue& v = values_.at(i);
 
-    if (v.type() & type) {
-      index = i;
+        if (v.type() & type) {
+            index = i;
 
-      if (tag.isEmpty() || tag == v.tag()) {
-        break;
-      }
+            if (tag.isEmpty() || tag == v.tag()) {
+                break;
+            }
+        }
     }
-  }
 
-  return index;
+    return index;
 }
 
 OLIVE_NAMESPACE_EXIT

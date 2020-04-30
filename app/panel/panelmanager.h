@@ -44,192 +44,192 @@ OLIVE_NAMESPACE_ENTER
  */
 class PanelManager : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PanelManager(QObject* parent = nullptr);
+    PanelManager(QObject* parent = nullptr);
 
-  /**
-   * @brief Destroy all panels
-   *
-   * Should only be used on application exit to cleanly free all panels.
-   */
-  void DeleteAllPanels();
+    /**
+     * @brief Destroy all panels
+     *
+     * Should only be used on application exit to cleanly free all panels.
+     */
+    void DeleteAllPanels();
 
-  /**
-   * @brief Get a list of all existing panels
-   *
-   * Panels are ordered from most recently focused to least recently focused.
-   */
-  const QList<PanelWidget*>& panels();
+    /**
+     * @brief Get a list of all existing panels
+     *
+     * Panels are ordered from most recently focused to least recently focused.
+     */
+    const QList<PanelWidget*>& panels();
 
-  /**
-   * @brief Return the currently focused widget, or nullptr if nothing is focused
-   *
-   * This result == CurrentlyFocused() if HoverFocus is true
-   */
-  PanelWidget* CurrentlyFocused() const;
+    /**
+     * @brief Return the currently focused widget, or nullptr if nothing is focused
+     *
+     * This result == CurrentlyFocused() if HoverFocus is true
+     */
+    PanelWidget* CurrentlyFocused() const;
 
-  /**
-   * @brief Return the widget that the mouse is currently hovering over, or nullptr if nothing is hovered over
-   *
-   * This result == CurrentlyFocused() if HoverFocus is true
-   */
-  PanelWidget* CurrentlyHovered() const;
+    /**
+     * @brief Return the widget that the mouse is currently hovering over, or nullptr if nothing is hovered over
+     *
+     * This result == CurrentlyFocused() if HoverFocus is true
+     */
+    PanelWidget* CurrentlyHovered() const;
 
-  template<class T>
-  /**
-   * @brief Get most recently focused panel of a certain type
-   *
-   * @return
-   *
-   * The most recently focused panel of the specified type, or nullptr if none exists
-   */
-  T* MostRecentlyFocused();
+    template<class T>
+    /**
+     * @brief Get most recently focused panel of a certain type
+     *
+     * @return
+     *
+     * The most recently focused panel of the specified type, or nullptr if none exists
+     */
+    T* MostRecentlyFocused();
 
-  template<class T>
-  /**
-   * @brief Create a panel
-   */
-  T* CreatePanel(QWidget* parent);
+    template<class T>
+    /**
+     * @brief Create a panel
+     */
+    T* CreatePanel(QWidget* parent);
 
-  /**
-   * @brief Get whether panels are currently prevented from moving
-   */
-  bool ArePanelsLocked();
+    /**
+     * @brief Get whether panels are currently prevented from moving
+     */
+    bool ArePanelsLocked();
 
-  /**
-   * @brief Create PanelManager singleton instance
-   */
-  static void CreateInstance();
+    /**
+     * @brief Create PanelManager singleton instance
+     */
+    static void CreateInstance();
 
-  /**
-   * @brief Destroy PanelManager singleton instance
-   *
-   * If no PanelManager was created, this is a no-op.
-   */
-  static void DestroyInstance();
+    /**
+     * @brief Destroy PanelManager singleton instance
+     *
+     * If no PanelManager was created, this is a no-op.
+     */
+    static void DestroyInstance();
 
-  /**
-   * @brief Access to PanelManager singleton instance
-   */
-  static PanelManager* instance();
+    /**
+     * @brief Access to PanelManager singleton instance
+     */
+    static PanelManager* instance();
 
-  template<class T>
-  /**
-   * @brief Get a list of panels of a certain type
-   */
-  QList<T*> GetPanelsOfType();
+    template<class T>
+    /**
+     * @brief Get a list of panels of a certain type
+     */
+    QList<T*> GetPanelsOfType();
 
 public slots:
-  /**
-   * @brief Connect this to a QApplication's SIGNAL(focusChanged())
-   *
-   * Interprets focus information to determine the currently focused panel
-   */
-  void FocusChanged(QWidget* old, QWidget* now);
+    /**
+     * @brief Connect this to a QApplication's SIGNAL(focusChanged())
+     *
+     * Interprets focus information to determine the currently focused panel
+     */
+    void FocusChanged(QWidget* old, QWidget* now);
 
-  /**
-   * @brief Sets whether panels should be prevented from moving
-   */
-  void SetPanelsLocked(bool locked);
+    /**
+     * @brief Sets whether panels should be prevented from moving
+     */
+    void SetPanelsLocked(bool locked);
 
 signals:
-  /**
-   * @brief Signal emitted when the currently focused panel changes
-   */
-  void FocusedPanelChanged(PanelWidget* panel);
+    /**
+     * @brief Signal emitted when the currently focused panel changes
+     */
+    void FocusedPanelChanged(PanelWidget* panel);
 
 private:
-  /**
-   * @brief History array for traversing through (see MostRecentlyFocused())
-   */
-  QList<PanelWidget*> focus_history_;
+    /**
+     * @brief History array for traversing through (see MostRecentlyFocused())
+     */
+    QList<PanelWidget*> focus_history_;
 
-  /**
-   * @brief Internal panel movement is locked value
-   */
-  bool locked_;
+    /**
+     * @brief Internal panel movement is locked value
+     */
+    bool locked_;
 
-  /**
-   * @brief PanelManager singleton instance
-   */
-  static PanelManager* instance_;
+    /**
+     * @brief PanelManager singleton instance
+     */
+    static PanelManager* instance_;
 
-  /**
-   * @brief The last panel that was focused
-   *
-   * Stored to prevent emitting FocusedPanelChanged() multiple times for the same panel
-   */
-  PanelWidget* last_focused_panel_;
+    /**
+     * @brief The last panel that was focused
+     *
+     * Stored to prevent emitting FocusedPanelChanged() multiple times for the same panel
+     */
+    PanelWidget* last_focused_panel_;
 
 private slots:
-  /**
-   * @brief Processing if a panel gets deleted
-   */
-  void PanelDestroyed();
+    /**
+     * @brief Processing if a panel gets deleted
+     */
+    void PanelDestroyed();
 
 };
 
 template<class T>
 T *PanelManager::CreatePanel(QWidget *parent)
 {
-  T* panel = new T(parent);
+    T* panel = new T(parent);
 
-  // Add panel to the bottom of the focus history
-  focus_history_.append(panel);
+    // Add panel to the bottom of the focus history
+    focus_history_.append(panel);
 
-  panel->SetMovementLocked(locked_);
+    panel->SetMovementLocked(locked_);
 
-  // Sane default for panel size
-  panel->resize(parent->size() / 3);
+    // Sane default for panel size
+    panel->resize(parent->size() / 3);
 
-  // We're about to center the panel relative to the parent (usually the main window), but for some
-  // reason this requires the panel to be shown first.
-  panel->show();
+    // We're about to center the panel relative to the parent (usually the main window), but for some
+    // reason this requires the panel to be shown first.
+    panel->show();
 
-  // Center the panel relative to the parent
-  QPoint parent_center = panel->mapFromGlobal(parent->mapToGlobal(parent->rect().center()));
-  QPoint panel_center = panel->rect().center();
-  panel->move(parent_center - panel_center);
+    // Center the panel relative to the parent
+    QPoint parent_center = panel->mapFromGlobal(parent->mapToGlobal(parent->rect().center()));
+    QPoint panel_center = panel->rect().center();
+    panel->move(parent_center - panel_center);
 
-  // Connect destroy signal so we can remove it from focus history
-  connect(panel, &PanelWidget::destroyed, this, &PanelManager::PanelDestroyed, Qt::DirectConnection);
+    // Connect destroy signal so we can remove it from focus history
+    connect(panel, &PanelWidget::destroyed, this, &PanelManager::PanelDestroyed, Qt::DirectConnection);
 
-  return panel;
+    return panel;
 }
 
 template<class T>
 T* PanelManager::MostRecentlyFocused()
 {
-  T* cast_test;
+    T* cast_test;
 
-  for (int i=0;i<focus_history_.size();i++) {
-    cast_test = dynamic_cast<T*>(focus_history_.at(i));
+    for (int i=0; i<focus_history_.size(); i++) {
+        cast_test = dynamic_cast<T*>(focus_history_.at(i));
 
-    if (cast_test != nullptr) {
-      return cast_test;
+        if (cast_test != nullptr) {
+            return cast_test;
+        }
     }
-  }
 
-  return nullptr;
+    return nullptr;
 }
 
 template<class T>
 QList<T*> PanelManager::GetPanelsOfType()
 {
-  QList<T*> panels;
+    QList<T*> panels;
 
-  T* cast_test;
+    T* cast_test;
 
-  foreach (PanelWidget* panel, focus_history_) {
-    cast_test = dynamic_cast<T*>(panel);
+    foreach (PanelWidget* panel, focus_history_) {
+        cast_test = dynamic_cast<T*>(panel);
 
-    if (cast_test) {
-      panels.append(cast_test);
+        if (cast_test) {
+            panels.append(cast_test);
+        }
     }
-  }
 
-  return panels;
+    return panels;
 }
 
 OLIVE_NAMESPACE_EXIT

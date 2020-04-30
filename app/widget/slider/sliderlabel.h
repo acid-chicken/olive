@@ -29,30 +29,30 @@ OLIVE_NAMESPACE_ENTER
 
 class SliderLabel : public QLabel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  SliderLabel(QWidget* parent);
+    SliderLabel(QWidget* parent);
 
 protected:
-  virtual void mousePressEvent(QMouseEvent *ev) override;
+    virtual void mousePressEvent(QMouseEvent *ev) override;
 
-  virtual void mouseMoveEvent(QMouseEvent *ev) override;
+    virtual void mouseMoveEvent(QMouseEvent *ev) override;
 
-  virtual void mouseReleaseEvent(QMouseEvent *ev) override;
+    virtual void mouseReleaseEvent(QMouseEvent *ev) override;
 
-  virtual void focusInEvent(QFocusEvent *event) override;
+    virtual void focusInEvent(QFocusEvent *event) override;
 
 signals:
-  void dragged(int x);
+    void dragged(int x);
 
-  void drag_start();
+    void drag_start();
 
-  void drag_stop();
+    void drag_stop();
 
-  void focused();
+    void focused();
 
 private:
-  QPoint drag_start_;
+    QPoint drag_start_;
 
 };
 

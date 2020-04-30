@@ -35,26 +35,26 @@ using ColorProcessorPtr = std::shared_ptr<ColorProcessor>;
 class ColorProcessor
 {
 public:
-  enum Direction {
-    kNormal,
-    kInverse
-  };
+    enum Direction {
+        kNormal,
+        kInverse
+    };
 
-  ColorProcessor(ColorManager* config, const QString& input, const ColorTransform& dest_space);
+    ColorProcessor(ColorManager* config, const QString& input, const ColorTransform& dest_space);
 
-  DISABLE_COPY_MOVE(ColorProcessor)
+    DISABLE_COPY_MOVE(ColorProcessor)
 
-  static ColorProcessorPtr Create(ColorManager* config, const QString& input, const ColorTransform& dest_space);
+    static ColorProcessorPtr Create(ColorManager* config, const QString& input, const ColorTransform& dest_space);
 
-  OCIO::ConstProcessorRcPtr GetProcessor();
+    OCIO::ConstProcessorRcPtr GetProcessor();
 
-  void ConvertFrame(FramePtr f);
-  void ConvertFrame(Frame* f);
+    void ConvertFrame(FramePtr f);
+    void ConvertFrame(Frame* f);
 
-  Color ConvertColor(Color in);
+    Color ConvertColor(Color in);
 
 private:
-  OCIO::ConstProcessorRcPtr processor_;
+    OCIO::ConstProcessorRcPtr processor_;
 
 };
 

@@ -23,19 +23,19 @@
 OLIVE_NAMESPACE_ENTER
 
 NodeEdge::NodeEdge(NodeOutput *output, NodeInput *input) :
-  output_(output),
-  input_(input)
+    output_(output),
+    input_(input)
 {
 }
 
 NodeOutput *NodeEdge::output()
 {
-  return output_;
+    return output_;
 }
 
 NodeInput *NodeEdge::input()
 {
-  return input_;
+    return input_;
 }
 
 OLIVE_NAMESPACE_EXIT

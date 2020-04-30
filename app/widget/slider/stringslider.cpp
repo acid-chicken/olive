@@ -23,30 +23,30 @@
 OLIVE_NAMESPACE_ENTER
 
 StringSlider::StringSlider(QWidget* parent) :
-  SliderBase(kString, parent)
+    SliderBase(kString, parent)
 {
-  connect(this, SIGNAL(ValueChanged(QVariant)), this, SLOT(ConvertValue(QVariant)));
+    connect(this, SIGNAL(ValueChanged(QVariant)), this, SLOT(ConvertValue(QVariant)));
 }
 
 QString StringSlider::GetValue()
 {
-  return Value().toString();
+    return Value().toString();
 }
 
 void StringSlider::SetValue(const QString &v)
 {
-  SliderBase::SetValue(v);
+    SliderBase::SetValue(v);
 }
 
 QString StringSlider::ValueToString(const QVariant &v)
 {
-  QString vstr = v.toString();
-  return (vstr.isEmpty()) ? tr("(none)") : vstr;
+    QString vstr = v.toString();
+    return (vstr.isEmpty()) ? tr("(none)") : vstr;
 }
 
 void StringSlider::ConvertValue(QVariant v)
 {
-  emit ValueChanged(v.toString());
+    emit ValueChanged(v.toString());
 }
 
 OLIVE_NAMESPACE_EXIT

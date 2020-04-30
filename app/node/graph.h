@@ -32,64 +32,64 @@ OLIVE_NAMESPACE_ENTER
  */
 class NodeGraph : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /**
-   * @brief NodeGraph Constructor
-   */
-  NodeGraph() = default;
+    /**
+     * @brief NodeGraph Constructor
+     */
+    NodeGraph() = default;
 
-  /**
-   * @brief Destructively destroys all nodes in the graph
-   */
-  void Clear();
+    /**
+     * @brief Destructively destroys all nodes in the graph
+     */
+    void Clear();
 
-  /**
-   * @brief Add a node to this graph
-   *
-   * The node will get added to this graph. It is not automatically connected to anything, any connections will need to
-   * be made manually after the node is added. The graph takes ownership of the Node.
-   */
-  void AddNode(Node* node);
+    /**
+     * @brief Add a node to this graph
+     *
+     * The node will get added to this graph. It is not automatically connected to anything, any connections will need to
+     * be made manually after the node is added. The graph takes ownership of the Node.
+     */
+    void AddNode(Node* node);
 
-  /**
-   * @brief Removes a Node from the graph BUT doesn't destroy it. Ownership is passed to `new_parent`.
-   */
-  void TakeNode(Node* node, QObject* new_parent = nullptr);
+    /**
+     * @brief Removes a Node from the graph BUT doesn't destroy it. Ownership is passed to `new_parent`.
+     */
+    void TakeNode(Node* node, QObject* new_parent = nullptr);
 
-  /**
-   * @brief Retrieve a complete list of the nodes belonging to this graph
-   */
-  const QList<Node*>& nodes() const;
+    /**
+     * @brief Retrieve a complete list of the nodes belonging to this graph
+     */
+    const QList<Node*>& nodes() const;
 
-  /**
-   * @brief Returns whether a certain Node is in the graph or not
-   */
-  bool ContainsNode(Node* n) const;
+    /**
+     * @brief Returns whether a certain Node is in the graph or not
+     */
+    bool ContainsNode(Node* n) const;
 
 signals:
-  /**
-   * @brief Signal emitted when a Node is added to the graph
-   */
-  void NodeAdded(Node* node);
+    /**
+     * @brief Signal emitted when a Node is added to the graph
+     */
+    void NodeAdded(Node* node);
 
-  /**
-   * @brief Signal emitted when a Node is removed from the graph
-   */
-  void NodeRemoved(Node* node);
+    /**
+     * @brief Signal emitted when a Node is removed from the graph
+     */
+    void NodeRemoved(Node* node);
 
-  /**
-   * @brief Signal emitted when a member node of this graph has been connected to another (creating an "edge")
-   */
-  void EdgeAdded(NodeEdgePtr edge);
+    /**
+     * @brief Signal emitted when a member node of this graph has been connected to another (creating an "edge")
+     */
+    void EdgeAdded(NodeEdgePtr edge);
 
-  /**
-   * @brief Signal emitted when a member node of this graph has been disconnected from another (removing an "edge")
-   */
-  void EdgeRemoved(NodeEdgePtr edge);
+    /**
+     * @brief Signal emitted when a member node of this graph has been disconnected from another (removing an "edge")
+     */
+    void EdgeRemoved(NodeEdgePtr edge);
 
 private:
-  QList<Node*> node_children_;
+    QList<Node*> node_children_;
 };
 
 OLIVE_NAMESPACE_EXIT

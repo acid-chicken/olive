@@ -23,23 +23,23 @@
 OLIVE_NAMESPACE_ENTER
 
 TimelineWidget::EditTool::EditTool(TimelineWidget* parent) :
-  Tool(parent)
+    Tool(parent)
 {
 }
 
 void TimelineWidget::EditTool::MousePress(TimelineViewMouseEvent *event)
 {
-  Q_UNUSED(event)
+    Q_UNUSED(event)
 }
 
 void TimelineWidget::EditTool::MouseMove(TimelineViewMouseEvent *event)
 {
-  Q_UNUSED(event)
+    Q_UNUSED(event)
 }
 
 void TimelineWidget::EditTool::MouseRelease(TimelineViewMouseEvent *event)
 {
-  Q_UNUSED(event)
+    Q_UNUSED(event)
 }
 
 OLIVE_NAMESPACE_EXIT

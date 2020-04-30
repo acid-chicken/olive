@@ -31,18 +31,18 @@ class Node;
 
 class NodeDependency {
 public:
-  NodeDependency();
-  NodeDependency(const Node* node, const TimeRange& range);
-  NodeDependency(const Node* node, const rational& in, const rational &out);
+    NodeDependency();
+    NodeDependency(const Node* node, const TimeRange& range);
+    NodeDependency(const Node* node, const rational& in, const rational &out);
 
-  const Node* node() const;
-  const rational& in() const;
-  const rational& out() const;
-  const TimeRange& range() const;
+    const Node* node() const;
+    const rational& in() const;
+    const rational& out() const;
+    const TimeRange& range() const;
 
 private:
-  const Node* node_;
-  TimeRange range_;
+    const Node* node_;
+    TimeRange range_;
 };
 
 OLIVE_NAMESPACE_EXIT

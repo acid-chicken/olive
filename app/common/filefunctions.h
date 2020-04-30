@@ -32,29 +32,29 @@ OLIVE_NAMESPACE_ENTER
  */
 class FileFunctions {
 public:
-  /**
-   * @brief Returns true if the application is running in portable mode
-   *
-   * In portable mode, any persistent configuration files should be made in a path relative to the application rather
-   * than in the user's home folder.
-   */
-  static bool IsPortable();
+    /**
+     * @brief Returns true if the application is running in portable mode
+     *
+     * In portable mode, any persistent configuration files should be made in a path relative to the application rather
+     * than in the user's home folder.
+     */
+    static bool IsPortable();
 
-  static QString GetUniqueFileIdentifier(const QString& filename);
+    static QString GetUniqueFileIdentifier(const QString& filename);
 
-  static QString GetMediaIndexLocation();
+    static QString GetMediaIndexLocation();
 
-  static QString GetMediaIndexFilename(const QString& filename);
+    static QString GetMediaIndexFilename(const QString& filename);
 
-  static QString GetMediaCacheLocation();
+    static QString GetMediaCacheLocation();
 
-  static QString GetConfigurationLocation();
+    static QString GetConfigurationLocation();
 
-  static QString GetApplicationPath();
+    static QString GetApplicationPath();
 
-  static QString GetTempFilePath();
+    static QString GetTempFilePath();
 
-  static void CopyDirectory(const QString& source, const QString& dest, bool overwrite = false);
+    static void CopyDirectory(const QString& source, const QString& dest, bool overwrite = false);
 
 };
 

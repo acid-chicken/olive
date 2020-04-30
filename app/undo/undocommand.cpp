@@ -25,33 +25,33 @@
 OLIVE_NAMESPACE_ENTER
 
 UndoCommand::UndoCommand(QUndoCommand *parent) :
-  QUndoCommand(parent)
+    QUndoCommand(parent)
 {
 }
 
 void UndoCommand::redo()
 {
-  redo_internal();
+    redo_internal();
 
-  modified_ = GetRelevantProject()->is_modified();
-  GetRelevantProject()->set_modified(true);
+    modified_ = GetRelevantProject()->is_modified();
+    GetRelevantProject()->set_modified(true);
 }
 
 void UndoCommand::undo()
 {
-  undo_internal();
+    undo_internal();
 
-  GetRelevantProject()->set_modified(modified_);
+    GetRelevantProject()->set_modified(modified_);
 }
 
 void UndoCommand::redo_internal()
 {
-  QUndoCommand::redo();
+    QUndoCommand::redo();
 }
 
 void UndoCommand::undo_internal()
 {
-  QUndoCommand::undo();
+    QUndoCommand::undo();
 }
 
 OLIVE_NAMESPACE_EXIT

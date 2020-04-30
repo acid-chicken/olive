@@ -28,45 +28,45 @@
 OLIVE_NAMESPACE_ENTER
 
 NodeParamViewConnectedLabel::NodeParamViewConnectedLabel(NodeInput *input, QWidget *parent) :
-  QWidget(parent),
-  input_(input)
+    QWidget(parent),
+    input_(input)
 {
-  QHBoxLayout* layout = new QHBoxLayout(this);
-  layout->setSpacing(QFontMetricsWidth(fontMetrics(), QStringLiteral(" ")));
-  layout->setMargin(0);
+    QHBoxLayout* layout = new QHBoxLayout(this);
+    layout->setSpacing(QFontMetricsWidth(fontMetrics(), QStringLiteral(" ")));
+    layout->setMargin(0);
 
-  layout->addWidget(new QLabel(tr("Connected to")));
+    layout->addWidget(new QLabel(tr("Connected to")));
 
-  connected_to_lbl_ = new ClickableLabel();
-  connected_to_lbl_->setCursor(Qt::PointingHandCursor);
-  connect(connected_to_lbl_, &ClickableLabel::MouseClicked, this, &NodeParamViewConnectedLabel::ConnectionClicked);
-  layout->addWidget(connected_to_lbl_);
+    connected_to_lbl_ = new ClickableLabel();
+    connected_to_lbl_->setCursor(Qt::PointingHandCursor);
+    connect(connected_to_lbl_, &ClickableLabel::MouseClicked, this, &NodeParamViewConnectedLabel::ConnectionClicked);
+    layout->addWidget(connected_to_lbl_);
 
-  layout->addStretch();
+    layout->addStretch();
 
-  // Set up "link" font
-  QFont link_font = connected_to_lbl_->font();
-  link_font.setUnderline(true);
-  connected_to_lbl_->setForegroundRole(QPalette::Link);
-  connected_to_lbl_->setFont(link_font);
+    // Set up "link" font
+    QFont link_font = connected_to_lbl_->font();
+    link_font.setUnderline(true);
+    connected_to_lbl_->setForegroundRole(QPalette::Link);
+    connected_to_lbl_->setFont(link_font);
 
-  UpdateConnected();
+    UpdateConnected();
 
-  connect(input_, &NodeInput::EdgeAdded, this, &NodeParamViewConnectedLabel::UpdateConnected);
-  connect(input_, &NodeInput::EdgeRemoved, this, &NodeParamViewConnectedLabel::UpdateConnected);
+    connect(input_, &NodeInput::EdgeAdded, this, &NodeParamViewConnectedLabel::UpdateConnected);
+    connect(input_, &NodeInput::EdgeRemoved, this, &NodeParamViewConnectedLabel::UpdateConnected);
 }
 
 void NodeParamViewConnectedLabel::UpdateConnected()
 {
-  QString connection_str;
+    QString connection_str;
 
-  if (input_->IsConnected()) {
-    connection_str = input_->get_connected_node()->Name();
-  } else {
-    connection_str = tr("Nothing");
-  }
+    if (input_->IsConnected()) {
+        connection_str = input_->get_connected_node()->Name();
+    } else {
+        connection_str = tr("Nothing");
+    }
 
-  connected_to_lbl_->setText(connection_str);
+    connected_to_lbl_->setText(connection_str);
 }
 
 OLIVE_NAMESPACE_EXIT

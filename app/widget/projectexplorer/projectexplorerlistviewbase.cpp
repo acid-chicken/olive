@@ -25,30 +25,30 @@
 OLIVE_NAMESPACE_ENTER
 
 ProjectExplorerListViewBase::ProjectExplorerListViewBase(QWidget *parent) :
-  QListView(parent)
+    QListView(parent)
 {
-  // FIXME Is this necessary?
-  setMovement(QListView::Free);
+    // FIXME Is this necessary?
+    setMovement(QListView::Free);
 
-  // Set selection mode (allows multiple item selection)
-  setSelectionMode(QAbstractItemView::ExtendedSelection);
+    // Set selection mode (allows multiple item selection)
+    setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  // Set resize mode
-  setResizeMode(QListView::Adjust);
+    // Set resize mode
+    setResizeMode(QListView::Adjust);
 
-  // Set widget to emit a signal on right click
-  setContextMenuPolicy(Qt::CustomContextMenu);
+    // Set widget to emit a signal on right click
+    setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 void ProjectExplorerListViewBase::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  // Perform default double click functions
-  QListView::mouseDoubleClickEvent(event);
+    // Perform default double click functions
+    QListView::mouseDoubleClickEvent(event);
 
-  // QAbstractItemView already has a doubleClicked() signal, but we emit another here for double clicking empty space
-  if (!indexAt(event->pos()).isValid()) {
-    emit DoubleClickedEmptyArea();
-  }
+    // QAbstractItemView already has a doubleClicked() signal, but we emit another here for double clicking empty space
+    if (!indexAt(event->pos()).isValid()) {
+        emit DoubleClickedEmptyArea();
+    }
 }
 
 OLIVE_NAMESPACE_EXIT

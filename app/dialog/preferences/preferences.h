@@ -40,32 +40,32 @@ OLIVE_NAMESPACE_ENTER
  */
 class PreferencesDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 
 public:
-  /**
-   * @brief PreferencesDialog Constructor
-   *
-   * @param parent
-   *
-   * QWidget parent. Usually MainWindow.
-   */
-  explicit PreferencesDialog(QWidget *parent, QMenuBar* main_menu_bar);
+    /**
+     * @brief PreferencesDialog Constructor
+     *
+     * @param parent
+     *
+     * QWidget parent. Usually MainWindow.
+     */
+    explicit PreferencesDialog(QWidget *parent, QMenuBar* main_menu_bar);
 
 private slots:
-  /**
-   * @brief Override of accept to save preferences to Config.
-   */
-  virtual void accept() override;
+    /**
+     * @brief Override of accept to save preferences to Config.
+     */
+    virtual void accept() override;
 
 private:
-  void AddTab(PreferencesTab* tab, const QString& title);
+    void AddTab(PreferencesTab* tab, const QString& title);
 
-  QListWidget* list_widget_;
+    QListWidget* list_widget_;
 
-  QStackedWidget* preference_pane_stack_;
+    QStackedWidget* preference_pane_stack_;
 
-  QList<PreferencesTab*> tabs_;
+    QList<PreferencesTab*> tabs_;
 
 };
 

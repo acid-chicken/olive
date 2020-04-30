@@ -37,180 +37,180 @@ QString StyleManager::current_style_;
 
 QList<StyleDescriptor> StyleManager::ListInternal()
 {
-  QList<StyleDescriptor> style_list;
+    QList<StyleDescriptor> style_list;
 
-  style_list.append(StyleDescriptor(tr("Olive Dark"), ":/style/olive-dark"));
-  style_list.append(StyleDescriptor(tr("Olive Light"), ":/style/olive-light"));
+    style_list.append(StyleDescriptor(tr("Olive Dark"), ":/style/olive-dark"));
+    style_list.append(StyleDescriptor(tr("Olive Light"), ":/style/olive-light"));
 
-  return style_list;
+    return style_list;
 }
 
 #ifdef Q_OS_WINDOWS
 void StyleManager::UseNativeWindowsStyling(QWidget *widget)
 {
-  QStyle* s = QStyleFactory::create(QStringLiteral("windowsvista"));
-  widget->setStyle(s);
-  widget->setPalette(s->standardPalette());
+    QStyle* s = QStyleFactory::create(QStringLiteral("windowsvista"));
+    widget->setStyle(s);
+    widget->setPalette(s->standardPalette());
 }
 #endif
 
 QPalette StyleManager::ParsePalette(const QString& ini_path)
 {
-  QSettings ini(ini_path, QSettings::IniFormat);
-  QPalette palette;
+    QSettings ini(ini_path, QSettings::IniFormat);
+    QPalette palette;
 
-  ParsePaletteGroup(&ini, &palette, QPalette::All);
-  ParsePaletteGroup(&ini, &palette, QPalette::Active);
-  ParsePaletteGroup(&ini, &palette, QPalette::Inactive);
-  ParsePaletteGroup(&ini, &palette, QPalette::Disabled);
+    ParsePaletteGroup(&ini, &palette, QPalette::All);
+    ParsePaletteGroup(&ini, &palette, QPalette::Active);
+    ParsePaletteGroup(&ini, &palette, QPalette::Inactive);
+    ParsePaletteGroup(&ini, &palette, QPalette::Disabled);
 
-  return palette;
+    return palette;
 }
 
 void StyleManager::ParsePaletteGroup(QSettings *ini, QPalette *palette, QPalette::ColorGroup group)
 {
-  QString group_name;
+    QString group_name;
 
-  switch (group) {
-  case QPalette::All:
-    group_name = "All";
-    break;
-  case QPalette::Active:
-    group_name = "Active";
-    break;
-  case QPalette::Inactive:
-    group_name = "Inactive";
-    break;
-  case QPalette::Disabled:
-    group_name = "Disabled";
-    break;
-  default:
-    return;
-  }
+    switch (group) {
+    case QPalette::All:
+        group_name = "All";
+        break;
+    case QPalette::Active:
+        group_name = "Active";
+        break;
+    case QPalette::Inactive:
+        group_name = "Inactive";
+        break;
+    case QPalette::Disabled:
+        group_name = "Disabled";
+        break;
+    default:
+        return;
+    }
 
-  ini->beginGroup(group_name);
+    ini->beginGroup(group_name);
 
-  QStringList keys = ini->childKeys();
-  foreach (QString k, keys) {
-    ParsePaletteColor(ini, palette, group, k);
-  }
+    QStringList keys = ini->childKeys();
+    foreach (QString k, keys) {
+        ParsePaletteColor(ini, palette, group, k);
+    }
 
-  ini->endGroup();
+    ini->endGroup();
 }
 
 void StyleManager::ParsePaletteColor(QSettings *ini, QPalette *palette, QPalette::ColorGroup group, const QString &role_name)
 {
-  QPalette::ColorRole role;
+    QPalette::ColorRole role;
 
-  if (!QString::compare(role_name, "Window", Qt::CaseInsensitive)) {
-    role = QPalette::Window;
-  } else if (!QString::compare(role_name, "WindowText", Qt::CaseInsensitive)) {
-    role = QPalette::WindowText;
-  } else if (!QString::compare(role_name, "Base", Qt::CaseInsensitive)) {
-    role = QPalette::Base;
-  } else if (!QString::compare(role_name, "AlternateBase", Qt::CaseInsensitive)) {
-    role = QPalette::AlternateBase;
-  } else if (!QString::compare(role_name, "ToolTipBase", Qt::CaseInsensitive)) {
-    role = QPalette::ToolTipBase;
-  } else if (!QString::compare(role_name, "ToolTipText", Qt::CaseInsensitive)) {
-    role = QPalette::ToolTipText;
+    if (!QString::compare(role_name, "Window", Qt::CaseInsensitive)) {
+        role = QPalette::Window;
+    } else if (!QString::compare(role_name, "WindowText", Qt::CaseInsensitive)) {
+        role = QPalette::WindowText;
+    } else if (!QString::compare(role_name, "Base", Qt::CaseInsensitive)) {
+        role = QPalette::Base;
+    } else if (!QString::compare(role_name, "AlternateBase", Qt::CaseInsensitive)) {
+        role = QPalette::AlternateBase;
+    } else if (!QString::compare(role_name, "ToolTipBase", Qt::CaseInsensitive)) {
+        role = QPalette::ToolTipBase;
+    } else if (!QString::compare(role_name, "ToolTipText", Qt::CaseInsensitive)) {
+        role = QPalette::ToolTipText;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-  } else if (!QString::compare(role_name, "PlaceholderText", Qt::CaseInsensitive)) {
-    role = QPalette::PlaceholderText;
+    } else if (!QString::compare(role_name, "PlaceholderText", Qt::CaseInsensitive)) {
+        role = QPalette::PlaceholderText;
 #endif
-  } else if (!QString::compare(role_name, "Text", Qt::CaseInsensitive)) {
-    role = QPalette::Text;
-  } else if (!QString::compare(role_name, "Button", Qt::CaseInsensitive)) {
-    role = QPalette::Button;
-  } else if (!QString::compare(role_name, "ButtonText", Qt::CaseInsensitive)) {
-    role = QPalette::ButtonText;
-  } else if (!QString::compare(role_name, "BrightText", Qt::CaseInsensitive)) {
-    role = QPalette::BrightText;
-  } else if (!QString::compare(role_name, "Highlight", Qt::CaseInsensitive)) {
-    role = QPalette::Highlight;
-  } else if (!QString::compare(role_name, "HighlightedText", Qt::CaseInsensitive)) {
-    role = QPalette::HighlightedText;
-  } else if (!QString::compare(role_name, "Link", Qt::CaseInsensitive)) {
-    role = QPalette::Link;
-  } else if (!QString::compare(role_name, "LinkVisited", Qt::CaseInsensitive)) {
-    role = QPalette::LinkVisited;
-  } else {
-    return;
-  }
+    } else if (!QString::compare(role_name, "Text", Qt::CaseInsensitive)) {
+        role = QPalette::Text;
+    } else if (!QString::compare(role_name, "Button", Qt::CaseInsensitive)) {
+        role = QPalette::Button;
+    } else if (!QString::compare(role_name, "ButtonText", Qt::CaseInsensitive)) {
+        role = QPalette::ButtonText;
+    } else if (!QString::compare(role_name, "BrightText", Qt::CaseInsensitive)) {
+        role = QPalette::BrightText;
+    } else if (!QString::compare(role_name, "Highlight", Qt::CaseInsensitive)) {
+        role = QPalette::Highlight;
+    } else if (!QString::compare(role_name, "HighlightedText", Qt::CaseInsensitive)) {
+        role = QPalette::HighlightedText;
+    } else if (!QString::compare(role_name, "Link", Qt::CaseInsensitive)) {
+        role = QPalette::Link;
+    } else if (!QString::compare(role_name, "LinkVisited", Qt::CaseInsensitive)) {
+        role = QPalette::LinkVisited;
+    } else {
+        return;
+    }
 
-  palette->setColor(group, role, QColor(ini->value(role_name).toString()));
+    palette->setColor(group, role, QColor(ini->value(role_name).toString()));
 }
 
 StyleDescriptor StyleManager::DefaultStyle()
 {
-  return ListInternal().first();
+    return ListInternal().first();
 }
 
 const QString &StyleManager::GetStyle()
 {
-  return current_style_;
+    return current_style_;
 }
 
 void StyleManager::SetStyleFromConfig()
 {
-  QString config_style = Config::Current()["Style"].toString();
+    QString config_style = Config::Current()["Style"].toString();
 
-  if (config_style.isEmpty()) {
-    SetStyle(DefaultStyle());
-  } else {
-    SetStyle(config_style);
-  }
+    if (config_style.isEmpty()) {
+        SetStyle(DefaultStyle());
+    } else {
+        SetStyle(config_style);
+    }
 }
 
 void StyleManager::SetStyle(const StyleDescriptor &style)
 {
-  SetStyle(style.path());
+    SetStyle(style.path());
 }
 
 void StyleManager::SetStyle(const QString &style_path)
 {
-  current_style_ = style_path;
+    current_style_ = style_path;
 
-  // Load all icons for this style (icons must be loaded first because the style change below triggers the icon change)
-  icon::LoadAll(style_path);
+    // Load all icons for this style (icons must be loaded first because the style change below triggers the icon change)
+    icon::LoadAll(style_path);
 
-  // Set palette for this
-  QString palette_file = QStringLiteral("%1/palette.ini").arg(style_path);
-  if (QFileInfo::exists(palette_file)) {
-    qApp->setPalette(ParsePalette(palette_file));
-  } else {
-    qApp->setPalette(qApp->style()->standardPalette());
-  }
+    // Set palette for this
+    QString palette_file = QStringLiteral("%1/palette.ini").arg(style_path);
+    if (QFileInfo::exists(palette_file)) {
+        qApp->setPalette(ParsePalette(palette_file));
+    } else {
+        qApp->setPalette(qApp->style()->standardPalette());
+    }
 
-  // Set CSS style for this
-  QFile css_file(QStringLiteral("%1/style.css").arg(style_path));
+    // Set CSS style for this
+    QFile css_file(QStringLiteral("%1/style.css").arg(style_path));
 
-  if (css_file.exists() && css_file.open(QFile::ReadOnly | QFile::Text)) {
-    // Read in entire CSS from file and set as the application stylesheet
-    QTextStream css_ts(&css_file);
+    if (css_file.exists() && css_file.open(QFile::ReadOnly | QFile::Text)) {
+        // Read in entire CSS from file and set as the application stylesheet
+        QTextStream css_ts(&css_file);
 
-    qApp->setStyleSheet(css_ts.readAll());
+        qApp->setStyleSheet(css_ts.readAll());
 
-    css_file.close();
-  } else {
-    qApp->setStyleSheet(QString());
-  }
+        css_file.close();
+    } else {
+        qApp->setStyleSheet(QString());
+    }
 }
 
 StyleDescriptor::StyleDescriptor(const QString &name, const QString &path) :
-  name_(name),
-  path_(path)
+    name_(name),
+    path_(path)
 {
 }
 
 const QString &StyleDescriptor::name() const
 {
-  return name_;
+    return name_;
 }
 
 const QString &StyleDescriptor::path() const
 {
-  return path_;
+    return path_;
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -32,16 +32,16 @@ OLIVE_NAMESPACE_ENTER
  * @brief Dockable wrapper around a ViewerWidget
  */
 class FootageViewerPanel : public ViewerPanelBase, public FootageManagementPanel {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  FootageViewerPanel(QWidget* parent);
+    FootageViewerPanel(QWidget* parent);
 
-  virtual QList<Footage*> GetSelectedFootage() const override;
+    virtual QList<Footage*> GetSelectedFootage() const override;
 
-  void SetFootage(Footage* f);
+    void SetFootage(Footage* f);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

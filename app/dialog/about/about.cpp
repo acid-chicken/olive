@@ -28,43 +28,43 @@
 OLIVE_NAMESPACE_ENTER
 
 AboutDialog::AboutDialog(QWidget *parent) :
-  QDialog(parent)
+    QDialog(parent)
 {
-  setWindowTitle(tr("About %1").arg(QApplication::applicationName()));
+    setWindowTitle(tr("About %1").arg(QApplication::applicationName()));
 
-  QVBoxLayout* layout = new QVBoxLayout(this);
-  //layout->setSpacing(20);
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    //layout->setSpacing(20);
 
-  // Construct About text
-  QLabel* label =
-      new QLabel(QStringLiteral("<html><head/><body>"
-                                "<p><img src=\":/icons/olive-splash.png\"/></p>"
-                                "<p><a href=\"https://www.olivevideoeditor.org/\">"
-                                "<span style=\" text-decoration: underline; color:#007af4;\">"
-                                "https://www.olivevideoeditor.org/"
-                                "</span></a></p>"
-                                "<p><b>%1</b> %2</p>" // AppName (version identifier)
-                                "<p>%3</p>" // First statement
-                                "<p>%4</p>" // Second statement
-                                "</body></html>").arg(QApplication::applicationName(),
-                                                      QApplication::applicationVersion(),
-                                                      tr("Olive is a non-linear video editor. This software is free and "
-                                                         "protected by the GNU GPL."),
-                                                      tr("Olive Team is obliged to inform users that Olive source code is "
-                                                         "available for download from its website.")),this);
+    // Construct About text
+    QLabel* label =
+        new QLabel(QStringLiteral("<html><head/><body>"
+                                  "<p><img src=\":/icons/olive-splash.png\"/></p>"
+                                  "<p><a href=\"https://www.olivevideoeditor.org/\">"
+                                  "<span style=\" text-decoration: underline; color:#007af4;\">"
+                                  "https://www.olivevideoeditor.org/"
+                                  "</span></a></p>"
+                                  "<p><b>%1</b> %2</p>" // AppName (version identifier)
+                                  "<p>%3</p>" // First statement
+                                  "<p>%4</p>" // Second statement
+                                  "</body></html>").arg(QApplication::applicationName(),
+                                          QApplication::applicationVersion(),
+                                          tr("Olive is a non-linear video editor. This software is free and "
+                                                  "protected by the GNU GPL."),
+                                          tr("Olive Team is obliged to inform users that Olive source code is "
+                                                  "available for download from its website.")),this);
 
-  // Set text formatting
-  label->setAlignment(Qt::AlignCenter);
-  label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-  label->setCursor(Qt::IBeamCursor);
-  label->setWordWrap(true);
-  layout->addWidget(label);
+    // Set text formatting
+    label->setAlignment(Qt::AlignCenter);
+    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    label->setCursor(Qt::IBeamCursor);
+    label->setWordWrap(true);
+    layout->addWidget(label);
 
-  QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, this);
-  buttons->setCenterButtons(true);
-  layout->addWidget(buttons);
+    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok, this);
+    buttons->setCenterButtons(true);
+    layout->addWidget(buttons);
 
-  connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
 }
 
 OLIVE_NAMESPACE_EXIT

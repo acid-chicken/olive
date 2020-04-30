@@ -48,109 +48,109 @@ OLIVE_NAMESPACE_ENTER
  * @brief Olive's main window responsible for docking widgets and the main menu bar.
  */
 class MainWindow : public QMainWindow {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
 
-  virtual ~MainWindow() override;
+    virtual ~MainWindow() override;
 
-  void LoadLayout(QXmlStreamReader* reader, XMLNodeData& xml_data);
+    void LoadLayout(QXmlStreamReader* reader, XMLNodeData& xml_data);
 
-  void SaveLayout(QXmlStreamWriter* writer) const;
+    void SaveLayout(QXmlStreamWriter* writer) const;
 
-  void OpenSequence(Sequence* sequence);
+    void OpenSequence(Sequence* sequence);
 
-  void CloseSequence(Sequence* sequence);
+    void CloseSequence(Sequence* sequence);
 
-  bool IsSequenceOpen(Sequence* sequence) const;
+    bool IsSequenceOpen(Sequence* sequence) const;
 
-  void FolderOpen(Project* p, Item* i, bool floating);
+    void FolderOpen(Project* p, Item* i, bool floating);
 
-  ScopePanel* AppendScopePanel();
+    ScopePanel* AppendScopePanel();
 
-  CurvePanel* AppendCurvePanel();
+    CurvePanel* AppendCurvePanel();
 
 #ifdef Q_OS_WINDOWS
-  void SetTaskbarButtonState(TBPFLAG flags);
+    void SetTaskbarButtonState(TBPFLAG flags);
 
-  void SetTaskbarButtonProgress(int value, int max);
+    void SetTaskbarButtonProgress(int value, int max);
 #endif
 
 public slots:
-  void ProjectOpen(Project *p);
+    void ProjectOpen(Project *p);
 
-  void ProjectClose(Project* p);
+    void ProjectClose(Project* p);
 
-  void SetFullscreen(bool fullscreen);
+    void SetFullscreen(bool fullscreen);
 
-  void ToggleMaximizedPanel();
+    void ToggleMaximizedPanel();
 
-  void SetDefaultLayout();
+    void SetDefaultLayout();
 
 protected:
-  virtual void closeEvent(QCloseEvent* e) override;
+    virtual void closeEvent(QCloseEvent* e) override;
 
 #ifdef Q_OS_WINDOWS
-  virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
+    virtual bool nativeEvent(const QByteArray &eventType, void *message, long *result) override;
 #endif
 
 private:
-  TimelinePanel* AppendTimelinePanel();
+    TimelinePanel* AppendTimelinePanel();
 
-  ProjectPanel* AppendProjectPanel();
+    ProjectPanel* AppendProjectPanel();
 
-  template <typename T>
-  T* AppendPanelInternal(QList<T*>& list);
+    template <typename T>
+    T* AppendPanelInternal(QList<T*>& list);
 
-  template <typename T>
-  T* AppendFloatingPanelInternal(QList<T*>& list);
+    template <typename T>
+    T* AppendFloatingPanelInternal(QList<T*>& list);
 
-  template<typename T>
-  void SetUniquePanelID(T* panel, const QList<T*>& list);
+    template<typename T>
+    void SetUniquePanelID(T* panel, const QList<T*>& list);
 
-  void RemoveTimelinePanel(TimelinePanel *panel);
+    void RemoveTimelinePanel(TimelinePanel *panel);
 
-  void RemoveProjectPanel(ProjectPanel* panel);
+    void RemoveProjectPanel(ProjectPanel* panel);
 
-  void TimelineFocused(ViewerOutput *viewer);
+    void TimelineFocused(ViewerOutput *viewer);
 
-  QByteArray premaximized_state_;
+    QByteArray premaximized_state_;
 
-  // Standard panels
-  NodePanel* node_panel_;
-  ParamPanel* param_panel_;
-  SequenceViewerPanel* sequence_viewer_panel_;
-  FootageViewerPanel* footage_viewer_panel_;
-  QList<ProjectPanel*> project_panels_;
-  QList<ProjectPanel*> folder_panels_;
-  ToolPanel* tool_panel_;
-  QList<TimelinePanel*> timeline_panels_;
-  AudioMonitorPanel* audio_monitor_panel_;
-  TaskManagerPanel* task_man_panel_;
-  QList<CurvePanel*> curve_panels_;
-  PixelSamplerPanel* pixel_sampler_panel_;
-  QList<ScopePanel*> scope_panels_;
+    // Standard panels
+    NodePanel* node_panel_;
+    ParamPanel* param_panel_;
+    SequenceViewerPanel* sequence_viewer_panel_;
+    FootageViewerPanel* footage_viewer_panel_;
+    QList<ProjectPanel*> project_panels_;
+    QList<ProjectPanel*> folder_panels_;
+    ToolPanel* tool_panel_;
+    QList<TimelinePanel*> timeline_panels_;
+    AudioMonitorPanel* audio_monitor_panel_;
+    TaskManagerPanel* task_man_panel_;
+    QList<CurvePanel*> curve_panels_;
+    PixelSamplerPanel* pixel_sampler_panel_;
+    QList<ScopePanel*> scope_panels_;
 
 #ifdef Q_OS_WINDOWS
-  unsigned int taskbar_btn_id_;
+    unsigned int taskbar_btn_id_;
 
-  ITaskbarList3* taskbar_interface_;
+    ITaskbarList3* taskbar_interface_;
 #endif
 
 private slots:
-  void FocusedPanelChanged(PanelWidget* panel);
+    void FocusedPanelChanged(PanelWidget* panel);
 
-  void UpdateTitle();
+    void UpdateTitle();
 
-  void TimelineCloseRequested();
+    void TimelineCloseRequested();
 
-  void ProjectCloseRequested();
+    void ProjectCloseRequested();
 
-  void FloatingPanelCloseRequested();
+    void FloatingPanelCloseRequested();
 
-  void LoadLayoutInternal(QXmlStreamReader* reader, XMLNodeData *xml_data);
+    void LoadLayoutInternal(QXmlStreamReader* reader, XMLNodeData *xml_data);
 
-  void StatusBarDoubleClicked();
+    void StatusBarDoubleClicked();
 
 };
 

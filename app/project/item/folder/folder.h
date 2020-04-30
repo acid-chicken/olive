@@ -36,17 +36,17 @@ OLIVE_NAMESPACE_ENTER
 class Folder : public Item
 {
 public:
-  Folder() = default;
+    Folder() = default;
 
-  virtual Type type() const override;
+    virtual Type type() const override;
 
-  virtual bool CanHaveChildren() const override;
+    virtual bool CanHaveChildren() const override;
 
-  virtual QIcon icon() override;
+    virtual QIcon icon() override;
 
-  virtual void Load(QXmlStreamReader* reader, XMLNodeData &xml_node_data, const QAtomicInt *cancelled) override;
+    virtual void Load(QXmlStreamReader* reader, XMLNodeData &xml_node_data, const QAtomicInt *cancelled) override;
 
-  virtual void Save(QXmlStreamWriter* writer) const override;
+    virtual void Save(QXmlStreamWriter* writer) const override;
 
 private:
 

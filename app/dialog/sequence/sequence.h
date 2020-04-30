@@ -46,99 +46,99 @@ OLIVE_NAMESPACE_ENTER
  */
 class SequenceDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /**
-   * @brief Used to set the dialog mode of operation (see SequenceDialog())
-   */
-  enum Type {
-    kNew,
-    kExisting
-  };
+    /**
+     * @brief Used to set the dialog mode of operation (see SequenceDialog())
+     */
+    enum Type {
+        kNew,
+        kExisting
+    };
 
-  /**
-   * @brief SequenceDialog Constructor
-   *
-   * @param s
-   * Sequence to edit
-   *
-   * @param t
-   * Mode of operation (changes some UI like the window title to best represent the action being performed)
-   *
-   * @param parent
-   * QWidget parent
-   */
-  SequenceDialog(Sequence* s, Type t = kExisting, QWidget* parent = nullptr);
+    /**
+     * @brief SequenceDialog Constructor
+     *
+     * @param s
+     * Sequence to edit
+     *
+     * @param t
+     * Mode of operation (changes some UI like the window title to best represent the action being performed)
+     *
+     * @param parent
+     * QWidget parent
+     */
+    SequenceDialog(Sequence* s, Type t = kExisting, QWidget* parent = nullptr);
 
-  /**
-   * @brief Set whether the parameter changes should be made into an undo command or not
-   *
-   * Defaults to true.
-   */
-  void SetUndoable(bool u);
+    /**
+     * @brief Set whether the parameter changes should be made into an undo command or not
+     *
+     * Defaults to true.
+     */
+    void SetUndoable(bool u);
 
-  /**
-   * @brief Set whether the name of this Sequence can be edited with this dialog
-   *
-   * Defaults to true.
-   */
-  void SetNameIsEditable(bool e);
+    /**
+     * @brief Set whether the name of this Sequence can be edited with this dialog
+     *
+     * Defaults to true.
+     */
+    void SetNameIsEditable(bool e);
 
 public slots:
-  /**
-   * @brief Function called when the user presses OK
-   */
-  virtual void accept() override;
+    /**
+     * @brief Function called when the user presses OK
+     */
+    virtual void accept() override;
 
 private:
-  Sequence* sequence_;
-
-  bool make_undoable_;
-
-  QSpinBox* video_width_field_;
-
-  QSpinBox* video_height_field_;
-
-  QComboBox* video_frame_rate_field_;
-
-  QComboBox* audio_sample_rate_field_;
-
-  QComboBox* audio_channels_field_;
-
-  QLineEdit* name_field_;
-
-  QList<rational> frame_rate_list_;
-
-  QList<int> sample_rate_list_;
-
-  /**
-   * @brief A QUndoCommand for setting the parameters on a sequence
-   */
-  class SequenceParamCommand : public UndoCommand {
-  public:
-    SequenceParamCommand(Sequence* s,
-                         const VideoParams& video_params,
-                         const AudioParams& audio_params,
-                         const QString& name,
-                         QUndoCommand* parent = nullptr);
-
-    virtual Project* GetRelevantProject() const override;
-
-  protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
-
-  private:
     Sequence* sequence_;
 
-    VideoParams new_video_params_;
-    AudioParams new_audio_params_;
-    QString new_name_;
+    bool make_undoable_;
 
-    VideoParams old_video_params_;
-    AudioParams old_audio_params_;
-    QString old_name_;
-  };
+    QSpinBox* video_width_field_;
+
+    QSpinBox* video_height_field_;
+
+    QComboBox* video_frame_rate_field_;
+
+    QComboBox* audio_sample_rate_field_;
+
+    QComboBox* audio_channels_field_;
+
+    QLineEdit* name_field_;
+
+    QList<rational> frame_rate_list_;
+
+    QList<int> sample_rate_list_;
+
+    /**
+     * @brief A QUndoCommand for setting the parameters on a sequence
+     */
+    class SequenceParamCommand : public UndoCommand {
+    public:
+        SequenceParamCommand(Sequence* s,
+                             const VideoParams& video_params,
+                             const AudioParams& audio_params,
+                             const QString& name,
+                             QUndoCommand* parent = nullptr);
+
+        virtual Project* GetRelevantProject() const override;
+
+    protected:
+        virtual void redo_internal() override;
+        virtual void undo_internal() override;
+
+    private:
+        Sequence* sequence_;
+
+        VideoParams new_video_params_;
+        AudioParams new_audio_params_;
+        QString new_name_;
+
+        VideoParams old_video_params_;
+        AudioParams old_audio_params_;
+        QString old_name_;
+    };
 };
 
 OLIVE_NAMESPACE_EXIT

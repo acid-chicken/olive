@@ -24,7 +24,7 @@ OLIVE_NAMESPACE_ENTER
 
 bool PreferencesTab::Validate()
 {
-  return true;
+    return true;
 }
 
 OLIVE_NAMESPACE_EXIT

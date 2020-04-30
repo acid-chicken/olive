@@ -32,16 +32,16 @@ OLIVE_NAMESPACE_ENTER
 class NodeCopyPasteWidget
 {
 public:
-  NodeCopyPasteWidget() = default;
+    NodeCopyPasteWidget() = default;
 
 protected:
-  void CopyNodesToClipboard(const QList<Node*>& nodes, void* userdata = nullptr);
+    void CopyNodesToClipboard(const QList<Node*>& nodes, void* userdata = nullptr);
 
-  QList<Node*> PasteNodesFromClipboard(Sequence *graph, QUndoCommand *command, void* userdata = nullptr);
+    QList<Node*> PasteNodesFromClipboard(Sequence *graph, QUndoCommand *command, void* userdata = nullptr);
 
-  virtual void CopyNodesToClipboardInternal(QXmlStreamWriter *writer, void* userdata);
+    virtual void CopyNodesToClipboardInternal(QXmlStreamWriter *writer, void* userdata);
 
-  virtual void PasteNodesFromClipboardInternal(QXmlStreamReader *reader, void* userdata);
+    virtual void PasteNodesFromClipboardInternal(QXmlStreamReader *reader, void* userdata);
 
 };
 

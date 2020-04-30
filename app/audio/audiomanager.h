@@ -41,87 +41,87 @@ OLIVE_NAMESPACE_ENTER
  */
 class AudioManager : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  static void CreateInstance();
-  static void DestroyInstance();
+    static void CreateInstance();
+    static void DestroyInstance();
 
-  static AudioManager* instance();
+    static AudioManager* instance();
 
-  void RefreshDevices();
+    void RefreshDevices();
 
-  bool IsRefreshingOutputs();
+    bool IsRefreshingOutputs();
 
-  bool IsRefreshingInputs();
+    bool IsRefreshingInputs();
 
-  void PushToOutput(const QByteArray& samples);
+    void PushToOutput(const QByteArray& samples);
 
-  /**
-   * @brief Start playing audio from QIODevice
-   *
-   * This takes ownership of the QIODevice and will delete it when StopOutput() is called
-   */
-  void StartOutput(const QString& filename, qint64 offset, int playback_speed);
+    /**
+     * @brief Start playing audio from QIODevice
+     *
+     * This takes ownership of the QIODevice and will delete it when StopOutput() is called
+     */
+    void StartOutput(const QString& filename, qint64 offset, int playback_speed);
 
-  /**
-   * @brief Stop audio output immediately
-   */
-  void StopOutput();
+    /**
+     * @brief Stop audio output immediately
+     */
+    void StopOutput();
 
-  void SetOutputDevice(const QAudioDeviceInfo& info);
+    void SetOutputDevice(const QAudioDeviceInfo& info);
 
-  void SetOutputParams(const AudioRenderingParams& params);
+    void SetOutputParams(const AudioRenderingParams& params);
 
-  void SetInputDevice(const QAudioDeviceInfo& info);
+    void SetInputDevice(const QAudioDeviceInfo& info);
 
-  const QList<QAudioDeviceInfo>& ListInputDevices();
-  const QList<QAudioDeviceInfo>& ListOutputDevices();
+    const QList<QAudioDeviceInfo>& ListInputDevices();
+    const QList<QAudioDeviceInfo>& ListOutputDevices();
 
-  static void ReverseBuffer(char* buffer, int size, int resolution);
+    static void ReverseBuffer(char* buffer, int size, int resolution);
 
 signals:
-  void OutputListReady();
+    void OutputListReady();
 
-  void InputListReady();
+    void InputListReady();
 
-  void OutputNotified();
+    void OutputNotified();
 
-  void OutputDeviceStarted(const QString& filename, qint64 offset, int playback_speed);
+    void OutputDeviceStarted(const QString& filename, qint64 offset, int playback_speed);
 
-  void AudioParamsChanged(const AudioRenderingParams& params);
+    void AudioParamsChanged(const AudioRenderingParams& params);
 
-  void OutputPushed(const QByteArray& data);
+    void OutputPushed(const QByteArray& data);
 
-  void Stopped();
+    void Stopped();
 
 private:
-  AudioManager();
+    AudioManager();
 
-  virtual ~AudioManager() override;
+    virtual ~AudioManager() override;
 
-  QList<QAudioDeviceInfo> input_devices_;
-  QList<QAudioDeviceInfo> output_devices_;
+    QList<QAudioDeviceInfo> input_devices_;
+    QList<QAudioDeviceInfo> output_devices_;
 
-  QFutureWatcher< QList<QAudioDeviceInfo> > input_watcher_;
-  QFutureWatcher< QList<QAudioDeviceInfo> > output_watcher_;
+    QFutureWatcher< QList<QAudioDeviceInfo> > input_watcher_;
+    QFutureWatcher< QList<QAudioDeviceInfo> > output_watcher_;
 
-  static AudioManager* instance_;
+    static AudioManager* instance_;
 
-  QThread output_thread_;
-  AudioOutputManager output_manager_;
-  bool output_is_set_;
+    QThread output_thread_;
+    AudioOutputManager output_manager_;
+    bool output_is_set_;
 
-  QAudioDeviceInfo output_device_info_;
-  AudioRenderingParams output_params_;
+    QAudioDeviceInfo output_device_info_;
+    AudioRenderingParams output_params_;
 
-  std::unique_ptr<QAudioInput> input_;
-  QAudioDeviceInfo input_device_info_;
-  QIODevice* input_file_;
+    std::unique_ptr<QAudioInput> input_;
+    QAudioDeviceInfo input_device_info_;
+    QIODevice* input_file_;
 
 private slots:
-  void OutputDevicesRefreshed();
+    void OutputDevicesRefreshed();
 
-  void InputDevicesRefreshed();
+    void InputDevicesRefreshed();
 
 };
 

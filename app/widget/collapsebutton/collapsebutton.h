@@ -29,12 +29,12 @@ OLIVE_NAMESPACE_ENTER
 
 class CollapseButton : public QPushButton
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  CollapseButton(QWidget* parent = nullptr);
+    CollapseButton(QWidget* parent = nullptr);
 
 private slots:
-  void UpdateIcon(bool e);
+    void UpdateIcon(bool e);
 
 };
 

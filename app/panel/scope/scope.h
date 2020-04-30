@@ -34,39 +34,39 @@ class ViewerPanel;
 
 class ScopePanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  enum Type {
-    kTypeWaveform,
-    kTypeHistogram,
+    enum Type {
+        kTypeWaveform,
+        kTypeHistogram,
 
-    kTypeCount
-  };
+        kTypeCount
+    };
 
-  ScopePanel(QWidget* parent = nullptr);
+    ScopePanel(QWidget* parent = nullptr);
 
-  void SetType(Type t);
+    void SetType(Type t);
 
-  static QString TypeToName(Type t);
+    static QString TypeToName(Type t);
 
 public slots:
-  void SetReferenceBuffer(Frame* frame);
+    void SetReferenceBuffer(Frame* frame);
 
-  void SetColorManager(ColorManager* manager);
+    void SetColorManager(ColorManager* manager);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 private:
-  Type type_;
+    Type type_;
 
-  QStackedWidget* stack_;
+    QStackedWidget* stack_;
 
-  QComboBox* scope_type_combobox_;
+    QComboBox* scope_type_combobox_;
 
-  WaveformScope* waveform_view_;
+    WaveformScope* waveform_view_;
 
-  HistogramScope* histogram_;
+    HistogramScope* histogram_;
 
 };
 

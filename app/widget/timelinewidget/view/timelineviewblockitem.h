@@ -32,17 +32,17 @@ OLIVE_NAMESPACE_ENTER
 class TimelineViewBlockItem : public TimelineViewRect
 {
 public:
-  TimelineViewBlockItem(Block* block, QGraphicsItem* parent = nullptr);
+    TimelineViewBlockItem(Block* block, QGraphicsItem* parent = nullptr);
 
-  Block* block() const;
+    Block* block() const;
 
-  virtual void UpdateRect() override;
+    virtual void UpdateRect() override;
 
 protected:
-  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 private:
-  Block* block_;
+    Block* block_;
 
 };
 

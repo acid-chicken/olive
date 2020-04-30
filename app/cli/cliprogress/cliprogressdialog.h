@@ -31,19 +31,19 @@ OLIVE_NAMESPACE_ENTER
 class CLIProgressDialog : public QObject
 {
 public:
-  CLIProgressDialog(const QString &title, QObject* parent = nullptr);
+    CLIProgressDialog(const QString &title, QObject* parent = nullptr);
 
 public slots:
-  void SetProgress(int p);
+    void SetProgress(int p);
 
 private:
-  void Update();
+    void Update();
 
-  QString title_;
+    QString title_;
 
-  int progress_;
+    int progress_;
 
-  bool drawn_;
+    bool drawn_;
 
 };
 

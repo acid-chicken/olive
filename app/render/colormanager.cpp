@@ -34,332 +34,332 @@ OCIO::ConstConfigRcPtr ColorManager::default_config_;
 
 ColorManager::ColorManager()
 {
-  // Set config to our built-in default
-  config_ = GetDefaultConfig();
+    // Set config to our built-in default
+    config_ = GetDefaultConfig();
 
-  // Default input space
-  default_input_color_space_ = QStringLiteral("sRGB OETF");
+    // Default input space
+    default_input_color_space_ = QStringLiteral("sRGB OETF");
 
-  // Default reference space is scene linear
-  reference_space_ = OCIO::ROLE_SCENE_LINEAR;
+    // Default reference space is scene linear
+    reference_space_ = OCIO::ROLE_SCENE_LINEAR;
 }
 
 OCIO::ConstConfigRcPtr ColorManager::GetConfig() const
 {
-  return config_;
+    return config_;
 }
 
 const QString &ColorManager::GetConfigFilename() const
 {
-  return config_filename_;
+    return config_filename_;
 }
 
 OCIO::ConstConfigRcPtr ColorManager::GetDefaultConfig()
 {
-  return default_config_;
+    return default_config_;
 }
 
 void ColorManager::SetUpDefaultConfig()
 {
-  // Kind of hacky, but it'll work
-  QString dir = QDir(FileFunctions::GetTempFilePath()).filePath(QStringLiteral("ocioconf"));
+    // Kind of hacky, but it'll work
+    QString dir = QDir(FileFunctions::GetTempFilePath()).filePath(QStringLiteral("ocioconf"));
 
-  FileFunctions::CopyDirectory(QStringLiteral(":/ocioconf"),
-                               dir,
-                               true);
+    FileFunctions::CopyDirectory(QStringLiteral(":/ocioconf"),
+                                 dir,
+                                 true);
 
-  qDebug() << "Extracting default OCIO config to" << dir;
+    qDebug() << "Extracting default OCIO config to" << dir;
 
-  default_config_ = OCIO::Config::CreateFromFile(QDir(dir).filePath(QStringLiteral("config.ocio")).toUtf8());
+    default_config_ = OCIO::Config::CreateFromFile(QDir(dir).filePath(QStringLiteral("config.ocio")).toUtf8());
 }
 
 void ColorManager::SetConfig(const QString &filename)
 {
-  if (filename != config_filename_) {
-    SetConfigInternal(filename);
+    if (filename != config_filename_) {
+        SetConfigInternal(filename);
 
-    emit ConfigChanged();
-  }
+        emit ConfigChanged();
+    }
 }
 
 void ColorManager::SetConfigInternal(const QString &filename)
 {
-  config_filename_ = filename;
+    config_filename_ = filename;
 
-  OCIO::ConstConfigRcPtr cfg;
+    OCIO::ConstConfigRcPtr cfg;
 
-  if (config_filename_.isEmpty()) {
-    cfg = OCIO::GetCurrentConfig();
-  } else {
-    cfg = OCIO::Config::CreateFromFile(filename.toUtf8());
-  }
+    if (config_filename_.isEmpty()) {
+        cfg = OCIO::GetCurrentConfig();
+    } else {
+        cfg = OCIO::Config::CreateFromFile(filename.toUtf8());
+    }
 
-  config_ = cfg;
+    config_ = cfg;
 }
 
 void ColorManager::SetDefaultInputColorSpaceInternal(const QString &s)
 {
-  default_input_color_space_ = s;
+    default_input_color_space_ = s;
 }
 
 void ColorManager::SetConfigAndDefaultInput(const QString &filename, const QString &s)
 {
-  bool config_changed = false;
-  bool default_input_changed = false;
+    bool config_changed = false;
+    bool default_input_changed = false;
 
-  if (filename != config_filename_) {
-    SetConfigInternal(filename);
-    config_changed = true;
-  }
+    if (filename != config_filename_) {
+        SetConfigInternal(filename);
+        config_changed = true;
+    }
 
-  if (default_input_color_space_ != s) {
-    SetDefaultInputColorSpaceInternal(s);
-    default_input_changed = true;
-  }
+    if (default_input_color_space_ != s) {
+        SetDefaultInputColorSpaceInternal(s);
+        default_input_changed = true;
+    }
 
-  if (config_changed) {
-    emit ConfigChanged();
-  }
+    if (config_changed) {
+        emit ConfigChanged();
+    }
 
-  if (default_input_changed) {
-    emit DefaultInputColorSpaceChanged();
-  }
+    if (default_input_changed) {
+        emit DefaultInputColorSpaceChanged();
+    }
 }
 
 void ColorManager::DisassociateAlpha(FramePtr f)
 {
-  AssociateAlphaPixFmtFilter(kDisassociate, f);
+    AssociateAlphaPixFmtFilter(kDisassociate, f);
 }
 
 void ColorManager::AssociateAlpha(FramePtr f)
 {
-  AssociateAlphaPixFmtFilter(kAssociate, f);
+    AssociateAlphaPixFmtFilter(kAssociate, f);
 }
 
 void ColorManager::ReassociateAlpha(FramePtr f)
 {
-  AssociateAlphaPixFmtFilter(kReassociate, f);
+    AssociateAlphaPixFmtFilter(kReassociate, f);
 }
 
 QStringList ColorManager::ListAvailableDisplays()
 {
-  QStringList displays;
+    QStringList displays;
 
-  int number_of_displays = config_->getNumDisplays();
+    int number_of_displays = config_->getNumDisplays();
 
-  for (int i=0;i<number_of_displays;i++) {
-    displays.append(config_->getDisplay(i));
-  }
+    for (int i=0; i<number_of_displays; i++) {
+        displays.append(config_->getDisplay(i));
+    }
 
-  return displays;
+    return displays;
 }
 
 QString ColorManager::GetDefaultDisplay()
 {
-  return config_->getDefaultDisplay();
+    return config_->getDefaultDisplay();
 }
 
 QStringList ColorManager::ListAvailableViews(QString display)
 {
-  QStringList views;
+    QStringList views;
 
-  int number_of_views = config_->getNumViews(display.toUtf8());
+    int number_of_views = config_->getNumViews(display.toUtf8());
 
-  for (int i=0;i<number_of_views;i++) {
-    views.append(config_->getView(display.toUtf8(), i));
-  }
+    for (int i=0; i<number_of_views; i++) {
+        views.append(config_->getView(display.toUtf8(), i));
+    }
 
-  return views;
+    return views;
 }
 
 QString ColorManager::GetDefaultView(const QString &display)
 {
-  return config_->getDefaultView(display.toUtf8());
+    return config_->getDefaultView(display.toUtf8());
 }
 
 QStringList ColorManager::ListAvailableLooks()
 {
-  QStringList looks;
+    QStringList looks;
 
-  int number_of_looks = config_->getNumLooks();
+    int number_of_looks = config_->getNumLooks();
 
-  for (int i=0;i<number_of_looks;i++) {
-    looks.append(config_->getLookNameByIndex(i));
-  }
+    for (int i=0; i<number_of_looks; i++) {
+        looks.append(config_->getLookNameByIndex(i));
+    }
 
-  return looks;
+    return looks;
 }
 
 QStringList ColorManager::ListAvailableInputColorspaces()
 {
-  return ListAvailableInputColorspaces(config_);
+    return ListAvailableInputColorspaces(config_);
 }
 
 const QString &ColorManager::GetDefaultInputColorSpace() const
 {
-  return default_input_color_space_;
+    return default_input_color_space_;
 }
 
 void ColorManager::SetDefaultInputColorSpace(const QString &s)
 {
-  if (default_input_color_space_ != s) {
-    SetDefaultInputColorSpaceInternal(s);
+    if (default_input_color_space_ != s) {
+        SetDefaultInputColorSpaceInternal(s);
 
-    emit DefaultInputColorSpaceChanged();
-  }
+        emit DefaultInputColorSpaceChanged();
+    }
 }
 
 const QString &ColorManager::GetReferenceColorSpace() const
 {
-  return reference_space_;
+    return reference_space_;
 }
 
 void ColorManager::SetReferenceColorSpace(const QString &s)
 {
-  reference_space_ = s;
+    reference_space_ = s;
 
-  emit ConfigChanged();
+    emit ConfigChanged();
 }
 
 QString ColorManager::GetCompliantColorSpace(const QString &s)
 {
-  if (ListAvailableInputColorspaces().contains(s)) {
-    return s;
-  } else {
-    return GetDefaultInputColorSpace();
-  }
+    if (ListAvailableInputColorspaces().contains(s)) {
+        return s;
+    } else {
+        return GetDefaultInputColorSpace();
+    }
 }
 
 ColorTransform ColorManager::GetCompliantColorSpace(const ColorTransform &transform, bool force_display)
 {
-  if (transform.is_display() || force_display) {
-    // Get display information
-    QString display = transform.display();
-    QString view = transform.view();
-    QString look = transform.look();
+    if (transform.is_display() || force_display) {
+        // Get display information
+        QString display = transform.display();
+        QString view = transform.view();
+        QString look = transform.look();
 
-    // Check if display still exists in config
-    if (!ListAvailableDisplays().contains(display)) {
-      display = GetDefaultDisplay();
+        // Check if display still exists in config
+        if (!ListAvailableDisplays().contains(display)) {
+            display = GetDefaultDisplay();
+        }
+
+        // Check if view still exists in display
+        if (!ListAvailableViews(display).contains(view)) {
+            view = GetDefaultView(display);
+        }
+
+        // Check if looks still exists
+        if (!ListAvailableLooks().contains(look)) {
+            look.clear();
+        }
+
+        return ColorTransform(display, view, look);
+
+    } else {
+
+        QString output = transform.output();
+
+        if (!ListAvailableInputColorspaces().contains(output)) {
+            output = GetDefaultInputColorSpace();
+        }
+
+        return ColorTransform(output);
+
     }
-
-    // Check if view still exists in display
-    if (!ListAvailableViews(display).contains(view)) {
-      view = GetDefaultView(display);
-    }
-
-    // Check if looks still exists
-    if (!ListAvailableLooks().contains(look)) {
-      look.clear();
-    }
-
-    return ColorTransform(display, view, look);
-
-  } else {
-
-    QString output = transform.output();
-
-    if (!ListAvailableInputColorspaces().contains(output)) {
-      output = GetDefaultInputColorSpace();
-    }
-
-    return ColorTransform(output);
-
-  }
 }
 
 QStringList ColorManager::ListAvailableInputColorspaces(OCIO::ConstConfigRcPtr config)
 {
-  QStringList spaces;
+    QStringList spaces;
 
-  int number_of_colorspaces = config->getNumColorSpaces();
+    int number_of_colorspaces = config->getNumColorSpaces();
 
-  for (int i=0;i<number_of_colorspaces;i++) {
-    spaces.append(config->getColorSpaceNameByIndex(i));
-  }
+    for (int i=0; i<number_of_colorspaces; i++) {
+        spaces.append(config->getColorSpaceNameByIndex(i));
+    }
 
-  return spaces;
+    return spaces;
 }
 
 void ColorManager::GetDefaultLumaCoefs(float *rgb) const
 {
-  config_->getDefaultLumaCoefs(rgb);
+    config_->getDefaultLumaCoefs(rgb);
 }
 
 Color ColorManager::GetDefaultLumaCoefs() const
 {
-  Color c;
+    Color c;
 
-  // Just a default value, shouldn't be significant
-  c.set_alpha(1.0f);
+    // Just a default value, shouldn't be significant
+    c.set_alpha(1.0f);
 
-  // The float data in Color lines up with the "rgb" param of this function
-  GetDefaultLumaCoefs(c.data());
+    // The float data in Color lines up with the "rgb" param of this function
+    GetDefaultLumaCoefs(c.data());
 
-  return c;
+    return c;
 }
 
 ColorManager::OCIOMethod ColorManager::GetOCIOMethodForMode(RenderMode::Mode mode)
 {
-  return static_cast<OCIOMethod>(Core::GetPreferenceForRenderMode(mode, QStringLiteral("OCIOMethod")).toInt());
+    return static_cast<OCIOMethod>(Core::GetPreferenceForRenderMode(mode, QStringLiteral("OCIOMethod")).toInt());
 }
 
 void ColorManager::SetOCIOMethodForMode(RenderMode::Mode mode, ColorManager::OCIOMethod method)
 {
-  Core::SetPreferenceForRenderMode(mode, QStringLiteral("OCIOMethod"), method);
+    Core::SetPreferenceForRenderMode(mode, QStringLiteral("OCIOMethod"), method);
 }
 
 void ColorManager::AssociateAlphaPixFmtFilter(ColorManager::AlphaAction action, FramePtr f)
 {
-  if (!PixelFormat::FormatHasAlphaChannel(f->format())) {
-    // This frame has no alpha channel, do nothing
-    return;
-  }
+    if (!PixelFormat::FormatHasAlphaChannel(f->format())) {
+        // This frame has no alpha channel, do nothing
+        return;
+    }
 
-  int pixel_count = f->width() * f->height() * kRGBAChannels;
+    int pixel_count = f->width() * f->height() * kRGBAChannels;
 
-  switch (static_cast<PixelFormat::Format>(f->format())) {
-  case PixelFormat::PIX_FMT_INVALID:
-  case PixelFormat::PIX_FMT_COUNT:
-    qWarning() << "Alpha association functions received an invalid pixel format";
-    break;
-  case PixelFormat::PIX_FMT_RGB8:
-  case PixelFormat::PIX_FMT_RGBA8:
-  case PixelFormat::PIX_FMT_RGB16U:
-  case PixelFormat::PIX_FMT_RGBA16U:
-    qWarning() << "Alpha association functions only works on float-based pixel formats at this time";
-    break;
-  case PixelFormat::PIX_FMT_RGB16F:
-  case PixelFormat::PIX_FMT_RGBA16F:
-  {
-    AssociateAlphaInternal<qfloat16>(action, reinterpret_cast<qfloat16*>(f->data()), pixel_count);
-    break;
-  }
-  case PixelFormat::PIX_FMT_RGB32F:
-  case PixelFormat::PIX_FMT_RGBA32F:
-  {
-    AssociateAlphaInternal<float>(action, reinterpret_cast<float*>(f->data()), pixel_count);
-    break;
-  }
-  }
+    switch (static_cast<PixelFormat::Format>(f->format())) {
+    case PixelFormat::PIX_FMT_INVALID:
+    case PixelFormat::PIX_FMT_COUNT:
+        qWarning() << "Alpha association functions received an invalid pixel format";
+        break;
+    case PixelFormat::PIX_FMT_RGB8:
+    case PixelFormat::PIX_FMT_RGBA8:
+    case PixelFormat::PIX_FMT_RGB16U:
+    case PixelFormat::PIX_FMT_RGBA16U:
+        qWarning() << "Alpha association functions only works on float-based pixel formats at this time";
+        break;
+    case PixelFormat::PIX_FMT_RGB16F:
+    case PixelFormat::PIX_FMT_RGBA16F:
+    {
+        AssociateAlphaInternal<qfloat16>(action, reinterpret_cast<qfloat16*>(f->data()), pixel_count);
+        break;
+    }
+    case PixelFormat::PIX_FMT_RGB32F:
+    case PixelFormat::PIX_FMT_RGBA32F:
+    {
+        AssociateAlphaInternal<float>(action, reinterpret_cast<float*>(f->data()), pixel_count);
+        break;
+    }
+    }
 }
 
 template<typename T>
 void ColorManager::AssociateAlphaInternal(ColorManager::AlphaAction action, T *data, int pix_count)
 {
-  for (int i=0;i<pix_count;i+=kRGBAChannels) {
-    T alpha = data[i+kRGBChannels];
+    for (int i=0; i<pix_count; i+=kRGBAChannels) {
+        T alpha = data[i+kRGBChannels];
 
-    if (action == kAssociate || alpha > 0) {
-      for (int j=0;j<kRGBChannels;j++) {
-        if (action == kDisassociate) {
-          data[i+j] /= alpha;
-        } else {
-          data[i+j] *= alpha;
+        if (action == kAssociate || alpha > 0) {
+            for (int j=0; j<kRGBChannels; j++) {
+                if (action == kDisassociate) {
+                    data[i+j] /= alpha;
+                } else {
+                    data[i+j] *= alpha;
+                }
+            }
         }
-      }
     }
-  }
 }
 
 OLIVE_NAMESPACE_EXIT

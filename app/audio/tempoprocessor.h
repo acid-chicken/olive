@@ -40,42 +40,42 @@ OLIVE_NAMESPACE_ENTER
 class TempoProcessor
 {
 public:
-  TempoProcessor();
+    TempoProcessor();
 
-  bool IsOpen() const;
+    bool IsOpen() const;
 
-  const double& GetSpeed() const;
+    const double& GetSpeed() const;
 
-  bool Open(const AudioRenderingParams& params, const double &speed);
+    bool Open(const AudioRenderingParams& params, const double &speed);
 
-  void Push(const char *data, int length);
+    void Push(const char *data, int length);
 
-  int Pull(char* data, int max_length);
+    int Pull(char* data, int max_length);
 
-  void Close();
+    void Close();
 
 private:
-  static AVFilterContext* CreateTempoFilter(AVFilterGraph *graph, AVFilterContext *link, const double& tempo);
+    static AVFilterContext* CreateTempoFilter(AVFilterGraph *graph, AVFilterContext *link, const double& tempo);
 
-  AVFilterGraph* filter_graph_;
+    AVFilterGraph* filter_graph_;
 
-  AVFilterContext* buffersrc_ctx_;
+    AVFilterContext* buffersrc_ctx_;
 
-  AVFilterContext* buffersink_ctx_;
+    AVFilterContext* buffersink_ctx_;
 
-  AVFrame* processed_frame_;
-  int processed_frame_byte_index_;
-  int processed_frame_max_bytes_;
+    AVFrame* processed_frame_;
+    int processed_frame_byte_index_;
+    int processed_frame_max_bytes_;
 
-  AudioRenderingParams params_;
+    AudioRenderingParams params_;
 
-  int64_t timestamp_;
+    int64_t timestamp_;
 
-  double speed_;
+    double speed_;
 
-  bool open_;
+    bool open_;
 
-  bool flushed_;
+    bool flushed_;
 };
 
 OLIVE_NAMESPACE_EXIT

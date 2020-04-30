@@ -25,10 +25,10 @@ OLIVE_NAMESPACE_ENTER
 /// Works in conjunction with `genicons.sh` to generate and utilize icons of specific sizes
 const int ICON_SIZE_COUNT = 4;
 const int ICON_SIZES[] = {
-  16,
-  32,
-  64,
-  128
+    16,
+    32,
+    64,
+    128
 };
 
 /// Internal icon library for use throughout Olive without having to regenerate constantly
@@ -76,64 +76,64 @@ QIcon icon::Diamond;
 
 void icon::LoadAll(const QString& theme)
 {
-  GoToStart = Create(theme, "prev");
-  PrevFrame = Create(theme, "rew");
-  Play = Create(theme, "play");
-  Pause = Create(theme, "pause");
-  NextFrame = Create(theme, "ff");
-  GoToEnd = Create(theme, "next");
+    GoToStart = Create(theme, "prev");
+    PrevFrame = Create(theme, "rew");
+    Play = Create(theme, "play");
+    Pause = Create(theme, "pause");
+    NextFrame = Create(theme, "ff");
+    GoToEnd = Create(theme, "next");
 
-  New = Create(theme, "new");
-  Open = Create(theme, "open");
-  Save = Create(theme, "save");
-  Undo = Create(theme, "undo");
-  Redo = Create(theme, "redo");
-  TreeView = Create(theme, "treeview");
-  ListView = Create(theme, "listview");
-  IconView = Create(theme, "iconview");
+    New = Create(theme, "new");
+    Open = Create(theme, "open");
+    Save = Create(theme, "save");
+    Undo = Create(theme, "undo");
+    Redo = Create(theme, "redo");
+    TreeView = Create(theme, "treeview");
+    ListView = Create(theme, "listview");
+    IconView = Create(theme, "iconview");
 
-  ToolPointer = Create(theme, "arrow");
-  ToolEdit = Create(theme, "beam");
-  ToolRipple = Create(theme, "ripple");
-  ToolRolling = Create(theme, "rolling");
-  ToolRazor = Create(theme, "razor");
-  ToolSlip = Create(theme, "slip");
-  ToolSlide = Create(theme, "slide");
-  ToolHand = Create(theme, "hand");
-  ToolTransition = Create(theme, "transition-tool");
+    ToolPointer = Create(theme, "arrow");
+    ToolEdit = Create(theme, "beam");
+    ToolRipple = Create(theme, "ripple");
+    ToolRolling = Create(theme, "rolling");
+    ToolRazor = Create(theme, "razor");
+    ToolSlip = Create(theme, "slip");
+    ToolSlide = Create(theme, "slide");
+    ToolHand = Create(theme, "hand");
+    ToolTransition = Create(theme, "transition-tool");
 
-  Folder = Create(theme, "folder");
-  Sequence = Create(theme, "sequence");
-  Video = Create(theme, "videosource");
-  Audio = Create(theme, "audiosource");
-  Image = Create(theme, "imagesource");
+    Folder = Create(theme, "folder");
+    Sequence = Create(theme, "sequence");
+    Video = Create(theme, "videosource");
+    Audio = Create(theme, "audiosource");
+    Image = Create(theme, "imagesource");
 
-  TriUp = Create(theme, "tri-up");
-  TriLeft = Create(theme, "tri-left");
-  TriDown = Create(theme, "tri-down");
-  TriRight = Create(theme, "tri-right");
+    TriUp = Create(theme, "tri-up");
+    TriLeft = Create(theme, "tri-left");
+    TriDown = Create(theme, "tri-down");
+    TriRight = Create(theme, "tri-right");
 
-  Snapping = Create(theme, "magnet");
-  ZoomIn = Create(theme, "zoomin");
-  ZoomOut = Create(theme, "zoomout");
-  Record = Create(theme, "record");
-  Add = Create(theme, "add-button");
-  Error = Create(theme, "error");
-  DirUp = Create(theme, "dirup");
-  Clock = Create(theme, "clock");
-  Diamond = Create(theme, "diamond");
+    Snapping = Create(theme, "magnet");
+    ZoomIn = Create(theme, "zoomin");
+    ZoomOut = Create(theme, "zoomout");
+    Record = Create(theme, "record");
+    Add = Create(theme, "add-button");
+    Error = Create(theme, "error");
+    DirUp = Create(theme, "dirup");
+    Clock = Create(theme, "clock");
+    Diamond = Create(theme, "diamond");
 }
 
 QIcon icon::Create(const QString& theme, const QString &name)
 {
-  QIcon icon;
+    QIcon icon;
 
-  for (int i=0;i<ICON_SIZE_COUNT;i++) {
-    icon.addFile(QStringLiteral("%1/png/%2.%3.png").arg(theme, name, QString::number(ICON_SIZES[i])),
-                 QSize(ICON_SIZES[i], ICON_SIZES[i]));
-  }
+    for (int i=0; i<ICON_SIZE_COUNT; i++) {
+        icon.addFile(QStringLiteral("%1/png/%2.%3.png").arg(theme, name, QString::number(ICON_SIZES[i])),
+                     QSize(ICON_SIZES[i], ICON_SIZES[i]));
+    }
 
-  return icon;
+    return icon;
 }
 
 OLIVE_NAMESPACE_EXIT

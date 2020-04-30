@@ -23,191 +23,191 @@
 OLIVE_NAMESPACE_ENTER
 
 TimeBasedPanel::TimeBasedPanel(const QString &object_name, QWidget *parent) :
-  PanelWidget(object_name, parent),
-  widget_(nullptr)
+    PanelWidget(object_name, parent),
+    widget_(nullptr)
 {
 }
 
 rational TimeBasedPanel::GetTime()
 {
-  return widget_->GetTime();
+    return widget_->GetTime();
 }
 
 void TimeBasedPanel::GoToStart()
 {
-  widget_->GoToStart();
+    widget_->GoToStart();
 }
 
 void TimeBasedPanel::PrevFrame()
 {
-  widget_->PrevFrame();
+    widget_->PrevFrame();
 }
 
 void TimeBasedPanel::NextFrame()
 {
-  widget_->NextFrame();
+    widget_->NextFrame();
 }
 
 void TimeBasedPanel::GoToEnd()
 {
-  widget_->GoToEnd();
+    widget_->GoToEnd();
 }
 
 void TimeBasedPanel::ZoomIn()
 {
-  widget_->ZoomIn();
+    widget_->ZoomIn();
 }
 
 void TimeBasedPanel::ZoomOut()
 {
-  widget_->ZoomOut();
+    widget_->ZoomOut();
 }
 
 void TimeBasedPanel::SetTimebase(const rational &timebase)
 {
-  widget_->SetTimebase(timebase);
+    widget_->SetTimebase(timebase);
 }
 
 void TimeBasedPanel::SetTimestamp(const int64_t &timestamp)
 {
-  widget_->SetTimestamp(timestamp);
+    widget_->SetTimestamp(timestamp);
 }
 
 void TimeBasedPanel::GoToPrevCut()
 {
-  widget_->GoToPrevCut();
+    widget_->GoToPrevCut();
 }
 
 void TimeBasedPanel::GoToNextCut()
 {
-  widget_->GoToNextCut();
+    widget_->GoToNextCut();
 }
 
 void TimeBasedPanel::PlayPause()
 {
-  emit PlayPauseRequested();
+    emit PlayPauseRequested();
 }
 
 void TimeBasedPanel::PlayInToOut()
 {
-  emit PlayInToOutRequested();
+    emit PlayInToOutRequested();
 }
 
 void TimeBasedPanel::ShuttleLeft()
 {
-  emit ShuttleLeftRequested();
+    emit ShuttleLeftRequested();
 }
 
 void TimeBasedPanel::ShuttleStop()
 {
-  emit ShuttleStopRequested();
+    emit ShuttleStopRequested();
 }
 
 void TimeBasedPanel::ShuttleRight()
 {
-  emit ShuttleRightRequested();
+    emit ShuttleRightRequested();
 }
 
 TimeBasedWidget *TimeBasedPanel::GetTimeBasedWidget() const
 {
-  return widget_;
+    return widget_;
 }
 
 ViewerOutput *TimeBasedPanel::GetConnectedViewer() const
 {
-  return widget_->GetConnectedNode();
+    return widget_->GetConnectedNode();
 }
 
 TimeRuler *TimeBasedPanel::ruler() const
 {
-  return widget_->ruler();
+    return widget_->ruler();
 }
 
 void TimeBasedPanel::ConnectViewerNode(ViewerOutput *node)
 {
-  if (widget_->GetConnectedNode()) {
-    disconnect(widget_->GetConnectedNode(), &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
-  }
+    if (widget_->GetConnectedNode()) {
+        disconnect(widget_->GetConnectedNode(), &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
+    }
 
-  widget_->ConnectViewerNode(node);
+    widget_->ConnectViewerNode(node);
 
-  if (node) {
-    connect(node, &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
-  }
+    if (node) {
+        connect(node, &ViewerOutput::MediaNameChanged, this, &TimeBasedPanel::SetSubtitle);
+    }
 
-  // Update strings
-  Retranslate();
+    // Update strings
+    Retranslate();
 }
 
 void TimeBasedPanel::SetTimeBasedWidget(TimeBasedWidget *widget)
 {
-  if (widget_) {
-    disconnect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
-    disconnect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
-  }
+    if (widget_) {
+        disconnect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
+        disconnect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
+    }
 
-  widget_ = widget;
+    widget_ = widget;
 
-  if (widget_) {
-    connect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
-    connect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
-  }
+    if (widget_) {
+        connect(widget_, &TimeBasedWidget::TimeChanged, this, &TimeBasedPanel::TimeChanged);
+        connect(widget_, &TimeBasedWidget::TimebaseChanged, this, &TimeBasedPanel::TimebaseChanged);
+    }
 
-  SetWidgetWithPadding(widget_);
+    SetWidgetWithPadding(widget_);
 }
 
 void TimeBasedPanel::Retranslate()
 {
-  if (GetTimeBasedWidget()->GetConnectedNode()) {
-    SetSubtitle(GetTimeBasedWidget()->GetConnectedNode()->media_name());
-  } else {
-    SetSubtitle(tr("(none)"));
-  }
+    if (GetTimeBasedWidget()->GetConnectedNode()) {
+        SetSubtitle(GetTimeBasedWidget()->GetConnectedNode()->media_name());
+    } else {
+        SetSubtitle(tr("(none)"));
+    }
 }
 
 void TimeBasedPanel::SetIn()
 {
-  GetTimeBasedWidget()->SetInAtPlayhead();
+    GetTimeBasedWidget()->SetInAtPlayhead();
 }
 
 void TimeBasedPanel::SetOut()
 {
-  GetTimeBasedWidget()->SetOutAtPlayhead();
+    GetTimeBasedWidget()->SetOutAtPlayhead();
 }
 
 void TimeBasedPanel::ResetIn()
 {
-  GetTimeBasedWidget()->ResetIn();
+    GetTimeBasedWidget()->ResetIn();
 }
 
 void TimeBasedPanel::ResetOut()
 {
-  GetTimeBasedWidget()->ResetOut();
+    GetTimeBasedWidget()->ResetOut();
 }
 
 void TimeBasedPanel::ClearInOut()
 {
-  GetTimeBasedWidget()->ClearInOutPoints();
+    GetTimeBasedWidget()->ClearInOutPoints();
 }
 
 void TimeBasedPanel::SetMarker()
 {
-  GetTimeBasedWidget()->SetMarker();
+    GetTimeBasedWidget()->SetMarker();
 }
 
 void TimeBasedPanel::ToggleShowAll()
 {
-  GetTimeBasedWidget()->ToggleShowAll();
+    GetTimeBasedWidget()->ToggleShowAll();
 }
 
 void TimeBasedPanel::GoToIn()
 {
-  GetTimeBasedWidget()->GoToIn();
+    GetTimeBasedWidget()->GoToIn();
 }
 
 void TimeBasedPanel::GoToOut()
 {
-  GetTimeBasedWidget()->GoToOut();
+    GetTimeBasedWidget()->GoToOut();
 }
 
 OLIVE_NAMESPACE_EXIT

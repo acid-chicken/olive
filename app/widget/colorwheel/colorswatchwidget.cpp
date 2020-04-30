@@ -27,48 +27,48 @@
 OLIVE_NAMESPACE_ENTER
 
 ColorSwatchWidget::ColorSwatchWidget(QWidget *parent) :
-  QWidget(parent),
-  to_linear_processor_(nullptr),
-  to_display_processor_(nullptr)
+    QWidget(parent),
+    to_linear_processor_(nullptr),
+    to_display_processor_(nullptr)
 {
 }
 
 const Color &ColorSwatchWidget::GetSelectedColor() const
 {
-  return selected_color_;
+    return selected_color_;
 }
 
 void ColorSwatchWidget::SetColorProcessor(ColorProcessorPtr to_linear, ColorProcessorPtr to_display)
 {
-  to_linear_processor_ = to_linear;
-  to_display_processor_ = to_display;
+    to_linear_processor_ = to_linear;
+    to_display_processor_ = to_display;
 
-  // Force full update
-  SelectedColorChangedEvent(GetSelectedColor(), true);
-  update();
+    // Force full update
+    SelectedColorChangedEvent(GetSelectedColor(), true);
+    update();
 }
 
 void ColorSwatchWidget::SetSelectedColor(const Color &c)
 {
-  SetSelectedColorInternal(c, true);
+    SetSelectedColorInternal(c, true);
 }
 
 void ColorSwatchWidget::mousePressEvent(QMouseEvent *e)
 {
-  QWidget::mousePressEvent(e);
+    QWidget::mousePressEvent(e);
 
-  SetSelectedColorInternal(GetColorFromScreenPos(e->pos()), false);
-  emit SelectedColorChanged(GetSelectedColor());
+    SetSelectedColorInternal(GetColorFromScreenPos(e->pos()), false);
+    emit SelectedColorChanged(GetSelectedColor());
 }
 
 void ColorSwatchWidget::mouseMoveEvent(QMouseEvent *e)
 {
-  QWidget::mouseMoveEvent(e);
+    QWidget::mouseMoveEvent(e);
 
-  if (e->buttons() & Qt::LeftButton) {
-    SetSelectedColorInternal(GetColorFromScreenPos(e->pos()), false);
-    emit SelectedColorChanged(GetSelectedColor());
-  }
+    if (e->buttons() & Qt::LeftButton) {
+        SetSelectedColorInternal(GetColorFromScreenPos(e->pos()), false);
+        emit SelectedColorChanged(GetSelectedColor());
+    }
 }
 
 void ColorSwatchWidget::SelectedColorChangedEvent(const Color &, bool)
@@ -77,29 +77,29 @@ void ColorSwatchWidget::SelectedColorChangedEvent(const Color &, bool)
 
 Qt::GlobalColor ColorSwatchWidget::GetUISelectorColor() const
 {
-  float rough_color_luma = (GetSelectedColor().red()+GetSelectedColor().red()+GetSelectedColor().blue()+GetSelectedColor().green()+GetSelectedColor().green()+GetSelectedColor().green())/6;
+    float rough_color_luma = (GetSelectedColor().red()+GetSelectedColor().red()+GetSelectedColor().blue()+GetSelectedColor().green()+GetSelectedColor().green()+GetSelectedColor().green())/6;
 
-  if (rough_color_luma > 0.66) {
-    return Qt::black;
-  } else {
-    return Qt::white;
-  }
+    if (rough_color_luma > 0.66) {
+        return Qt::black;
+    } else {
+        return Qt::white;
+    }
 }
 
 Color ColorSwatchWidget::GetManagedColor(const Color &input) const
 {
-  if (to_linear_processor_ && to_display_processor_) {
-    return to_display_processor_->ConvertColor(to_linear_processor_->ConvertColor(input));
-  }
+    if (to_linear_processor_ && to_display_processor_) {
+        return to_display_processor_->ConvertColor(to_linear_processor_->ConvertColor(input));
+    }
 
-  return input;
+    return input;
 }
 
 void ColorSwatchWidget::SetSelectedColorInternal(const Color &c, bool external)
 {
-  selected_color_ = c;
-  SelectedColorChangedEvent(c, external);
-  update();
+    selected_color_ = c;
+    SelectedColorChangedEvent(c, external);
+    update();
 }
 
 OLIVE_NAMESPACE_EXIT

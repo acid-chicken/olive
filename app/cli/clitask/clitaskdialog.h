@@ -29,7 +29,7 @@ OLIVE_NAMESPACE_ENTER
 class CLITaskDialog : public CLIProgressDialog
 {
 public:
-  CLITaskDialog(Task *task, QObject* parent = nullptr);
+    CLITaskDialog(Task *task, QObject* parent = nullptr);
 
 };
 

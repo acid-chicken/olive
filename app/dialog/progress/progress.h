@@ -30,18 +30,18 @@ OLIVE_NAMESPACE_ENTER
 
 class ProgressDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProgressDialog(const QString &message, const QString &title, QWidget* parent = nullptr);
+    ProgressDialog(const QString &message, const QString &title, QWidget* parent = nullptr);
 
 public slots:
-  void SetProgress(int value);
+    void SetProgress(int value);
 
 signals:
-  void Cancelled();
+    void Cancelled();
 
 private:
-  QProgressBar* bar_;
+    QProgressBar* bar_;
 
 };
 

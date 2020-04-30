@@ -32,81 +32,81 @@ OLIVE_NAMESPACE_ENTER
 
 class ColorValuesTab : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ColorValuesTab(QWidget* parent = nullptr);
+    ColorValuesTab(QWidget* parent = nullptr);
 
-  Color GetColor() const;
+    Color GetColor() const;
 
-  void SetColor(const Color& c);
+    void SetColor(const Color& c);
 
 signals:
-  void ColorChanged(const Color& c);
+    void ColorChanged(const Color& c);
 
 private:
-  FloatSlider* CreateColorSlider();
+    FloatSlider* CreateColorSlider();
 
-  FloatSlider* red_slider_;
-  FloatSlider* green_slider_;
-  FloatSlider* blue_slider_;
+    FloatSlider* red_slider_;
+    FloatSlider* green_slider_;
+    FloatSlider* blue_slider_;
 
 private slots:
-  void SliderChanged();
+    void SliderChanged();
 
 };
 
 class ColorValuesWidget : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ColorValuesWidget(ColorManager* manager, QWidget* parent = nullptr);
+    ColorValuesWidget(ColorManager* manager, QWidget* parent = nullptr);
 
-  Color GetColor() const;
+    Color GetColor() const;
 
-  void SetColorProcessor(ColorProcessorPtr input_to_ref,
-                         ColorProcessorPtr ref_to_display,
-                         ColorProcessorPtr display_to_ref,
-                         ColorProcessorPtr ref_to_input);
+    void SetColorProcessor(ColorProcessorPtr input_to_ref,
+                           ColorProcessorPtr ref_to_display,
+                           ColorProcessorPtr display_to_ref,
+                           ColorProcessorPtr ref_to_input);
 
 public slots:
-  void SetColor(const Color& c);
+    void SetColor(const Color& c);
 
 signals:
-  void ColorChanged(const Color& c);
+    void ColorChanged(const Color& c);
 
 private:
-  void UpdateInputFromRef();
+    void UpdateInputFromRef();
 
-  void UpdateDisplayFromRef();
+    void UpdateDisplayFromRef();
 
-  void UpdateRefFromInput();
+    void UpdateRefFromInput();
 
-  void UpdateRefFromDisplay();
+    void UpdateRefFromDisplay();
 
-  ColorManager* manager_;
+    ColorManager* manager_;
 
-  ColorPreviewBox* preview_;
+    ColorPreviewBox* preview_;
 
-  ColorValuesTab* input_tab_;
+    ColorValuesTab* input_tab_;
 
-  ColorValuesTab* reference_tab_;
+    ColorValuesTab* reference_tab_;
 
-  ColorValuesTab* display_tab_;
+    ColorValuesTab* display_tab_;
 
-  ColorProcessorPtr input_to_ref_;
+    ColorProcessorPtr input_to_ref_;
 
-  ColorProcessorPtr ref_to_display_;
+    ColorProcessorPtr ref_to_display_;
 
-  ColorProcessorPtr display_to_ref_;
+    ColorProcessorPtr display_to_ref_;
 
-  ColorProcessorPtr ref_to_input_;
+    ColorProcessorPtr ref_to_input_;
 
 private slots:
-  void UpdateValuesFromInput();
+    void UpdateValuesFromInput();
 
-  void UpdateValuesFromRef();
+    void UpdateValuesFromRef();
 
-  void UpdateValuesFromDisplay();
+    void UpdateValuesFromDisplay();
 
 };
 

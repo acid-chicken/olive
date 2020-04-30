@@ -23,40 +23,40 @@
 OLIVE_NAMESPACE_ENTER
 
 TimelineCoordinate::TimelineCoordinate() :
-  track_(Timeline::kTrackTypeNone, 0)
+    track_(Timeline::kTrackTypeNone, 0)
 {
 }
 
 TimelineCoordinate::TimelineCoordinate(const rational &frame, const TrackReference &track) :
-  frame_(frame),
-  track_(track)
+    frame_(frame),
+    track_(track)
 {
 }
 
 TimelineCoordinate::TimelineCoordinate(const rational &frame, const Timeline::TrackType &track_type, const int &track_index) :
-  frame_(frame),
-  track_(track_type, track_index)
+    frame_(frame),
+    track_(track_type, track_index)
 {
 }
 
 const rational &TimelineCoordinate::GetFrame() const
 {
-  return frame_;
+    return frame_;
 }
 
 const TrackReference &TimelineCoordinate::GetTrack() const
 {
-  return track_;
+    return track_;
 }
 
 void TimelineCoordinate::SetFrame(const rational &frame)
 {
-  frame_ = frame;
+    frame_ = frame;
 }
 
 void TimelineCoordinate::SetTrack(const TrackReference &track)
 {
-  track_ = track;
+    track_ = track;
 }
 
 OLIVE_NAMESPACE_EXIT

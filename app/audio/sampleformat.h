@@ -30,26 +30,26 @@ OLIVE_NAMESPACE_ENTER
 
 class SampleFormat : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  SampleFormat() = default;
+    SampleFormat() = default;
 
-  enum Format {
-    SAMPLE_FMT_INVALID = -1,
+    enum Format {
+        SAMPLE_FMT_INVALID = -1,
 
-    SAMPLE_FMT_U8,
-    SAMPLE_FMT_S16,
-    SAMPLE_FMT_S32,
-    SAMPLE_FMT_S64,
-    SAMPLE_FMT_FLT,
-    SAMPLE_FMT_DBL,
+        SAMPLE_FMT_U8,
+        SAMPLE_FMT_S16,
+        SAMPLE_FMT_S32,
+        SAMPLE_FMT_S64,
+        SAMPLE_FMT_FLT,
+        SAMPLE_FMT_DBL,
 
-    SAMPLE_FMT_COUNT
-  };
+        SAMPLE_FMT_COUNT
+    };
 
-  static const Format kInternalFormat;
+    static const Format kInternalFormat;
 
-  static QString GetSampleFormatName(const Format& f);
+    static QString GetSampleFormatName(const Format& f);
 
 };
 

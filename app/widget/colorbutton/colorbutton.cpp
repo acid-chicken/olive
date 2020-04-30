@@ -25,54 +25,54 @@
 OLIVE_NAMESPACE_ENTER
 
 ColorButton::ColorButton(ColorManager* color_manager, QWidget *parent) :
-  QPushButton(parent),
-  color_manager_(color_manager),
-  color_processor_(nullptr)
+    QPushButton(parent),
+    color_manager_(color_manager),
+    color_processor_(nullptr)
 {
-  setAutoFillBackground(true);
+    setAutoFillBackground(true);
 
-  connect(this, &ColorButton::clicked, this, &ColorButton::ShowColorDialog);
+    connect(this, &ColorButton::clicked, this, &ColorButton::ShowColorDialog);
 
-  SetColor(Color(1.0f, 1.0f, 1.0f));
+    SetColor(Color(1.0f, 1.0f, 1.0f));
 }
 
 const ManagedColor &ColorButton::GetColor() const
 {
-  return color_;
+    return color_;
 }
 
 void ColorButton::SetColor(const ManagedColor &c)
 {
-  color_ = c;
+    color_ = c;
 
-  color_.set_color_input(color_manager_->GetCompliantColorSpace(color_.color_input()));
-  color_.set_color_output(color_manager_->GetCompliantColorSpace(color_.color_output()));
+    color_.set_color_input(color_manager_->GetCompliantColorSpace(color_.color_input()));
+    color_.set_color_output(color_manager_->GetCompliantColorSpace(color_.color_output()));
 
-  UpdateColor();
+    UpdateColor();
 }
 
 void ColorButton::ShowColorDialog()
 {
-  ColorDialog cd(color_manager_, color_, this);
+    ColorDialog cd(color_manager_, color_, this);
 
-  if (cd.exec() == QDialog::Accepted) {
-    color_ = cd.GetSelectedColor();
+    if (cd.exec() == QDialog::Accepted) {
+        color_ = cd.GetSelectedColor();
 
-    UpdateColor();
+        UpdateColor();
 
-    emit ColorChanged(color_);
-  }
+        emit ColorChanged(color_);
+    }
 }
 
 void ColorButton::UpdateColor()
 {
-  color_processor_ = ColorProcessor::Create(color_manager_,
-                                            color_.color_input(),
-                                            color_.color_output());
+    color_processor_ = ColorProcessor::Create(color_manager_,
+                       color_.color_input(),
+                       color_.color_output());
 
-  QColor managed = color_processor_->ConvertColor(color_).toQColor();
+    QColor managed = color_processor_->ConvertColor(color_).toQColor();
 
-  setStyleSheet(QStringLiteral("%1--ColorButton {background: %2;}").arg(MACRO_VAL_AS_STR(OLIVE_NAMESPACE), managed.name()));
+    setStyleSheet(QStringLiteral("%1--ColorButton {background: %2;}").arg(MACRO_VAL_AS_STR(OLIVE_NAMESPACE), managed.name()));
 }
 
 OLIVE_NAMESPACE_EXIT

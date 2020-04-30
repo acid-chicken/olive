@@ -42,27 +42,27 @@ class Item;
 Node *XMLLoadNode(QXmlStreamReader* reader);
 
 struct XMLNodeData {
-  struct SerializedConnection {
-    NodeInput* input;
-    quintptr output;
-  };
+    struct SerializedConnection {
+        NodeInput* input;
+        quintptr output;
+    };
 
-  struct FootageConnection {
-    NodeInput* input;
-    quintptr footage;
-  };
+    struct FootageConnection {
+        NodeInput* input;
+        quintptr footage;
+    };
 
-  struct BlockLink {
-    Block* block;
-    quintptr link;
-  };
+    struct BlockLink {
+        Block* block;
+        quintptr link;
+    };
 
-  QHash<quintptr, NodeOutput*> output_ptrs;
-  QList<SerializedConnection> desired_connections;
-  QHash<quintptr, StreamPtr> footage_ptrs;
-  QList<FootageConnection> footage_connections;
-  QList<BlockLink> block_links;
-  QHash<quintptr, Item*> item_ptrs;
+    QHash<quintptr, NodeOutput*> output_ptrs;
+    QList<SerializedConnection> desired_connections;
+    QHash<quintptr, StreamPtr> footage_ptrs;
+    QList<FootageConnection> footage_connections;
+    QList<BlockLink> block_links;
+    QHash<quintptr, Item*> item_ptrs;
 
 };
 

@@ -28,25 +28,25 @@
 
 class FunctionTimer {
 public:
-  FunctionTimer(const char* s)
-  {
-    name_ = s;
-    time_ = QDateTime::currentMSecsSinceEpoch();
-  }
-
-  ~FunctionTimer()
-  {
-    qint64 elapsed = (QDateTime::currentMSecsSinceEpoch() - time_);
-
-    if (elapsed > 1) {
-      qDebug() << name_ << "took" << elapsed;
+    FunctionTimer(const char* s)
+    {
+        name_ = s;
+        time_ = QDateTime::currentMSecsSinceEpoch();
     }
-  }
+
+    ~FunctionTimer()
+    {
+        qint64 elapsed = (QDateTime::currentMSecsSinceEpoch() - time_);
+
+        if (elapsed > 1) {
+            qDebug() << name_ << "took" << elapsed;
+        }
+    }
 
 private:
-  const char* name_;
+    const char* name_;
 
-  qint64 time_;
+    qint64 time_;
 
 };
 

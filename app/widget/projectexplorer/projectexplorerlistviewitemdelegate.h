@@ -33,10 +33,10 @@ OLIVE_NAMESPACE_ENTER
 class ProjectExplorerListViewItemDelegate : public QStyledItemDelegate
 {
 public:
-  ProjectExplorerListViewItemDelegate(QObject *parent = nullptr);
+    ProjectExplorerListViewItemDelegate(QObject *parent = nullptr);
 
-  virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 };
 
 OLIVE_NAMESPACE_EXIT

@@ -41,94 +41,94 @@ OLIVE_NAMESPACE_ENTER
  * a valid Media object.
  */
 class FootagePropertiesDialog : public QDialog {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /**
-   * @brief MediaPropertiesDialog Constructor
-   *
-   * @param parent
-   *
-   * QWidget parent. Usually MainWindow or Project panel.
-   *
-   * @param i
-   *
-   * Media object to set properties for.
-   */
-  FootagePropertiesDialog(QWidget *parent, Footage* footage);
+    /**
+     * @brief MediaPropertiesDialog Constructor
+     *
+     * @param parent
+     *
+     * QWidget parent. Usually MainWindow or Project panel.
+     *
+     * @param i
+     *
+     * Media object to set properties for.
+     */
+    FootagePropertiesDialog(QWidget *parent, Footage* footage);
 private:
-  class FootageChangeCommand : public UndoCommand {
-  public:
-    FootageChangeCommand(Footage* footage,
-                         const QString& name,
-                         QUndoCommand *command = nullptr);
+    class FootageChangeCommand : public UndoCommand {
+    public:
+        FootageChangeCommand(Footage* footage,
+                             const QString& name,
+                             QUndoCommand *command = nullptr);
 
-    virtual Project* GetRelevantProject() const override;
+        virtual Project* GetRelevantProject() const override;
 
-  protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
+    protected:
+        virtual void redo_internal() override;
+        virtual void undo_internal() override;
 
-  private:
+    private:
+        Footage* footage_;
+
+        QString new_name_;
+        QString old_name_;
+    };
+
+    class StreamEnableChangeCommand : public UndoCommand {
+    public:
+        StreamEnableChangeCommand(StreamPtr stream,
+                                  bool enabled,
+                                  QUndoCommand* command = nullptr);
+
+        virtual Project* GetRelevantProject() const override;
+
+    protected:
+        virtual void redo_internal() override;
+        virtual void undo_internal() override;
+
+    private:
+        StreamPtr stream_;
+
+        bool old_enabled_;
+        bool new_enabled_;
+    };
+
+    /**
+     * @brief Stack of widgets that changes based on whether the stream is a video or audio stream
+     */
+    QStackedWidget* stacked_widget_;
+
+    /**
+     * @brief ComboBox for interlacing setting
+     */
+    QComboBox* interlacing_box;
+
+    /**
+     * @brief Media name text field
+     */
+    QLineEdit* footage_name_field_;
+
+    /**
+     * @brief Internal pointer to Media object (set in constructor)
+     */
     Footage* footage_;
 
-    QString new_name_;
-    QString old_name_;
-  };
+    /**
+     * @brief A list widget for listing the tracks in Media
+     */
+    QListWidget* track_list;
 
-  class StreamEnableChangeCommand : public UndoCommand {
-  public:
-    StreamEnableChangeCommand(StreamPtr stream,
-                              bool enabled,
-                              QUndoCommand* command = nullptr);
-
-    virtual Project* GetRelevantProject() const override;
-
-  protected:
-    virtual void redo_internal() override;
-    virtual void undo_internal() override;
-
-  private:
-    StreamPtr stream_;
-
-    bool old_enabled_;
-    bool new_enabled_;
-  };
-
-  /**
-   * @brief Stack of widgets that changes based on whether the stream is a video or audio stream
-   */
-  QStackedWidget* stacked_widget_;
-
-  /**
-   * @brief ComboBox for interlacing setting
-   */
-  QComboBox* interlacing_box;
-
-  /**
-   * @brief Media name text field
-   */
-  QLineEdit* footage_name_field_;
-
-  /**
-   * @brief Internal pointer to Media object (set in constructor)
-   */
-  Footage* footage_;
-
-  /**
-   * @brief A list widget for listing the tracks in Media
-   */
-  QListWidget* track_list;
-
-  /**
-   * @brief Frame rate to conform to
-   */
-  QDoubleSpinBox* conform_fr;
+    /**
+     * @brief Frame rate to conform to
+     */
+    QDoubleSpinBox* conform_fr;
 
 private slots:
-  /**
-   * @brief Overridden accept function for saving the properties back to the Media class
-   */
-  void accept();
+    /**
+     * @brief Overridden accept function for saving the properties back to the Media class
+     */
+    void accept();
 
 };
 

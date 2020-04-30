@@ -30,24 +30,24 @@ OLIVE_NAMESPACE_ENTER
 
 class ColorPreviewBox : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ColorPreviewBox(QWidget* parent = nullptr);
+    ColorPreviewBox(QWidget* parent = nullptr);
 
-  void SetColorProcessor(ColorProcessorPtr to_ref, ColorProcessorPtr to_display);
+    void SetColorProcessor(ColorProcessorPtr to_ref, ColorProcessorPtr to_display);
 
 public slots:
-  void SetColor(const Color& c);
+    void SetColor(const Color& c);
 
 protected:
-  virtual void paintEvent(QPaintEvent* e) override;
+    virtual void paintEvent(QPaintEvent* e) override;
 
 private:
-  Color color_;
+    Color color_;
 
-  ColorProcessorPtr to_ref_processor_;
+    ColorProcessorPtr to_ref_processor_;
 
-  ColorProcessorPtr to_display_processor_;
+    ColorProcessorPtr to_display_processor_;
 
 };
 

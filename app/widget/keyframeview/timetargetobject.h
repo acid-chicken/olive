@@ -28,25 +28,25 @@ OLIVE_NAMESPACE_ENTER
 class TimeTargetObject
 {
 public:
-  TimeTargetObject();
+    TimeTargetObject();
 
-  Node* GetTimeTarget() const;
-  void SetTimeTarget(Node* target);
+    Node* GetTimeTarget() const;
+    void SetTimeTarget(Node* target);
 
-  void SetPathIndex(int index);
+    void SetPathIndex(int index);
 
-  rational GetAdjustedTime(Node* from, Node* to, const rational& r, NodeParam::Type direction) const;
-  TimeRange GetAdjustedTime(Node* from, Node* to, const TimeRange& r, NodeParam::Type direction) const;
+    rational GetAdjustedTime(Node* from, Node* to, const rational& r, NodeParam::Type direction) const;
+    TimeRange GetAdjustedTime(Node* from, Node* to, const TimeRange& r, NodeParam::Type direction) const;
 
-  //int GetNumberOfPathAdjustments(Node* from, NodeParam::Type direction) const;
+    //int GetNumberOfPathAdjustments(Node* from, NodeParam::Type direction) const;
 
 protected:
-  virtual void TimeTargetChangedEvent(Node* ){}
+    virtual void TimeTargetChangedEvent(Node* ) {}
 
 private:
-  Node* time_target_;
+    Node* time_target_;
 
-  int path_index_;
+    int path_index_;
 
 };
 

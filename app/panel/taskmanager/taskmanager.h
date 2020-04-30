@@ -31,14 +31,14 @@ OLIVE_NAMESPACE_ENTER
  */
 class TaskManagerPanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TaskManagerPanel(QWidget* parent);
+    TaskManagerPanel(QWidget* parent);
 
 private:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  TaskView* view_;
+    TaskView* view_;
 };
 
 OLIVE_NAMESPACE_EXIT

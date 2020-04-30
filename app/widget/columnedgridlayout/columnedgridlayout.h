@@ -35,17 +35,17 @@ OLIVE_NAMESPACE_ENTER
  */
 class ColumnedGridLayout : public QGridLayout
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ColumnedGridLayout(QWidget* parent = nullptr,
-                     int maximum_columns = 0);
+    ColumnedGridLayout(QWidget* parent = nullptr,
+                       int maximum_columns = 0);
 
-  void Add(QWidget* widget);
-  int MaximumColumns() const;
-  void SetMaximumColumns(int maximum_columns);
+    void Add(QWidget* widget);
+    int MaximumColumns() const;
+    void SetMaximumColumns(int maximum_columns);
 
 private:
-  int maximum_columns_;
+    int maximum_columns_;
 };
 
 OLIVE_NAMESPACE_EXIT

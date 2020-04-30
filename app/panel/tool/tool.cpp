@@ -26,29 +26,29 @@
 OLIVE_NAMESPACE_ENTER
 
 ToolPanel::ToolPanel(QWidget *parent) :
-  PanelWidget(QStringLiteral("ToolPanel"), parent)
+    PanelWidget(QStringLiteral("ToolPanel"), parent)
 {
-  Toolbar* t = new Toolbar(this);
+    Toolbar* t = new Toolbar(this);
 
-  t->SetTool(Core::instance()->tool());
-  t->SetSnapping(Core::instance()->snapping());
+    t->SetTool(Core::instance()->tool());
+    t->SetSnapping(Core::instance()->snapping());
 
-  SetWidgetWithPadding(t);
+    SetWidgetWithPadding(t);
 
-  connect(t, &Toolbar::ToolChanged, Core::instance(), &Core::SetTool);
-  connect(Core::instance(), &Core::ToolChanged, t, &Toolbar::SetTool);
+    connect(t, &Toolbar::ToolChanged, Core::instance(), &Core::SetTool);
+    connect(Core::instance(), &Core::ToolChanged, t, &Toolbar::SetTool);
 
-  connect(t, &Toolbar::SnappingChanged, Core::instance(), &Core::SetSnapping);
-  connect(Core::instance(), &Core::SnappingChanged, t, &Toolbar::SetSnapping);
+    connect(t, &Toolbar::SnappingChanged, Core::instance(), &Core::SetSnapping);
+    connect(Core::instance(), &Core::SnappingChanged, t, &Toolbar::SetSnapping);
 
-  connect(t, &Toolbar::AddableObjectChanged, Core::instance(), &Core::SetSelectedAddableObject);
+    connect(t, &Toolbar::AddableObjectChanged, Core::instance(), &Core::SetSelectedAddableObject);
 
-  Retranslate();
+    Retranslate();
 }
 
 void ToolPanel::Retranslate()
 {
-  SetTitle(tr("Tools"));
+    SetTitle(tr("Tools"));
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -30,22 +30,22 @@ OLIVE_NAMESPACE_ENTER
 class ViewerWindow : public QWidget
 {
 public:
-  ViewerWindow(QWidget* parent = nullptr);
+    ViewerWindow(QWidget* parent = nullptr);
 
-  ViewerDisplayWidget* gl_widget() const;
+    ViewerDisplayWidget* gl_widget() const;
 
-  /**
-   * @brief Used to adjust resulting picture to be the right aspect ratio
-   */
-  void SetResolution(int width, int height);
+    /**
+     * @brief Used to adjust resulting picture to be the right aspect ratio
+     */
+    void SetResolution(int width, int height);
 
 protected:
-  virtual void keyPressEvent(QKeyEvent* e) override;
+    virtual void keyPressEvent(QKeyEvent* e) override;
 
-  virtual void closeEvent(QCloseEvent* e) override;
+    virtual void closeEvent(QCloseEvent* e) override;
 
 private:
-  ViewerDisplayWidget* gl_widget_;
+    ViewerDisplayWidget* gl_widget_;
 
 };
 

@@ -28,27 +28,27 @@ GapBlock::GapBlock()
 
 Node *GapBlock::copy() const
 {
-  return new GapBlock();
+    return new GapBlock();
 }
 
 Block::Type GapBlock::type() const
 {
-  return kGap;
+    return kGap;
 }
 
 QString GapBlock::Name() const
 {
-  return tr("Gap");
+    return tr("Gap");
 }
 
 QString GapBlock::id() const
 {
-  return QStringLiteral("org.olivevideoeditor.Olive.gap");
+    return QStringLiteral("org.olivevideoeditor.Olive.gap");
 }
 
 QString GapBlock::Description() const
 {
-  return tr("A time-based node that represents an empty space.");
+    return tr("A time-based node that represents an empty space.");
 }
 
 OLIVE_NAMESPACE_EXIT

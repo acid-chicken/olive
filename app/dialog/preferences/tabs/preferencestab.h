@@ -30,11 +30,11 @@ OLIVE_NAMESPACE_ENTER
 class PreferencesTab : public QWidget
 {
 public:
-  PreferencesTab() = default;
+    PreferencesTab() = default;
 
-  virtual bool Validate();
+    virtual bool Validate();
 
-  virtual void Accept() = 0;
+    virtual void Accept() = 0;
 };
 
 OLIVE_NAMESPACE_EXIT

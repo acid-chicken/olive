@@ -30,12 +30,12 @@ OLIVE_NAMESPACE_ENTER
  */
 class ToolPanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ToolPanel(QWidget* parent);
+    ToolPanel(QWidget* parent);
 
 private:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

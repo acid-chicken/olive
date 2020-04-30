@@ -27,70 +27,70 @@
 OLIVE_NAMESPACE_ENTER
 
 TimelineViewMouseEvent::TimelineViewMouseEvent(const qreal &scene_x,
-                                               const double &scale_x,
-                                               const rational &timebase,
-                                               const TrackReference &track,
-                                               const Qt::KeyboardModifiers &modifiers) :
-  scene_x_(scene_x),
-  scale_x_(scale_x),
-  timebase_(timebase),
-  track_(track),
-  modifiers_(modifiers),
-  source_event_(nullptr),
-  mime_data_(nullptr)
+        const double &scale_x,
+        const rational &timebase,
+        const TrackReference &track,
+        const Qt::KeyboardModifiers &modifiers) :
+    scene_x_(scene_x),
+    scale_x_(scale_x),
+    timebase_(timebase),
+    track_(track),
+    modifiers_(modifiers),
+    source_event_(nullptr),
+    mime_data_(nullptr)
 {
 }
 
 TimelineCoordinate TimelineViewMouseEvent::GetCoordinates(bool round_time) const
 {
-  return TimelineCoordinate(GetFrame(round_time), track_);
+    return TimelineCoordinate(GetFrame(round_time), track_);
 }
 
 const Qt::KeyboardModifiers TimelineViewMouseEvent::GetModifiers() const
 {
-  return modifiers_;
+    return modifiers_;
 }
 
 rational TimelineViewMouseEvent::GetFrame(bool round) const
 {
-  return TimelineScaledObject::SceneToTime(scene_x_, scale_x_, timebase_, round);
+    return TimelineScaledObject::SceneToTime(scene_x_, scale_x_, timebase_, round);
 }
 
 const TrackReference &TimelineViewMouseEvent::GetTrack() const
 {
-  return track_;
+    return track_;
 }
 
 const QMimeData* TimelineViewMouseEvent::GetMimeData()
 {
-  return mime_data_;
+    return mime_data_;
 }
 
 void TimelineViewMouseEvent::SetMimeData(const QMimeData *data)
 {
-  mime_data_ = data;
+    mime_data_ = data;
 }
 
 void TimelineViewMouseEvent::SetEvent(QEvent *event)
 {
-  source_event_ = event;
+    source_event_ = event;
 }
 
 const qreal &TimelineViewMouseEvent::GetSceneX() const
 {
-  return scene_x_;
+    return scene_x_;
 }
 
 void TimelineViewMouseEvent::accept()
 {
-  if (source_event_ != nullptr)
-    source_event_->accept();
+    if (source_event_ != nullptr)
+        source_event_->accept();
 }
 
 void TimelineViewMouseEvent::ignore()
 {
-  if (source_event_ != nullptr)
-    source_event_->ignore();
+    if (source_event_ != nullptr)
+        source_event_->ignore();
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -33,144 +33,144 @@ OLIVE_NAMESPACE_ENTER
 
 class RenderBackend : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  RenderBackend(QObject* parent = nullptr);
+    RenderBackend(QObject* parent = nullptr);
 
-  bool Init();
+    bool Init();
 
-  void Close();
+    void Close();
 
-  const QString& GetError() const;
+    const QString& GetError() const;
 
-  void SetViewerNode(ViewerOutput* viewer_node);
+    void SetViewerNode(ViewerOutput* viewer_node);
 
-  bool IsInitiated();
+    bool IsInitiated();
 
-  ViewerOutput* viewer_node() const;
+    ViewerOutput* viewer_node() const;
 
-  void CancelQueue();
+    void CancelQueue();
 
 public slots:
-  void InvalidateCache(const TimeRange &range, NodeInput *from);
+    void InvalidateCache(const TimeRange &range, NodeInput *from);
 
 signals:
-  void QueueComplete();
+    void QueueComplete();
 
 protected:
-  void RegenerateCacheID();
+    void RegenerateCacheID();
 
-  virtual bool InitInternal();
+    virtual bool InitInternal();
 
-  virtual void CloseInternal();
+    virtual void CloseInternal();
 
-  virtual bool CanRender();
+    virtual bool CanRender();
 
-  virtual TimeRange PopNextFrameFromQueue();
+    virtual TimeRange PopNextFrameFromQueue();
 
-  rational GetSequenceLength();
+    rational GetSequenceLength();
 
-  const QVector<QThread*>& threads();
+    const QVector<QThread*>& threads();
 
-  /**
-   * @brief Internal function for generating the cache ID
-   */
-  virtual bool GenerateCacheIDInternal(QCryptographicHash& hash) = 0;
+    /**
+     * @brief Internal function for generating the cache ID
+     */
+    virtual bool GenerateCacheIDInternal(QCryptographicHash& hash) = 0;
 
-  virtual void InvalidateCacheInternal(const rational &start_range, const rational &end_range);
+    virtual void InvalidateCacheInternal(const rational &start_range, const rational &end_range);
 
-  virtual void CacheIDChangedEvent(const QString& id);
+    virtual void CacheIDChangedEvent(const QString& id);
 
-  void SetError(const QString& error);
+    void SetError(const QString& error);
 
-  virtual void ConnectViewer(ViewerOutput* node);
-  virtual void DisconnectViewer(ViewerOutput* node);
+    virtual void ConnectViewer(ViewerOutput* node);
+    virtual void DisconnectViewer(ViewerOutput* node);
 
-  /**
-   * @brief Function called when there are frames in the queue to cache
-   *
-   * This function is NOT thread-safe and should only be called in the main thread.
-   */
-  void CacheNext();
+    /**
+     * @brief Function called when there are frames in the queue to cache
+     *
+     * This function is NOT thread-safe and should only be called in the main thread.
+     */
+    void CacheNext();
 
-  void InitWorkers();
+    void InitWorkers();
 
-  virtual NodeInput* GetDependentInput() = 0;
+    virtual NodeInput* GetDependentInput() = 0;
 
-  virtual void ConnectWorkerToThis(RenderWorker* worker) = 0;
+    virtual void ConnectWorkerToThis(RenderWorker* worker) = 0;
 
-  bool ViewerIsConnected() const;
+    bool ViewerIsConnected() const;
 
-  const QString& cache_id() const;
+    const QString& cache_id() const;
 
-  void QueueValueUpdate(NodeInput *from);
+    void QueueValueUpdate(NodeInput *from);
 
-  bool AllProcessorsAreAvailable() const;
-  bool WorkerIsBusy(RenderWorker* worker) const;
-  void SetWorkerBusyState(RenderWorker* worker, bool busy);
+    bool AllProcessorsAreAvailable() const;
+    bool WorkerIsBusy(RenderWorker* worker) const;
+    void SetWorkerBusyState(RenderWorker* worker, bool busy);
 
-  TimeRangeList cache_queue_;
+    TimeRangeList cache_queue_;
 
-  QVector<RenderWorker*> processors_;
+    QVector<RenderWorker*> processors_;
 
-  QHash<TimeRange, qint64> render_job_info_;
+    QHash<TimeRange, qint64> render_job_info_;
 
-  QHash<Node*, Node*> node_copy_map_;
+    QHash<Node*, Node*> node_copy_map_;
 
-  NodeGraph copied_graph_;
+    NodeGraph copied_graph_;
 
 private:
-  void CopyNodeInputValue(NodeInput* input);
-  Node *CopyNodeConnections(Node *src_node);
-  void CopyNodeMakeConnection(NodeInput *src_input, NodeInput *dst_input);
+    void CopyNodeInputValue(NodeInput* input);
+    Node *CopyNodeConnections(Node *src_node);
+    void CopyNodeMakeConnection(NodeInput *src_input, NodeInput *dst_input);
 
-  /**
-   * @brief Internal list of RenderProcessThreads
-   */
-  QVector<QThread*> threads_;
+    /**
+     * @brief Internal list of RenderProcessThreads
+     */
+    QVector<QThread*> threads_;
 
-  /**
-   * @brief Internal variable that contains whether the Renderer has started or not
-   */
-  bool started_;
+    /**
+     * @brief Internal variable that contains whether the Renderer has started or not
+     */
+    bool started_;
 
-  /**
-   * @brief Internal reference to attached viewer node
-   */
-  ViewerOutput* viewer_node_;
+    /**
+     * @brief Internal reference to attached viewer node
+     */
+    ViewerOutput* viewer_node_;
 
-  /**
-   * @brief Internal reference to the copied viewer node we made in the compilation process
-   */
-  ViewerOutput* copied_viewer_node_;
+    /**
+     * @brief Internal reference to the copied viewer node we made in the compilation process
+     */
+    ViewerOutput* copied_viewer_node_;
 
-  /**
-   * @brief Error string that can be set in SetError() to handle failures
-   */
-  QString error_;
+    /**
+     * @brief Error string that can be set in SetError() to handle failures
+     */
+    QString error_;
 
-  QString cache_id_;
+    QString cache_id_;
 
-  QList<NodeInput*> input_update_queued_;
+    QList<NodeInput*> input_update_queued_;
 
-  QVector<bool> processor_busy_state_;
+    QVector<bool> processor_busy_state_;
 
-  RenderCancelDialog* cancel_dialog_;
+    RenderCancelDialog* cancel_dialog_;
 
-  struct FootageWaitInfo {
-    StreamPtr stream;
-    TimeRange affected_range;
-    rational stream_time;
+    struct FootageWaitInfo {
+        StreamPtr stream;
+        TimeRange affected_range;
+        rational stream_time;
 
-    bool operator==(const FootageWaitInfo& rhs) const;
-  };
+        bool operator==(const FootageWaitInfo& rhs) const;
+    };
 
-  QList<FootageWaitInfo> footage_wait_info_;
+    QList<FootageWaitInfo> footage_wait_info_;
 
 private slots:
-  void FootageUnavailable(StreamPtr stream, Decoder::RetrieveState state, const TimeRange& path, const rational& stream_time);
+    void FootageUnavailable(StreamPtr stream, Decoder::RetrieveState state, const TimeRange& path, const rational& stream_time);
 
-  void IndexUpdated(Stream *stream);
+    void IndexUpdated(Stream *stream);
 
 };
 

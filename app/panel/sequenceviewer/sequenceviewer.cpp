@@ -23,17 +23,17 @@
 OLIVE_NAMESPACE_ENTER
 
 SequenceViewerPanel::SequenceViewerPanel(QWidget *parent) :
-  ViewerPanel(QStringLiteral("SequenceViewerPanel"), parent)
+    ViewerPanel(QStringLiteral("SequenceViewerPanel"), parent)
 {
-  // Set strings
-  Retranslate();
+    // Set strings
+    Retranslate();
 }
 
 void SequenceViewerPanel::Retranslate()
 {
-  ViewerPanel::Retranslate();
+    ViewerPanel::Retranslate();
 
-  SetTitle(tr("Sequence Viewer"));
+    SetTitle(tr("Sequence Viewer"));
 }
 
 OLIVE_NAMESPACE_EXIT

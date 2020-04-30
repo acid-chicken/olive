@@ -31,11 +31,13 @@ OLIVE_NAMESPACE_ENTER
 class StreamProperties : public QWidget
 {
 public:
-  StreamProperties(QWidget* parent = nullptr);
+    StreamProperties(QWidget* parent = nullptr);
 
-  virtual void Accept(QUndoCommand*){}
+    virtual void Accept(QUndoCommand*) {}
 
-  virtual bool SanityCheck(){return true;}
+    virtual bool SanityCheck() {
+        return true;
+    }
 
 };
 

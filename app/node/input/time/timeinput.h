@@ -29,18 +29,18 @@ class TimeInput : public Node
 {
     Q_OBJECT
 public:
-  TimeInput();
+    TimeInput();
 
-  virtual Node* copy() const override;
+    virtual Node* copy() const override;
 
-  virtual QString Name() const override;
-  virtual QString id() const override;
-  virtual QString Category() const override;
-  virtual QString Description() const override;
+    virtual QString Name() const override;
+    virtual QString id() const override;
+    virtual QString Category() const override;
+    virtual QString Description() const override;
 
-  virtual NodeValueTable Value(NodeValueDatabase& value) const override;
+    virtual NodeValueTable Value(NodeValueDatabase& value) const override;
 
-  virtual void Hash(QCryptographicHash& hash, const rational& time) const override;
+    virtual void Hash(QCryptographicHash& hash, const rational& time) const override;
 
 };
 

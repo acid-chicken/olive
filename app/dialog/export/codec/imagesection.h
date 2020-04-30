@@ -30,12 +30,12 @@ OLIVE_NAMESPACE_ENTER
 class ImageSection : public CodecSection
 {
 public:
-  ImageSection(QWidget* parent = nullptr);
+    ImageSection(QWidget* parent = nullptr);
 
-  QCheckBox* image_sequence_checkbox() const;
+    QCheckBox* image_sequence_checkbox() const;
 
 private:
-  QCheckBox* image_sequence_checkbox_;
+    QCheckBox* image_sequence_checkbox_;
 
 };
 

@@ -35,55 +35,55 @@ OLIVE_NAMESPACE_ENTER
 
 class ColorDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /**
-   * @brief ColorDialog Constructor
-   *
-   * @param color_manager
-   *
-   * The ColorManager to use for color management. This must be valid.
-   *
-   * @param start
-   *
-   * The color to start with. This must be in the color_manager's reference space
-   *
-   * @param input_cs
-   *
-   * The input range that the user should see. The start color will be converted to this for UI object.
-   *
-   * @param parent
-   *
-   * QWidget parent.
-   */
-  ColorDialog(ColorManager* color_manager, const ManagedColor &start = Color(1.0f, 1.0f, 1.0f), QWidget* parent = nullptr);
+    /**
+     * @brief ColorDialog Constructor
+     *
+     * @param color_manager
+     *
+     * The ColorManager to use for color management. This must be valid.
+     *
+     * @param start
+     *
+     * The color to start with. This must be in the color_manager's reference space
+     *
+     * @param input_cs
+     *
+     * The input range that the user should see. The start color will be converted to this for UI object.
+     *
+     * @param parent
+     *
+     * QWidget parent.
+     */
+    ColorDialog(ColorManager* color_manager, const ManagedColor &start = Color(1.0f, 1.0f, 1.0f), QWidget* parent = nullptr);
 
-  /**
-   * @brief Retrieves the color selected by the user
-   *
-   * The color is always returned in the ColorManager's reference space (usually scene linear).
-   */
-  ManagedColor GetSelectedColor() const;
+    /**
+     * @brief Retrieves the color selected by the user
+     *
+     * The color is always returned in the ColorManager's reference space (usually scene linear).
+     */
+    ManagedColor GetSelectedColor() const;
 
-  QString GetColorSpaceInput() const;
+    QString GetColorSpaceInput() const;
 
-  ColorTransform GetColorSpaceOutput() const;
+    ColorTransform GetColorSpaceOutput() const;
 
 private:
-  ColorManager* color_manager_;
+    ColorManager* color_manager_;
 
-  ColorWheelWidget* color_wheel_;
+    ColorWheelWidget* color_wheel_;
 
-  ColorValuesWidget* color_values_widget_;
+    ColorValuesWidget* color_values_widget_;
 
-  ColorGradientWidget* hsv_value_gradient_;
+    ColorGradientWidget* hsv_value_gradient_;
 
-  ColorProcessorPtr input_to_ref_processor_;
+    ColorProcessorPtr input_to_ref_processor_;
 
-  ColorSpaceChooser* chooser_;
+    ColorSpaceChooser* chooser_;
 
 private slots:
-  void ColorSpaceChanged(const QString& input, const ColorTransform &output);
+    void ColorSpaceChanged(const QString& input, const ColorTransform &output);
 
 };
 

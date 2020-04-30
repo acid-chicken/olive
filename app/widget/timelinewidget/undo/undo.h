@@ -34,118 +34,118 @@ OLIVE_NAMESPACE_ENTER
 
 class BlockResizeCommand : public UndoCommand {
 public:
-  BlockResizeCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
+    BlockResizeCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
-  rational old_length_;
-  rational new_length_;
+    Block* block_;
+    rational old_length_;
+    rational new_length_;
 };
 
 class BlockResizeWithMediaInCommand : public UndoCommand {
 public:
-  BlockResizeWithMediaInCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
+    BlockResizeWithMediaInCommand(Block* block, rational new_length, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
-  rational old_length_;
-  rational new_length_;
+    Block* block_;
+    rational old_length_;
+    rational new_length_;
 };
 
 class BlockSetMediaInCommand : public UndoCommand {
 public:
-  BlockSetMediaInCommand(Block* block, rational new_media_in, QUndoCommand* parent = nullptr);
+    BlockSetMediaInCommand(Block* block, rational new_media_in, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
-  rational old_media_in_;
-  rational new_media_in_;
+    Block* block_;
+    rational old_media_in_;
+    rational new_media_in_;
 };
 
 class BlockSetSpeedCommand : public UndoCommand {
 public:
-  BlockSetSpeedCommand(Block* block, const rational& new_speed, QUndoCommand* parent = nullptr);
+    BlockSetSpeedCommand(Block* block, const rational& new_speed, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
+    Block* block_;
 
-  rational old_speed_;
-  rational new_speed_;
+    rational old_speed_;
+    rational new_speed_;
 };
 
 class TrackRippleRemoveBlockCommand : public UndoCommand {
 public:
-  TrackRippleRemoveBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
+    TrackRippleRemoveBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  TrackOutput* track_;
+    TrackOutput* track_;
 
-  Block* block_;
+    Block* block_;
 
-  Block* before_;
+    Block* before_;
 };
 
 class TrackPrependBlockCommand : public UndoCommand {
 public:
-  TrackPrependBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
+    TrackPrependBlockCommand(TrackOutput* track, Block* block, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  TrackOutput* track_;
-  Block* block_;
+    TrackOutput* track_;
+    Block* block_;
 };
 
 class TrackInsertBlockAfterCommand : public UndoCommand {
 public:
-  TrackInsertBlockAfterCommand(TrackOutput* track, Block* block, Block* before, QUndoCommand* parent = nullptr);
+    TrackInsertBlockAfterCommand(TrackOutput* track, Block* block, Block* before, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  TrackOutput* track_;
+    TrackOutput* track_;
 
-  Block* block_;
+    Block* block_;
 
-  Block* before_;
+    Block* before_;
 };
 
 /**
@@ -157,38 +157,38 @@ private:
  */
 class TrackRippleRemoveAreaCommand : public UndoCommand {
 public:
-  TrackRippleRemoveAreaCommand(TrackOutput* track, rational in, rational out, QUndoCommand* parent = nullptr);
+    TrackRippleRemoveAreaCommand(TrackOutput* track, rational in, rational out, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
-  void SetInsert(Block* insert);
-
-protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    void SetInsert(Block* insert);
 
 protected:
-  TrackOutput* track_;
-  rational in_;
-  rational out_;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
-  bool splice_;
+protected:
+    TrackOutput* track_;
+    rational in_;
+    rational out_;
 
-  Block* trim_out_;
-  Block* trim_in_;
-  QVector<Block*> removed_blocks_;
+    bool splice_;
 
-  rational trim_in_old_length_;
-  rational trim_out_old_length_;
+    Block* trim_out_;
+    Block* trim_in_;
+    QVector<Block*> removed_blocks_;
 
-  rational trim_in_new_length_;
-  rational trim_out_new_length_;
+    rational trim_in_old_length_;
+    rational trim_out_old_length_;
 
-  Block* insert_;
+    rational trim_in_new_length_;
+    rational trim_out_new_length_;
 
-  QObject memory_manager_;
+    Block* insert_;
 
-  QList<UndoCommand*> remove_block_commands_;
+    QObject memory_manager_;
+
+    QList<UndoCommand*> remove_block_commands_;
 
 };
 
@@ -201,69 +201,69 @@ protected:
  */
 class TrackPlaceBlockCommand : public TrackRippleRemoveAreaCommand {
 public:
-  TrackPlaceBlockCommand(TrackList *timeline, int track, Block* block, rational in, QUndoCommand* parent = nullptr);
+    TrackPlaceBlockCommand(TrackList *timeline, int track, Block* block, rational in, QUndoCommand* parent = nullptr);
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  TrackList* timeline_;
-  int track_index_;
-  bool append_;
-  GapBlock* gap_;
-  int added_track_count_;
+    TrackList* timeline_;
+    int track_index_;
+    bool append_;
+    GapBlock* gap_;
+    int added_track_count_;
 };
 
 class BlockSplitCommand : public UndoCommand {
 public:
-  BlockSplitCommand(TrackOutput* track, Block* block, rational point, QUndoCommand* parent = nullptr);
+    BlockSplitCommand(TrackOutput* track, Block* block, rational point, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
-  Block* new_block();
+    Block* new_block();
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  TrackOutput* track_;
-  Block* block_;
+    TrackOutput* track_;
+    Block* block_;
 
-  rational new_length_;
-  rational old_length_;
-  rational point_;
+    rational new_length_;
+    rational old_length_;
+    rational point_;
 
-  Block* new_block_;
+    Block* new_block_;
 
-  QList<NodeInput*> transitions_to_move_;
+    QList<NodeInput*> transitions_to_move_;
 
-  QObject memory_manager_;
+    QObject memory_manager_;
 
 };
 
 class TrackSplitAtTimeCommand : public UndoCommand {
 public:
-  TrackSplitAtTimeCommand(TrackOutput* track, rational point, QUndoCommand* parent = nullptr);
+    TrackSplitAtTimeCommand(TrackOutput* track, rational point, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 private:
-  TrackOutput* track_;
+    TrackOutput* track_;
 
 };
 
 class BlockSplitPreservingLinksCommand : public UndoCommand {
 public:
-  BlockSplitPreservingLinksCommand(const QVector<Block *> &blocks, const QList<rational>& times, QUndoCommand* parent = nullptr);
+    BlockSplitPreservingLinksCommand(const QVector<Block *> &blocks, const QList<rational>& times, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 private:
-  QVector<Block *> blocks_;
+    QVector<Block *> blocks_;
 
-  QList<rational> times_;
+    QList<rational> times_;
 };
 
 /**
@@ -273,174 +273,174 @@ private:
  */
 class TrackReplaceBlockCommand : public UndoCommand {
 public:
-  TrackReplaceBlockCommand(TrackOutput* track, Block* old, Block* replace, QUndoCommand* parent = nullptr);
+    TrackReplaceBlockCommand(TrackOutput* track, Block* old, Block* replace, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  TrackOutput* track_;
-  Block* old_;
-  Block* replace_;
+    TrackOutput* track_;
+    Block* old_;
+    Block* replace_;
 };
 
 class TrackCleanGapsCommand : public UndoCommand {
 public:
-  TrackCleanGapsCommand(TrackList* track_list, int index, QUndoCommand* parent = nullptr);
+    TrackCleanGapsCommand(TrackList* track_list, int index, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  struct MergedGap {
-    GapBlock* merged;
-    rational original_length;
-    QList<GapBlock*> removed;
-  };
+    struct MergedGap {
+        GapBlock* merged;
+        rational original_length;
+        QList<GapBlock*> removed;
+    };
 
-  TrackList* track_list_;
+    TrackList* track_list_;
 
-  int track_index_;
+    int track_index_;
 
-  QObject memory_manager_;
+    QObject memory_manager_;
 
-  QList<MergedGap> merged_gaps_;
+    QList<MergedGap> merged_gaps_;
 
-  QList<GapBlock*> removed_end_gaps_;
+    QList<GapBlock*> removed_end_gaps_;
 
 };
 
 class TimelineRippleDeleteGapsAtRegionsCommand : public UndoCommand {
 public:
-  TimelineRippleDeleteGapsAtRegionsCommand(ViewerOutput* vo, const TimeRangeList& regions, QUndoCommand* parent = nullptr);
+    TimelineRippleDeleteGapsAtRegionsCommand(ViewerOutput* vo, const TimeRangeList& regions, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  ViewerOutput* timeline_;
-  TimeRangeList regions_;
+    ViewerOutput* timeline_;
+    TimeRangeList regions_;
 
-  QList<UndoCommand*> commands_;
+    QList<UndoCommand*> commands_;
 
 };
 
 class WorkareaSetEnabledCommand : public UndoCommand {
 public:
-  WorkareaSetEnabledCommand(Project *project, TimelinePoints* points, bool enabled, QUndoCommand* parent = nullptr);
+    WorkareaSetEnabledCommand(Project *project, TimelinePoints* points, bool enabled, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Project* project_;
+    Project* project_;
 
-  TimelinePoints* points_;
+    TimelinePoints* points_;
 
-  bool old_enabled_;
+    bool old_enabled_;
 
-  bool new_enabled_;
+    bool new_enabled_;
 
 };
 
 class WorkareaSetRangeCommand : public UndoCommand {
 public:
-  WorkareaSetRangeCommand(Project *project, TimelinePoints* points, const TimeRange& range, QUndoCommand* parent = nullptr);
+    WorkareaSetRangeCommand(Project *project, TimelinePoints* points, const TimeRange& range, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Project* project_;
+    Project* project_;
 
-  TimelinePoints* points_;
+    TimelinePoints* points_;
 
-  TimeRange old_range_;
+    TimeRange old_range_;
 
-  TimeRange new_range_;
+    TimeRange new_range_;
 
 };
 
 class BlockLinkManyCommand : public UndoCommand {
 public:
-  BlockLinkManyCommand(const QList<Block*> blocks, bool link, QUndoCommand* parent = nullptr);
+    BlockLinkManyCommand(const QList<Block*> blocks, bool link, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 private:
-  QList<Block*> blocks_;
+    QList<Block*> blocks_;
 
 };
 
 class BlockLinkCommand : public UndoCommand {
 public:
-  BlockLinkCommand(Block* a, Block* b, bool link, QUndoCommand* parent = nullptr);
+    BlockLinkCommand(Block* a, Block* b, bool link, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* a_;
+    Block* a_;
 
-  Block* b_;
+    Block* b_;
 
-  bool link_;
+    bool link_;
 
-  bool done_;
+    bool done_;
 
 };
 
 class BlockUnlinkAllCommand : public UndoCommand {
 public:
-  BlockUnlinkAllCommand(Block* block, QUndoCommand* parent = nullptr);
+    BlockUnlinkAllCommand(Block* block, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
+    Block* block_;
 
-  QVector<Block*> unlinked_;
+    QVector<Block*> unlinked_;
 
 };
 
 class BlockEnableDisableCommand : public UndoCommand {
 public:
-  BlockEnableDisableCommand(Block* block, bool enabled, QUndoCommand* parent = nullptr);
+    BlockEnableDisableCommand(Block* block, bool enabled, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
+    Block* block_;
 
-  bool old_enabled_;
+    bool old_enabled_;
 
-  bool new_enabled_;
+    bool new_enabled_;
 
 };
 

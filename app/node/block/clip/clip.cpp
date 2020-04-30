@@ -24,99 +24,99 @@ OLIVE_NAMESPACE_ENTER
 
 ClipBlock::ClipBlock()
 {
-  texture_input_ = new NodeInput("buffer_in", NodeInput::kBuffer);
-  texture_input_->set_is_keyframable(false);
-  AddInput(texture_input_);
+    texture_input_ = new NodeInput("buffer_in", NodeInput::kBuffer);
+    texture_input_->set_is_keyframable(false);
+    AddInput(texture_input_);
 }
 
 Node *ClipBlock::copy() const
 {
-  return new ClipBlock();
+    return new ClipBlock();
 }
 
 Block::Type ClipBlock::type() const
 {
-  return kClip;
+    return kClip;
 }
 
 QString ClipBlock::Name() const
 {
-  return tr("Clip");
+    return tr("Clip");
 }
 
 QString ClipBlock::id() const
 {
-  return QStringLiteral("org.olivevideoeditor.Olive.clip");
+    return QStringLiteral("org.olivevideoeditor.Olive.clip");
 }
 
 QString ClipBlock::Description() const
 {
-  return tr("A time-based node that represents a media source.");
+    return tr("A time-based node that represents a media source.");
 }
 
 NodeInput *ClipBlock::texture_input() const
 {
-  return texture_input_;
+    return texture_input_;
 }
 
 void ClipBlock::InvalidateCache(const TimeRange &range, NodeInput *from, NodeInput *source)
 {
-  // If signal is from texture input, transform all times from media time to sequence time
-  if (from == texture_input_) {
-    rational start = MediaToSequenceTime(range.in());
-    rational end = MediaToSequenceTime(range.out());
+    // If signal is from texture input, transform all times from media time to sequence time
+    if (from == texture_input_) {
+        rational start = MediaToSequenceTime(range.in());
+        rational end = MediaToSequenceTime(range.out());
 
-    // Ensure range actually covers this clip's area
-    if (!(end < in() || start > out())) {
+        // Ensure range actually covers this clip's area
+        if (!(end < in() || start > out())) {
 
-      // Limit cache invalidation to clip lengths
-      start = qMax(start, in());
-      end = qMin(end, out());
+            // Limit cache invalidation to clip lengths
+            start = qMax(start, in());
+            end = qMin(end, out());
 
-      Node::InvalidateCache(TimeRange(start, end), from, source);
+            Node::InvalidateCache(TimeRange(start, end), from, source);
 
+        }
+    } else {
+        // Otherwise, pass signal along normally
+        Node::InvalidateCache(range, from, source);
     }
-  } else {
-    // Otherwise, pass signal along normally
-    Node::InvalidateCache(range, from, source);
-  }
 }
 
 TimeRange ClipBlock::InputTimeAdjustment(NodeInput *input, const TimeRange &input_time) const
 {
-  if (input == texture_input_) {
-    return TimeRange(SequenceToMediaTime(input_time.in()), SequenceToMediaTime(input_time.out()));
-  }
+    if (input == texture_input_) {
+        return TimeRange(SequenceToMediaTime(input_time.in()), SequenceToMediaTime(input_time.out()));
+    }
 
-  return Block::InputTimeAdjustment(input, input_time);
+    return Block::InputTimeAdjustment(input, input_time);
 }
 
 TimeRange ClipBlock::OutputTimeAdjustment(NodeInput *input, const TimeRange &input_time) const
 {
-  if (input == texture_input_) {
-    return TimeRange(MediaToSequenceTime(input_time.in()), MediaToSequenceTime(input_time.out()));
-  }
+    if (input == texture_input_) {
+        return TimeRange(MediaToSequenceTime(input_time.in()), MediaToSequenceTime(input_time.out()));
+    }
 
-  return Block::InputTimeAdjustment(input, input_time);
+    return Block::InputTimeAdjustment(input, input_time);
 }
 
 NodeValueTable ClipBlock::Value(NodeValueDatabase &value) const
 {
-  // We discard most values here except for the buffer we received
-  NodeValue data = value[texture_input()].GetWithMeta(NodeParam::kBuffer);
+    // We discard most values here except for the buffer we received
+    NodeValue data = value[texture_input()].GetWithMeta(NodeParam::kBuffer);
 
-  NodeValueTable table;
-  if (data.type() != NodeParam::kNone) {
-    table.Push(data);
-  }
-  return table;
+    NodeValueTable table;
+    if (data.type() != NodeParam::kNone) {
+        table.Push(data);
+    }
+    return table;
 }
 
 void ClipBlock::Retranslate()
 {
-  Block::Retranslate();
+    Block::Retranslate();
 
-  texture_input_->set_name(tr("Buffer"));
+    texture_input_->set_name(tr("Buffer"));
 }
 
 OLIVE_NAMESPACE_EXIT

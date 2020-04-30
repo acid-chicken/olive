@@ -27,11 +27,11 @@ OLIVE_NAMESPACE_ENTER
 
 class AutoScroll {
 public:
-  enum Method {
-    kNone,
-    kPage,
-    kSmooth
-  };
+    enum Method {
+        kNone,
+        kPage,
+        kSmooth
+    };
 };
 
 OLIVE_NAMESPACE_EXIT

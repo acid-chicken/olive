@@ -26,178 +26,178 @@
 OLIVE_NAMESPACE_ENTER
 
 NodeParamSetKeyframingCommand::NodeParamSetKeyframingCommand(NodeInput *input, bool setting, QUndoCommand *parent) :
-  UndoCommand(parent),
-  input_(input),
-  setting_(setting)
+    UndoCommand(parent),
+    input_(input),
+    setting_(setting)
 {
-  Q_ASSERT(setting != input_->is_keyframing());
+    Q_ASSERT(setting != input_->is_keyframing());
 }
 
 Project *NodeParamSetKeyframingCommand::GetRelevantProject() const
 {
-  return static_cast<Sequence*>(input_->parentNode()->parent())->project();
+    return static_cast<Sequence*>(input_->parentNode()->parent())->project();
 }
 
 void NodeParamSetKeyframingCommand::redo_internal()
 {
-  input_->set_is_keyframing(setting_);
+    input_->set_is_keyframing(setting_);
 }
 
 void NodeParamSetKeyframingCommand::undo_internal()
 {
-  input_->set_is_keyframing(!setting_);
+    input_->set_is_keyframing(!setting_);
 }
 
 NodeParamSetKeyframeValueCommand::NodeParamSetKeyframeValueCommand(NodeKeyframePtr key, const QVariant& value, QUndoCommand* parent) :
-  UndoCommand(parent),
-  key_(key),
-  old_value_(key_->value()),
-  new_value_(value)
+    UndoCommand(parent),
+    key_(key),
+    old_value_(key_->value()),
+    new_value_(value)
 {
 }
 
 NodeParamSetKeyframeValueCommand::NodeParamSetKeyframeValueCommand(NodeKeyframePtr key, const QVariant &new_value, const QVariant &old_value, QUndoCommand *parent) :
-  UndoCommand(parent),
-  key_(key),
-  old_value_(old_value),
-  new_value_(new_value)
+    UndoCommand(parent),
+    key_(key),
+    old_value_(old_value),
+    new_value_(new_value)
 {
 
 }
 
 Project *NodeParamSetKeyframeValueCommand::GetRelevantProject() const
 {
-  return static_cast<Sequence*>(key_->parent()->parentNode()->parent())->project();
+    return static_cast<Sequence*>(key_->parent()->parentNode()->parent())->project();
 }
 
 void NodeParamSetKeyframeValueCommand::redo_internal()
 {
-  key_->set_value(new_value_);
+    key_->set_value(new_value_);
 }
 
 void NodeParamSetKeyframeValueCommand::undo_internal()
 {
-  key_->set_value(old_value_);
+    key_->set_value(old_value_);
 }
 
 NodeParamInsertKeyframeCommand::NodeParamInsertKeyframeCommand(NodeInput *input, NodeKeyframePtr keyframe, QUndoCommand* parent) :
-  UndoCommand(parent),
-  input_(input),
-  keyframe_(keyframe),
-  done_(false)
+    UndoCommand(parent),
+    input_(input),
+    keyframe_(keyframe),
+    done_(false)
 {
 }
 
 NodeParamInsertKeyframeCommand::NodeParamInsertKeyframeCommand(NodeInput *input, NodeKeyframePtr keyframe, bool already_done, QUndoCommand *parent) :
-  UndoCommand(parent),
-  input_(input),
-  keyframe_(keyframe),
-  done_(already_done)
+    UndoCommand(parent),
+    input_(input),
+    keyframe_(keyframe),
+    done_(already_done)
 {
 }
 
 Project *NodeParamInsertKeyframeCommand::GetRelevantProject() const
 {
-  return static_cast<Sequence*>(input_->parentNode()->parent())->project();
+    return static_cast<Sequence*>(input_->parentNode()->parent())->project();
 }
 
 void NodeParamInsertKeyframeCommand::redo_internal()
 {
-  if (!done_) {
-    input_->insert_keyframe(keyframe_);
-  }
+    if (!done_) {
+        input_->insert_keyframe(keyframe_);
+    }
 }
 
 void NodeParamInsertKeyframeCommand::undo_internal()
 {
-  input_->remove_keyframe(keyframe_);
-  done_ = false;
+    input_->remove_keyframe(keyframe_);
+    done_ = false;
 }
 
 NodeParamRemoveKeyframeCommand::NodeParamRemoveKeyframeCommand(NodeInput *input, NodeKeyframePtr keyframe, QUndoCommand *parent) :
-  UndoCommand(parent),
-  input_(input),
-  keyframe_(keyframe)
+    UndoCommand(parent),
+    input_(input),
+    keyframe_(keyframe)
 {
 }
 
 Project *NodeParamRemoveKeyframeCommand::GetRelevantProject() const
 {
-  return static_cast<Sequence*>(input_->parentNode()->parent())->project();
+    return static_cast<Sequence*>(input_->parentNode()->parent())->project();
 }
 
 void NodeParamRemoveKeyframeCommand::redo_internal()
 {
-  input_->remove_keyframe(keyframe_);
+    input_->remove_keyframe(keyframe_);
 }
 
 void NodeParamRemoveKeyframeCommand::undo_internal()
 {
-  input_->insert_keyframe(keyframe_);
+    input_->insert_keyframe(keyframe_);
 }
 
 NodeParamSetKeyframeTimeCommand::NodeParamSetKeyframeTimeCommand(NodeKeyframePtr key, const rational &time, QUndoCommand *parent) :
-  UndoCommand(parent),
-  key_(key),
-  old_time_(key->time()),
-  new_time_(time)
+    UndoCommand(parent),
+    key_(key),
+    old_time_(key->time()),
+    new_time_(time)
 {
 }
 
 NodeParamSetKeyframeTimeCommand::NodeParamSetKeyframeTimeCommand(NodeKeyframePtr key, const rational &new_time, const rational &old_time, QUndoCommand *parent) :
-  UndoCommand(parent),
-  key_(key),
-  old_time_(old_time),
-  new_time_(new_time)
+    UndoCommand(parent),
+    key_(key),
+    old_time_(old_time),
+    new_time_(new_time)
 {
 }
 
 Project *NodeParamSetKeyframeTimeCommand::GetRelevantProject() const
 {
-  return static_cast<Sequence*>(key_->parent()->parentNode()->parent())->project();
+    return static_cast<Sequence*>(key_->parent()->parentNode()->parent())->project();
 }
 
 void NodeParamSetKeyframeTimeCommand::redo_internal()
 {
-  key_->set_time(new_time_);
+    key_->set_time(new_time_);
 }
 
 void NodeParamSetKeyframeTimeCommand::undo_internal()
 {
-  key_->set_time(old_time_);
+    key_->set_time(old_time_);
 }
 
 NodeParamSetStandardValueCommand::NodeParamSetStandardValueCommand(NodeInput *input, int track, const QVariant &value, QUndoCommand *parent) :
-  UndoCommand(parent),
-  input_(input),
-  track_(track),
-  old_value_(input_->get_standard_value()),
-  new_value_(value)
+    UndoCommand(parent),
+    input_(input),
+    track_(track),
+    old_value_(input_->get_standard_value()),
+    new_value_(value)
 {
 }
 
 NodeParamSetStandardValueCommand::NodeParamSetStandardValueCommand(NodeInput *input, int track, const QVariant &new_value, const QVariant &old_value, QUndoCommand *parent) :
-  UndoCommand(parent),
-  input_(input),
-  track_(track),
-  old_value_(old_value),
-  new_value_(new_value)
+    UndoCommand(parent),
+    input_(input),
+    track_(track),
+    old_value_(old_value),
+    new_value_(new_value)
 {
 }
 
 Project *NodeParamSetStandardValueCommand::GetRelevantProject() const
 {
-  return static_cast<Sequence*>(input_->parentNode()->parent())->project();
+    return static_cast<Sequence*>(input_->parentNode()->parent())->project();
 }
 
 void NodeParamSetStandardValueCommand::redo_internal()
 {
-  input_->set_standard_value(new_value_, track_);
+    input_->set_standard_value(new_value_, track_);
 }
 
 void NodeParamSetStandardValueCommand::undo_internal()
 {
-  input_->set_standard_value(old_value_, track_);
+    input_->set_standard_value(old_value_, track_);
 }
 
 OLIVE_NAMESPACE_EXIT

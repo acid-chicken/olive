@@ -29,19 +29,19 @@ OLIVE_NAMESPACE_ENTER
 
 class FocusableLineEdit : public QLineEdit
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  FocusableLineEdit(QWidget* parent = nullptr);
+    FocusableLineEdit(QWidget* parent = nullptr);
 
 signals:
-  void Confirmed();
+    void Confirmed();
 
-  void Cancelled();
+    void Cancelled();
 
 protected:
-  void keyPressEvent(QKeyEvent *) override;
+    void keyPressEvent(QKeyEvent *) override;
 
-  void focusOutEvent(QFocusEvent *) override;
+    void focusOutEvent(QFocusEvent *) override;
 
 
 };

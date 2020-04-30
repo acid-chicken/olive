@@ -28,18 +28,18 @@ OLIVE_NAMESPACE_ENTER
 
 class ProjectLoadManager : public Task
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectLoadManager(const QString& filename);
+    ProjectLoadManager(const QString& filename);
 
 protected:
-  virtual void Action() override;
+    virtual void Action() override;
 
 signals:
-  void ProjectLoaded(OLIVE_NAMESPACE::ProjectPtr project);
+    void ProjectLoaded(OLIVE_NAMESPACE::ProjectPtr project);
 
 private:
-  QString filename_;
+    QString filename_;
 
 };
 

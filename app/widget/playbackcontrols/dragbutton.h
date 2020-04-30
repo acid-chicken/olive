@@ -29,15 +29,15 @@ OLIVE_NAMESPACE_ENTER
 
 class DragButton : public QPushButton
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  DragButton(QWidget* parent = nullptr);
+    DragButton(QWidget* parent = nullptr);
 
 signals:
-  void MousePressed();
+    void MousePressed();
 
 protected:
-  virtual void mousePressEvent(QMouseEvent* event) override;
+    virtual void mousePressEvent(QMouseEvent* event) override;
 
 };
 

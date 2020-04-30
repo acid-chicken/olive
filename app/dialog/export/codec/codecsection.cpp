@@ -23,7 +23,7 @@
 OLIVE_NAMESPACE_ENTER
 
 CodecSection::CodecSection(QWidget *parent) :
-  QWidget(parent)
+    QWidget(parent)
 {
 }
 

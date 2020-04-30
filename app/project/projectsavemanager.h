@@ -28,18 +28,18 @@ OLIVE_NAMESPACE_ENTER
 
 class ProjectSaveManager : public Task
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectSaveManager(ProjectPtr project);
+    ProjectSaveManager(ProjectPtr project);
 
 signals:
-  void ProjectSaveSucceeded(OLIVE_NAMESPACE::ProjectPtr p);
+    void ProjectSaveSucceeded(OLIVE_NAMESPACE::ProjectPtr p);
 
 protected:
-  virtual void Action() override;
+    virtual void Action() override;
 
 private:
-  ProjectPtr project_;
+    ProjectPtr project_;
 
 };
 

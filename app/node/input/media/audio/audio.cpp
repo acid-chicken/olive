@@ -24,22 +24,22 @@ OLIVE_NAMESPACE_ENTER
 
 Node *AudioInput::copy() const
 {
-  return new AudioInput();
+    return new AudioInput();
 }
 
 QString AudioInput::Name() const
 {
-  return tr("Audio Input");
+    return tr("Audio Input");
 }
 
 QString AudioInput::id() const
 {
-  return QStringLiteral("org.olivevideoeditor.Olive.audioinput");
+    return QStringLiteral("org.olivevideoeditor.Olive.audioinput");
 }
 
 QString AudioInput::Description() const
 {
-  return tr("Import an audio footage stream.");
+    return tr("Import an audio footage stream.");
 }
 
 OLIVE_NAMESPACE_EXIT

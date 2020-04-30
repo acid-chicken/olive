@@ -31,100 +31,100 @@
 OLIVE_NAMESPACE_ENTER
 
 KeyframeViewItem::KeyframeViewItem(NodeKeyframePtr key, QGraphicsItem *parent) :
-  QGraphicsRectItem(parent),
-  key_(key),
-  scale_(1.0),
-  vert_center_(0),
-  use_custom_brush_(false)
+    QGraphicsRectItem(parent),
+    key_(key),
+    scale_(1.0),
+    vert_center_(0),
+    use_custom_brush_(false)
 {
-  setFlag(QGraphicsItem::ItemIsSelectable);
+    setFlag(QGraphicsItem::ItemIsSelectable);
 
-  connect(key.get(), &NodeKeyframe::TimeChanged, this, &KeyframeViewItem::UpdatePos);
-  connect(key.get(), &NodeKeyframe::TypeChanged, this, &KeyframeViewItem::Redraw);
+    connect(key.get(), &NodeKeyframe::TimeChanged, this, &KeyframeViewItem::UpdatePos);
+    connect(key.get(), &NodeKeyframe::TypeChanged, this, &KeyframeViewItem::Redraw);
 
-  int keyframe_size = QFontMetricsWidth(qApp->fontMetrics(), "Oi");
-  int half_sz = keyframe_size/2;
-  setRect(-half_sz, -half_sz, keyframe_size, keyframe_size);
+    int keyframe_size = QFontMetricsWidth(qApp->fontMetrics(), "Oi");
+    int half_sz = keyframe_size/2;
+    setRect(-half_sz, -half_sz, keyframe_size, keyframe_size);
 
-  UpdatePos();
+    UpdatePos();
 
-  // Set default brush
+    // Set default brush
 }
 
 void KeyframeViewItem::SetOverrideY(qreal vertical_center)
 {
-  vert_center_ = vertical_center;
-  UpdatePos();
+    vert_center_ = vertical_center;
+    UpdatePos();
 }
 
 void KeyframeViewItem::SetScale(double scale)
 {
-  scale_ = scale;
-  UpdatePos();
+    scale_ = scale;
+    UpdatePos();
 }
 
 void KeyframeViewItem::SetOverrideBrush(const QBrush &b)
 {
-  use_custom_brush_ = true;
-  setBrush(b);
+    use_custom_brush_ = true;
+    setBrush(b);
 }
 
 NodeKeyframePtr KeyframeViewItem::key() const
 {
-  return key_;
+    return key_;
 }
 
 void KeyframeViewItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-  painter->setRenderHint(QPainter::Antialiasing);
+    painter->setRenderHint(QPainter::Antialiasing);
 
-  painter->setPen(Qt::black);
+    painter->setPen(Qt::black);
 
-  if (option->state & QStyle::State_Selected) {
-    painter->setBrush(widget->palette().highlight());
-  } else if (use_custom_brush_) {
-    painter->setBrush(brush());
-  } else {
-    painter->setBrush(widget->palette().text());
-  }
+    if (option->state & QStyle::State_Selected) {
+        painter->setBrush(widget->palette().highlight());
+    } else if (use_custom_brush_) {
+        painter->setBrush(brush());
+    } else {
+        painter->setBrush(widget->palette().text());
+    }
 
-  switch (key_->type()) {
-  case NodeKeyframe::kLinear:
-  {
-    QPointF points[] = {
-      QPointF(rect().center().x(), rect().top()),
-      QPointF(rect().right(), rect().center().y()),
-      QPointF(rect().center().x(), rect().bottom()),
-      QPointF(rect().left(), rect().center().y())
-    };
+    switch (key_->type()) {
+    case NodeKeyframe::kLinear:
+    {
+        QPointF points[] = {
+            QPointF(rect().center().x(), rect().top()),
+            QPointF(rect().right(), rect().center().y()),
+            QPointF(rect().center().x(), rect().bottom()),
+            QPointF(rect().left(), rect().center().y())
+        };
 
-    painter->drawPolygon(points, 4);
-    break;
-  }
-  case NodeKeyframe::kBezier:
-    painter->drawEllipse(rect());
-    break;
-  case NodeKeyframe::kHold:
-    painter->drawRect(rect());
-    break;
-  }
+        painter->drawPolygon(points, 4);
+        break;
+    }
+    case NodeKeyframe::kBezier:
+        painter->drawEllipse(rect());
+        break;
+    case NodeKeyframe::kHold:
+        painter->drawRect(rect());
+        break;
+    }
 }
 
 void KeyframeViewItem::TimeTargetChangedEvent(Node *)
 {
-  UpdatePos();
+    UpdatePos();
 }
 
 void KeyframeViewItem::UpdatePos()
 {
-  rational adjusted = GetAdjustedTime(key_->parent()->parentNode(), GetTimeTarget(), key_->time(), NodeParam::kOutput);
+    rational adjusted = GetAdjustedTime(key_->parent()->parentNode(), GetTimeTarget(), key_->time(), NodeParam::kOutput);
 
-  setPos(adjusted.toDouble() * scale_, vert_center_);
+    setPos(adjusted.toDouble() * scale_, vert_center_);
 }
 
 void KeyframeViewItem::Redraw()
 {
-  QGraphicsItem::update();
+    QGraphicsItem::update();
 }
 
 OLIVE_NAMESPACE_EXIT

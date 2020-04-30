@@ -32,83 +32,83 @@ OLIVE_NAMESPACE_ENTER
 class ViewerOutput;
 
 class TrackList : public QObject {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TrackList(ViewerOutput *parent, const Timeline::TrackType& type, NodeInputArray* track_input);
+    TrackList(ViewerOutput *parent, const Timeline::TrackType& type, NodeInputArray* track_input);
 
-  const Timeline::TrackType& type() const;
+    const Timeline::TrackType& type() const;
 
-  const QVector<TrackOutput*>& GetTracks() const;
+    const QVector<TrackOutput*>& GetTracks() const;
 
-  TrackOutput* GetTrackAt(int index) const;
+    TrackOutput* GetTrackAt(int index) const;
 
-  TrackOutput *AddTrack();
+    TrackOutput *AddTrack();
 
-  void RemoveTrack();
+    void RemoveTrack();
 
-  const rational& GetTotalLength() const;
+    const rational& GetTotalLength() const;
 
-  int GetTrackCount() const;
+    int GetTrackCount() const;
 
-  NodeGraph* GetParentGraph() const;
+    NodeGraph* GetParentGraph() const;
 
 signals:
-  void BlockAdded(Block* block, int index);
+    void BlockAdded(Block* block, int index);
 
-  void BlockRemoved(Block* block);
+    void BlockRemoved(Block* block);
 
-  void TrackAdded(TrackOutput* track);
+    void TrackAdded(TrackOutput* track);
 
-  void TrackRemoved(TrackOutput* track);
+    void TrackRemoved(TrackOutput* track);
 
-  void TrackListChanged();
+    void TrackListChanged();
 
-  void LengthChanged(const rational &length);
+    void LengthChanged(const rational &length);
 
-  void TrackHeightChanged(int index, int height);
+    void TrackHeightChanged(int index, int height);
 
 private:
-  /**
-   * @brief A cache of connected Tracks
-   */
-  QVector<TrackOutput*> track_cache_;
+    /**
+     * @brief A cache of connected Tracks
+     */
+    QVector<TrackOutput*> track_cache_;
 
-  NodeInputArray* track_input_;
+    NodeInputArray* track_input_;
 
-  rational total_length_;
+    rational total_length_;
 
-  enum Timeline::TrackType type_;
+    enum Timeline::TrackType type_;
 
 private slots:
-  /**
-   * @brief Slot for when the track connection is added
-   */
-  void TrackConnected(NodeEdgePtr edge);
+    /**
+     * @brief Slot for when the track connection is added
+     */
+    void TrackConnected(NodeEdgePtr edge);
 
-  /**
-   * @brief Slot for when the track connection is removed
-   */
-  void TrackDisconnected(NodeEdgePtr edge);
+    /**
+     * @brief Slot for when the track connection is removed
+     */
+    void TrackDisconnected(NodeEdgePtr edge);
 
-  /**
-   * @brief Slot for when a connected Track has added a Block so we can update the UI
-   */
-  void TrackAddedBlock(Block* block);
+    /**
+     * @brief Slot for when a connected Track has added a Block so we can update the UI
+     */
+    void TrackAddedBlock(Block* block);
 
-  /**
-   * @brief Slot for when a connected Track has added a Block so we can update the UI
-   */
-  void TrackRemovedBlock(Block* block);
+    /**
+     * @brief Slot for when a connected Track has added a Block so we can update the UI
+     */
+    void TrackRemovedBlock(Block* block);
 
-  /**
-   * @brief Slot for when any of the track's length changes so we can update the length of the tracklist
-   */
-  void UpdateTotalLength();
+    /**
+     * @brief Slot for when any of the track's length changes so we can update the length of the tracklist
+     */
+    void UpdateTotalLength();
 
-  /**
-   * @brief Slot when a track height changes, transforms to the TrackHeightChanged signal which includes a track index
-   */
-  void TrackHeightChangedSlot(int height);
+    /**
+     * @brief Slot when a track height changes, transforms to the TrackHeightChanged signal which includes a track index
+     */
+    void TrackHeightChangedSlot(int height);
 
 };
 

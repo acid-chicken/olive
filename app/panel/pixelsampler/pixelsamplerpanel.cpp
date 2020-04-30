@@ -23,22 +23,22 @@
 OLIVE_NAMESPACE_ENTER
 
 PixelSamplerPanel::PixelSamplerPanel(QWidget *parent) :
-  PanelWidget(QStringLiteral("ProjectPanel"), parent)
+    PanelWidget(QStringLiteral("ProjectPanel"), parent)
 {
-  sampler_widget_ = new ManagedPixelSamplerWidget();
-  SetWidgetWithPadding(sampler_widget_);
+    sampler_widget_ = new ManagedPixelSamplerWidget();
+    SetWidgetWithPadding(sampler_widget_);
 
-  Retranslate();
+    Retranslate();
 }
 
 void PixelSamplerPanel::SetValues(const Color &reference, const Color &display)
 {
-  sampler_widget_->SetValues(reference, display);
+    sampler_widget_->SetValues(reference, display);
 }
 
 void PixelSamplerPanel::Retranslate()
 {
-  SetTitle(tr("Pixel Sampler"));
+    SetTitle(tr("Pixel Sampler"));
 }
 
 OLIVE_NAMESPACE_EXIT

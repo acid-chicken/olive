@@ -30,29 +30,29 @@ OLIVE_NAMESPACE_ENTER
 
 class ColorButton : public QPushButton
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ColorButton(ColorManager* color_manager, QWidget* parent = nullptr);
+    ColorButton(ColorManager* color_manager, QWidget* parent = nullptr);
 
-  const ManagedColor& GetColor() const;
+    const ManagedColor& GetColor() const;
 
 public slots:
-  void SetColor(const ManagedColor& c);
+    void SetColor(const ManagedColor& c);
 
 signals:
-  void ColorChanged(const ManagedColor& c);
+    void ColorChanged(const ManagedColor& c);
 
 private slots:
-  void ShowColorDialog();
+    void ShowColorDialog();
 
 private:
-  void UpdateColor();
+    void UpdateColor();
 
-  ColorManager* color_manager_;
+    ColorManager* color_manager_;
 
-  ManagedColor color_;
+    ManagedColor color_;
 
-  ColorProcessorPtr color_processor_;
+    ColorProcessorPtr color_processor_;
 
 };
 

@@ -31,28 +31,28 @@ OLIVE_NAMESPACE_ENTER
 
 class ProjectPropertiesDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectPropertiesDialog(Project *p, QWidget* parent);
+    ProjectPropertiesDialog(Project *p, QWidget* parent);
 
 public slots:
-  virtual void accept() override;
+    virtual void accept() override;
 
 private:
-  Project* working_project_;
+    Project* working_project_;
 
-  QLineEdit* ocio_filename_;
+    QLineEdit* ocio_filename_;
 
-  QComboBox* default_input_colorspace_;
+    QComboBox* default_input_colorspace_;
 
-  bool ocio_config_is_valid_;
+    bool ocio_config_is_valid_;
 
-  QString ocio_config_error_;
+    QString ocio_config_error_;
 
 private slots:
-  void BrowseForOCIOConfig();
+    void BrowseForOCIOConfig();
 
-  void FilenameUpdated();
+    void FilenameUpdated();
 
 };
 

@@ -25,28 +25,28 @@
 OLIVE_NAMESPACE_ENTER
 
 TaskView::TaskView(QWidget* parent) :
-  QScrollArea(parent)
+    QScrollArea(parent)
 {
-  // Allow scroll area to resize widget to fit
-  setWidgetResizable(true);
+    // Allow scroll area to resize widget to fit
+    setWidgetResizable(true);
 
-  // Create central widget
-  central_widget_ = new QWidget(this);
-  setWidget(central_widget_);
+    // Create central widget
+    central_widget_ = new QWidget(this);
+    setWidget(central_widget_);
 
-  // Create layout for central widget
-  layout_ = new QVBoxLayout(central_widget_);
-  layout_->setSpacing(0);
-  layout_->setMargin(0);
+    // Create layout for central widget
+    layout_ = new QVBoxLayout(central_widget_);
+    layout_->setSpacing(0);
+    layout_->setMargin(0);
 
-  // Add a "stretch" so that TaskViewItems don't try to expand all the way to the bottom
-  layout_->addStretch();
+    // Add a "stretch" so that TaskViewItems don't try to expand all the way to the bottom
+    layout_->addStretch();
 }
 
 void TaskView::AddTask(Task *t)
 {
-  // Create TaskViewItem (UI representation of a Task) and connect it
-  layout_->insertWidget(layout_->count()-1, new TaskViewItem(t));
+    // Create TaskViewItem (UI representation of a Task) and connect it
+    layout_->insertWidget(layout_->count()-1, new TaskViewItem(t));
 }
 
 OLIVE_NAMESPACE_EXIT

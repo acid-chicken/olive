@@ -31,12 +31,12 @@ OLIVE_NAMESPACE_ENTER
  * @brief Dockable wrapper around a ViewerWidget
  */
 class ViewerPanel : public ViewerPanelBase {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ViewerPanel(const QString& object_name, QWidget* parent);
+    ViewerPanel(const QString& object_name, QWidget* parent);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

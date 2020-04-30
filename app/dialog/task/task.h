@@ -28,25 +28,25 @@ OLIVE_NAMESPACE_ENTER
 
 class TaskDialog : public ProgressDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TaskDialog(Task *task, const QString &title, QWidget* parent = nullptr);
+    TaskDialog(Task *task, const QString &title, QWidget* parent = nullptr);
 
 protected:
-  virtual void showEvent(QShowEvent* e) override;
+    virtual void showEvent(QShowEvent* e) override;
 
-  virtual void closeEvent(QCloseEvent* e) override;
+    virtual void closeEvent(QCloseEvent* e) override;
 
 private:
-  Task* task_;
+    Task* task_;
 
-  QThread* thread_;
+    QThread* thread_;
 
-  bool task_failed_;
-  QString task_error_;
+    bool task_failed_;
+    QString task_error_;
 
 private slots:
-  void TaskFailed(const QString& s);
+    void TaskFailed(const QString& s);
 
 };
 

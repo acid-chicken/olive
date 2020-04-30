@@ -34,50 +34,50 @@ OLIVE_NAMESPACE_ENTER
 
 class SpeedDurationDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  SpeedDurationDialog(const rational& timebase, const QList<ClipBlock*>& clips, QWidget* parent = nullptr);
+    SpeedDurationDialog(const rational& timebase, const QList<ClipBlock*>& clips, QWidget* parent = nullptr);
 
 public slots:
-  virtual void accept() override;
+    virtual void accept() override;
 
 private:
-  double GetUnadjustedLengthTimestamp(ClipBlock* clip) const;
+    double GetUnadjustedLengthTimestamp(ClipBlock* clip) const;
 
-  int64_t GetAdjustedDuration(ClipBlock* clip, const double& new_speed) const;
+    int64_t GetAdjustedDuration(ClipBlock* clip, const double& new_speed) const;
 
-  double GetAdjustedSpeed(ClipBlock* clip, const int64_t& new_duration) const;
+    double GetAdjustedSpeed(ClipBlock* clip, const int64_t& new_duration) const;
 
-  QList<ClipBlock*> clips_;
+    QList<ClipBlock*> clips_;
 
-  FloatSlider* speed_slider_;
-  TimeSlider* duration_slider_;
+    FloatSlider* speed_slider_;
+    TimeSlider* duration_slider_;
 
-  rational timebase_;
+    rational timebase_;
 
-  QCheckBox* link_speed_and_duration_;
-  QCheckBox* reverse_speed_checkbox_;
-  QCheckBox* maintain_audio_pitch_checkbox_;
-  QCheckBox* ripple_clips_checkbox_;
+    QCheckBox* link_speed_and_duration_;
+    QCheckBox* reverse_speed_checkbox_;
+    QCheckBox* maintain_audio_pitch_checkbox_;
+    QCheckBox* ripple_clips_checkbox_;
 
 private slots:
-  void SpeedChanged();
+    void SpeedChanged();
 
-  void DurationChanged();
+    void DurationChanged();
 };
 
 class BlockReverseCommand : public UndoCommand {
 public:
-  BlockReverseCommand(Block* block, QUndoCommand* parent = nullptr);
+    BlockReverseCommand(Block* block, QUndoCommand* parent = nullptr);
 
-  virtual Project* GetRelevantProject() const override;
+    virtual Project* GetRelevantProject() const override;
 
 protected:
-  virtual void redo_internal() override;
-  virtual void undo_internal() override;
+    virtual void redo_internal() override;
+    virtual void undo_internal() override;
 
 private:
-  Block* block_;
+    Block* block_;
 
 };
 

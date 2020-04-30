@@ -23,35 +23,35 @@
 OLIVE_NAMESPACE_ENTER
 
 Task::Task() :
-  title_(tr("Task"))
+    title_(tr("Task"))
 {
 }
 
 void Task::Start()
 {
-  Action();
+    Action();
 
-  emit Finished();
+    emit Finished();
 }
 
 const QString &Task::GetTitle()
 {
-  return title_;
+    return title_;
 }
 
 void Task::Cancel()
 {
-  CancelableObject::Cancel();
+    CancelableObject::Cancel();
 }
 
 void Task::SetErrorText(const QString &s)
 {
-  error_ = s;
+    error_ = s;
 }
 
 void Task::SetTitle(const QString &s)
 {
-  title_ = s;
+    title_ = s;
 }
 
 OLIVE_NAMESPACE_EXIT

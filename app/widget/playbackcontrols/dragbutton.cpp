@@ -23,14 +23,14 @@
 OLIVE_NAMESPACE_ENTER
 
 DragButton::DragButton(QWidget *parent) :
-  QPushButton(parent)
+    QPushButton(parent)
 {
 }
 
 void DragButton::mousePressEvent(QMouseEvent *event) {
-  QPushButton::mousePressEvent(event);
+    QPushButton::mousePressEvent(event);
 
-  emit MousePressed();
+    emit MousePressed();
 }
 
 OLIVE_NAMESPACE_EXIT

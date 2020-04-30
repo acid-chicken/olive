@@ -27,35 +27,35 @@ OLIVE_NAMESPACE_ENTER
 
 class MatrixGenerator : public Node
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MatrixGenerator();
+    MatrixGenerator();
 
-  virtual Node* copy() const override;
+    virtual Node* copy() const override;
 
-  virtual QString Name() const override;
-  virtual QString ShortName() const override;
-  virtual QString id() const override;
-  virtual QString Category() const override;
-  virtual QString Description() const override;
+    virtual QString Name() const override;
+    virtual QString ShortName() const override;
+    virtual QString id() const override;
+    virtual QString Category() const override;
+    virtual QString Description() const override;
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  virtual NodeValueTable Value(NodeValueDatabase& value) const override;
+    virtual NodeValueTable Value(NodeValueDatabase& value) const override;
 
 private:
-  NodeInput* position_input_;
+    NodeInput* position_input_;
 
-  NodeInput* rotation_input_;
+    NodeInput* rotation_input_;
 
-  NodeInput* scale_input_;
+    NodeInput* scale_input_;
 
-  NodeInput* uniform_scale_input_;
+    NodeInput* uniform_scale_input_;
 
-  NodeInput* anchor_input_;
+    NodeInput* anchor_input_;
 
 private slots:
-  void UniformScaleChanged();
+    void UniformScaleChanged();
 
 };
 

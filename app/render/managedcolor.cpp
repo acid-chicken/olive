@@ -27,38 +27,38 @@ ManagedColor::ManagedColor()
 }
 
 ManagedColor::ManagedColor(const float &r, const float &g, const float &b, const float &a) :
-  Color(r, g, b, a)
+    Color(r, g, b, a)
 {
 }
 
 ManagedColor::ManagedColor(const char *data, const PixelFormat::Format &format) :
-  Color(data, format)
+    Color(data, format)
 {
 }
 
 ManagedColor::ManagedColor(const Color &c) :
-  Color(c)
+    Color(c)
 {
 }
 
 const QString &ManagedColor::color_input() const
 {
-  return color_input_;
+    return color_input_;
 }
 
 void ManagedColor::set_color_input(const QString &color_input)
 {
-  color_input_ = color_input;
+    color_input_ = color_input;
 }
 
 const ColorTransform &ManagedColor::color_output() const
 {
-  return color_transform_;
+    return color_transform_;
 }
 
 void ManagedColor::set_color_output(const ColorTransform &color_output)
 {
-  color_transform_ = color_output;
+    color_transform_ = color_output;
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -29,21 +29,21 @@ OLIVE_NAMESPACE_ENTER
 
 class AudioBackend : public AudioRenderBackend
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  AudioBackend(QObject* parent = nullptr);
+    AudioBackend(QObject* parent = nullptr);
 
-  virtual ~AudioBackend() override;
+    virtual ~AudioBackend() override;
 
 protected:
-  virtual bool InitInternal() override;
+    virtual bool InitInternal() override;
 
-  virtual void CloseInternal() override;
+    virtual void CloseInternal() override;
 
-  virtual void ConnectWorkerToThis(RenderWorker* worker) override;
+    virtual void ConnectWorkerToThis(RenderWorker* worker) override;
 
 private slots:
-  void ThreadCompletedCache(NodeDependency dep, NodeValueTable data, qint64 job_time);
+    void ThreadCompletedCache(NodeDependency dep, NodeValueTable data, qint64 job_time);
 
 };
 

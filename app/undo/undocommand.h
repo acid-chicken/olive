@@ -31,19 +31,19 @@ OLIVE_NAMESPACE_ENTER
 class UndoCommand : public QUndoCommand
 {
 public:
-  UndoCommand(QUndoCommand* parent = nullptr);
+    UndoCommand(QUndoCommand* parent = nullptr);
 
-  virtual void redo() override;
-  virtual void undo() override;
+    virtual void redo() override;
+    virtual void undo() override;
 
-  virtual Project* GetRelevantProject() const = 0;
+    virtual Project* GetRelevantProject() const = 0;
 
 protected:
-  virtual void redo_internal();
-  virtual void undo_internal();
+    virtual void redo_internal();
+    virtual void undo_internal();
 
 private:
-  bool modified_;
+    bool modified_;
 
 };
 

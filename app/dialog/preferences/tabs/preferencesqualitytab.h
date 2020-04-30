@@ -32,35 +32,35 @@ OLIVE_NAMESPACE_ENTER
 
 class PreferencesQualityGroup : public QGroupBox
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PreferencesQualityGroup(const QString& title, QWidget* parent = nullptr);
+    PreferencesQualityGroup(const QString& title, QWidget* parent = nullptr);
 
-  QComboBox* bit_depth_combobox();
+    QComboBox* bit_depth_combobox();
 
-  QComboBox* ocio_method();
+    QComboBox* ocio_method();
 
 private:
-  QComboBox* bit_depth_combobox_;
+    QComboBox* bit_depth_combobox_;
 
-  QComboBox* ocio_method_;
+    QComboBox* ocio_method_;
 
 };
 
 class PreferencesQualityTab : public PreferencesTab
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PreferencesQualityTab();
+    PreferencesQualityTab();
 
-  virtual void Accept() override;
+    virtual void Accept() override;
 
 private:
-  QStackedWidget* quality_stack_;
+    QStackedWidget* quality_stack_;
 
-  PreferencesQualityGroup* offline_group_;
+    PreferencesQualityGroup* offline_group_;
 
-  PreferencesQualityGroup* online_group_;
+    PreferencesQualityGroup* online_group_;
 
 };
 

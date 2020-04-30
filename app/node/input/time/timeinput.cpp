@@ -28,46 +28,46 @@ TimeInput::TimeInput()
 
 Node *TimeInput::copy() const
 {
-  return new TimeInput();
+    return new TimeInput();
 }
 
 QString TimeInput::Name() const
 {
-  return tr("Time");
+    return tr("Time");
 }
 
 QString TimeInput::id() const
 {
-  return QStringLiteral("org.olivevideoeditor.Olive.time");
+    return QStringLiteral("org.olivevideoeditor.Olive.time");
 }
 
 QString TimeInput::Category() const
 {
-  return tr("Input");
+    return tr("Input");
 }
 
 QString TimeInput::Description() const
 {
-  return tr("Generates the time (in seconds) at this frame");
+    return tr("Generates the time (in seconds) at this frame");
 }
 
 NodeValueTable TimeInput::Value(NodeValueDatabase &value) const
 {
-  NodeValueTable table = value.Merge();
+    NodeValueTable table = value.Merge();
 
-  table.Push(NodeParam::kFloat,
-             value[QStringLiteral("global")].Get(NodeParam::kFloat, QStringLiteral("time_in")),
-             QStringLiteral("time"));
+    table.Push(NodeParam::kFloat,
+               value[QStringLiteral("global")].Get(NodeParam::kFloat, QStringLiteral("time_in")),
+               QStringLiteral("time"));
 
-  return table;
+    return table;
 }
 
 void TimeInput::Hash(QCryptographicHash &hash, const rational &time) const
 {
-  Node::Hash(hash, time);
+    Node::Hash(hash, time);
 
-  // Make sure time is hashed
-  hash.addData(NodeParam::ValueToBytes(NodeParam::kRational, QVariant::fromValue(time)));
+    // Make sure time is hashed
+    hash.addData(NodeParam::ValueToBytes(NodeParam::kRational, QVariant::fromValue(time)));
 }
 
 OLIVE_NAMESPACE_EXIT

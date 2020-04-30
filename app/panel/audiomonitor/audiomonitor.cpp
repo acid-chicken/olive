@@ -23,18 +23,18 @@
 OLIVE_NAMESPACE_ENTER
 
 AudioMonitorPanel::AudioMonitorPanel(QWidget *parent) :
-  PanelWidget(QStringLiteral("AudioMonitor"), parent)
+    PanelWidget(QStringLiteral("AudioMonitor"), parent)
 {
-  audio_monitor_ = new AudioMonitor(this);
+    audio_monitor_ = new AudioMonitor(this);
 
-  setWidget(audio_monitor_);
+    setWidget(audio_monitor_);
 
-  Retranslate();
+    Retranslate();
 }
 
 void AudioMonitorPanel::Retranslate()
 {
-  SetTitle(tr("Audio Monitor"));
+    SetTitle(tr("Audio Monitor"));
 }
 
 OLIVE_NAMESPACE_EXIT

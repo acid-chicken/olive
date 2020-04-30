@@ -26,112 +26,112 @@ OLIVE_NAMESPACE_ENTER
 
 AudioOutputDeviceProxy::~AudioOutputDeviceProxy()
 {
-  if (file_.isOpen()) {
-    file_.close();
-  }
+    if (file_.isOpen()) {
+        file_.close();
+    }
 }
 
 void AudioOutputDeviceProxy::SetParameters(const AudioRenderingParams &params)
 {
-  params_ = params;
+    params_ = params;
 }
 
 void AudioOutputDeviceProxy::SetDevice(const QString &filename, qint64 offset, int playback_speed)
 {
-  if (file_.isOpen()) {
-    file_.close();
-  }
+    if (file_.isOpen()) {
+        file_.close();
+    }
 
-  file_.setFileName(filename);
+    file_.setFileName(filename);
 
-  if (!file_.open(QFile::ReadOnly)) {
-    qCritical() << "Failed to open" << filename << "for audio playback";
-    return;
-  }
+    if (!file_.open(QFile::ReadOnly)) {
+        qCritical() << "Failed to open" << filename << "for audio playback";
+        return;
+    }
 
-  file_.seek(offset);
+    file_.seek(offset);
 
-  playback_speed_ = playback_speed;
+    playback_speed_ = playback_speed;
 
-  if (qAbs(playback_speed_) != 1) {
-    tempo_processor_.Open(params_, qAbs(playback_speed_));
-  }
+    if (qAbs(playback_speed_) != 1) {
+        tempo_processor_.Open(params_, qAbs(playback_speed_));
+    }
 }
 
 void AudioOutputDeviceProxy::close()
 {
-  QIODevice::close();
+    QIODevice::close();
 
-  file_.close();
+    file_.close();
 
-  if (tempo_processor_.IsOpen()) {
-    tempo_processor_.Close();
-  }
+    if (tempo_processor_.IsOpen()) {
+        tempo_processor_.Close();
+    }
 }
 
 qint64 AudioOutputDeviceProxy::readData(char *data, qint64 maxlen)
 {
-  if (!file_.isOpen()) {
-    return 0;
-  }
-
-  qint64 read_count;
-
-  if (tempo_processor_.IsOpen()) {
-
-    while ((read_count = tempo_processor_.Pull(data, static_cast<int>(maxlen))) == 0) {
-      int dev_read = static_cast<int>(ReverseAwareRead(data, maxlen));
-
-      if (!dev_read) {
-        break;
-      }
-
-      tempo_processor_.Push(data, dev_read);
+    if (!file_.isOpen()) {
+        return 0;
     }
 
-  } else {
-    // If we aren't doing any tempo processing, simply passthrough the read signal
-    read_count = ReverseAwareRead(data, maxlen);
-  }
+    qint64 read_count;
 
-  return read_count;
+    if (tempo_processor_.IsOpen()) {
+
+        while ((read_count = tempo_processor_.Pull(data, static_cast<int>(maxlen))) == 0) {
+            int dev_read = static_cast<int>(ReverseAwareRead(data, maxlen));
+
+            if (!dev_read) {
+                break;
+            }
+
+            tempo_processor_.Push(data, dev_read);
+        }
+
+    } else {
+        // If we aren't doing any tempo processing, simply passthrough the read signal
+        read_count = ReverseAwareRead(data, maxlen);
+    }
+
+    return read_count;
 }
 
 qint64 AudioOutputDeviceProxy::writeData(const char *data, qint64 maxSize)
 {
-  Q_UNUSED(data)
-  Q_UNUSED(maxSize)
+    Q_UNUSED(data)
+    Q_UNUSED(maxSize)
 
-  return 0;
+    return 0;
 }
 
 qint64 AudioOutputDeviceProxy::ReverseAwareRead(char *data, qint64 maxlen)
 {
-  qint64 new_pos = -1;
+    qint64 new_pos = -1;
 
-  if (playback_speed_ < 0) {
-    // If we're reversing, we'll seek back by maxlen bytes before we read
-    new_pos = file_.pos() - maxlen;
+    if (playback_speed_ < 0) {
+        // If we're reversing, we'll seek back by maxlen bytes before we read
+        new_pos = file_.pos() - maxlen;
 
-    if (new_pos < 0) {
-      maxlen = file_.pos();
+        if (new_pos < 0) {
+            maxlen = file_.pos();
 
-      new_pos = 0;
+            new_pos = 0;
+        }
+
+        file_.seek(new_pos);
     }
 
-    file_.seek(new_pos);
-  }
+    qint64 read_count = file_.read(data, maxlen);
 
-  qint64 read_count = file_.read(data, maxlen);
+    if (playback_speed_ < 0) {
+        file_.seek(new_pos);
 
-  if (playback_speed_ < 0) {
-    file_.seek(new_pos);
+        // Reverse the samples here
+        AudioManager::ReverseBuffer(data, static_cast<int>(read_count), params_.samples_to_bytes(1));
+    }
 
-    // Reverse the samples here
-    AudioManager::ReverseBuffer(data, static_cast<int>(read_count), params_.samples_to_bytes(1));
-  }
-
-  return read_count;
+    return read_count;
 }
 
 OLIVE_NAMESPACE_EXIT

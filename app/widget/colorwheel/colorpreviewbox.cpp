@@ -25,45 +25,45 @@
 OLIVE_NAMESPACE_ENTER
 
 ColorPreviewBox::ColorPreviewBox(QWidget *parent) :
-  QWidget(parent),
-  to_ref_processor_(nullptr),
-  to_display_processor_(nullptr)
+    QWidget(parent),
+    to_ref_processor_(nullptr),
+    to_display_processor_(nullptr)
 {
 }
 
 void ColorPreviewBox::SetColorProcessor(ColorProcessorPtr to_ref, ColorProcessorPtr to_display)
 {
-  to_ref_processor_ = to_ref;
-  to_display_processor_ = to_display;
+    to_ref_processor_ = to_ref;
+    to_display_processor_ = to_display;
 
-  update();
+    update();
 }
 
 void ColorPreviewBox::SetColor(const Color &c)
 {
-  color_ = c;
-  update();
+    color_ = c;
+    update();
 }
 
 void ColorPreviewBox::paintEvent(QPaintEvent *e)
 {
-  QWidget::paintEvent(e);
+    QWidget::paintEvent(e);
 
-  QColor c;
+    QColor c;
 
-  // Color management
-  if (to_ref_processor_ && to_display_processor_) {
-    c = to_display_processor_->ConvertColor(to_ref_processor_->ConvertColor(color_)).toQColor();
-  } else {
-    c = color_.toQColor();
-  }
+    // Color management
+    if (to_ref_processor_ && to_display_processor_) {
+        c = to_display_processor_->ConvertColor(to_ref_processor_->ConvertColor(color_)).toQColor();
+    } else {
+        c = color_.toQColor();
+    }
 
-  QPainter p(this);
+    QPainter p(this);
 
-  p.setPen(Qt::black);
-  p.setBrush(c);
+    p.setPen(Qt::black);
+    p.setBrush(c);
 
-  p.drawRect(rect().adjusted(0, 0, -1, -1));
+    p.drawRect(rect().adjusted(0, 0, -1, -1));
 }
 
 OLIVE_NAMESPACE_EXIT

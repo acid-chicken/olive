@@ -34,22 +34,22 @@ OLIVE_NAMESPACE_ENTER
 
 class AVFrameWrapper {
 public:
-  AVFrameWrapper() {
-    frame_ = av_frame_alloc();
-  }
+    AVFrameWrapper() {
+        frame_ = av_frame_alloc();
+    }
 
-  virtual ~AVFrameWrapper() {
-    av_frame_free(&frame_);
-  }
+    virtual ~AVFrameWrapper() {
+        av_frame_free(&frame_);
+    }
 
-  DISABLE_COPY_MOVE(AVFrameWrapper)
+    DISABLE_COPY_MOVE(AVFrameWrapper)
 
-  inline AVFrame* frame() const {
-    return frame_;
-  }
+    inline AVFrame* frame() const {
+        return frame_;
+    }
 
 private:
-  AVFrame* frame_;
+    AVFrame* frame_;
 
 };
 

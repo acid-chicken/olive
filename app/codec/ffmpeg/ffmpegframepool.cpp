@@ -27,44 +27,44 @@ extern "C" {
 OLIVE_NAMESPACE_ENTER
 
 FFmpegFramePool::FFmpegFramePool(int element_count, int width, int height, AVPixelFormat format) :
-  MemoryPool(element_count),
-  width_(width),
-  height_(height),
-  format_(format)
+    MemoryPool(element_count),
+    width_(width),
+    height_(height),
+    format_(format)
 {
 }
 
 FFmpegFramePool::ElementPtr FFmpegFramePool::Get(AVFrame *copy)
 {
-  ElementPtr ele = MemoryPool::Get();
+    ElementPtr ele = MemoryPool::Get();
 
-  if (ele) {
-    av_image_copy_to_buffer(ele->data(),
-                            GetElementSize(),
-                            copy->data,
-                            copy->linesize,
-                            format_,
-                            width_,
-                            height_,
-                            1);
-  }
+    if (ele) {
+        av_image_copy_to_buffer(ele->data(),
+                                GetElementSize(),
+                                copy->data,
+                                copy->linesize,
+                                format_,
+                                width_,
+                                height_,
+                                1);
+    }
 
-  return ele;
+    return ele;
 }
 
 size_t FFmpegFramePool::GetElementSize()
 {
-  int buf_sz = av_image_get_buffer_size(static_cast<AVPixelFormat>(format_),
-                                        width_,
-                                        height_,
-                                        1);
+    int buf_sz = av_image_get_buffer_size(static_cast<AVPixelFormat>(format_),
+                                          width_,
+                                          height_,
+                                          1);
 
-  if (buf_sz < 0) {
-    qDebug() << "Failed to find buffer size:" << buf_sz;
-    return 0;
-  }
+    if (buf_sz < 0) {
+        qDebug() << "Failed to find buffer size:" << buf_sz;
+        return 0;
+    }
 
-  return buf_sz;
+    return buf_sz;
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -32,35 +32,35 @@ OLIVE_NAMESPACE_ENTER
 class WaveOutput
 {
 public:
-  WaveOutput(const QString& f,
-             const AudioRenderingParams& params);
+    WaveOutput(const QString& f,
+               const AudioRenderingParams& params);
 
-  ~WaveOutput();
+    ~WaveOutput();
 
-  DISABLE_COPY_MOVE(WaveOutput)
+    DISABLE_COPY_MOVE(WaveOutput)
 
-  bool open();
+    bool open();
 
-  void write(const QByteArray& bytes);
-  void write(const char* bytes, int length);
+    void write(const QByteArray& bytes);
+    void write(const char* bytes, int length);
 
-  void close();
+    void close();
 
-  const int& data_length() const;
+    const int& data_length() const;
 
-  const AudioRenderingParams& params() const;
+    const AudioRenderingParams& params() const;
 
 private:
-  template<typename T>
-  void write_int(QFile* file, T integer);
+    template<typename T>
+    void write_int(QFile* file, T integer);
 
-  void switch_endianness(QByteArray &array);
+    void switch_endianness(QByteArray &array);
 
-  QFile file_;
+    QFile file_;
 
-  AudioRenderingParams params_;
+    AudioRenderingParams params_;
 
-  int data_length_;
+    int data_length_;
 
 };
 

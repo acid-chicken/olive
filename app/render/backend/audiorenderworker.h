@@ -27,28 +27,28 @@ OLIVE_NAMESPACE_ENTER
 
 class AudioRenderWorker : public RenderWorker
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  AudioRenderWorker(QHash<Node*, Node*>* copy_map, QObject* parent = nullptr);
+    AudioRenderWorker(QHash<Node*, Node*>* copy_map, QObject* parent = nullptr);
 
-  void SetParameters(const AudioRenderingParams& audio_params);
+    void SetParameters(const AudioRenderingParams& audio_params);
 
 signals:
-  void ConformUnavailable(StreamPtr stream, TimeRange range, rational stream_time, AudioRenderingParams params);
+    void ConformUnavailable(StreamPtr stream, TimeRange range, rational stream_time, AudioRenderingParams params);
 
 protected:
-  virtual bool InitInternal() override;
+    virtual bool InitInternal() override;
 
-  virtual void CloseInternal() override;
+    virtual void CloseInternal() override;
 
-  virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange& range) override;
+    virtual NodeValueTable RenderBlock(const TrackOutput *track, const TimeRange& range) override;
 
-  const AudioRenderingParams& audio_params() const;
+    const AudioRenderingParams& audio_params() const;
 
 private:
-  AudioRenderingParams audio_params_;
+    AudioRenderingParams audio_params_;
 
-  QHash<Node*, Node*>* copy_map_;
+    QHash<Node*, Node*>* copy_map_;
 
 };
 

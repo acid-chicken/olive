@@ -28,93 +28,93 @@ OLIVE_NAMESPACE_ENTER
 
 class TimeBasedPanel : public PanelWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  TimeBasedPanel(const QString& object_name, QWidget *parent = nullptr);
+    TimeBasedPanel(const QString& object_name, QWidget *parent = nullptr);
 
-  void ConnectViewerNode(ViewerOutput* node);
+    void ConnectViewerNode(ViewerOutput* node);
 
-  void DisconnectViewerNode();
+    void DisconnectViewerNode();
 
-  rational GetTime();
+    rational GetTime();
 
-  ViewerOutput* GetConnectedViewer() const;
+    ViewerOutput* GetConnectedViewer() const;
 
-  TimeRuler* ruler() const;
+    TimeRuler* ruler() const;
 
-  virtual void ZoomIn() override;
+    virtual void ZoomIn() override;
 
-  virtual void ZoomOut() override;
+    virtual void ZoomOut() override;
 
-  virtual void GoToStart() override;
+    virtual void GoToStart() override;
 
-  virtual void PrevFrame() override;
+    virtual void PrevFrame() override;
 
-  virtual void NextFrame() override;
+    virtual void NextFrame() override;
 
-  virtual void GoToEnd() override;
+    virtual void GoToEnd() override;
 
-  virtual void GoToPrevCut() override;
+    virtual void GoToPrevCut() override;
 
-  virtual void GoToNextCut() override;
+    virtual void GoToNextCut() override;
 
-  virtual void PlayPause() override;
+    virtual void PlayPause() override;
 
-  virtual void PlayInToOut() override;
+    virtual void PlayInToOut() override;
 
-  virtual void ShuttleLeft() override;
+    virtual void ShuttleLeft() override;
 
-  virtual void ShuttleStop() override;
+    virtual void ShuttleStop() override;
 
-  virtual void ShuttleRight() override;
+    virtual void ShuttleRight() override;
 
-  virtual void SetIn() override;
+    virtual void SetIn() override;
 
-  virtual void SetOut() override;
+    virtual void SetOut() override;
 
-  virtual void ResetIn() override;
+    virtual void ResetIn() override;
 
-  virtual void ResetOut() override;
+    virtual void ResetOut() override;
 
-  virtual void ClearInOut() override;
+    virtual void ClearInOut() override;
 
-  virtual void SetMarker() override;
+    virtual void SetMarker() override;
 
-  virtual void ToggleShowAll() override;
+    virtual void ToggleShowAll() override;
 
-  virtual void GoToIn() override;
+    virtual void GoToIn() override;
 
-  virtual void GoToOut() override;
+    virtual void GoToOut() override;
 
 public slots:
-  void SetTimebase(const rational& timebase);
+    void SetTimebase(const rational& timebase);
 
-  virtual void SetTimestamp(const int64_t& timestamp);
+    virtual void SetTimestamp(const int64_t& timestamp);
 
 signals:
-  void TimeChanged(const int64_t& time);
+    void TimeChanged(const int64_t& time);
 
-  void TimebaseChanged(const rational& timebase);
+    void TimebaseChanged(const rational& timebase);
 
-  void PlayPauseRequested();
+    void PlayPauseRequested();
 
-  void PlayInToOutRequested();
+    void PlayInToOutRequested();
 
-  void ShuttleLeftRequested();
+    void ShuttleLeftRequested();
 
-  void ShuttleStopRequested();
+    void ShuttleStopRequested();
 
-  void ShuttleRightRequested();
+    void ShuttleRightRequested();
 
 protected:
-  TimeBasedWidget* GetTimeBasedWidget() const;
+    TimeBasedWidget* GetTimeBasedWidget() const;
 
-  void SetTimeBasedWidget(TimeBasedWidget* widget);
+    void SetTimeBasedWidget(TimeBasedWidget* widget);
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 private:
-  TimeBasedWidget* widget_;
+    TimeBasedWidget* widget_;
 
 };
 

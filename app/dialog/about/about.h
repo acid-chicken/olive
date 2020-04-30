@@ -35,18 +35,18 @@ OLIVE_NAMESPACE_ENTER
  */
 class AboutDialog : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  /**
-   * @brief AboutDialog Constructor
-   *
-   * Creates About dialog.
-   *
-   * @param parent
-   *
-   * QWidget parent object. Usually this will be MainWindow.
-   */
-  explicit AboutDialog(QWidget *parent = nullptr);
+    /**
+     * @brief AboutDialog Constructor
+     *
+     * Creates About dialog.
+     *
+     * @param parent
+     *
+     * QWidget parent object. Usually this will be MainWindow.
+     */
+    explicit AboutDialog(QWidget *parent = nullptr);
 };
 
 OLIVE_NAMESPACE_EXIT

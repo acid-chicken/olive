@@ -24,11 +24,11 @@ OLIVE_NAMESPACE_ENTER
 
 void UndoStack::pushIfHasChildren(QUndoCommand *command)
 {
-  if (command->childCount() > 0) {
-    push(command);
-  } else {
-    delete command;
-  }
+    if (command->childCount() > 0) {
+        push(command);
+    } else {
+        delete command;
+    }
 }
 
 OLIVE_NAMESPACE_EXIT

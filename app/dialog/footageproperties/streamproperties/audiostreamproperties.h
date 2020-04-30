@@ -29,12 +29,12 @@ OLIVE_NAMESPACE_ENTER
 class AudioStreamProperties : public StreamProperties
 {
 public:
-  AudioStreamProperties(AudioStreamPtr stream);
+    AudioStreamProperties(AudioStreamPtr stream);
 
-  virtual void Accept(QUndoCommand* parent) override;
+    virtual void Accept(QUndoCommand* parent) override;
 
 private:
-  AudioStreamPtr stream_;
+    AudioStreamPtr stream_;
 };
 
 OLIVE_NAMESPACE_EXIT

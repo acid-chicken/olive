@@ -30,35 +30,35 @@ OLIVE_NAMESPACE_ENTER
  */
 class ClipBlock : public Block
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ClipBlock();
+    ClipBlock();
 
-  virtual Node* copy() const override;
+    virtual Node* copy() const override;
 
-  virtual Type type() const override;
+    virtual Type type() const override;
 
-  virtual QString Name() const override;
-  virtual QString id() const override;
-  virtual QString Description() const override;
+    virtual QString Name() const override;
+    virtual QString id() const override;
+    virtual QString Description() const override;
 
-  NodeInput* texture_input() const;
+    NodeInput* texture_input() const;
 
-  virtual void InvalidateCache(const TimeRange &range, NodeInput *from, NodeInput* source) override;
+    virtual void InvalidateCache(const TimeRange &range, NodeInput *from, NodeInput* source) override;
 
-  virtual TimeRange InputTimeAdjustment(NodeInput* input, const TimeRange& input_time) const override;
+    virtual TimeRange InputTimeAdjustment(NodeInput* input, const TimeRange& input_time) const override;
 
-  virtual TimeRange OutputTimeAdjustment(NodeInput* input, const TimeRange& input_time) const override;
+    virtual TimeRange OutputTimeAdjustment(NodeInput* input, const TimeRange& input_time) const override;
 
-  virtual NodeValueTable Value(NodeValueDatabase& value) const override;
+    virtual NodeValueTable Value(NodeValueDatabase& value) const override;
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 signals:
-  void PreviewUpdated();
+    void PreviewUpdated();
 
 private:
-  NodeInput* texture_input_;
+    NodeInput* texture_input_;
 
 };
 

@@ -39,52 +39,52 @@ OLIVE_NAMESPACE_ENTER
  */
 class ProjectToolbar : public QWidget
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ProjectToolbar(QWidget* parent);
+    ProjectToolbar(QWidget* parent);
 
-  enum ViewType {
-    TreeView,
-    ListView,
-    IconView
-  };
+    enum ViewType {
+        TreeView,
+        ListView,
+        IconView
+    };
 
 public slots:
-  void SetView(ViewType type);
+    void SetView(ViewType type);
 
 protected:
-  void changeEvent(QEvent *) override;
+    void changeEvent(QEvent *) override;
 
 signals:
-  void NewClicked();
-  void OpenClicked();
-  void SaveClicked();
+    void NewClicked();
+    void OpenClicked();
+    void SaveClicked();
 
-  void UndoClicked();
-  void RedoClicked();
+    void UndoClicked();
+    void RedoClicked();
 
-  void SearchChanged(const QString&);
+    void SearchChanged(const QString&);
 
-  void ViewChanged(ViewType type);
+    void ViewChanged(ViewType type);
 
 private:
-  void Retranslate();
-  void UpdateIcons();
+    void Retranslate();
+    void UpdateIcons();
 
-  QPushButton* new_button_;
-  QPushButton* open_button_;
-  QPushButton* save_button_;
-  QPushButton* undo_button_;
-  QPushButton* redo_button_;
+    QPushButton* new_button_;
+    QPushButton* open_button_;
+    QPushButton* save_button_;
+    QPushButton* undo_button_;
+    QPushButton* redo_button_;
 
-  QLineEdit* search_field_;
+    QLineEdit* search_field_;
 
-  QPushButton* tree_button_;
-  QPushButton* list_button_;
-  QPushButton* icon_button_;
+    QPushButton* tree_button_;
+    QPushButton* list_button_;
+    QPushButton* icon_button_;
 
 private slots:
-  void ViewButtonClicked();
+    void ViewButtonClicked();
 };
 
 OLIVE_NAMESPACE_EXIT

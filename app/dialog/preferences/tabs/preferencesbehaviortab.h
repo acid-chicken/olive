@@ -29,22 +29,22 @@ OLIVE_NAMESPACE_ENTER
 
 class PreferencesBehaviorTab : public PreferencesTab
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PreferencesBehaviorTab();
+    PreferencesBehaviorTab();
 
-  virtual void Accept() override;
+    virtual void Accept() override;
 
 private:
-  QTreeWidgetItem *AddParent(const QString& text, const QString &tooltip, QTreeWidgetItem *parent = nullptr);
-  QTreeWidgetItem *AddParent(const QString& text, QTreeWidgetItem *parent = nullptr);
+    QTreeWidgetItem *AddParent(const QString& text, const QString &tooltip, QTreeWidgetItem *parent = nullptr);
+    QTreeWidgetItem *AddParent(const QString& text, QTreeWidgetItem *parent = nullptr);
 
-  QTreeWidgetItem *AddItem(const QString& text, const QString& config_key, const QString &tooltip, QTreeWidgetItem *parent );
-  QTreeWidgetItem *AddItem(const QString& text, const QString& config_key, QTreeWidgetItem *parent);
+    QTreeWidgetItem *AddItem(const QString& text, const QString& config_key, const QString &tooltip, QTreeWidgetItem *parent );
+    QTreeWidgetItem *AddItem(const QString& text, const QString& config_key, QTreeWidgetItem *parent);
 
-  QMap<QTreeWidgetItem*, QString> config_map_;
+    QMap<QTreeWidgetItem*, QString> config_map_;
 
-  QTreeWidget* behavior_tree_;
+    QTreeWidget* behavior_tree_;
 
 };
 

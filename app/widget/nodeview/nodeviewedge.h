@@ -37,71 +37,71 @@ OLIVE_NAMESPACE_ENTER
 class NodeViewEdge : public QGraphicsPathItem
 {
 public:
-  NodeViewEdge(QGraphicsItem* parent = nullptr);
+    NodeViewEdge(QGraphicsItem* parent = nullptr);
 
-  /**
-   * @brief Set the edge that this item corresponds to
-   *
-   * This can be changed at any time (but under most circumstances won't be). Calling this will automatically call
-   * Adjust() to move this item into the correct position.
-   */
-  void SetEdge(NodeEdgePtr edge);
-  NodeEdgePtr edge();
+    /**
+     * @brief Set the edge that this item corresponds to
+     *
+     * This can be changed at any time (but under most circumstances won't be). Calling this will automatically call
+     * Adjust() to move this item into the correct position.
+     */
+    void SetEdge(NodeEdgePtr edge);
+    NodeEdgePtr edge();
 
-  /**
-   * @brief Moves/updates this line to visually connect between the two corresponding NodeViewItems
-   *
-   * Using the attached edge (see SetEdge()), this function retrieves the NodeViewItems representing the two nodes
-   * that this edge connects. It uses their positions to determine where the line should visually connect and sets
-   * it accordingly.
-   *
-   * This should be set any time the NodeEdge changes (see SetEdge()), and any time the nodes move in the NodeGraph
-   * (see NodeView::ItemsChanged()). This will keep the nodes visually connected at all times.
-   */
-  void Adjust();
+    /**
+     * @brief Moves/updates this line to visually connect between the two corresponding NodeViewItems
+     *
+     * Using the attached edge (see SetEdge()), this function retrieves the NodeViewItems representing the two nodes
+     * that this edge connects. It uses their positions to determine where the line should visually connect and sets
+     * it accordingly.
+     *
+     * This should be set any time the NodeEdge changes (see SetEdge()), and any time the nodes move in the NodeGraph
+     * (see NodeView::ItemsChanged()). This will keep the nodes visually connected at all times.
+     */
+    void Adjust();
 
-  /**
-   * @brief Set the connected state of this line
-   *
-   * When the edge is not connected, it visually depicts this by coloring the line grey. When an edge is connected or
-   * a potential connection is valid, the line is colored white. This function sets whether the line should be grey
-   * (false) or white (true).
-   *
-   * Using SetEdge() automatically sets this to true. Under most circumstances this should be left alone, and only
-   * be set when an edge is being created/dragged.
-   */
-  void SetConnected(bool c);
+    /**
+     * @brief Set the connected state of this line
+     *
+     * When the edge is not connected, it visually depicts this by coloring the line grey. When an edge is connected or
+     * a potential connection is valid, the line is colored white. This function sets whether the line should be grey
+     * (false) or white (true).
+     *
+     * Using SetEdge() automatically sets this to true. Under most circumstances this should be left alone, and only
+     * be set when an edge is being created/dragged.
+     */
+    void SetConnected(bool c);
 
-  /**
-   * @brief Set highlighted state
-   *
-   * Changes color of edge.
-   */
-  void SetHighlighted(bool e);
+    /**
+     * @brief Set highlighted state
+     *
+     * Changes color of edge.
+     */
+    void SetHighlighted(bool e);
 
-  /**
-   * @brief Set points to create curve from
-   */
-  void SetPoints(const QPointF& start, const QPointF& end, bool input_is_expanded);
+    /**
+     * @brief Set points to create curve from
+     */
+    void SetPoints(const QPointF& start, const QPointF& end, bool input_is_expanded);
 
-  /**
-   * @brief Sets the direction nodes are flowing
-   */
-  void SetFlowDirection(NodeViewCommon::FlowDirection dir);
+    /**
+     * @brief Sets the direction nodes are flowing
+     */
+    void SetFlowDirection(NodeViewCommon::FlowDirection dir);
 
 protected:
-  virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
 
 private:
-  NodeEdgePtr edge_;
+    NodeEdgePtr edge_;
 
-  int edge_width_;
+    int edge_width_;
 
-  bool connected_;
+    bool connected_;
 
-  bool highlighted_;
+    bool highlighted_;
 
-  NodeViewCommon::FlowDirection flow_dir_;
+    NodeViewCommon::FlowDirection flow_dir_;
 
 };
 

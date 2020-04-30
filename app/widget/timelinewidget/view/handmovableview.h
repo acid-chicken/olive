@@ -29,28 +29,30 @@ OLIVE_NAMESPACE_ENTER
 
 class HandMovableView : public QGraphicsView
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  HandMovableView(QWidget* parent = nullptr);
+    HandMovableView(QWidget* parent = nullptr);
 
 protected:
-  virtual void ToolChangedEvent(Tool::Item tool){Q_UNUSED(tool)}
+    virtual void ToolChangedEvent(Tool::Item tool) {
+        Q_UNUSED(tool)
+    }
 
-  bool HandPress(QMouseEvent* event);
-  bool HandMove(QMouseEvent* event);
-  bool HandRelease(QMouseEvent* event);
+    bool HandPress(QMouseEvent* event);
+    bool HandMove(QMouseEvent* event);
+    bool HandRelease(QMouseEvent* event);
 
-  void SetDefaultDragMode(DragMode mode);
-  const DragMode& GetDefaultDragMode() const;
+    void SetDefaultDragMode(DragMode mode);
+    const DragMode& GetDefaultDragMode() const;
 
 private:
-  bool dragging_hand_;
-  DragMode pre_hand_drag_mode_;
+    bool dragging_hand_;
+    DragMode pre_hand_drag_mode_;
 
-  DragMode default_drag_mode_;
+    DragMode default_drag_mode_;
 
 private slots:
-  void ApplicationToolChanged(Tool::Item tool);
+    void ApplicationToolChanged(Tool::Item tool);
 
 };
 

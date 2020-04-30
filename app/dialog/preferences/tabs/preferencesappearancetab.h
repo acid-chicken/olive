@@ -31,29 +31,29 @@ OLIVE_NAMESPACE_ENTER
 
 class PreferencesAppearanceTab : public PreferencesTab
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  PreferencesAppearanceTab();
+    PreferencesAppearanceTab();
 
-  virtual void Accept() override;
+    virtual void Accept() override;
 
 private:
-  /**
-   * @brief Show a file dialog to browse for an external CSS file to load for styling the application.
-   */
-  void BrowseForCSS();
+    /**
+     * @brief Show a file dialog to browse for an external CSS file to load for styling the application.
+     */
+    void BrowseForCSS();
 
-  /**
-   * @brief UI widget for selecting the current UI style
-   */
-  QComboBox* style_;
+    /**
+     * @brief UI widget for selecting the current UI style
+     */
+    QComboBox* style_;
 
-  /**
-   * @brief List of internal styles
-   */
-  QList<StyleDescriptor> style_list_;
+    /**
+     * @brief List of internal styles
+     */
+    QList<StyleDescriptor> style_list_;
 
-  QString custom_style_path_;
+    QString custom_style_path_;
 };
 
 OLIVE_NAMESPACE_EXIT

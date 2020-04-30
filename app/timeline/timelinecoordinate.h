@@ -29,20 +29,20 @@ OLIVE_NAMESPACE_ENTER
 class TimelineCoordinate
 {
 public:
-  TimelineCoordinate();
-  TimelineCoordinate(const rational& frame, const TrackReference& track);
-  TimelineCoordinate(const rational& frame, const Timeline::TrackType& track_type, const int& track_index);
+    TimelineCoordinate();
+    TimelineCoordinate(const rational& frame, const TrackReference& track);
+    TimelineCoordinate(const rational& frame, const Timeline::TrackType& track_type, const int& track_index);
 
-  const rational& GetFrame() const;
-  const TrackReference& GetTrack() const;
+    const rational& GetFrame() const;
+    const TrackReference& GetTrack() const;
 
-  void SetFrame(const rational& frame);
-  void SetTrack(const TrackReference& track);
+    void SetFrame(const rational& frame);
+    void SetTrack(const TrackReference& track);
 
 private:
-  rational frame_;
+    rational frame_;
 
-  TrackReference track_;
+    TrackReference track_;
 
 };
 

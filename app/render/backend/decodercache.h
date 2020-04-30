@@ -30,12 +30,14 @@ OLIVE_NAMESPACE_ENTER
 class DecoderCache : public RenderCache<Stream*, DecoderPtr>
 {
 public:
-  DecoderCache() = default;
+    DecoderCache() = default;
 
-  QMutex* lock() {return &lock_;}
+    QMutex* lock() {
+        return &lock_;
+    }
 
 private:
-  QMutex lock_;
+    QMutex lock_;
 
 };
 

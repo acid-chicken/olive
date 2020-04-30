@@ -28,35 +28,35 @@ OLIVE_NAMESPACE_ENTER
 class TrigonometryNode : public Node
 {
 public:
-  TrigonometryNode();
+    TrigonometryNode();
 
-  virtual Node* copy() const override;
+    virtual Node* copy() const override;
 
-  virtual QString Name() const override;
-  virtual QString id() const override;
-  virtual QString Category() const override;
-  virtual QString Description() const override;
+    virtual QString Name() const override;
+    virtual QString id() const override;
+    virtual QString Category() const override;
+    virtual QString Description() const override;
 
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
-  virtual NodeValueTable Value(NodeValueDatabase &value) const override;
+    virtual NodeValueTable Value(NodeValueDatabase &value) const override;
 
 private:
-  enum Operation {
-    kOpSine,
-    kOpCosine,
-    kOpTangent,
-    kOpArcSine,
-    kOpArcCosine,
-    kOpArcTangent,
-    kOpHypSine,
-    kOpHypCosine,
-    kOpHypTangent
-  };
+    enum Operation {
+        kOpSine,
+        kOpCosine,
+        kOpTangent,
+        kOpArcSine,
+        kOpArcCosine,
+        kOpArcTangent,
+        kOpHypSine,
+        kOpHypCosine,
+        kOpHypTangent
+    };
 
-  NodeInput* method_in_;
+    NodeInput* method_in_;
 
-  NodeInput* x_in_;
+    NodeInput* x_in_;
 
 };
 

@@ -23,7 +23,7 @@
 OLIVE_NAMESPACE_ENTER
 
 AudioStreamProperties::AudioStreamProperties(AudioStreamPtr stream) :
-  stream_(stream)
+    stream_(stream)
 {
 }
 

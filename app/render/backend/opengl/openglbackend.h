@@ -32,21 +32,21 @@ OLIVE_NAMESPACE_ENTER
 
 class OpenGLBackend : public VideoRenderBackend
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  OpenGLBackend(QObject* parent = nullptr);
+    OpenGLBackend(QObject* parent = nullptr);
 
-  virtual ~OpenGLBackend() override;
+    virtual ~OpenGLBackend() override;
 
 protected:
-  virtual bool InitInternal() override;
+    virtual bool InitInternal() override;
 
-  virtual void CloseInternal() override;
+    virtual void CloseInternal() override;
 
-  virtual void ParamsChangedEvent() override;
+    virtual void ParamsChangedEvent() override;
 
 private:
-  OpenGLProxy* proxy_;
+    OpenGLProxy* proxy_;
 
 };
 
