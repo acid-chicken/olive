@@ -25,7 +25,7 @@ void main(void) {
 
     if (!blend_in_enabled) {
         fragColor = base_col;
-        return; 
+        return;
     }
 
     base_col *= 1.0 - blend_col.a;

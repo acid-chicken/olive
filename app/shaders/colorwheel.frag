@@ -22,32 +22,32 @@ vec3 hsv_to_rgb(float H, float S, float V) {
     if(H >= 0.0 && H < 60.0) {
         Rs = C;
         Gs = X;
-        Bs = 0.0; 
+        Bs = 0.0;
     }
-    else if(H >= 60.0 && H < 120.0) {   
+    else if(H >= 60.0 && H < 120.0) {
         Rs = X;
         Gs = C;
-        Bs = 0.0; 
+        Bs = 0.0;
     }
     else if(H >= 120.0 && H < 180.0) {
         Rs = 0.0;
         Gs = C;
-        Bs = X; 
+        Bs = X;
     }
     else if(H >= 180.0 && H < 240.0) {
         Rs = 0.0;
         Gs = X;
-        Bs = C; 
+        Bs = C;
     }
     else if(H >= 240.0 && H < 300.0) {
         Rs = X;
         Gs = 0.0;
-        Bs = C; 
+        Bs = C;
     }
     else {
         Rs = C;
         Gs = 0.0;
-        Bs = X; 
+        Bs = X;
     }
 
     return vec3(Rs + m, Gs + m, Bs + m);
@@ -69,7 +69,7 @@ void main(void) {
         } else {
             flipped_texcoord.y *= ove_resolution.y / ove_resolution.x;
         }
-        
+
         flipped_texcoord += vec2(0.5, 0.5);
     }
 
