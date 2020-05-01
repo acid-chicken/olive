@@ -28,25 +28,25 @@ OLIVE_NAMESPACE_ENTER
 
 class CurvePanel : public TimeBasedPanel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  CurvePanel(QWidget* parent);
+    CurvePanel(QWidget* parent);
 
-  NodeInput* GetInput() const;
+    NodeInput* GetInput() const;
 
-  virtual void DeleteSelected() override;
+    virtual void DeleteSelected() override;
 
 public slots:
-  void SetInput(NodeInput* input);
+    void SetInput(NodeInput* input);
 
-  void SetTimeTarget(Node* target);
+    void SetTimeTarget(Node* target);
 
-  virtual void IncreaseTrackHeight() override;
+    virtual void IncreaseTrackHeight() override;
 
-  virtual void DecreaseTrackHeight() override;
+    virtual void DecreaseTrackHeight() override;
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 };
 

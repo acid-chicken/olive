@@ -29,36 +29,36 @@ OLIVE_NAMESPACE_ENTER
 
 class ParamPanel : public TimeBasedPanel
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  ParamPanel(QWidget* parent);
+    ParamPanel(QWidget* parent);
 
 public slots:
-  void SetNodes(QList<Node*> nodes);
+    void SetNodes(QList<Node*> nodes);
 
-  virtual void SetTimestamp(const int64_t& timestamp) override;
+    virtual void SetTimestamp(const int64_t& timestamp) override;
 
-  virtual void DeleteSelected() override;
+    virtual void DeleteSelected() override;
 
 signals:
-  void TimeTargetChanged(Node* node);
+    void TimeTargetChanged(Node* node);
 
-  void RequestSelectNode(const QList<Node*>& target);
+    void RequestSelectNode(const QList<Node*>& target);
 
 protected:
-  virtual void Retranslate() override;
+    virtual void Retranslate() override;
 
 private slots:
-  void CreateCurvePanel(NodeInput* input);
+    void CreateCurvePanel(NodeInput* input);
 
-  void OpeningNode(Node* n);
+    void OpeningNode(Node* n);
 
-  void ClosingNode(Node* n);
+    void ClosingNode(Node* n);
 
-  void ClosingCurvePanel();
+    void ClosingCurvePanel();
 
 private:
-  QHash<NodeInput*, CurvePanel*> open_curve_panels_;
+    QHash<NodeInput*, CurvePanel*> open_curve_panels_;
 
 };
 
