@@ -22,62 +22,49 @@
 
 OLIVE_NAMESPACE_ENTER
 
-CurvePanel::CurvePanel(QWidget *parent) :
-    TimeBasedPanel(QStringLiteral("CurvePanel"), parent)
-{
-    // Create main widget and set it
-    SetTimeBasedWidget(new CurveWidget());
+CurvePanel::CurvePanel(QWidget *parent) : TimeBasedPanel(QStringLiteral("CurvePanel"), parent) {
+  // Create main widget and set it
+  SetTimeBasedWidget(new CurveWidget());
 
-    // Set strings
-    Retranslate();
+  // Set strings
+  Retranslate();
 }
 
-NodeInput *CurvePanel::GetInput() const
-{
-    return static_cast<CurveWidget*>(GetTimeBasedWidget())->GetInput();
+NodeInput *CurvePanel::GetInput() const { return static_cast<CurveWidget *>(GetTimeBasedWidget())->GetInput(); }
+
+void CurvePanel::DeleteSelected() { static_cast<CurveWidget *>(GetTimeBasedWidget())->DeleteSelected(); }
+
+void CurvePanel::SetInput(NodeInput *input) {
+  static_cast<CurveWidget *>(GetTimeBasedWidget())->SetInput(input);
+
+  Retranslate();
 }
 
-void CurvePanel::DeleteSelected()
-{
-    static_cast<CurveWidget*>(GetTimeBasedWidget())->DeleteSelected();
+void CurvePanel::SetTimeTarget(Node *target) {
+  static_cast<CurveWidget *>(GetTimeBasedWidget())->SetTimeTarget(target);
 }
 
-void CurvePanel::SetInput(NodeInput *input)
-{
-    static_cast<CurveWidget*>(GetTimeBasedWidget())->SetInput(input);
-
-    Retranslate();
+void CurvePanel::IncreaseTrackHeight() {
+  CurveWidget *c = static_cast<CurveWidget *>(GetTimeBasedWidget());
+  c->SetVerticalScale(c->GetVerticalScale() * 2);
 }
 
-void CurvePanel::SetTimeTarget(Node *target)
-{
-    static_cast<CurveWidget*>(GetTimeBasedWidget())->SetTimeTarget(target);
+void CurvePanel::DecreaseTrackHeight() {
+  CurveWidget *c = static_cast<CurveWidget *>(GetTimeBasedWidget());
+  c->SetVerticalScale(c->GetVerticalScale() * 0.5);
 }
 
-void CurvePanel::IncreaseTrackHeight()
-{
-    CurveWidget* c = static_cast<CurveWidget*>(GetTimeBasedWidget());
-    c->SetVerticalScale(c->GetVerticalScale() * 2);
-}
+void CurvePanel::Retranslate() {
+  TimeBasedPanel::Retranslate();
 
-void CurvePanel::DecreaseTrackHeight()
-{
-    CurveWidget* c = static_cast<CurveWidget*>(GetTimeBasedWidget());
-    c->SetVerticalScale(c->GetVerticalScale() * 0.5);
-}
+  SetTitle(tr("Curve Editor"));
 
-void CurvePanel::Retranslate()
-{
-    TimeBasedPanel::Retranslate();
-
-    SetTitle(tr("Curve Editor"));
-
-    NodeInput* connected_input = static_cast<CurveWidget*>(GetTimeBasedWidget())->GetInput();
-    if (connected_input) {
-        SetSubtitle(connected_input->name());
-    } else {
-        SetSubtitle(QString());
-    }
+  NodeInput *connected_input = static_cast<CurveWidget *>(GetTimeBasedWidget())->GetInput();
+  if (connected_input) {
+    SetSubtitle(connected_input->name());
+  } else {
+    SetSubtitle(QString());
+  }
 }
 
 OLIVE_NAMESPACE_EXIT
