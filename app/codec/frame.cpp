@@ -26,137 +26,75 @@
 
 OLIVE_NAMESPACE_ENTER
 
-Frame::Frame() :
-    timestamp_(0),
-    sample_aspect_ratio_(1)
-{
+Frame::Frame() : timestamp_(0), sample_aspect_ratio_(1) {}
+
+FramePtr Frame::Create() { return std::make_shared<Frame>(); }
+
+const VideoRenderingParams &Frame::video_params() const { return params_; }
+
+void Frame::set_video_params(const VideoRenderingParams &params) {
+  params_ = params;
+
+  // Align linesize to 16
+  linesize_ = qCeil(static_cast<double>(width()) / 16.0) * 16;
 }
 
-FramePtr Frame::Create()
-{
-    return std::make_shared<Frame>();
+int Frame::linesize_pixels() const { return linesize_; }
+
+int Frame::linesize_bytes() const { return linesize_pixels() * PixelFormat::BytesPerPixel(params_.format()); }
+
+const int &Frame::width() const { return params_.effective_width(); }
+
+const int &Frame::height() const { return params_.effective_height(); }
+
+const PixelFormat::Format &Frame::format() const { return params_.format(); }
+
+Color Frame::get_pixel(int x, int y) const {
+  if (!contains_pixel(x, y)) {
+    return Color();
+  }
+
+  int pixel_index = y * linesize_pixels() + x;
+
+  int byte_offset = PixelFormat::GetBufferSize(video_params().format(), pixel_index, 1);
+
+  return Color(data_.data() + byte_offset, video_params().format());
 }
 
-const VideoRenderingParams &Frame::video_params() const
-{
-    return params_;
+bool Frame::contains_pixel(int x, int y) const {
+  return (is_allocated() && x >= 0 && x < width() && y >= 0 && y < height());
 }
 
-void Frame::set_video_params(const VideoRenderingParams &params)
-{
-    params_ = params;
+const rational &Frame::sample_aspect_ratio() const { return sample_aspect_ratio_; }
 
-    // Align linesize to 16
-    linesize_ = qCeil(static_cast<double>(width()) / 16.0) * 16;
+void Frame::set_sample_aspect_ratio(const rational &aspect_ratio) { sample_aspect_ratio_ = aspect_ratio; }
+
+const rational &Frame::timestamp() const { return timestamp_; }
+
+void Frame::set_timestamp(const rational &timestamp) { timestamp_ = timestamp; }
+
+const int64_t &Frame::native_timestamp() { return native_timestamp_; }
+
+void Frame::set_native_timestamp(const int64_t &timestamp) { native_timestamp_ = timestamp; }
+
+char *Frame::data() { return data_.data(); }
+
+const char *Frame::const_data() const { return data_.constData(); }
+
+void Frame::allocate() {
+  // Assume this frame is intended to be a video frame
+  if (!params_.is_valid()) {
+    qWarning() << "Tried to allocate a frame with invalid parameters";
+    return;
+  }
+
+  data_.resize(PixelFormat::GetBufferSize(params_.format(), linesize_, params_.height()));
 }
 
-int Frame::linesize_pixels() const
-{
-    return linesize_;
-}
+bool Frame::is_allocated() const { return !data_.isEmpty(); }
 
-int Frame::linesize_bytes() const
-{
-    return linesize_pixels() * PixelFormat::BytesPerPixel(params_.format());
-}
+void Frame::destroy() { data_.clear(); }
 
-const int &Frame::width() const
-{
-    return params_.effective_width();
-}
-
-const int &Frame::height() const
-{
-    return params_.effective_height();
-}
-
-const PixelFormat::Format &Frame::format() const
-{
-    return params_.format();
-}
-
-Color Frame::get_pixel(int x, int y) const
-{
-    if (!contains_pixel(x, y)) {
-        return Color();
-    }
-
-    int pixel_index = y * linesize_pixels() + x;
-
-    int byte_offset = PixelFormat::GetBufferSize(video_params().format(), pixel_index, 1);
-
-    return Color(data_.data() + byte_offset, video_params().format());
-}
-
-bool Frame::contains_pixel(int x, int y) const
-{
-    return (is_allocated() && x >= 0 && x < width() && y >= 0 && y < height());
-}
-
-const rational &Frame::sample_aspect_ratio() const
-{
-    return sample_aspect_ratio_;
-}
-
-void Frame::set_sample_aspect_ratio(const rational &aspect_ratio)
-{
-    sample_aspect_ratio_ = aspect_ratio;
-}
-
-const rational &Frame::timestamp() const
-{
-    return timestamp_;
-}
-
-void Frame::set_timestamp(const rational &timestamp)
-{
-    timestamp_ = timestamp;
-}
-
-const int64_t &Frame::native_timestamp()
-{
-    return native_timestamp_;
-}
-
-void Frame::set_native_timestamp(const int64_t &timestamp)
-{
-    native_timestamp_ = timestamp;
-}
-
-char *Frame::data()
-{
-    return data_.data();
-}
-
-const char *Frame::const_data() const
-{
-    return data_.constData();
-}
-
-void Frame::allocate()
-{
-    // Assume this frame is intended to be a video frame
-    if (!params_.is_valid()) {
-        qWarning() << "Tried to allocate a frame with invalid parameters";
-        return;
-    }
-
-    data_.resize(PixelFormat::GetBufferSize(params_.format(), linesize_, params_.height()));
-}
-
-bool Frame::is_allocated() const
-{
-    return !data_.isEmpty();
-}
-
-void Frame::destroy()
-{
-    data_.clear();
-}
-
-int Frame::allocated_size() const
-{
-    return data_.size();
-}
+int Frame::allocated_size() const { return data_.size(); }
 
 OLIVE_NAMESPACE_EXIT

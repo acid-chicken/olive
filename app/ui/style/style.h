@@ -29,44 +29,44 @@
 OLIVE_NAMESPACE_ENTER
 
 class StyleDescriptor {
-public:
-    StyleDescriptor(const QString& name, const QString& path);
+ public:
+  StyleDescriptor(const QString& name, const QString& path);
 
-    const QString& name() const;
-    const QString& path() const;
+  const QString& name() const;
+  const QString& path() const;
 
-private:
-    QString name_;
-    QString path_;
+ private:
+  QString name_;
+  QString path_;
 };
 
 class StyleManager : public QObject {
-public:
-    static StyleDescriptor DefaultStyle();
+ public:
+  static StyleDescriptor DefaultStyle();
 
-    static const QString& GetStyle();
+  static const QString& GetStyle();
 
-    static void SetStyleFromConfig();
+  static void SetStyleFromConfig();
 
-    static void SetStyle(const StyleDescriptor& style);
+  static void SetStyle(const StyleDescriptor& style);
 
-    static void SetStyle(const QString& style_path);
+  static void SetStyle(const QString& style_path);
 
-    static QList<StyleDescriptor> ListInternal();
+  static QList<StyleDescriptor> ListInternal();
 
-    static void UseOSNativeStyling(QWidget* widget);
+  static void UseOSNativeStyling(QWidget* widget);
 
-private:
-    static QPalette ParsePalette(const QString& ini_path);
+ private:
+  static QPalette ParsePalette(const QString& ini_path);
 
-    static void ParsePaletteGroup(QSettings* ini, QPalette* palette, QPalette::ColorGroup group);
+  static void ParsePaletteGroup(QSettings* ini, QPalette* palette, QPalette::ColorGroup group);
 
-    static void ParsePaletteColor(QSettings* ini, QPalette* palette, QPalette::ColorGroup group, const QString& role_name);
+  static void ParsePaletteColor(QSettings* ini, QPalette* palette, QPalette::ColorGroup group,
+                                const QString& role_name);
 
-    static QString current_style_;
-
+  static QString current_style_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // STYLEMANAGER_H
+#endif  // STYLEMANAGER_H

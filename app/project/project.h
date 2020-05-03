@@ -24,8 +24,8 @@
 #include <QObject>
 #include <memory>
 
-#include "render/colormanager.h"
 #include "project/item/folder/folder.h"
+#include "render/colormanager.h"
 
 OLIVE_NAMESPACE_ENTER
 
@@ -40,76 +40,66 @@ OLIVE_NAMESPACE_ENTER
  * * Project Settings
  * * Window Layout
  */
-class Project : public QObject
-{
-    Q_OBJECT
-public:
-    Project();
+class Project : public QObject {
+  Q_OBJECT
+ public:
+  Project();
 
-    void Load(QXmlStreamReader* reader, const QAtomicInt* cancelled);
+  void Load(QXmlStreamReader* reader, const QAtomicInt* cancelled);
 
-    void Save(QXmlStreamWriter* writer) const;
+  void Save(QXmlStreamWriter* writer) const;
 
-    Folder* root();
+  Folder* root();
 
-    QString name() const;
+  QString name() const;
 
-    const QString& filename() const;
-    QString pretty_filename() const;
-    void set_filename(const QString& s);
+  const QString& filename() const;
+  QString pretty_filename() const;
+  void set_filename(const QString& s);
 
-    ColorManager* color_manager();
+  ColorManager* color_manager();
 
-    QList<ItemPtr> get_items_of_type(Item::Type type) const;
+  QList<ItemPtr> get_items_of_type(Item::Type type) const;
 
-    bool is_modified() const;
-    void set_modified(bool e);
+  bool is_modified() const;
+  void set_modified(bool e);
 
-    bool has_autorecovery_been_saved() const;
-    void set_autorecovery_saved(bool e);
+  bool has_autorecovery_been_saved() const;
+  void set_autorecovery_saved(bool e);
 
-    bool is_new() const;
+  bool is_new() const;
 
-    const QString& cache_path() const {
-        return cache_path_;
-    }
+  const QString& cache_path() const { return cache_path_; }
 
-    void set_cache_path(const QString& cache_path) {
-        cache_path_ = cache_path;
-    }
+  void set_cache_path(const QString& cache_path) { cache_path_ = cache_path; }
 
-    const QString& proxy_path() const {
-        return proxy_path_;
-    }
+  const QString& proxy_path() const { return proxy_path_; }
 
-    void set_proxy_path(const QString& proxy_path) {
-        proxy_path_ = proxy_path;
-    }
+  void set_proxy_path(const QString& proxy_path) { proxy_path_ = proxy_path; }
 
-signals:
-    void NameChanged();
+ signals:
+  void NameChanged();
 
-    void ModifiedChanged(bool e);
+  void ModifiedChanged(bool e);
 
-private:
-    Folder root_;
+ private:
+  Folder root_;
 
-    QString filename_;
+  QString filename_;
 
-    ColorManager color_manager_;
+  ColorManager color_manager_;
 
-    bool is_modified_;
+  bool is_modified_;
 
-    bool autorecovery_saved_;
+  bool autorecovery_saved_;
 
-    QString cache_path_;
+  QString cache_path_;
 
-    QString proxy_path_;
-
+  QString proxy_path_;
 };
 
 using ProjectPtr = std::shared_ptr<Project>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECT_H
+#endif  // PROJECT_H

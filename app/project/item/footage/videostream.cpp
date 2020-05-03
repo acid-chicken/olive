@@ -26,122 +26,93 @@
 
 OLIVE_NAMESPACE_ENTER
 
-VideoStream::VideoStream() :
-    start_time_(0),
-    is_image_sequence_(false),
-    is_generating_proxy_(false),
-    using_proxy_(0)
-{
-    set_type(kVideo);
+VideoStream::VideoStream() : start_time_(0), is_image_sequence_(false), is_generating_proxy_(false), using_proxy_(0) {
+  set_type(kVideo);
 }
 
-QString VideoStream::description() const
-{
-    return QCoreApplication::translate("Stream", "%1: Video - %2x%3").arg(QString::number(index()),
-            QString::number(width()),
-            QString::number(height()));
+QString VideoStream::description() const {
+  return QCoreApplication::translate("Stream", "%1: Video - %2x%3")
+      .arg(QString::number(index()), QString::number(width()), QString::number(height()));
 }
 
-const rational &VideoStream::frame_rate() const
-{
-    return frame_rate_;
+const rational &VideoStream::frame_rate() const { return frame_rate_; }
+
+void VideoStream::set_frame_rate(const rational &frame_rate) { frame_rate_ = frame_rate; }
+
+const int64_t &VideoStream::start_time() const { return start_time_; }
+
+void VideoStream::set_start_time(const int64_t &start_time) {
+  start_time_ = start_time;
+  emit ParametersChanged();
 }
 
-void VideoStream::set_frame_rate(const rational &frame_rate)
-{
-    frame_rate_ = frame_rate;
+bool VideoStream::is_image_sequence() const { return is_image_sequence_; }
+
+void VideoStream::set_image_sequence(bool e) { is_image_sequence_ = e; }
+
+bool VideoStream::is_generating_proxy() {
+  QMutexLocker locker(proxy_access_lock());
+
+  return is_generating_proxy_;
 }
 
-const int64_t &VideoStream::start_time() const
-{
-    return start_time_;
+bool VideoStream::try_start_proxy() {
+  QMutexLocker locker(proxy_access_lock());
+
+  if (is_generating_proxy_) {
+    return false;
+  }
+
+  is_generating_proxy_ = true;
+
+  return true;
 }
 
-void VideoStream::set_start_time(const int64_t &start_time)
-{
-    start_time_ = start_time;
-    emit ParametersChanged();
+int VideoStream::using_proxy() {
+  QMutexLocker locker(proxy_access_lock());
+
+  return using_proxy_;
 }
 
-bool VideoStream::is_image_sequence() const
-{
-    return is_image_sequence_;
+void VideoStream::set_proxy(const int &divider, const QVector<int64_t> &index) {
+  QMutexLocker locker(proxy_access_lock());
+
+  using_proxy_ = divider;
+  frame_index_ = index;
+  is_generating_proxy_ = false;
 }
 
-void VideoStream::set_image_sequence(bool e)
-{
-    is_image_sequence_ = e;
+int64_t VideoStream::get_closest_timestamp_in_frame_index(const rational &time) {
+  // Get rough approximation of what the timestamp would be in this timebase
+  int64_t target_ts = Timecode::time_to_timestamp(time, timebase());
+
+  // Find closest actual timebase in the file
+  return get_closest_timestamp_in_frame_index(target_ts);
 }
 
-bool VideoStream::is_generating_proxy()
-{
-    QMutexLocker locker(proxy_access_lock());
+int64_t VideoStream::get_closest_timestamp_in_frame_index(int64_t timestamp) {
+  QMutexLocker locker(proxy_access_lock());
 
-    return is_generating_proxy_;
-}
+  if (!frame_index_.isEmpty()) {
+    if (timestamp <= frame_index_.first()) {
+      return frame_index_.first();
+    } else if (timestamp >= frame_index_.last()) {
+      return frame_index_.last();
+    } else {
+      // Use index to find closest frame in file
+      for (int i = 1; i < frame_index_.size(); i++) {
+        int64_t this_ts = frame_index_.at(i);
 
-bool VideoStream::try_start_proxy()
-{
-    QMutexLocker locker(proxy_access_lock());
-
-    if (is_generating_proxy_) {
-        return false;
-    }
-
-    is_generating_proxy_ = true;
-
-    return true;
-}
-
-int VideoStream::using_proxy()
-{
-    QMutexLocker locker(proxy_access_lock());
-
-    return using_proxy_;
-}
-
-void VideoStream::set_proxy(const int &divider, const QVector<int64_t> &index)
-{
-    QMutexLocker locker(proxy_access_lock());
-
-    using_proxy_ = divider;
-    frame_index_ = index;
-    is_generating_proxy_ = false;
-}
-
-int64_t VideoStream::get_closest_timestamp_in_frame_index(const rational &time)
-{
-    // Get rough approximation of what the timestamp would be in this timebase
-    int64_t target_ts = Timecode::time_to_timestamp(time, timebase());
-
-    // Find closest actual timebase in the file
-    return get_closest_timestamp_in_frame_index(target_ts);
-}
-
-int64_t VideoStream::get_closest_timestamp_in_frame_index(int64_t timestamp)
-{
-    QMutexLocker locker(proxy_access_lock());
-
-    if (!frame_index_.isEmpty()) {
-        if (timestamp <= frame_index_.first()) {
-            return frame_index_.first();
-        } else if (timestamp >= frame_index_.last()) {
-            return frame_index_.last();
-        } else {
-            // Use index to find closest frame in file
-            for (int i=1; i<frame_index_.size(); i++) {
-                int64_t this_ts = frame_index_.at(i);
-
-                if (this_ts == timestamp) {
-                    return timestamp;
-                } else if (this_ts > timestamp) {
-                    return frame_index_.at(i - 1);
-                }
-            }
+        if (this_ts == timestamp) {
+          return timestamp;
+        } else if (this_ts > timestamp) {
+          return frame_index_.at(i - 1);
         }
+      }
     }
+  }
 
-    return -1;
+  return -1;
 }
 
 /*

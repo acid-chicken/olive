@@ -26,115 +26,96 @@
 
 OLIVE_NAMESPACE_ENTER
 
-RenderWorker::RenderWorker(QObject *parent) :
-    QObject(parent),
-    started_(false)
-{
+RenderWorker::RenderWorker(QObject *parent) : QObject(parent), started_(false) {}
+
+bool RenderWorker::Init() {
+  if (started_) {
+    return true;
+  }
+
+  if (!(started_ = InitInternal())) {
+    Close();
+  }
+
+  return started_;
 }
 
-bool RenderWorker::Init()
-{
-    if (started_) {
-        return true;
+void RenderWorker::Close() {
+  CloseInternal();
+
+  decoder_cache_.Clear();
+
+  started_ = false;
+}
+
+void RenderWorker::Render(NodeDependency path, qint64 job_time) {
+  path_ = path;
+
+  emit CompletedCache(path, RenderInternal(path, job_time), job_time);
+}
+
+NodeValueTable RenderWorker::RenderInternal(const NodeDependency &path, const qint64 &job_time) {
+  Q_UNUSED(job_time)
+
+  return ProcessNode(path);
+}
+
+void RenderWorker::RunNodeAccelerated(const Node *node, const TimeRange &range, NodeValueDatabase &input_params,
+                                      NodeValueTable &output_params) {
+  Q_UNUSED(node)
+  Q_UNUSED(range)
+  Q_UNUSED(input_params)
+  Q_UNUSED(output_params)
+}
+
+StreamPtr RenderWorker::ResolveStreamFromInput(NodeInput *input) {
+  return input->get_standard_value().value<StreamPtr>();
+}
+
+DecoderPtr RenderWorker::ResolveDecoderFromInput(StreamPtr stream) {
+  // Access a map of Node inputs and decoder instances and retrieve a frame!
+
+  DecoderPtr decoder = decoder_cache_.Get(stream.get());
+
+  if (!decoder && stream) {
+    // Create a new Decoder here
+    decoder = Decoder::CreateFromID(stream->footage()->decoder());
+    decoder->set_stream(stream);
+
+    if (decoder->Open()) {
+      decoder_cache_.Add(stream.get(), decoder);
+    } else {
+      decoder = nullptr;
+      qWarning() << "Failed to open decoder for" << stream->footage()->filename() << "::" << stream->index();
     }
+  }
 
-    if (!(started_ = InitInternal())) {
-        Close();
+  return decoder;
+}
+
+bool RenderWorker::IsStarted() { return started_; }
+
+void RenderWorker::InputProcessingEvent(NodeInput *input, const TimeRange &input_time, NodeValueTable *table) {
+  // Exception for Footage types where we actually retrieve some Footage data from a decoder
+  if (input->data_type() == NodeParam::kFootage) {
+    StreamPtr stream = ResolveStreamFromInput(input);
+
+    if (stream) {
+      DecoderPtr decoder = ResolveDecoderFromInput(stream);
+
+      if (decoder) {
+        FrameToValue(decoder, stream, input_time, table);
+      }
     }
-
-    return started_;
+  }
 }
 
-void RenderWorker::Close()
-{
-    CloseInternal();
-
-    decoder_cache_.Clear();
-
-    started_ = false;
+void RenderWorker::ProcessNodeEvent(const Node *node, const TimeRange &range, NodeValueDatabase &input_params,
+                                    NodeValueTable &output_params) {
+  // Check if we have a shader for this output
+  RunNodeAccelerated(node, range, input_params, output_params);
 }
 
-void RenderWorker::Render(NodeDependency path, qint64 job_time)
-{
-    path_ = path;
-
-    emit CompletedCache(path, RenderInternal(path, job_time), job_time);
-}
-
-NodeValueTable RenderWorker::RenderInternal(const NodeDependency &path, const qint64 &job_time)
-{
-    Q_UNUSED(job_time)
-
-    return ProcessNode(path);
-}
-
-void RenderWorker::RunNodeAccelerated(const Node *node, const TimeRange &range, NodeValueDatabase &input_params, NodeValueTable& output_params)
-{
-    Q_UNUSED(node)
-    Q_UNUSED(range)
-    Q_UNUSED(input_params)
-    Q_UNUSED(output_params)
-}
-
-StreamPtr RenderWorker::ResolveStreamFromInput(NodeInput *input)
-{
-    return input->get_standard_value().value<StreamPtr>();
-}
-
-DecoderPtr RenderWorker::ResolveDecoderFromInput(StreamPtr stream)
-{
-    // Access a map of Node inputs and decoder instances and retrieve a frame!
-
-    DecoderPtr decoder = decoder_cache_.Get(stream.get());
-
-    if (!decoder && stream) {
-        // Create a new Decoder here
-        decoder = Decoder::CreateFromID(stream->footage()->decoder());
-        decoder->set_stream(stream);
-
-        if (decoder->Open()) {
-            decoder_cache_.Add(stream.get(), decoder);
-        } else {
-            decoder = nullptr;
-            qWarning() << "Failed to open decoder for" << stream->footage()->filename() << "::" << stream->index();
-        }
-    }
-
-    return decoder;
-}
-
-bool RenderWorker::IsStarted()
-{
-    return started_;
-}
-
-void RenderWorker::InputProcessingEvent(NodeInput* input, const TimeRange& input_time, NodeValueTable *table)
-{
-    // Exception for Footage types where we actually retrieve some Footage data from a decoder
-    if (input->data_type() == NodeParam::kFootage) {
-        StreamPtr stream = ResolveStreamFromInput(input);
-
-        if (stream) {
-            DecoderPtr decoder = ResolveDecoderFromInput(stream);
-
-            if (decoder) {
-
-                FrameToValue(decoder, stream, input_time, table);
-
-            }
-        }
-    }
-}
-
-void RenderWorker::ProcessNodeEvent(const Node *node, const TimeRange &range, NodeValueDatabase &input_params, NodeValueTable &output_params)
-{
-    // Check if we have a shader for this output
-    RunNodeAccelerated(node, range, input_params, output_params);
-}
-
-const NodeDependency &RenderWorker::CurrentPath() const
-{
-    return path_;
-}
+const NodeDependency &RenderWorker::CurrentPath() const { return path_; }
 
 OLIVE_NAMESPACE_EXIT

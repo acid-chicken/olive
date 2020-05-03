@@ -31,74 +31,63 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class PathWidget : public QObject
-{
-    Q_OBJECT
-public:
-    PathWidget(const QString& path,
-               QWidget* parent = nullptr);
+class PathWidget : public QObject {
+  Q_OBJECT
+ public:
+  PathWidget(const QString& path, QWidget* parent = nullptr);
 
-    bool PathIsValid(bool try_to_create) const;
+  bool PathIsValid(bool try_to_create) const;
 
-    QLineEdit* path_edit() const {
-        return path_edit_;
-    }
+  QLineEdit* path_edit() const { return path_edit_; }
 
-    QCheckBox* default_box() const {
-        return default_box_;
-    }
+  QCheckBox* default_box() const { return default_box_; }
 
-    QPushButton* browse_btn() const {
-        return browse_btn_;
-    }
+  QPushButton* browse_btn() const { return browse_btn_; }
 
-private slots:
-    void DefaultToggled(bool e);
+ private slots:
+  void DefaultToggled(bool e);
 
-    void BrowseClicked();
+  void BrowseClicked();
 
-    void LineEditChanged();
+  void LineEditChanged();
 
-private:
-    QLineEdit* path_edit_;
+ private:
+  QLineEdit* path_edit_;
 
-    QCheckBox* default_box_;
+  QCheckBox* default_box_;
 
-    QPushButton* browse_btn_;
-
+  QPushButton* browse_btn_;
 };
 
-class ProjectPropertiesDialog : public QDialog
-{
-    Q_OBJECT
-public:
-    ProjectPropertiesDialog(Project *p, QWidget* parent);
+class ProjectPropertiesDialog : public QDialog {
+  Q_OBJECT
+ public:
+  ProjectPropertiesDialog(Project* p, QWidget* parent);
 
-public slots:
-    virtual void accept() override;
+ public slots:
+  virtual void accept() override;
 
-private:
-    Project* working_project_;
+ private:
+  Project* working_project_;
 
-    QLineEdit* ocio_filename_;
+  QLineEdit* ocio_filename_;
 
-    QComboBox* default_input_colorspace_;
+  QComboBox* default_input_colorspace_;
 
-    bool ocio_config_is_valid_;
+  bool ocio_config_is_valid_;
 
-    QString ocio_config_error_;
+  QString ocio_config_error_;
 
-    PathWidget* cache_path_;
+  PathWidget* cache_path_;
 
-    PathWidget* proxy_path_;
+  PathWidget* proxy_path_;
 
-private slots:
-    void BrowseForOCIOConfig();
+ private slots:
+  void BrowseForOCIOConfig();
 
-    void OCIOFilenameUpdated();
-
+  void OCIOFilenameUpdated();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTPROPERTIESDIALOG_H
+#endif  // PROJECTPROPERTIESDIALOG_H

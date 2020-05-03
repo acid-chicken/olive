@@ -22,78 +22,51 @@
 
 OLIVE_NAMESPACE_ENTER
 
-AudioStream::AudioStream()
-{
-    set_type(kAudio);
+AudioStream::AudioStream() { set_type(kAudio); }
+
+QString AudioStream::description() const {
+  return QCoreApplication::translate("Stream", "%1: Audio - %2 Channels, %3Hz")
+      .arg(QString::number(index()), QString::number(channels()), QString::number(sample_rate()));
 }
 
-QString AudioStream::description() const
-{
-    return QCoreApplication::translate("Stream", "%1: Audio - %2 Channels, %3Hz").arg(QString::number(index()),
-            QString::number(channels()),
-            QString::number(sample_rate()));
+const int &AudioStream::channels() const { return channels_; }
+
+void AudioStream::set_channels(const int &channels) { channels_ = channels; }
+
+const uint64_t &AudioStream::channel_layout() const { return layout_; }
+
+void AudioStream::set_channel_layout(const uint64_t &layout) { layout_ = layout; }
+
+const int &AudioStream::sample_rate() const { return sample_rate_; }
+
+void AudioStream::set_sample_rate(const int &sample_rate) { sample_rate_ = sample_rate; }
+
+bool AudioStream::try_start_conforming(const AudioRenderingParams &params) {
+  QMutexLocker locker(proxy_access_lock());
+
+  if (!currently_conforming_.contains(params) && !conformed_.contains(params)) {
+    currently_conforming_.append(params);
+    return true;
+  }
+
+  return false;
 }
 
-const int &AudioStream::channels() const
-{
-    return channels_;
+bool AudioStream::has_conformed_version(const AudioRenderingParams &params) {
+  QMutexLocker locker(proxy_access_lock());
+
+  return conformed_.contains(params);
 }
 
-void AudioStream::set_channels(const int &channels)
-{
-    channels_ = channels;
-}
-
-const uint64_t &AudioStream::channel_layout() const
-{
-    return layout_;
-}
-
-void AudioStream::set_channel_layout(const uint64_t &layout)
-{
-    layout_ = layout;
-}
-
-const int &AudioStream::sample_rate() const
-{
-    return sample_rate_;
-}
-
-void AudioStream::set_sample_rate(const int &sample_rate)
-{
-    sample_rate_ = sample_rate;
-}
-
-bool AudioStream::try_start_conforming(const AudioRenderingParams &params)
-{
+void AudioStream::append_conformed_version(const AudioRenderingParams &params) {
+  {
     QMutexLocker locker(proxy_access_lock());
 
-    if (!currently_conforming_.contains(params)
-            && !conformed_.contains(params)) {
-        currently_conforming_.append(params);
-        return true;
-    }
+    currently_conforming_.removeOne(params);
+    conformed_.append(params);
+  }
 
-    return false;
-}
-
-bool AudioStream::has_conformed_version(const AudioRenderingParams &params)
-{
-    QMutexLocker locker(proxy_access_lock());
-
-    return conformed_.contains(params);
-}
-
-void AudioStream::append_conformed_version(const AudioRenderingParams &params)
-{
-    {
-        QMutexLocker locker(proxy_access_lock());
-
-        currently_conforming_.removeOne(params);
-        conformed_.append(params);
-    }
-
-    emit ConformAppended(params);
+  emit ConformAppended(params);
 }
 
 OLIVE_NAMESPACE_EXIT

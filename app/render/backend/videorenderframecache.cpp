@@ -20,10 +20,10 @@
 
 #include "videorenderframecache.h"
 
+#include <OpenEXR/ImfChannelList.h>
 #include <OpenEXR/ImfFloatAttribute.h>
 #include <OpenEXR/ImfInputFile.h>
 #include <OpenEXR/ImfOutputFile.h>
-#include <OpenEXR/ImfChannelList.h>
 #include <QDir>
 #include <QFileInfo>
 
@@ -33,244 +33,215 @@
 
 OLIVE_NAMESPACE_ENTER
 
-void VideoRenderFrameCache::Clear()
-{
-    time_hash_map_.clear();
+void VideoRenderFrameCache::Clear() {
+  time_hash_map_.clear();
 
-    {
-        QMutexLocker locker(&currently_caching_lock_);
-        currently_caching_list_.clear();
-    }
-
-    cache_id_.clear();
-}
-
-bool VideoRenderFrameCache::HasHash(const QByteArray &hash, const PixelFormat::Format& format)
-{
-    return QFileInfo::exists(CachePathName(hash, format)) && !IsCaching(hash);
-}
-
-bool VideoRenderFrameCache::IsCaching(const QByteArray &hash)
-{
+  {
     QMutexLocker locker(&currently_caching_lock_);
+    currently_caching_list_.clear();
+  }
 
-    return currently_caching_list_.contains(hash);
+  cache_id_.clear();
 }
 
-bool VideoRenderFrameCache::TryCache(const QByteArray &hash)
-{
-    QMutexLocker locker(&currently_caching_lock_);
-
-    if (!currently_caching_list_.contains(hash)) {
-        currently_caching_list_.append(hash);
-        return true;
-    }
-
-    return false;
+bool VideoRenderFrameCache::HasHash(const QByteArray &hash, const PixelFormat::Format &format) {
+  return QFileInfo::exists(CachePathName(hash, format)) && !IsCaching(hash);
 }
 
-void VideoRenderFrameCache::SetCacheID(const QString &id)
-{
-    Clear();
+bool VideoRenderFrameCache::IsCaching(const QByteArray &hash) {
+  QMutexLocker locker(&currently_caching_lock_);
 
-    cache_id_ = id;
+  return currently_caching_list_.contains(hash);
 }
 
-QByteArray VideoRenderFrameCache::TimeToHash(const rational &time) const
-{
-    return time_hash_map_.value(time);
+bool VideoRenderFrameCache::TryCache(const QByteArray &hash) {
+  QMutexLocker locker(&currently_caching_lock_);
+
+  if (!currently_caching_list_.contains(hash)) {
+    currently_caching_list_.append(hash);
+    return true;
+  }
+
+  return false;
 }
 
-void VideoRenderFrameCache::SetHash(const rational &time, const QByteArray &hash)
-{
-    time_hash_map_.insert(time, hash);
+void VideoRenderFrameCache::SetCacheID(const QString &id) {
+  Clear();
+
+  cache_id_ = id;
 }
 
-void VideoRenderFrameCache::Truncate(const rational &time)
-{
-    QMap<rational, QByteArray>::iterator i = time_hash_map_.begin();
+QByteArray VideoRenderFrameCache::TimeToHash(const rational &time) const { return time_hash_map_.value(time); }
 
-    while (i != time_hash_map_.end()) {
-        if (i.key() >= time) {
-            i = time_hash_map_.erase(i);
-        } else {
-            i++;
-        }
-    }
-}
+void VideoRenderFrameCache::SetHash(const rational &time, const QByteArray &hash) { time_hash_map_.insert(time, hash); }
 
-void VideoRenderFrameCache::RemoveHashFromCurrentlyCaching(const QByteArray &hash)
-{
-    QMutexLocker locker(&currently_caching_lock_);
+void VideoRenderFrameCache::Truncate(const rational &time) {
+  QMap<rational, QByteArray>::iterator i = time_hash_map_.begin();
 
-    currently_caching_list_.removeOne(hash);
-}
-
-QList<rational> VideoRenderFrameCache::FramesWithHash(const QByteArray &hash) const
-{
-    QList<rational> times;
-
-    QMap<rational, QByteArray>::const_iterator iterator;
-
-    for (iterator=time_hash_map_.begin(); iterator!=time_hash_map_.end(); iterator++) {
-        if (iterator.value() == hash) {
-            times.append(iterator.key());
-        }
-    }
-
-    return times;
-}
-
-QList<rational> VideoRenderFrameCache::TakeFramesWithHash(const QByteArray &hash)
-{
-    QList<rational> times;
-
-    QMap<rational, QByteArray>::iterator iterator = time_hash_map_.begin();
-
-    while (iterator != time_hash_map_.end()) {
-        if (iterator.value() == hash) {
-            times.append(iterator.key());
-
-            iterator = time_hash_map_.erase(iterator);
-        } else {
-            iterator++;
-        }
-    }
-
-    return times;
-}
-
-const QMap<rational, QByteArray> &VideoRenderFrameCache::time_hash_map() const
-{
-    return time_hash_map_;
-}
-
-QString VideoRenderFrameCache::GetFormatExtension(const PixelFormat::Format &f)
-{
-    if (PixelFormat::FormatIsFloat(f)) {
-        // EXR is only fast with float buffers so we only use it for those
-        return QStringLiteral(".exr");
+  while (i != time_hash_map_.end()) {
+    if (i.key() >= time) {
+      i = time_hash_map_.erase(i);
     } else {
-        // FIXME: Will probably need different codec here. JPEG is the fastest and smallest by far (much
-        //        more so than TIFF or PNG) and we don't mind lossy for the offline cache, but JPEG
-        //        doesn't support >8-bit or alpha channels. JPEG2000 does, but my OIIO wasn't compiled
-        //        with it and I imagine it's not common in general. Still, this works well for now as a
-        //        prototype.
-        return QStringLiteral(".jpg");
+      i++;
     }
+  }
 }
 
-void VideoRenderFrameCache::SaveCacheFrame(const QByteArray& hash,
-        char* data,
-        const VideoRenderingParams& vparam) const
-{
-    QString fn = CachePathName(hash, vparam.format());
+void VideoRenderFrameCache::RemoveHashFromCurrentlyCaching(const QByteArray &hash) {
+  QMutexLocker locker(&currently_caching_lock_);
 
-    if (SaveCacheFrame(fn, data, vparam)) {
-        // Register frame with the disk manager
-        DiskManager::instance()->CreatedFile(fn, hash);
+  currently_caching_list_.removeOne(hash);
+}
+
+QList<rational> VideoRenderFrameCache::FramesWithHash(const QByteArray &hash) const {
+  QList<rational> times;
+
+  QMap<rational, QByteArray>::const_iterator iterator;
+
+  for (iterator = time_hash_map_.begin(); iterator != time_hash_map_.end(); iterator++) {
+    if (iterator.value() == hash) {
+      times.append(iterator.key());
     }
+  }
+
+  return times;
 }
 
-QString VideoRenderFrameCache::CachePathName(const QByteArray& hash, const PixelFormat::Format& pix_fmt) const
-{
-    QString ext = GetFormatExtension(pix_fmt);
+QList<rational> VideoRenderFrameCache::TakeFramesWithHash(const QByteArray &hash) {
+  QList<rational> times;
 
-    QDir cache_dir(QDir(FileFunctions::GetMediaCacheLocation()).filePath(QString(hash.left(1).toHex())));
-    cache_dir.mkpath(".");
+  QMap<rational, QByteArray>::iterator iterator = time_hash_map_.begin();
 
-    QString filename = QStringLiteral("%1%2").arg(QString(hash.mid(1).toHex()), ext);
+  while (iterator != time_hash_map_.end()) {
+    if (iterator.value() == hash) {
+      times.append(iterator.key());
 
-    return cache_dir.filePath(filename);
+      iterator = time_hash_map_.erase(iterator);
+    } else {
+      iterator++;
+    }
+  }
+
+  return times;
 }
 
-bool VideoRenderFrameCache::SaveCacheFrame(const QString &filename, char *data, const VideoRenderingParams &vparam)
-{
-    switch (vparam.format()) {
+const QMap<rational, QByteArray> &VideoRenderFrameCache::time_hash_map() const { return time_hash_map_; }
+
+QString VideoRenderFrameCache::GetFormatExtension(const PixelFormat::Format &f) {
+  if (PixelFormat::FormatIsFloat(f)) {
+    // EXR is only fast with float buffers so we only use it for those
+    return QStringLiteral(".exr");
+  } else {
+    // FIXME: Will probably need different codec here. JPEG is the fastest and smallest by far (much
+    //        more so than TIFF or PNG) and we don't mind lossy for the offline cache, but JPEG
+    //        doesn't support >8-bit or alpha channels. JPEG2000 does, but my OIIO wasn't compiled
+    //        with it and I imagine it's not common in general. Still, this works well for now as a
+    //        prototype.
+    return QStringLiteral(".jpg");
+  }
+}
+
+void VideoRenderFrameCache::SaveCacheFrame(const QByteArray &hash, char *data,
+                                           const VideoRenderingParams &vparam) const {
+  QString fn = CachePathName(hash, vparam.format());
+
+  if (SaveCacheFrame(fn, data, vparam)) {
+    // Register frame with the disk manager
+    DiskManager::instance()->CreatedFile(fn, hash);
+  }
+}
+
+QString VideoRenderFrameCache::CachePathName(const QByteArray &hash, const PixelFormat::Format &pix_fmt) const {
+  QString ext = GetFormatExtension(pix_fmt);
+
+  QDir cache_dir(QDir(FileFunctions::GetMediaCacheLocation()).filePath(QString(hash.left(1).toHex())));
+  cache_dir.mkpath(".");
+
+  QString filename = QStringLiteral("%1%2").arg(QString(hash.mid(1).toHex()), ext);
+
+  return cache_dir.filePath(filename);
+}
+
+bool VideoRenderFrameCache::SaveCacheFrame(const QString &filename, char *data, const VideoRenderingParams &vparam) {
+  switch (vparam.format()) {
     case PixelFormat::PIX_FMT_RGB8:
     case PixelFormat::PIX_FMT_RGBA8:
     case PixelFormat::PIX_FMT_RGB16U:
-    case PixelFormat::PIX_FMT_RGBA16U:
-    {
-        // Integer types are stored in JPEG which we run through OIIO
+    case PixelFormat::PIX_FMT_RGBA16U: {
+      // Integer types are stored in JPEG which we run through OIIO
 
-        std::string fn_std = filename.toStdString();
+      std::string fn_std = filename.toStdString();
 
-        auto out = OIIO::ImageOutput::create(fn_std);
+      auto out = OIIO::ImageOutput::create(fn_std);
 
-        if (out) {
-            // Attempt to keep this write to one thread
-            out->threads(1);
+      if (out) {
+        // Attempt to keep this write to one thread
+        out->threads(1);
 
-            out->open(fn_std, OIIO::ImageSpec(vparam.width(),
-                                              vparam.height(),
-                                              PixelFormat::ChannelCount(vparam.format()),
-                                              PixelFormat::GetOIIOTypeDesc(vparam.format())));
+        out->open(fn_std, OIIO::ImageSpec(vparam.width(), vparam.height(), PixelFormat::ChannelCount(vparam.format()),
+                                          PixelFormat::GetOIIOTypeDesc(vparam.format())));
 
-            out->write_image(PixelFormat::GetOIIOTypeDesc(vparam.format()), data);
+        out->write_image(PixelFormat::GetOIIOTypeDesc(vparam.format()), data);
 
-            out->close();
+        out->close();
 
 #if OIIO_VERSION < 10903
-            OIIO::ImageOutput::destroy(out);
+        OIIO::ImageOutput::destroy(out);
 #endif
 
-            return true;
-        } else {
-            qCritical() << "Failed to write JPEG file:" << OIIO::geterror().c_str();
-            return false;
-        }
+        return true;
+      } else {
+        qCritical() << "Failed to write JPEG file:" << OIIO::geterror().c_str();
+        return false;
+      }
     }
     case PixelFormat::PIX_FMT_RGB16F:
     case PixelFormat::PIX_FMT_RGBA16F:
     case PixelFormat::PIX_FMT_RGB32F:
-    case PixelFormat::PIX_FMT_RGBA32F:
-    {
-        // Floating point types are stored in EXR
-        Imf::PixelType pix_type;
+    case PixelFormat::PIX_FMT_RGBA32F: {
+      // Floating point types are stored in EXR
+      Imf::PixelType pix_type;
 
-        if (vparam.format() == PixelFormat::PIX_FMT_RGB16F
-                || vparam.format() == PixelFormat::PIX_FMT_RGBA16F) {
-            pix_type = Imf::HALF;
-        } else {
-            pix_type = Imf::FLOAT;
-        }
+      if (vparam.format() == PixelFormat::PIX_FMT_RGB16F || vparam.format() == PixelFormat::PIX_FMT_RGBA16F) {
+        pix_type = Imf::HALF;
+      } else {
+        pix_type = Imf::FLOAT;
+      }
 
-        Imf::Header header(vparam.effective_width(),
-                           vparam.effective_height());
-        header.channels().insert("R", Imf::Channel(pix_type));
-        header.channels().insert("G", Imf::Channel(pix_type));
-        header.channels().insert("B", Imf::Channel(pix_type));
-        header.channels().insert("A", Imf::Channel(pix_type));
+      Imf::Header header(vparam.effective_width(), vparam.effective_height());
+      header.channels().insert("R", Imf::Channel(pix_type));
+      header.channels().insert("G", Imf::Channel(pix_type));
+      header.channels().insert("B", Imf::Channel(pix_type));
+      header.channels().insert("A", Imf::Channel(pix_type));
 
-        header.compression() = Imf::DWAA_COMPRESSION;
-        header.insert("dwaCompressionLevel", Imf::FloatAttribute(200.0f));
+      header.compression() = Imf::DWAA_COMPRESSION;
+      header.insert("dwaCompressionLevel", Imf::FloatAttribute(200.0f));
 
-        Imf::OutputFile out(filename.toUtf8(), header, 0);
+      Imf::OutputFile out(filename.toUtf8(), header, 0);
 
-        int bpc = PixelFormat::BytesPerChannel(vparam.format());
+      int bpc = PixelFormat::BytesPerChannel(vparam.format());
 
-        size_t xs = kRGBAChannels * bpc;
-        size_t ys = vparam.effective_width() * kRGBAChannels * bpc;
+      size_t xs = kRGBAChannels * bpc;
+      size_t ys = vparam.effective_width() * kRGBAChannels * bpc;
 
-        Imf::FrameBuffer framebuffer;
-        framebuffer.insert("R", Imf::Slice(pix_type, data, xs, ys));
-        framebuffer.insert("G", Imf::Slice(pix_type, data + bpc, xs, ys));
-        framebuffer.insert("B", Imf::Slice(pix_type, data + 2*bpc, xs, ys));
-        framebuffer.insert("A", Imf::Slice(pix_type, data + 3*bpc, xs, ys));
-        out.setFrameBuffer(framebuffer);
+      Imf::FrameBuffer framebuffer;
+      framebuffer.insert("R", Imf::Slice(pix_type, data, xs, ys));
+      framebuffer.insert("G", Imf::Slice(pix_type, data + bpc, xs, ys));
+      framebuffer.insert("B", Imf::Slice(pix_type, data + 2 * bpc, xs, ys));
+      framebuffer.insert("A", Imf::Slice(pix_type, data + 3 * bpc, xs, ys));
+      out.setFrameBuffer(framebuffer);
 
-        out.writePixels(vparam.effective_height());
+      out.writePixels(vparam.effective_height());
 
-        return true;
+      return true;
     }
     case PixelFormat::PIX_FMT_INVALID:
     case PixelFormat::PIX_FMT_COUNT:
-        qCritical() << "Unable to cache invalid pixel format" << vparam.format();
-        break;
-    }
+      qCritical() << "Unable to cache invalid pixel format" << vparam.format();
+      break;
+  }
 
-    return false;
+  return false;
 }
 
 OLIVE_NAMESPACE_EXIT

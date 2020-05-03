@@ -26,21 +26,19 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class ProxyTask : public Task
-{
-public:
-    ProxyTask(VideoStreamPtr stream, int divider);
+class ProxyTask : public Task {
+ public:
+  ProxyTask(VideoStreamPtr stream, int divider);
 
-protected:
-    virtual void Action() override;
+ protected:
+  virtual void Action() override;
 
-private:
-    VideoStreamPtr stream_;
+ private:
+  VideoStreamPtr stream_;
 
-    int divider_;
-
+  int divider_;
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROXYTASK_H
+#endif  // PROXYTASK_H

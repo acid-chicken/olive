@@ -33,132 +33,109 @@
 
 OLIVE_NAMESPACE_ENTER
 
-Decoder::Decoder() :
-    open_(false),
-    stream_(nullptr)
-{
+Decoder::Decoder() : open_(false), stream_(nullptr) {}
+
+Decoder::Decoder(Stream *fs) : open_(false), stream_(fs) {}
+
+StreamPtr Decoder::stream() const { return stream_; }
+
+void Decoder::set_stream(StreamPtr fs) {
+  Close();
+
+  stream_ = fs;
 }
 
-Decoder::Decoder(Stream *fs) :
-    open_(false),
-    stream_(fs)
-{
+FramePtr Decoder::RetrieveVideo(const rational & /*timecode*/, const int & /*divider*/, bool /*use_proxies*/) {
+  return nullptr;
 }
 
-StreamPtr Decoder::stream() const
-{
-    return stream_;
+SampleBufferPtr Decoder::RetrieveAudio(const rational & /*timecode*/, const rational & /*length*/,
+                                       const AudioRenderingParams & /*params*/) {
+  return nullptr;
 }
 
-void Decoder::set_stream(StreamPtr fs)
-{
-    Close();
+bool Decoder::SupportsVideo() { return false; }
 
-    stream_ = fs;
-}
-
-FramePtr Decoder::RetrieveVideo(const rational &/*timecode*/, const int &/*divider*/, bool /*use_proxies*/)
-{
-    return nullptr;
-}
-
-SampleBufferPtr Decoder::RetrieveAudio(const rational &/*timecode*/, const rational &/*length*/, const AudioRenderingParams &/*params*/)
-{
-    return nullptr;
-}
-
-bool Decoder::SupportsVideo()
-{
-    return false;
-}
-
-bool Decoder::SupportsAudio()
-{
-    return false;
-}
+bool Decoder::SupportsAudio() { return false; }
 
 /*
  * DECODER STATIC PUBLIC MEMBERS
  */
 
 QVector<DecoderPtr> ReceiveListOfAllDecoders() {
-    QVector<DecoderPtr> decoders;
+  QVector<DecoderPtr> decoders;
 
-    // The order in which these decoders are added is their priority when probing. Hence FFmpeg should usually be last,
-    // since it supports so many formats and we presumably want to override those formats with a more specific decoder.
+  // The order in which these decoders are added is their priority when probing. Hence FFmpeg should usually be last,
+  // since it supports so many formats and we presumably want to override those formats with a more specific decoder.
 
-    decoders.append(std::make_shared<OIIODecoder>());
-    decoders.append(std::make_shared<FFmpegDecoder>());
+  decoders.append(std::make_shared<OIIODecoder>());
+  decoders.append(std::make_shared<FFmpegDecoder>());
 
-    return decoders;
+  return decoders;
 }
 
-bool Decoder::ProbeMedia(Footage *f, const QAtomicInt* cancelled)
-{
-    // Check for a valid filename
-    if (f->filename().isEmpty()) {
-        qWarning() << "Tried to probe media with an empty filename";
-        return false;
-    }
-
-    // Check file exists
-    if (!QFileInfo::exists(f->filename())) {
-        qWarning() << "Tried to probe file that doesn't exist:" << f->filename();
-        return false;
-    }
-
-    // Reset Footage state for probing
-    f->Clear();
-
-    // Create list to iterate through
-    QVector<DecoderPtr> decoder_list = ReceiveListOfAllDecoders();
-
-    // Pass Footage through each Decoder's probe function
-    for (int i=0; i<decoder_list.size(); i++) {
-
-        if (cancelled && *cancelled) {
-            return false;
-        }
-
-        DecoderPtr decoder = decoder_list.at(i);
-
-        if (decoder->Probe(f, cancelled)) {
-
-            // We found a Decoder, so we can set this media as valid
-            f->set_status(Footage::kReady);
-
-            // Attach the successful Decoder to this Footage object
-            f->set_decoder(decoder->id());
-
-            // FIXME: Cache the results so we don't have to probe if this media is added a second time
-
-            return true;
-        }
-    }
-
-    // We aren't able to use this Footage
-    f->set_status(Footage::kInvalid);
-    f->set_decoder(QString());
-
+bool Decoder::ProbeMedia(Footage *f, const QAtomicInt *cancelled) {
+  // Check for a valid filename
+  if (f->filename().isEmpty()) {
+    qWarning() << "Tried to probe media with an empty filename";
     return false;
+  }
+
+  // Check file exists
+  if (!QFileInfo::exists(f->filename())) {
+    qWarning() << "Tried to probe file that doesn't exist:" << f->filename();
+    return false;
+  }
+
+  // Reset Footage state for probing
+  f->Clear();
+
+  // Create list to iterate through
+  QVector<DecoderPtr> decoder_list = ReceiveListOfAllDecoders();
+
+  // Pass Footage through each Decoder's probe function
+  for (int i = 0; i < decoder_list.size(); i++) {
+    if (cancelled && *cancelled) {
+      return false;
+    }
+
+    DecoderPtr decoder = decoder_list.at(i);
+
+    if (decoder->Probe(f, cancelled)) {
+      // We found a Decoder, so we can set this media as valid
+      f->set_status(Footage::kReady);
+
+      // Attach the successful Decoder to this Footage object
+      f->set_decoder(decoder->id());
+
+      // FIXME: Cache the results so we don't have to probe if this media is added a second time
+
+      return true;
+    }
+  }
+
+  // We aren't able to use this Footage
+  f->set_status(Footage::kInvalid);
+  f->set_decoder(QString());
+
+  return false;
 }
 
-DecoderPtr Decoder::CreateFromID(const QString &id)
-{
-    if (id.isEmpty()) {
-        return nullptr;
-    }
-
-    // Create list to iterate through
-    QVector<DecoderPtr> decoder_list = ReceiveListOfAllDecoders();
-
-    foreach (DecoderPtr d, decoder_list) {
-        if (d->id() == id) {
-            return d;
-        }
-    }
-
+DecoderPtr Decoder::CreateFromID(const QString &id) {
+  if (id.isEmpty()) {
     return nullptr;
+  }
+
+  // Create list to iterate through
+  QVector<DecoderPtr> decoder_list = ReceiveListOfAllDecoders();
+
+  foreach (DecoderPtr d, decoder_list) {
+    if (d->id() == id) {
+      return d;
+    }
+  }
+
+  return nullptr;
 }
 
 /*void Decoder::Conform(const AudioRenderingParams &params, const QAtomicInt* cancelled)
@@ -255,86 +232,73 @@ DecoderPtr Decoder::CreateFromID(const QString &id)
   }
 }*/
 
-void Decoder::ConformInternal(SwrContext* resampler, WaveOutput* output, const char* in_data, int in_sample_count)
-{
-    // Determine how many samples the output will be
-    int out_sample_count = swr_get_out_samples(resampler, in_sample_count);
+void Decoder::ConformInternal(SwrContext *resampler, WaveOutput *output, const char *in_data, int in_sample_count) {
+  // Determine how many samples the output will be
+  int out_sample_count = swr_get_out_samples(resampler, in_sample_count);
 
-    // Allocate array for the amount of samples we'll need
-    QByteArray out_samples;
-    out_samples.resize(output->params().samples_to_bytes(out_sample_count));
+  // Allocate array for the amount of samples we'll need
+  QByteArray out_samples;
+  out_samples.resize(output->params().samples_to_bytes(out_sample_count));
 
-    char* out_data = out_samples.data();
+  char *out_data = out_samples.data();
 
-    // Convert samples
-    int convert_count = swr_convert(resampler,
-                                    reinterpret_cast<uint8_t**>(&out_data),
-                                    out_sample_count,
-                                    reinterpret_cast<const uint8_t**>(&in_data),
-                                    in_sample_count);
+  // Convert samples
+  int convert_count = swr_convert(resampler, reinterpret_cast<uint8_t **>(&out_data), out_sample_count,
+                                  reinterpret_cast<const uint8_t **>(&in_data), in_sample_count);
 
-    if (convert_count != out_sample_count) {
-        out_samples.resize(output->params().samples_to_bytes(convert_count));
-    }
+  if (convert_count != out_sample_count) {
+    out_samples.resize(output->params().samples_to_bytes(convert_count));
+  }
 
-    output->write(out_samples);
+  output->write(out_samples);
 }
 
-QString Decoder::GetConformedFilename(const AudioRenderingParams &params)
-{
-    QString index_fn = GetIndexFilename();
+QString Decoder::GetConformedFilename(const AudioRenderingParams &params) {
+  QString index_fn = GetIndexFilename();
 
-    index_fn.append('.');
-    index_fn.append(QString::number(params.sample_rate()));
-    index_fn.append('.');
-    index_fn.append(QString::number(params.format()));
-    index_fn.append('.');
-    index_fn.append(QString::number(params.channel_layout()));
+  index_fn.append('.');
+  index_fn.append(QString::number(params.sample_rate()));
+  index_fn.append('.');
+  index_fn.append(QString::number(params.format()));
+  index_fn.append('.');
+  index_fn.append(QString::number(params.channel_layout()));
 
-    return index_fn;
+  return index_fn;
 }
 
-bool Decoder::ProxyVideo(const QAtomicInt *, int )
-{
+bool Decoder::ProxyVideo(const QAtomicInt *, int) { return false; }
+
+bool Decoder::ConformAudio(const QAtomicInt *, const AudioRenderingParams &) { return false; }
+
+bool Decoder::HasConformedVersion(const AudioRenderingParams &params) {
+  if (stream()->type() != Stream::kAudio) {
     return false;
+  }
+
+  AudioStreamPtr audio_stream = std::static_pointer_cast<AudioStream>(stream());
+
+  if (audio_stream->has_conformed_version(params)) {
+    return true;
+  }
+
+  // Get indexed WAV file
+  WaveInput input(GetIndexFilename());
+
+  bool index_already_matches = false;
+
+  if (input.open()) {
+    index_already_matches = (input.params() == params);
+
+    input.close();
+  }
+
+  return index_already_matches;
 }
 
-bool Decoder::ConformAudio(const QAtomicInt *, const AudioRenderingParams& )
-{
-    return false;
-}
-
-bool Decoder::HasConformedVersion(const AudioRenderingParams &params)
-{
-    if (stream()->type() != Stream::kAudio) {
-        return false;
-    }
-
-    AudioStreamPtr audio_stream = std::static_pointer_cast<AudioStream>(stream());
-
-    if (audio_stream->has_conformed_version(params)) {
-        return true;
-    }
-
-    // Get indexed WAV file
-    WaveInput input(GetIndexFilename());
-
-    bool index_already_matches = false;
-
-    if (input.open()) {
-        index_already_matches = (input.params() == params);
-
-        input.close();
-    }
-
-    return index_already_matches;
-}
-
-void Decoder::SignalProcessingProgress(const int64_t &ts)
-{
-    if (stream()->duration() != AV_NOPTS_VALUE && stream()->duration() != 0) {
-        emit IndexProgress(qRound(100.0 * static_cast<double>(ts) / static_cast<double>(stream()->duration())));
-    }
+void Decoder::SignalProcessingProgress(const int64_t &ts) {
+  if (stream()->duration() != AV_NOPTS_VALUE && stream()->duration() != 0) {
+    emit IndexProgress(qRound(100.0 * static_cast<double>(ts) / static_cast<double>(stream()->duration())));
+  }
 }
 
 OLIVE_NAMESPACE_EXIT

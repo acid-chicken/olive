@@ -32,43 +32,41 @@ OLIVE_NAMESPACE_ENTER
 /**
  * @brief A Stream derivative containing audio-specific information
  */
-class AudioStream : public Stream
-{
-    Q_OBJECT
-public:
-    AudioStream();
+class AudioStream : public Stream {
+  Q_OBJECT
+ public:
+  AudioStream();
 
-    virtual QString description() const override;
+  virtual QString description() const override;
 
-    const int& channels() const;
-    void set_channels(const int& channels);
+  const int& channels() const;
+  void set_channels(const int& channels);
 
-    const uint64_t& channel_layout() const;
-    void set_channel_layout(const uint64_t& channel_layout);
+  const uint64_t& channel_layout() const;
+  void set_channel_layout(const uint64_t& channel_layout);
 
-    const int& sample_rate() const;
-    void set_sample_rate(const int& sample_rate);
+  const int& sample_rate() const;
+  void set_sample_rate(const int& sample_rate);
 
-    bool try_start_conforming(const AudioRenderingParams& params);
-    bool has_conformed_version(const AudioRenderingParams& params);
-    void append_conformed_version(const AudioRenderingParams& params);
+  bool try_start_conforming(const AudioRenderingParams& params);
+  bool has_conformed_version(const AudioRenderingParams& params);
+  void append_conformed_version(const AudioRenderingParams& params);
 
-signals:
-    void ConformAppended(OLIVE_NAMESPACE::AudioRenderingParams params);
+ signals:
+  void ConformAppended(OLIVE_NAMESPACE::AudioRenderingParams params);
 
-private:
-    int channels_;
-    uint64_t layout_;
-    int sample_rate_;
+ private:
+  int channels_;
+  uint64_t layout_;
+  int sample_rate_;
 
-    QList<AudioRenderingParams> conformed_;
+  QList<AudioRenderingParams> conformed_;
 
-    QList<AudioRenderingParams> currently_conforming_;
-
+  QList<AudioRenderingParams> currently_conforming_;
 };
 
 using AudioStreamPtr = std::shared_ptr<AudioStream>;
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIOSTREAM_H
+#endif  // AUDIOSTREAM_H

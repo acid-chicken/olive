@@ -26,80 +26,78 @@
 
 OLIVE_NAMESPACE_ENTER
 
-class AudioRenderBackend : public RenderBackend
-{
-    Q_OBJECT
-public:
-    AudioRenderBackend(QObject* parent = nullptr);
+class AudioRenderBackend : public RenderBackend {
+  Q_OBJECT
+ public:
+  AudioRenderBackend(QObject* parent = nullptr);
 
-    /**
-     * @brief Set parameters of the Renderer
-     *
-     * The Renderer owns the buffers that are used in the rendering process and this function sets the kind of buffers
-     * to use. The Renderer must be stopped when calling this function.
-     */
-    void SetParameters(const AudioRenderingParams &params);
+  /**
+   * @brief Set parameters of the Renderer
+   *
+   * The Renderer owns the buffers that are used in the rendering process and this function sets the kind of buffers
+   * to use. The Renderer must be stopped when calling this function.
+   */
+  void SetParameters(const AudioRenderingParams& params);
 
-    const AudioRenderingParams& params() const;
+  const AudioRenderingParams& params() const;
 
-    QString CachePathName() const;
+  QString CachePathName() const;
 
-signals:
-    void ParamsChanged();
+ signals:
+  void ParamsChanged();
 
-    void AudioComplete();
+  void AudioComplete();
 
-protected:
-    virtual void ConnectViewer(ViewerOutput* node) override;
+ protected:
+  virtual void ConnectViewer(ViewerOutput* node) override;
 
-    virtual void DisconnectViewer(ViewerOutput* node) override;
+  virtual void DisconnectViewer(ViewerOutput* node) override;
 
-    /**
-     * @brief Internal function for generating the cache ID
-     */
-    virtual bool GenerateCacheIDInternal(QCryptographicHash& hash) override;
+  /**
+   * @brief Internal function for generating the cache ID
+   */
+  virtual bool GenerateCacheIDInternal(QCryptographicHash& hash) override;
 
-    virtual NodeInput* GetDependentInput() override;
+  virtual NodeInput* GetDependentInput() override;
 
-    virtual bool CanRender() override;
+  virtual bool CanRender() override;
 
-    virtual void ConnectWorkerToThis(RenderWorker* worker) override;
+  virtual void ConnectWorkerToThis(RenderWorker* worker) override;
 
-    virtual TimeRange PopNextFrameFromQueue() override;
+  virtual TimeRange PopNextFrameFromQueue() override;
 
-    virtual void InvalidateCacheInternal(const rational &start_range, const rational &end_range) override;
+  virtual void InvalidateCacheInternal(const rational& start_range, const rational& end_range) override;
 
-private:
-    struct ConformWaitInfo {
-        StreamPtr stream;
-        AudioRenderingParams params;
-        TimeRange affected_range;
-        rational stream_time;
+ private:
+  struct ConformWaitInfo {
+    StreamPtr stream;
+    AudioRenderingParams params;
+    TimeRange affected_range;
+    rational stream_time;
 
-        bool operator==(const ConformWaitInfo& rhs) const;
-    };
+    bool operator==(const ConformWaitInfo& rhs) const;
+  };
 
-    void ListenForConformSignal(AudioStreamPtr s);
+  void ListenForConformSignal(AudioStreamPtr s);
 
-    void StopListeningForConformSignal(AudioStream *s);
+  void StopListeningForConformSignal(AudioStream* s);
 
-    QList<ConformWaitInfo> conform_wait_info_;
+  QList<ConformWaitInfo> conform_wait_info_;
 
-    AudioRenderingParams params_;
+  AudioRenderingParams params_;
 
-    bool ic_from_conform_;
+  bool ic_from_conform_;
 
-private slots:
-    void ConformUnavailable(StreamPtr stream, TimeRange range, rational stream_time, AudioRenderingParams params);
+ private slots:
+  void ConformUnavailable(StreamPtr stream, TimeRange range, rational stream_time, AudioRenderingParams params);
 
-    void ConformUpdated(OLIVE_NAMESPACE::AudioRenderingParams params);
+  void ConformUpdated(OLIVE_NAMESPACE::AudioRenderingParams params);
 
-    void TruncateCache(const rational& r);
+  void TruncateCache(const rational& r);
 
-    void FilterQueueCompleteSignal();
-
+  void FilterQueueCompleteSignal();
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // AUDIORENDERBACKEND_H
+#endif  // AUDIORENDERBACKEND_H

@@ -29,8 +29,8 @@
 #include "project/projectviewmodel.h"
 #include "widget/projectexplorer/projectexplorericonview.h"
 #include "widget/projectexplorer/projectexplorerlistview.h"
-#include "widget/projectexplorer/projectexplorertreeview.h"
 #include "widget/projectexplorer/projectexplorernavigation.h"
+#include "widget/projectexplorer/projectexplorertreeview.h"
 #include "widget/projecttoolbar/projecttoolbar.h"
 
 OLIVE_NAMESPACE_ENTER
@@ -43,138 +43,136 @@ OLIVE_NAMESPACE_ENTER
  *
  * This widget contains three views, tree view, list view, and icon view. These can be switched at any time.
  */
-class ProjectExplorer : public QWidget
-{
-    Q_OBJECT
-public:
-    ProjectExplorer(QWidget* parent);
+class ProjectExplorer : public QWidget {
+  Q_OBJECT
+ public:
+  ProjectExplorer(QWidget* parent);
 
-    const ProjectToolbar::ViewType& view_type() const;
+  const ProjectToolbar::ViewType& view_type() const;
 
-    Project* project() const;
-    void set_project(Project* p);
+  Project* project() const;
+  void set_project(Project* p);
 
-    QModelIndex get_root_index() const;
+  QModelIndex get_root_index() const;
 
-    void set_root(Item* item);
+  void set_root(Item* item);
 
-    QList<Item*> SelectedItems() const;
+  QList<Item*> SelectedItems() const;
 
-    /**
-     * @brief Use a heuristic to determine which (if any) folder is selected
-     *
-     * Generally for some import/adding processes, we assume that if a folder is selected, the user probably wants to
-     * create the new object in it rather than in the root. If, however, more than one folder is selected, we can't
-     * truly determine any folder from this and just return the root instead.
-     *
-     * @return
-     *
-     * A folder that's heuristically been determined as "selected", or the root directory if none, or nullptr if no
-     * project is open.
-     */
-    Folder* GetSelectedFolder() const;
+  /**
+   * @brief Use a heuristic to determine which (if any) folder is selected
+   *
+   * Generally for some import/adding processes, we assume that if a folder is selected, the user probably wants to
+   * create the new object in it rather than in the root. If, however, more than one folder is selected, we can't
+   * truly determine any folder from this and just return the root instead.
+   *
+   * @return
+   *
+   * A folder that's heuristically been determined as "selected", or the root directory if none, or nullptr if no
+   * project is open.
+   */
+  Folder* GetSelectedFolder() const;
 
-    /**
-     * @brief Access the ViewModel model of the project
-     */
-    ProjectViewModel* model();
+  /**
+   * @brief Access the ViewModel model of the project
+   */
+  ProjectViewModel* model();
 
-    void SelectAll();
+  void SelectAll();
 
-    void DeselectAll();
+  void DeselectAll();
 
-    void DeleteSelected();
+  void DeleteSelected();
 
-public slots:
-    void set_view_type(ProjectToolbar::ViewType type);
+ public slots:
+  void set_view_type(ProjectToolbar::ViewType type);
 
-    void Edit(Item* item);
+  void Edit(Item* item);
 
-signals:
-    /**
-     * @brief Emitted when an Item is double clicked
-     *
-     * @param item
-     *
-     * The Item that was double clicked, or nullptr if empty area was double clicked
-     */
-    void DoubleClickedItem(Item* item);
+ signals:
+  /**
+   * @brief Emitted when an Item is double clicked
+   *
+   * @param item
+   *
+   * The Item that was double clicked, or nullptr if empty area was double clicked
+   */
+  void DoubleClickedItem(Item* item);
 
-private:
-    /**
-     * @brief Simple convenience function for adding a view to this stacked widget
-     *
-     * Mainly for use in the constructor. Adds the view, connects its signals/slots, and sets the model.
-     *
-     * @param view
-     *
-     * View to add to the stack
-     */
-    void AddView(QAbstractItemView* view);
+ private:
+  /**
+   * @brief Simple convenience function for adding a view to this stacked widget
+   *
+   * Mainly for use in the constructor. Adds the view, connects its signals/slots, and sets the model.
+   *
+   * @param view
+   *
+   * View to add to the stack
+   */
+  void AddView(QAbstractItemView* view);
 
-    /**
-     * @brief Browse to a specific folder index in the model
-     *
-     * Only affects list_view_ and icon_view_.
-     *
-     * @param index
-     *
-     * Either an invalid index to return to the project root, or an index to a valid Folder object.
-     */
-    void BrowseToFolder(const QModelIndex& index);
+  /**
+   * @brief Browse to a specific folder index in the model
+   *
+   * Only affects list_view_ and icon_view_.
+   *
+   * @param index
+   *
+   * Either an invalid index to return to the project root, or an index to a valid Folder object.
+   */
+  void BrowseToFolder(const QModelIndex& index);
 
-    /**
-     * @brief Get the currently active QAbstractItemView
-     */
-    QAbstractItemView* CurrentView() const;
+  /**
+   * @brief Get the currently active QAbstractItemView
+   */
+  QAbstractItemView* CurrentView() const;
 
-    QStackedWidget* stacked_widget_;
+  QStackedWidget* stacked_widget_;
 
-    ProjectExplorerNavigation* nav_bar_;
+  ProjectExplorerNavigation* nav_bar_;
 
-    ProjectExplorerIconView* icon_view_;
-    ProjectExplorerListView* list_view_;
-    ProjectExplorerTreeView* tree_view_;
+  ProjectExplorerIconView* icon_view_;
+  ProjectExplorerListView* list_view_;
+  ProjectExplorerTreeView* tree_view_;
 
-    ProjectToolbar::ViewType view_type_;
+  ProjectToolbar::ViewType view_type_;
 
-    ProjectViewModel model_;
+  ProjectViewModel model_;
 
-    QModelIndex clicked_index_;
+  QModelIndex clicked_index_;
 
-    QTimer rename_timer_;
+  QTimer rename_timer_;
 
-    Item* context_menu_item_;
+  Item* context_menu_item_;
 
-private slots:
-    void ItemClickedSlot(const QModelIndex& index);
+ private slots:
+  void ItemClickedSlot(const QModelIndex& index);
 
-    void ViewEmptyAreaDoubleClickedSlot();
+  void ViewEmptyAreaDoubleClickedSlot();
 
-    void ItemDoubleClickedSlot(const QModelIndex& index);
+  void ItemDoubleClickedSlot(const QModelIndex& index);
 
-    void SizeChangedSlot(int s);
+  void SizeChangedSlot(int s);
 
-    void DirUpSlot();
+  void DirUpSlot();
 
-    void RenameTimerSlot();
+  void RenameTimerSlot();
 
-    void ShowContextMenu();
+  void ShowContextMenu();
 
-    void ShowFootagePropertiesDialog();
+  void ShowFootagePropertiesDialog();
 
-    void ShowSequencePropertiesDialog();
+  void ShowSequencePropertiesDialog();
 
-    void RevealSelectedFootage();
+  void RevealSelectedFootage();
 
-    void OpenContextMenuItemInNewTab();
+  void OpenContextMenuItemInNewTab();
 
-    void OpenContextMenuItemInNewWindow();
+  void OpenContextMenuItemInNewWindow();
 
-    void ContextMenuStartProxy(QAction* a);
-
+  void ContextMenuStartProxy(QAction* a);
 };
 
 OLIVE_NAMESPACE_EXIT
 
-#endif // PROJECTEXPLORER_H
+#endif  // PROJECTEXPLORER_H
