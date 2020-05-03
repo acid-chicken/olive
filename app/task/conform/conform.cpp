@@ -25,29 +25,29 @@
 OLIVE_NAMESPACE_ENTER
 
 ConformTask::ConformTask(AudioStreamPtr stream, const AudioRenderingParams& params) :
-  stream_(stream),
-  params_(params)
+    stream_(stream),
+    params_(params)
 {
-  SetTitle(tr("Conforming Audio %1:%2").arg(stream_->footage()->filename(), QString::number(stream_->index())));
+    SetTitle(tr("Conforming Audio %1:%2").arg(stream_->footage()->filename(), QString::number(stream_->index())));
 }
 
 void ConformTask::Action()
 {
-  if (stream_->footage()->decoder().isEmpty()) {
-    emit Failed(tr("Failed to find decoder to conform audio stream"));
-  } else {
-    DecoderPtr decoder = Decoder::CreateFromID(stream_->footage()->decoder());
-
-    decoder->set_stream(stream_);
-
-    connect(decoder.get(), &Decoder::IndexProgress, this, &ConformTask::ProgressChanged);
-
-    if (decoder->ConformAudio(&IsCancelled(), params_)) {
-      emit Succeeded();
+    if (stream_->footage()->decoder().isEmpty()) {
+        emit Failed(tr("Failed to find decoder to conform audio stream"));
     } else {
-      emit Failed(QStringLiteral("Failed to conform audio"));
+        DecoderPtr decoder = Decoder::CreateFromID(stream_->footage()->decoder());
+
+        decoder->set_stream(stream_);
+
+        connect(decoder.get(), &Decoder::IndexProgress, this, &ConformTask::ProgressChanged);
+
+        if (decoder->ConformAudio(&IsCancelled(), params_)) {
+            emit Succeeded();
+        } else {
+            emit Failed(QStringLiteral("Failed to conform audio"));
+        }
     }
-  }
 }
 
 OLIVE_NAMESPACE_EXIT

@@ -29,15 +29,15 @@ OLIVE_NAMESPACE_ENTER
 class ProxyTask : public Task
 {
 public:
-  ProxyTask(VideoStreamPtr stream, int divider);
+    ProxyTask(VideoStreamPtr stream, int divider);
 
 protected:
-  virtual void Action() override;
+    virtual void Action() override;
 
 private:
-  VideoStreamPtr stream_;
+    VideoStreamPtr stream_;
 
-  int divider_;
+    int divider_;
 
 };
 

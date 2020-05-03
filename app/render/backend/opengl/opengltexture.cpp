@@ -30,176 +30,176 @@
 OLIVE_NAMESPACE_ENTER
 
 OpenGLTexture::OpenGLTexture() :
-  created_ctx_(nullptr),
-  texture_(0)
+    created_ctx_(nullptr),
+    texture_(0)
 {
 }
 
 OpenGLTexture::~OpenGLTexture()
 {
-  Destroy();
+    Destroy();
 }
 
 bool OpenGLTexture::IsCreated() const
 {
-  return (texture_);
+    return (texture_);
 }
 
 void OpenGLTexture::Create(QOpenGLContext *ctx, const VideoRenderingParams &params, const void* data, int linesize)
 {
-  if (!ctx) {
-    qWarning() << "OpenGLTexture::Create was passed an invalid context";
-    return;
-  }
+    if (!ctx) {
+        qWarning() << "OpenGLTexture::Create was passed an invalid context";
+        return;
+    }
 
-  Destroy();
+    Destroy();
 
-  created_ctx_ = ctx;
-  params_ = params;
+    created_ctx_ = ctx;
+    params_ = params;
 
-  connect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()), Qt::DirectConnection);
+    connect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()), Qt::DirectConnection);
 
-  // Create main texture
-  CreateInternal(created_ctx_, &texture_, data, linesize);
+    // Create main texture
+    CreateInternal(created_ctx_, &texture_, data, linesize);
 }
 
 void OpenGLTexture::Create(QOpenGLContext *ctx, const VideoRenderingParams &params)
 {
-  Create(ctx, params, nullptr, 0);
+    Create(ctx, params, nullptr, 0);
 }
 
 void OpenGLTexture::Create(QOpenGLContext *ctx, FramePtr frame)
 {
-  Create(ctx, frame.get());
+    Create(ctx, frame.get());
 }
 
 void OpenGLTexture::Create(QOpenGLContext *ctx, Frame *frame)
 {
-  Create(ctx, frame->video_params(), frame->data(), frame->linesize_pixels());
+    Create(ctx, frame->video_params(), frame->data(), frame->linesize_pixels());
 }
 
 void OpenGLTexture::Destroy()
 {
-  if (created_ctx_) {
-    disconnect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
+    if (created_ctx_) {
+        disconnect(created_ctx_, SIGNAL(aboutToBeDestroyed()), this, SLOT(Destroy()));
 
-    created_ctx_->functions()->glDeleteTextures(1, &texture_);
-    texture_ = 0;
+        created_ctx_->functions()->glDeleteTextures(1, &texture_);
+        texture_ = 0;
 
-    created_ctx_ = nullptr;
-  }
+        created_ctx_ = nullptr;
+    }
 }
 
 void OpenGLTexture::Bind()
 {
-  created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, texture_);
+    created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, texture_);
 }
 
 void OpenGLTexture::Release()
 {
-  created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, 0);
+    created_ctx_->functions()->glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 const int &OpenGLTexture::width() const
 {
-  return params_.effective_width();
+    return params_.effective_width();
 }
 
 const int &OpenGLTexture::height() const
 {
-  return params_.effective_height();
+    return params_.effective_height();
 }
 
 const PixelFormat::Format &OpenGLTexture::format() const
 {
-  return params_.format();
+    return params_.format();
 }
 
 const GLuint &OpenGLTexture::texture() const
 {
-  return texture_;
+    return texture_;
 }
 
 const int &OpenGLTexture::divider() const
 {
-  return params_.divider();
+    return params_.divider();
 }
 
 void OpenGLTexture::Upload(FramePtr frame)
 {
-  Upload(frame.get());
+    Upload(frame.get());
 }
 
 void OpenGLTexture::Upload(Frame *frame)
 {
-  Upload(frame->data(), frame->linesize_pixels());
+    Upload(frame->data(), frame->linesize_pixels());
 }
 
 void OpenGLTexture::Upload(const void *data, int linesize)
 {
-  if (!IsCreated()) {
-    qWarning() << "OpenGLTexture::Upload() called while it wasn't created";
-    return;
-  }
+    if (!IsCreated()) {
+        qWarning() << "OpenGLTexture::Upload() called while it wasn't created";
+        return;
+    }
 
-  Bind();
+    Bind();
 
-  created_ctx_->functions()->glPixelStorei(GL_UNPACK_ROW_LENGTH, linesize);
+    created_ctx_->functions()->glPixelStorei(GL_UNPACK_ROW_LENGTH, linesize);
 
-  created_ctx_->functions()->glTexSubImage2D(GL_TEXTURE_2D,
-                                             0,
-                                             0,
-                                             0,
-                                             width(),
-                                             height(),
-                                             OpenGLRenderFunctions::GetPixelFormat(format()),
-                                             OpenGLRenderFunctions::GetPixelType(format()),
-                                             data);
+    created_ctx_->functions()->glTexSubImage2D(GL_TEXTURE_2D,
+            0,
+            0,
+            0,
+            width(),
+            height(),
+            OpenGLRenderFunctions::GetPixelFormat(format()),
+            OpenGLRenderFunctions::GetPixelType(format()),
+            data);
 
-  created_ctx_->functions()->glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    created_ctx_->functions()->glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
-  Release();
+    Release();
 }
 
 void OpenGLTexture::CreateInternal(QOpenGLContext* create_ctx, GLuint* tex, const void *data, int linesize)
 {
-  QOpenGLFunctions* f = create_ctx->functions();
+    QOpenGLFunctions* f = create_ctx->functions();
 
-  // Create texture
-  f->glGenTextures(1, tex);
+    // Create texture
+    f->glGenTextures(1, tex);
 
-  // Verify texture
-  if (texture_ == 0) {
-    qWarning() << "OpenGL texture creation failed";
-    return;
-  }
+    // Verify texture
+    if (texture_ == 0) {
+        qWarning() << "OpenGL texture creation failed";
+        return;
+    }
 
-  // Bind texture
-  f->glBindTexture(GL_TEXTURE_2D, *tex);
+    // Bind texture
+    f->glBindTexture(GL_TEXTURE_2D, *tex);
 
-  // Set linesize
-  f->glPixelStorei(GL_UNPACK_ROW_LENGTH, linesize);
+    // Set linesize
+    f->glPixelStorei(GL_UNPACK_ROW_LENGTH, linesize);
 
-  // Allocate storage for texture
-  f->glTexImage2D(GL_TEXTURE_2D,
-                  0,
-                  OpenGLRenderFunctions::GetInternalFormat(format()),
-                  width(),
-                  height(),
-                  0,
-                  OpenGLRenderFunctions::GetPixelFormat(format()),
-                  OpenGLRenderFunctions::GetPixelType(format()),
-                  data);
+    // Allocate storage for texture
+    f->glTexImage2D(GL_TEXTURE_2D,
+                    0,
+                    OpenGLRenderFunctions::GetInternalFormat(format()),
+                    width(),
+                    height(),
+                    0,
+                    OpenGLRenderFunctions::GetPixelFormat(format()),
+                    OpenGLRenderFunctions::GetPixelType(format()),
+                    data);
 
-  // Return linesize to default
-  f->glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    // Return linesize to default
+    f->glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
-  // Set texture filtering to bilinear
-  f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Set texture filtering to bilinear
+    f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    f->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  // Release texture
-  f->glBindTexture(GL_TEXTURE_2D, 0);
+    // Release texture
+    f->glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 OLIVE_NAMESPACE_EXIT

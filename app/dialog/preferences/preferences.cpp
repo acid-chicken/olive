@@ -37,67 +37,67 @@
 OLIVE_NAMESPACE_ENTER
 
 PreferencesDialog::PreferencesDialog(QWidget *parent, QMenuBar* main_menu_bar) :
-  QDialog(parent)
+    QDialog(parent)
 {
-  setWindowTitle(tr("Preferences"));
+    setWindowTitle(tr("Preferences"));
 
-  QVBoxLayout* layout = new QVBoxLayout(this);
+    QVBoxLayout* layout = new QVBoxLayout(this);
 
-  QSplitter* splitter = new QSplitter();
-  splitter->setChildrenCollapsible(false);
-  layout->addWidget(splitter);
+    QSplitter* splitter = new QSplitter();
+    splitter->setChildrenCollapsible(false);
+    layout->addWidget(splitter);
 
-  list_widget_ = new QListWidget();
+    list_widget_ = new QListWidget();
 
-  preference_pane_stack_ = new QStackedWidget(this);
+    preference_pane_stack_ = new QStackedWidget(this);
 
-  AddTab(new PreferencesGeneralTab(), tr("General"));
-  AddTab(new PreferencesAppearanceTab(), tr("Appearance"));
-  AddTab(new PreferencesBehaviorTab(), tr("Behavior"));
-  AddTab(new PreferencesQualityTab(), tr("Quality"));
-  AddTab(new PreferencesDiskTab(), tr("Disk"));
-  AddTab(new PreferencesAudioTab(), tr("Audio"));
-  AddTab(new PreferencesKeyboardTab(main_menu_bar), tr("Keyboard"));
+    AddTab(new PreferencesGeneralTab(), tr("General"));
+    AddTab(new PreferencesAppearanceTab(), tr("Appearance"));
+    AddTab(new PreferencesBehaviorTab(), tr("Behavior"));
+    AddTab(new PreferencesQualityTab(), tr("Quality"));
+    AddTab(new PreferencesDiskTab(), tr("Disk"));
+    AddTab(new PreferencesAudioTab(), tr("Audio"));
+    AddTab(new PreferencesKeyboardTab(main_menu_bar), tr("Keyboard"));
 
-  splitter->addWidget(list_widget_);
-  splitter->addWidget(preference_pane_stack_);
+    splitter->addWidget(list_widget_);
+    splitter->addWidget(preference_pane_stack_);
 
-  QDialogButtonBox* button_box = new QDialogButtonBox(this);
-  button_box->setOrientation(Qt::Horizontal);
-  button_box->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
+    QDialogButtonBox* button_box = new QDialogButtonBox(this);
+    button_box->setOrientation(Qt::Horizontal);
+    button_box->setStandardButtons(QDialogButtonBox::Cancel|QDialogButtonBox::Ok);
 
-  layout->addWidget(button_box);
+    layout->addWidget(button_box);
 
-  connect(button_box, &QDialogButtonBox::accepted, this, &PreferencesDialog::accept);
-  connect(button_box, &QDialogButtonBox::rejected, this, &PreferencesDialog::reject);
+    connect(button_box, &QDialogButtonBox::accepted, this, &PreferencesDialog::accept);
+    connect(button_box, &QDialogButtonBox::rejected, this, &PreferencesDialog::reject);
 
-  connect(list_widget_,
-          &QListWidget::currentRowChanged,
-          preference_pane_stack_,
-          &QStackedWidget::setCurrentIndex);
+    connect(list_widget_,
+            &QListWidget::currentRowChanged,
+            preference_pane_stack_,
+            &QStackedWidget::setCurrentIndex);
 }
 
 void PreferencesDialog::accept()
 {
-  foreach (PreferencesTab* tab, tabs_) {
-    if (!tab->Validate()) {
-      return;
+    foreach (PreferencesTab* tab, tabs_) {
+        if (!tab->Validate()) {
+            return;
+        }
     }
-  }
 
-  foreach (PreferencesTab* tab, tabs_) {
-    tab->Accept();
-  }
+    foreach (PreferencesTab* tab, tabs_) {
+        tab->Accept();
+    }
 
-  QDialog::accept();
+    QDialog::accept();
 }
 
 void PreferencesDialog::AddTab(PreferencesTab *tab, const QString &title)
 {
-  list_widget_->addItem(title);
-  preference_pane_stack_->addWidget(tab);
+    list_widget_->addItem(title);
+    preference_pane_stack_->addWidget(tab);
 
-  tabs_.append(tab);
+    tabs_.append(tab);
 }
 
 OLIVE_NAMESPACE_EXIT

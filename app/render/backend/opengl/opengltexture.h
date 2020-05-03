@@ -34,49 +34,49 @@ OLIVE_NAMESPACE_ENTER
  */
 class OpenGLTexture : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  OpenGLTexture();
-  virtual ~OpenGLTexture() override;
+    OpenGLTexture();
+    virtual ~OpenGLTexture() override;
 
-  DISABLE_COPY_MOVE(OpenGLTexture)
+    DISABLE_COPY_MOVE(OpenGLTexture)
 
-  void Create(QOpenGLContext* ctx, const VideoRenderingParams& params, const void *data, int linesize);
-  void Create(QOpenGLContext* ctx, const VideoRenderingParams& params);
-  void Create(QOpenGLContext* ctx, FramePtr frame);
-  void Create(QOpenGLContext* ctx, Frame* frame);
+    void Create(QOpenGLContext* ctx, const VideoRenderingParams& params, const void *data, int linesize);
+    void Create(QOpenGLContext* ctx, const VideoRenderingParams& params);
+    void Create(QOpenGLContext* ctx, FramePtr frame);
+    void Create(QOpenGLContext* ctx, Frame* frame);
 
-  bool IsCreated() const;
+    bool IsCreated() const;
 
-  void Bind();
+    void Bind();
 
-  void Release();
+    void Release();
 
-  const int& width() const;
+    const int& width() const;
 
-  const int& height() const;
+    const int& height() const;
 
-  const PixelFormat::Format &format() const;
+    const PixelFormat::Format &format() const;
 
-  const GLuint& texture() const;
+    const GLuint& texture() const;
 
-  const int& divider() const;
+    const int& divider() const;
 
-  void Upload(FramePtr frame);
-  void Upload(Frame* frame);
-  void Upload(const void *data, int linesize);
+    void Upload(FramePtr frame);
+    void Upload(Frame* frame);
+    void Upload(const void *data, int linesize);
 
 public slots:
-  void Destroy();
+    void Destroy();
 
 private:
-  void CreateInternal(QOpenGLContext *create_ctx, GLuint *tex, const void *data, int linesize);
+    void CreateInternal(QOpenGLContext *create_ctx, GLuint *tex, const void *data, int linesize);
 
-  QOpenGLContext* created_ctx_;
+    QOpenGLContext* created_ctx_;
 
-  GLuint texture_;
+    GLuint texture_;
 
-  VideoRenderingParams params_;
+    VideoRenderingParams params_;
 
 };
 

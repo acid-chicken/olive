@@ -44,80 +44,80 @@ class Footage;
  */
 class Stream : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  enum Type {
-    kUnknown,
-    kVideo,
-    kAudio,
-    kData,
-    kSubtitle,
-    kAttachment,
-    kImage = 100
-  };
+    enum Type {
+        kUnknown,
+        kVideo,
+        kAudio,
+        kData,
+        kSubtitle,
+        kAttachment,
+        kImage = 100
+    };
 
-  /**
-   * @brief Stream constructor
-   */
-  Stream();
+    /**
+     * @brief Stream constructor
+     */
+    Stream();
 
-  /**
-   * @brief Required virtual destructor, serves no purpose
-   */
-  virtual ~Stream();
+    /**
+     * @brief Required virtual destructor, serves no purpose
+     */
+    virtual ~Stream();
 
-  void Load(QXmlStreamReader* reader);
+    void Load(QXmlStreamReader* reader);
 
-  void Save(QXmlStreamWriter *writer) const;
+    void Save(QXmlStreamWriter *writer) const;
 
-  virtual QString description() const;
+    virtual QString description() const;
 
-  const Type& type() const;
-  void set_type(const Type& type);
+    const Type& type() const;
+    void set_type(const Type& type);
 
-  Footage* footage() const;
-  void set_footage(Footage* f);
+    Footage* footage() const;
+    void set_footage(Footage* f);
 
-  const rational& timebase() const;
-  void set_timebase(const rational& timebase);
+    const rational& timebase() const;
+    void set_timebase(const rational& timebase);
 
-  const int& index() const;
-  void set_index(const int& index);
+    const int& index() const;
+    void set_index(const int& index);
 
-  const int64_t& duration() const;
-  void set_duration(const int64_t& duration);
+    const int64_t& duration() const;
+    void set_duration(const int64_t& duration);
 
-  bool enabled() const;
-  void set_enabled(bool e);
+    bool enabled() const;
+    void set_enabled(bool e);
 
-  static QIcon IconFromType(const Type& type);
+    static QIcon IconFromType(const Type& type);
 
-  QMutex* proxy_access_lock();
+    QMutex* proxy_access_lock();
 
 protected:
-  virtual void FootageSetEvent(Footage*);
+    virtual void FootageSetEvent(Footage*);
 
-  virtual void LoadCustomParameters(QXmlStreamReader *reader);
+    virtual void LoadCustomParameters(QXmlStreamReader *reader);
 
-  virtual void SaveCustomParameters(QXmlStreamWriter* writer) const;
+    virtual void SaveCustomParameters(QXmlStreamWriter* writer) const;
 
 signals:
-  void ParametersChanged();
+    void ParametersChanged();
 
 private:
-  Footage* footage_;
+    Footage* footage_;
 
-  rational timebase_;
+    rational timebase_;
 
-  int64_t duration_;
+    int64_t duration_;
 
-  int index_;
+    int index_;
 
-  Type type_;
+    Type type_;
 
-  bool enabled_;
+    bool enabled_;
 
-  QMutex proxy_access_lock_;
+    QMutex proxy_access_lock_;
 
 };
 

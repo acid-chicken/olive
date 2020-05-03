@@ -27,55 +27,55 @@ OLIVE_NAMESPACE_ENTER
 
 class VideoStream : public ImageStream
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  VideoStream();
+    VideoStream();
 
-  virtual QString description() const override;
+    virtual QString description() const override;
 
-  /**
-   * @brief Get this video stream's frame rate
-   *
-   * Used purely for metadata, rendering uses the timebase instead.
-   */
-  const rational& frame_rate() const;
-  void set_frame_rate(const rational& frame_rate);
+    /**
+     * @brief Get this video stream's frame rate
+     *
+     * Used purely for metadata, rendering uses the timebase instead.
+     */
+    const rational& frame_rate() const;
+    void set_frame_rate(const rational& frame_rate);
 
-  const int64_t& start_time() const;
-  void set_start_time(const int64_t& start_time);
+    const int64_t& start_time() const;
+    void set_start_time(const int64_t& start_time);
 
-  bool is_image_sequence() const;
-  void set_image_sequence(bool e);
+    bool is_image_sequence() const;
+    void set_image_sequence(bool e);
 
-  int64_t get_closest_timestamp_in_frame_index(const rational& time);
-  int64_t get_closest_timestamp_in_frame_index(int64_t timestamp);
-  /*
-  void clear_frame_index();
-  void append_frame_index(const int64_t& ts);
-  bool is_frame_index_ready();
-  int64_t last_frame_index_timestamp();
+    int64_t get_closest_timestamp_in_frame_index(const rational& time);
+    int64_t get_closest_timestamp_in_frame_index(int64_t timestamp);
+    /*
+    void clear_frame_index();
+    void append_frame_index(const int64_t& ts);
+    bool is_frame_index_ready();
+    int64_t last_frame_index_timestamp();
 
-  bool load_frame_index(const QString& s);
-  bool save_frame_index(const QString& s);
-  */
+    bool load_frame_index(const QString& s);
+    bool save_frame_index(const QString& s);
+    */
 
-  bool is_generating_proxy();
-  bool try_start_proxy();
-  int using_proxy();
-  void set_proxy(const int& divider, const QVector<int64_t>& index);
+    bool is_generating_proxy();
+    bool try_start_proxy();
+    int using_proxy();
+    void set_proxy(const int& divider, const QVector<int64_t>& index);
 
 private:
-  rational frame_rate_;
+    rational frame_rate_;
 
-  QVector<int64_t> frame_index_;
+    QVector<int64_t> frame_index_;
 
-  int64_t start_time_;
+    int64_t start_time_;
 
-  bool is_image_sequence_;
+    bool is_image_sequence_;
 
-  bool is_generating_proxy_;
+    bool is_generating_proxy_;
 
-  int using_proxy_;
+    int using_proxy_;
 
 };
 

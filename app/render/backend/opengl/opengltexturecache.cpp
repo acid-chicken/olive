@@ -24,96 +24,96 @@ OLIVE_NAMESPACE_ENTER
 
 OpenGLTextureCache::~OpenGLTextureCache()
 {
-  foreach (Reference* ref, existing_references_) {
-    ref->ParentKilled();
-  }
+    foreach (Reference* ref, existing_references_) {
+        ref->ParentKilled();
+    }
 }
 
 OpenGLTextureCache::ReferencePtr OpenGLTextureCache::Get(QOpenGLContext *ctx, FramePtr frame)
 {
-  return Get(ctx, frame.get());
+    return Get(ctx, frame.get());
 }
 
 OpenGLTextureCache::ReferencePtr OpenGLTextureCache::Get(QOpenGLContext *ctx, Frame *frame)
 {
-  return Get(ctx, frame->video_params(), frame->data(), frame->linesize_pixels());
+    return Get(ctx, frame->video_params(), frame->data(), frame->linesize_pixels());
 }
 
 OpenGLTextureCache::ReferencePtr OpenGLTextureCache::Get(QOpenGLContext* ctx, const VideoRenderingParams &params, const void *data, int linesize)
 {
-  OpenGLTexturePtr texture = nullptr;
+    OpenGLTexturePtr texture = nullptr;
 
-  lock_.lock();
+    lock_.lock();
 
-  // Iterate through textures and see if we have one that matches these parameters
-  for (int i=0;i<available_textures_.size();i++) {
-    OpenGLTexturePtr test = available_textures_.at(i);
+    // Iterate through textures and see if we have one that matches these parameters
+    for (int i=0; i<available_textures_.size(); i++) {
+        OpenGLTexturePtr test = available_textures_.at(i);
 
-    if (test->width() == params.effective_width()
-        && test->height() == params.effective_height()
-        && test->format() == params.format()) {
-      texture = test;
-      available_textures_.removeAt(i);
-      break;
+        if (test->width() == params.effective_width()
+                && test->height() == params.effective_height()
+                && test->format() == params.format()) {
+            texture = test;
+            available_textures_.removeAt(i);
+            break;
+        }
     }
-  }
 
-  // If we didn't find a texture, we'll need to create one
-  if (!texture) {
-    texture = std::make_shared<OpenGLTexture>();
-    texture->Create(ctx, params);
-  }
+    // If we didn't find a texture, we'll need to create one
+    if (!texture) {
+        texture = std::make_shared<OpenGLTexture>();
+        texture->Create(ctx, params);
+    }
 
-  ReferencePtr ref = std::make_shared<Reference>(this, texture);
-  existing_references_.append(ref.get());
+    ReferencePtr ref = std::make_shared<Reference>(this, texture);
+    existing_references_.append(ref.get());
 
-  lock_.unlock();
+    lock_.unlock();
 
-  if (data) {
-    texture->Upload(data, linesize);
-  }
+    if (data) {
+        texture->Upload(data, linesize);
+    }
 
-  return ref;
+    return ref;
 }
 
 OpenGLTextureCache::ReferencePtr OpenGLTextureCache::Get(QOpenGLContext *ctx, const VideoRenderingParams &params)
 {
-  return Get(ctx, params, nullptr, 0);
+    return Get(ctx, params, nullptr, 0);
 }
 
 void OpenGLTextureCache::Relinquish(OpenGLTextureCache::Reference *ref)
 {
-  OpenGLTexturePtr tex = ref->texture();
+    OpenGLTexturePtr tex = ref->texture();
 
-  lock_.lock();
+    lock_.lock();
 
-  existing_references_.removeOne(ref);
-  available_textures_.append(tex);
+    existing_references_.removeOne(ref);
+    available_textures_.append(tex);
 
-  lock_.unlock();
+    lock_.unlock();
 }
 
 OpenGLTextureCache::Reference::Reference(OpenGLTextureCache *parent, OpenGLTexturePtr texture) :
-  parent_(parent),
-  texture_(texture)
+    parent_(parent),
+    texture_(texture)
 {
 }
 
 OpenGLTextureCache::Reference::~Reference()
 {
-  if (parent_) {
-    parent_->Relinquish(this);
-  }
+    if (parent_) {
+        parent_->Relinquish(this);
+    }
 }
 
 OpenGLTexturePtr OpenGLTextureCache::Reference::texture()
 {
-  return texture_;
+    return texture_;
 }
 
 void OpenGLTextureCache::Reference::ParentKilled()
 {
-  parent_ = nullptr;
+    parent_ = nullptr;
 }
 
 OLIVE_NAMESPACE_EXIT
